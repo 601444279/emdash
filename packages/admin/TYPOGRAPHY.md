@@ -28,6 +28,7 @@ The approved Dashboard implementation lives in `src/components/Dashboard.tsx`.
 | Role                        | Tailwind treatment                                                | Notes                                                                                                                             |
 | --------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Page title                  | `text-2xl font-semibold leading-tight tracking-tight`             | `24px`, weight `600`; replaces oversized `text-3xl font-bold` on standard admin pages                                             |
+| Page subtitle               | `mt-1 text-sm leading-5 text-pretty text-kumo-subtle`             | Keep descriptive copy in the same heading block as the page title; do not make it a separate page section                         |
 | Card heading                | Kumo `LayerCard.Secondary` default                                | Keep one `14px` treatment across all card types; retain only required layout classes such as `flex`, `gap-*`, or alignment insets |
 | Metric value                | `text-3xl font-semibold leading-none tracking-tight tabular-nums` | `30px`, weight `600`; tabular digits prevent count changes from shifting                                                          |
 | Primary row label           | `text-sm font-medium leading-5`                                   | `14px`, weight `500`; suitable for collection and activity titles                                                                 |
@@ -43,6 +44,7 @@ The semantic heading element still follows the document outline. Choose `h1`, `h
 
 - Use one `h1` per page.
 - Standard page titles use the approved `24px/600` treatment.
+- Place a page description directly below its title using the page-subtitle role.
 - A lower heading level must never render larger than a higher heading on the same page.
 - Use `font-semibold` sparingly for titles and section headings. Use `font-medium` for row titles and labels.
 - Do not make all visible text medium or semibold. Metadata needs a normal-weight, lower-contrast role.

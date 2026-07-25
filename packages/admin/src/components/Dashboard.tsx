@@ -45,7 +45,7 @@ export function Dashboard({ manifest }: DashboardProps) {
 	const showDashboardData = !isError || hasDashboardData;
 
 	return (
-		<div className="space-y-6 antialiased">
+		<div className="space-y-6">
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<h1 className="text-2xl font-semibold leading-tight tracking-tight">{t`Dashboard`}</h1>
 				<QuickActions manifest={manifest} />

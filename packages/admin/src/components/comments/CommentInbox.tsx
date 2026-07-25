@@ -144,7 +144,7 @@ export function CommentInbox({
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-3">
 					<ADMIN_NAV_ICONS.comments className="h-6 w-6" />
-					<h1 className="text-2xl font-bold">{t`Comments`}</h1>
+					<h1 className="text-2xl font-semibold leading-tight tracking-tight">{t`Comments`}</h1>
 					{total > 0 && (
 						<span className="text-sm text-kumo-subtle">
 							{plural(total, { one: "# total", other: "# total" })}

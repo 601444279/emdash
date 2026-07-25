@@ -136,7 +136,7 @@ export function PluginManager({ manifest }: PluginManagerProps) {
 	if (isLoading) {
 		return (
 			<div className="space-y-6">
-				<h1 className="text-3xl font-bold">{t`Plugins`}</h1>
+				<h1 className="text-2xl font-semibold leading-tight tracking-tight">{t`Plugins`}</h1>
 				<div className="text-kumo-subtle">{t`Loading plugins...`}</div>
 			</div>
 		);
@@ -145,7 +145,7 @@ export function PluginManager({ manifest }: PluginManagerProps) {
 	if (error) {
 		return (
 			<div className="space-y-6">
-				<h1 className="text-3xl font-bold">{t`Plugins`}</h1>
+				<h1 className="text-2xl font-semibold leading-tight tracking-tight">{t`Plugins`}</h1>
 				<div className="text-kumo-danger">{t`Failed to load plugins: ${error.message}`}</div>
 			</div>
 		);
@@ -153,8 +153,13 @@ export function PluginManager({ manifest }: PluginManagerProps) {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<h1 className="text-3xl font-bold">{t`Plugins`}</h1>
+			<div className="flex items-start justify-between">
+				<div>
+					<h1 className="text-2xl font-semibold leading-tight tracking-tight">{t`Plugins`}</h1>
+					<p className="mt-1 text-sm leading-5 text-pretty text-kumo-subtle">
+						{t`Manage installed plugins. Enable or disable plugins to control their functionality.`}
+					</p>
+				</div>
 				<div className="flex items-center gap-3">
 					{hasUpdatableSources && (
 						<Button
@@ -174,10 +179,6 @@ export function PluginManager({ manifest }: PluginManagerProps) {
 					<span className="text-sm text-kumo-subtle">{t`${plugins?.length ?? 0} plugins`}</span>
 				</div>
 			</div>
-
-			<p className="text-kumo-subtle">
-				{t`Manage installed plugins. Enable or disable plugins to control their functionality.`}
-			</p>
 
 			<div className="grid gap-4">
 				{plugins?.map((plugin) => (

@@ -83,6 +83,7 @@ export function Shell({ children, manifest }: ShellProps) {
 
 	return (
 		<Sidebar.Provider
+			className="antialiased"
 			defaultOpen
 			side={sidebarSide}
 			style={
