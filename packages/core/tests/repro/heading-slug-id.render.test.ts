@@ -114,10 +114,7 @@ describe("heading slug ids", () => {
 		const c = await AstroContainer.create();
 		const html = await c.renderToString(PortableText, {
 			props: {
-				value: [
-					headingBlock("1st Post", { key: "d1" }),
-					headingBlock("1st Post", { key: "d2" }),
-				],
+				value: [headingBlock("1st Post", { key: "d1" }), headingBlock("1st Post", { key: "d2" })],
 			},
 		});
 		const ids = allIds(html);
