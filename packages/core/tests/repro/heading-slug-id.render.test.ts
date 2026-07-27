@@ -109,4 +109,22 @@ describe("heading slug ids", () => {
 		expect(headingTag(html, 3)).toContain('id="two"');
 		expect(html).toMatch(/<blockquote\b(?![^>]*\bid=)/);
 	});
+
+	test("digit-leading heading text gets a safe unique id", async () => {
+		const c = await AstroContainer.create();
+		const html = await c.renderToString(PortableText, {
+			props: {
+				value: [
+					headingBlock("1st Post", { key: "d1" }),
+					headingBlock("1st Post", { key: "d2" }),
+				],
+			},
+		});
+		const ids = allIds(html);
+		expect(ids).toContain("h-1st-post");
+		expect(ids).toContain("h-1st-post-2");
+		expect(ids).toContain("d1");
+		expect(ids).toContain("d2");
+		expect(headingTag(html)).toMatch(/<h2\b[^>]*\bid="h-1st-post"/);
+	});
 });

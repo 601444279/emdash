@@ -139,6 +139,19 @@ describe("allocateHeadingId", () => {
 		});
 		expect(result).toEqual({ id: "safe-title", extraIds: [] });
 	});
+
+	it("prefixes digit-leading slugs so the id stays isSafeHtmlId", () => {
+		const used = new Set<string>();
+		const result = allocateHeadingId({
+			style: "h2",
+			children: [span("1st Post")],
+			blockKey: "k1",
+			usedIds: used,
+		});
+		expect(result?.id).toBe("h-1st-post");
+		expect(isSafeHtmlId(result!.id)).toBe(true);
+		expect(result?.extraIds).toEqual(["k1"]);
+	});
 });
 
 describe("assignHeadingIds", () => {
@@ -180,5 +193,20 @@ describe("assignHeadingIds", () => {
 	it("returns non-arrays unchanged", () => {
 		const single = heading("Alone");
 		expect(assignHeadingIds(single)).toBe(single);
+	});
+
+	it("keeps digit-leading heading slugs unique across a document", () => {
+		const out = assignHeadingIds([
+			heading("1st Post", { key: "a" }),
+			heading("1st Post", { key: "b" }),
+		]);
+		const h1 = out[0] as { id?: string; _headingExtraIds?: string[] };
+		const h2 = out[1] as { id?: string; _headingExtraIds?: string[] };
+		expect(h1.id).toBe("h-1st-post");
+		expect(h2.id).toBe("h-1st-post-2");
+		expect(isSafeHtmlId(h1.id!)).toBe(true);
+		expect(isSafeHtmlId(h2.id!)).toBe(true);
+		expect(h1._headingExtraIds).toEqual(["a"]);
+		expect(h2._headingExtraIds).toEqual(["b"]);
 	});
 });

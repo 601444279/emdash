@@ -1,21 +1,9 @@
 /**
- * Heading anchor IDs for Portable Text block rendering.
+ * Allocate stable, document-unique HTML `id`s for Portable Text headings.
  *
- * Each heading gets a slug derived from its plain-text contents (e.g.
- * "This is a new heading" → "this-is-a-new-heading") so `#section` links work
- * without authors setting an id by hand.
- *
- * Heading text can change over time. When the block carries a stable `_key`,
- * that key is also exposed as an extra id (nested empty element) so old
- * `#block-key` bookmarks keep resolving after a rename. The primary `id` on
- * the heading tracks the current heading text.
- *
- * Any explicit id already on the block (e.g. an imported WordPress anchor) is
- * kept as an additional target — never dropped.
- *
- * Duplicate slugs within one document are disambiguated with `-2`, `-3`, …
- * (GitHub-style). An empty slug falls back to the existing id, then the block
- * key, then `heading`.
+ * The primary id is a slug of the heading text. Existing block ids and the
+ * Portable Text `_key` are kept as extra fragment targets so old anchors keep
+ * resolving after renames or edits.
  */
 
 import { slugify } from "../utils/slugify.js";
@@ -112,9 +100,11 @@ export function allocateHeadingId(options: {
 			: undefined;
 
 	// Prefer the human-readable text slug as the primary id.
+	// `slugify` can yield digit-leading strings ("1st Post" → "1st-post");
+	// those fail isSafeHtmlId, so prefix before uniqueness allocation.
 	let base: string;
 	if (fromText) {
-		base = fromText;
+		base = isSafeHtmlId(fromText) ? fromText : `h-${fromText}`;
 	} else if (existing) {
 		base = existing;
 	} else if (key) {

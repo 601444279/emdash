@@ -66,8 +66,8 @@ if (isHeadingStyle(node.style)) {
 	}
 }
 
-// Never spread a stale id from attrs; we control heading ids explicitly.
-const { id: _ignoredId, ...restAttrs } = attrs as Record<string, unknown> & { id?: unknown };
+const { id: _ignoredId, ...headingAttrs } = attrs as Record<string, unknown> & { id?: unknown };
+const restAttrs = isHeadingStyle(node.style) ? headingAttrs : attrs;
 ---
 
 {
