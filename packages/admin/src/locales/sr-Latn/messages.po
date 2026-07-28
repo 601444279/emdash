@@ -1073,7 +1073,7 @@ msgstr "Da li ste sigurni da želite da obrišete polje \"{0}\"?"
 msgid "Are you sure you want to delete this menu? This will also delete all menu items. This action cannot be undone."
 msgstr "Da li ste sigurni da želite da obrišete ovaj meni? Ovo će takođe obrisati sve stavke menija. Ova akcija se ne može poništiti."
 
-#: packages/admin/src/components/WelcomeModal.tsx:53
+#: packages/admin/src/components/WelcomeModal.tsx:59
 msgid "As an administrator, you can invite other users from the Users section."
 msgstr "Kao administrator, možete pozvati druge korisnike iz sekcije Korisnici."
 
@@ -1636,7 +1636,7 @@ msgstr "Kliknite na link u email-u da se prijavite."
 #: packages/admin/src/components/users/InviteUserModal.tsx:88
 #: packages/admin/src/components/users/InviteUserModal.tsx:94
 #: packages/admin/src/components/users/InviteUserModal.tsx:98
-#: packages/admin/src/components/WelcomeModal.tsx:54
+#: packages/admin/src/components/WelcomeModal.tsx:60
 #: packages/admin/src/components/Widgets.tsx:413
 #: packages/admin/src/components/Widgets.tsx:419
 #: packages/admin/src/components/Widgets.tsx:423
@@ -3299,7 +3299,7 @@ msgstr "Onemogućavanje korisnika nije uspelo"
 msgid "Failed to discard changes"
 msgstr "Odbacivanje izmena nije uspelo"
 
-#: packages/admin/src/components/WelcomeModal.tsx:70
+#: packages/admin/src/components/WelcomeModal.tsx:76
 msgid "Failed to dismiss welcome"
 msgstr "Odbacivanje dobrodošlice nije uspelo"
 
@@ -3900,7 +3900,7 @@ msgstr "Opšta podešavanja"
 msgid "Genres"
 msgstr "Žanrovi"
 
-#: packages/admin/src/components/WelcomeModal.tsx:143
+#: packages/admin/src/components/WelcomeModal.tsx:154
 msgid "Get Started"
 msgstr "Započnite"
 
@@ -4708,7 +4708,6 @@ msgstr "Učitavanje vidžeta..."
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
 #: packages/admin/src/components/users/UserList.tsx:156
-#: packages/admin/src/components/WelcomeModal.tsx:143
 #: packages/admin/src/routes/bylines.tsx:468
 msgid "Loading..."
 msgstr "Učitavanje..."
@@ -8530,11 +8529,11 @@ msgstr "Veb sajt"
 msgid "Website URL"
 msgstr "URL veb sajta"
 
-#: packages/admin/src/components/WelcomeModal.tsx:96
+#: packages/admin/src/components/WelcomeModal.tsx:102
 msgid "Welcome to EmDash, {firstName}!"
 msgstr "Dobrodošao u EmDash, {firstName}!"
 
-#: packages/admin/src/components/WelcomeModal.tsx:96
+#: packages/admin/src/components/WelcomeModal.tsx:102
 msgid "Welcome to EmDash!"
 msgstr "Dobrodošao u EmDash!"
 
@@ -8706,11 +8705,11 @@ msgstr "Yoast/RankMath"
 msgid "You can close this page and return to your terminal."
 msgstr "Možeš zatvoriti ovu stranicu i vratiti se u terminal."
 
-#: packages/admin/src/components/WelcomeModal.tsx:43
+#: packages/admin/src/components/WelcomeModal.tsx:49
 msgid "You can create and edit your own content."
 msgstr "Možeš kreirati i uređivati svoj sadržaj."
 
-#: packages/admin/src/components/WelcomeModal.tsx:42
+#: packages/admin/src/components/WelcomeModal.tsx:48
 msgid "You can manage content, media, menus, and taxonomies."
 msgstr "Možeš upravljati sadržajem, medijima, menijima i taksonomijama."
 
@@ -8718,7 +8717,7 @@ msgstr "Možeš upravljati sadržajem, medijima, menijima i taksonomijama."
 msgid "You can still edit the fixed fields above. Saving will not touch any stored custom-field values."
 msgstr "Još uvek možeš uređivati fiksna polja iznad. Čuvanje neće dirati sačuvane vrednosti prilagođenih polja."
 
-#: packages/admin/src/components/WelcomeModal.tsx:44
+#: packages/admin/src/components/WelcomeModal.tsx:50
 msgid "You can view and contribute to the site."
 msgstr "Možeš pregledati sajt i doprinositi mu."
 
@@ -8726,7 +8725,7 @@ msgstr "Možeš pregledati sajt i doprinositi mu."
 msgid "You cannot change your own role"
 msgstr "Ne možeš promeniti sopstvenu ulogu"
 
-#: packages/admin/src/components/WelcomeModal.tsx:41
+#: packages/admin/src/components/WelcomeModal.tsx:47
 msgid "You have full access to manage this site, including users, settings, and all content."
 msgstr "Imaš pun pristup za upravljanje ovim sajtom, uključujući korisnike, podešavanja i sav sadržaj."
 
@@ -8781,7 +8780,7 @@ msgstr "you@company.com"
 msgid "you@example.com"
 msgstr "you@example.com"
 
-#: packages/admin/src/components/WelcomeModal.tsx:39
+#: packages/admin/src/components/WelcomeModal.tsx:45
 msgid "Your account has been created successfully."
 msgstr "Tvoj nalog je uspešno kreiran."
 
@@ -8829,7 +8828,7 @@ msgstr "Tvoje ime"
 msgid "Your name (optional)"
 msgstr "Tvoje ime (opciono)"
 
-#: packages/admin/src/components/WelcomeModal.tsx:40
+#: packages/admin/src/components/WelcomeModal.tsx:46
 msgid "Your Role"
 msgstr "Tvoja uloga"
 

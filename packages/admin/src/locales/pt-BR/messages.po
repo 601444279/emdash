@@ -1073,7 +1073,7 @@ msgstr ""
 msgid "Are you sure you want to delete this menu? This will also delete all menu items. This action cannot be undone."
 msgstr "Tem certeza de que deseja excluir este menu? Isso também excluirá todos os itens do menu. Esta ação não pode ser desfeita."
 
-#: packages/admin/src/components/WelcomeModal.tsx:53
+#: packages/admin/src/components/WelcomeModal.tsx:59
 msgid "As an administrator, you can invite other users from the Users section."
 msgstr "Como administrador, você pode convidar outros usuários na seção Usuários."
 
@@ -1636,7 +1636,7 @@ msgstr "Clique no link no e-mail para entrar."
 #: packages/admin/src/components/users/InviteUserModal.tsx:88
 #: packages/admin/src/components/users/InviteUserModal.tsx:94
 #: packages/admin/src/components/users/InviteUserModal.tsx:98
-#: packages/admin/src/components/WelcomeModal.tsx:54
+#: packages/admin/src/components/WelcomeModal.tsx:60
 #: packages/admin/src/components/Widgets.tsx:413
 #: packages/admin/src/components/Widgets.tsx:419
 #: packages/admin/src/components/Widgets.tsx:423
@@ -3296,7 +3296,7 @@ msgstr ""
 msgid "Failed to discard changes"
 msgstr ""
 
-#: packages/admin/src/components/WelcomeModal.tsx:70
+#: packages/admin/src/components/WelcomeModal.tsx:76
 msgid "Failed to dismiss welcome"
 msgstr ""
 
@@ -3897,7 +3897,7 @@ msgstr "Configurações gerais"
 msgid "Genres"
 msgstr ""
 
-#: packages/admin/src/components/WelcomeModal.tsx:143
+#: packages/admin/src/components/WelcomeModal.tsx:154
 msgid "Get Started"
 msgstr "Começar"
 
@@ -4705,7 +4705,6 @@ msgstr ""
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
 #: packages/admin/src/components/users/UserList.tsx:156
-#: packages/admin/src/components/WelcomeModal.tsx:143
 #: packages/admin/src/routes/bylines.tsx:468
 msgid "Loading..."
 msgstr "Carregando..."
@@ -8524,11 +8523,11 @@ msgstr "Site"
 msgid "Website URL"
 msgstr ""
 
-#: packages/admin/src/components/WelcomeModal.tsx:96
+#: packages/admin/src/components/WelcomeModal.tsx:102
 msgid "Welcome to EmDash, {firstName}!"
 msgstr "Boas-vindas ao EmDash, {firstName}!"
 
-#: packages/admin/src/components/WelcomeModal.tsx:96
+#: packages/admin/src/components/WelcomeModal.tsx:102
 msgid "Welcome to EmDash!"
 msgstr "Boas-vindas ao EmDash!"
 
@@ -8700,11 +8699,11 @@ msgstr ""
 msgid "You can close this page and return to your terminal."
 msgstr "Você pode fechar esta página e retornar ao seu terminal."
 
-#: packages/admin/src/components/WelcomeModal.tsx:43
+#: packages/admin/src/components/WelcomeModal.tsx:49
 msgid "You can create and edit your own content."
 msgstr "Você pode criar e editar seu próprio conteúdo."
 
-#: packages/admin/src/components/WelcomeModal.tsx:42
+#: packages/admin/src/components/WelcomeModal.tsx:48
 msgid "You can manage content, media, menus, and taxonomies."
 msgstr "Você pode gerenciar conteúdo, mídia, menus e taxonomias."
 
@@ -8712,7 +8711,7 @@ msgstr "Você pode gerenciar conteúdo, mídia, menus e taxonomias."
 msgid "You can still edit the fixed fields above. Saving will not touch any stored custom-field values."
 msgstr ""
 
-#: packages/admin/src/components/WelcomeModal.tsx:44
+#: packages/admin/src/components/WelcomeModal.tsx:50
 msgid "You can view and contribute to the site."
 msgstr "Você pode visualizar e contribuir com o site."
 
@@ -8720,7 +8719,7 @@ msgstr "Você pode visualizar e contribuir com o site."
 msgid "You cannot change your own role"
 msgstr "Você não pode alterar sua própria função"
 
-#: packages/admin/src/components/WelcomeModal.tsx:41
+#: packages/admin/src/components/WelcomeModal.tsx:47
 msgid "You have full access to manage this site, including users, settings, and all content."
 msgstr "Você tem acesso completo para gerenciar este site, incluindo usuários, configurações e todo o conteúdo."
 
@@ -8775,7 +8774,7 @@ msgstr "you@company.com"
 msgid "you@example.com"
 msgstr "you@example.com"
 
-#: packages/admin/src/components/WelcomeModal.tsx:39
+#: packages/admin/src/components/WelcomeModal.tsx:45
 msgid "Your account has been created successfully."
 msgstr "Sua conta foi criada com sucesso."
 
@@ -8823,7 +8822,7 @@ msgstr "Seu nome"
 msgid "Your name (optional)"
 msgstr "Seu nome (opcional)"
 
-#: packages/admin/src/components/WelcomeModal.tsx:40
+#: packages/admin/src/components/WelcomeModal.tsx:46
 msgid "Your Role"
 msgstr "Sua função"
 
