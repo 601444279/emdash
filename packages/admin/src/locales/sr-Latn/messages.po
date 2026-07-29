@@ -311,7 +311,7 @@ msgid "{0}/160 characters"
 msgstr "{0}/160 karaktera"
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:313
+#: packages/admin/src/lib/api/marketplace.ts:314
 msgid "{base} to: {0}"
 msgstr "{base} na: {0}"
 
@@ -574,7 +574,7 @@ msgid "Access Denied"
 msgstr "Pristup odbijen"
 
 #: packages/admin/src/lib/api/marketplace.ts:282
-#: packages/admin/src/lib/api/marketplace.ts:290
+#: packages/admin/src/lib/api/marketplace.ts:291
 msgid "Access your media library"
 msgstr "Pristupite biblioteci medija"
 
@@ -1574,6 +1574,10 @@ msgstr ""
 msgid "Clear stored value for {fieldKey}"
 msgstr ""
 
+#: packages/admin/src/lib/api/marketplace.ts:285
+msgid "Clear the CMS object cache and Workers Cache"
+msgstr ""
+
 #: packages/admin/src/components/SignupPage.tsx:139
 msgid "Click the link in the email to continue setting up your account."
 msgstr "Kliknite na link u email-u da nastavite podešavanje naloga."
@@ -2076,7 +2080,7 @@ msgid "Create your passkey"
 msgstr "Kreirajte passkey"
 
 #: packages/admin/src/lib/api/marketplace.ts:280
-#: packages/admin/src/lib/api/marketplace.ts:289
+#: packages/admin/src/lib/api/marketplace.ts:290
 msgid "Create, update, and delete content"
 msgstr "Kreiraj, ažuriraj i briši sadržaj"
 
@@ -4762,13 +4766,13 @@ msgstr "Samo mala slova, brojevi i donje crte, počevši slovom"
 msgid "Main Sidebar"
 msgstr "Glavna bočna traka"
 
-#: packages/admin/src/lib/api/marketplace.ts:285
-#: packages/admin/src/lib/api/marketplace.ts:293
+#: packages/admin/src/lib/api/marketplace.ts:286
+#: packages/admin/src/lib/api/marketplace.ts:294
 msgid "Make network requests"
 msgstr "Šalji mrežne zahteve"
 
-#: packages/admin/src/lib/api/marketplace.ts:286
-#: packages/admin/src/lib/api/marketplace.ts:294
+#: packages/admin/src/lib/api/marketplace.ts:287
+#: packages/admin/src/lib/api/marketplace.ts:295
 msgid "Make network requests to any host (unrestricted)"
 msgstr "Šalji mrežne zahteve ka bilo kom hostu (neograničeno)"
 
@@ -6150,12 +6154,12 @@ msgid "Read site settings"
 msgstr "Čitanje podešavanja sajta"
 
 #: packages/admin/src/lib/api/marketplace.ts:284
-#: packages/admin/src/lib/api/marketplace.ts:292
+#: packages/admin/src/lib/api/marketplace.ts:293
 msgid "Read user accounts"
 msgstr "Čitanje korisničkih naloga"
 
 #: packages/admin/src/lib/api/marketplace.ts:279
-#: packages/admin/src/lib/api/marketplace.ts:288
+#: packages/admin/src/lib/api/marketplace.ts:289
 msgid "Read your content"
 msgstr "Čitanje vašeg sadržaja"
 
@@ -8217,7 +8221,7 @@ msgid "Upload and delete media"
 msgstr "Otpremi i obriši medije"
 
 #: packages/admin/src/lib/api/marketplace.ts:283
-#: packages/admin/src/lib/api/marketplace.ts:291
+#: packages/admin/src/lib/api/marketplace.ts:292
 msgid "Upload and manage media"
 msgstr "Otpremi i upravljaj medijima"
 

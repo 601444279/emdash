@@ -315,7 +315,7 @@ msgid "{0}/160 characters"
 msgstr "{0}/160 حرف"
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:313
+#: packages/admin/src/lib/api/marketplace.ts:314
 msgid "{base} to: {0}"
 msgstr "{base} إلى: {0}"
 
@@ -578,7 +578,7 @@ msgid "Access Denied"
 msgstr "الوصول مرفوض"
 
 #: packages/admin/src/lib/api/marketplace.ts:282
-#: packages/admin/src/lib/api/marketplace.ts:290
+#: packages/admin/src/lib/api/marketplace.ts:291
 msgid "Access your media library"
 msgstr "الوصول إلى مكتبة الوسائط"
 
@@ -1578,6 +1578,10 @@ msgstr ""
 msgid "Clear stored value for {fieldKey}"
 msgstr ""
 
+#: packages/admin/src/lib/api/marketplace.ts:285
+msgid "Clear the CMS object cache and Workers Cache"
+msgstr ""
+
 #: packages/admin/src/components/SignupPage.tsx:139
 msgid "Click the link in the email to continue setting up your account."
 msgstr "اضغط على الرابط في البريد الإلكتروني لمتابعة إعداد حسابك."
@@ -2080,7 +2084,7 @@ msgid "Create your passkey"
 msgstr "إنشاء مفتاح مرور خاص بك"
 
 #: packages/admin/src/lib/api/marketplace.ts:280
-#: packages/admin/src/lib/api/marketplace.ts:289
+#: packages/admin/src/lib/api/marketplace.ts:290
 msgid "Create, update, and delete content"
 msgstr "إنشاء المحتوى وتعديله وحذفه"
 
@@ -4763,13 +4767,13 @@ msgstr "أحرف صغيرة وأرقام وشرطات سفلية فقط، تبد
 msgid "Main Sidebar"
 msgstr "الشريط الجانبي الرئيسي"
 
-#: packages/admin/src/lib/api/marketplace.ts:285
-#: packages/admin/src/lib/api/marketplace.ts:293
+#: packages/admin/src/lib/api/marketplace.ts:286
+#: packages/admin/src/lib/api/marketplace.ts:294
 msgid "Make network requests"
 msgstr "إجراء طلبات الشبكة"
 
-#: packages/admin/src/lib/api/marketplace.ts:286
-#: packages/admin/src/lib/api/marketplace.ts:294
+#: packages/admin/src/lib/api/marketplace.ts:287
+#: packages/admin/src/lib/api/marketplace.ts:295
 msgid "Make network requests to any host (unrestricted)"
 msgstr "إجراء طلبات الشبكة لأي مضيف (بدون قيود)"
 
@@ -6151,12 +6155,12 @@ msgid "Read site settings"
 msgstr "قراءة إعدادات الموقع"
 
 #: packages/admin/src/lib/api/marketplace.ts:284
-#: packages/admin/src/lib/api/marketplace.ts:292
+#: packages/admin/src/lib/api/marketplace.ts:293
 msgid "Read user accounts"
 msgstr "قراءة حسابات المستخدمين"
 
 #: packages/admin/src/lib/api/marketplace.ts:279
-#: packages/admin/src/lib/api/marketplace.ts:288
+#: packages/admin/src/lib/api/marketplace.ts:289
 msgid "Read your content"
 msgstr "قراءة المحتوى"
 
@@ -8218,7 +8222,7 @@ msgid "Upload and delete media"
 msgstr "رفع وحذف الوسائط"
 
 #: packages/admin/src/lib/api/marketplace.ts:283
-#: packages/admin/src/lib/api/marketplace.ts:291
+#: packages/admin/src/lib/api/marketplace.ts:292
 msgid "Upload and manage media"
 msgstr "رفع الوسائط وإدارتها"
 
