@@ -311,7 +311,7 @@ msgid "{0}/160 characters"
 msgstr "{0}/160 tekens"
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:314
+#: packages/admin/src/lib/api/marketplace.ts:313
 msgid "{base} to: {0}"
 msgstr "{base} naar: {0}"
 
@@ -574,7 +574,7 @@ msgid "Access Denied"
 msgstr "Toegang geweigerd"
 
 #: packages/admin/src/lib/api/marketplace.ts:282
-#: packages/admin/src/lib/api/marketplace.ts:291
+#: packages/admin/src/lib/api/marketplace.ts:290
 msgid "Access your media library"
 msgstr "Toegang tot je mediabibliotheek"
 
@@ -1574,10 +1574,6 @@ msgstr ""
 msgid "Clear stored value for {fieldKey}"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:285
-msgid "Clear the CMS object cache and Workers Cache"
-msgstr ""
-
 #: packages/admin/src/components/SignupPage.tsx:139
 msgid "Click the link in the email to continue setting up your account."
 msgstr "Klik op de link in de e-mail om door te gaan met het instellen van je account."
@@ -2080,7 +2076,7 @@ msgid "Create your passkey"
 msgstr "Maak je passkey aan"
 
 #: packages/admin/src/lib/api/marketplace.ts:280
-#: packages/admin/src/lib/api/marketplace.ts:290
+#: packages/admin/src/lib/api/marketplace.ts:289
 msgid "Create, update, and delete content"
 msgstr "Content aanmaken, bijwerken en verwijderen"
 
@@ -4766,13 +4762,13 @@ msgstr "Alleen kleine letters, cijfers en underscores, beginnend met een letter"
 msgid "Main Sidebar"
 msgstr "Primaire sidebar"
 
-#: packages/admin/src/lib/api/marketplace.ts:286
-#: packages/admin/src/lib/api/marketplace.ts:294
+#: packages/admin/src/lib/api/marketplace.ts:285
+#: packages/admin/src/lib/api/marketplace.ts:293
 msgid "Make network requests"
 msgstr "Netwerkverzoeken uitvoeren"
 
-#: packages/admin/src/lib/api/marketplace.ts:287
-#: packages/admin/src/lib/api/marketplace.ts:295
+#: packages/admin/src/lib/api/marketplace.ts:286
+#: packages/admin/src/lib/api/marketplace.ts:294
 msgid "Make network requests to any host (unrestricted)"
 msgstr "Netwerkverzoeken uitvoeren naar elke host (onbeperkt)"
 
@@ -6154,12 +6150,12 @@ msgid "Read site settings"
 msgstr "Site-instellingen lezen"
 
 #: packages/admin/src/lib/api/marketplace.ts:284
-#: packages/admin/src/lib/api/marketplace.ts:293
+#: packages/admin/src/lib/api/marketplace.ts:292
 msgid "Read user accounts"
 msgstr "Gebruikersaccounts lezen"
 
 #: packages/admin/src/lib/api/marketplace.ts:279
-#: packages/admin/src/lib/api/marketplace.ts:289
+#: packages/admin/src/lib/api/marketplace.ts:288
 msgid "Read your content"
 msgstr "Je content lezen"
 
@@ -8221,7 +8217,7 @@ msgid "Upload and delete media"
 msgstr "Media uploaden en verwijderen"
 
 #: packages/admin/src/lib/api/marketplace.ts:283
-#: packages/admin/src/lib/api/marketplace.ts:292
+#: packages/admin/src/lib/api/marketplace.ts:291
 msgid "Upload and manage media"
 msgstr "Media uploaden en beheren"
 

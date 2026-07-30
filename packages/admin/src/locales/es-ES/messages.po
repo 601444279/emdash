@@ -311,7 +311,7 @@ msgid "{0}/160 characters"
 msgstr "{0}/160 caracteres"
 
 #. placeholder {0}: allowedHosts.join(", ")
-#: packages/admin/src/lib/api/marketplace.ts:314
+#: packages/admin/src/lib/api/marketplace.ts:313
 msgid "{base} to: {0}"
 msgstr "{base} a: {0}"
 
@@ -574,7 +574,7 @@ msgid "Access Denied"
 msgstr "Acceso denegado"
 
 #: packages/admin/src/lib/api/marketplace.ts:282
-#: packages/admin/src/lib/api/marketplace.ts:291
+#: packages/admin/src/lib/api/marketplace.ts:290
 msgid "Access your media library"
 msgstr "Accede a tu biblioteca multimedia"
 
@@ -1574,10 +1574,6 @@ msgstr ""
 msgid "Clear stored value for {fieldKey}"
 msgstr ""
 
-#: packages/admin/src/lib/api/marketplace.ts:285
-msgid "Clear the CMS object cache and Workers Cache"
-msgstr ""
-
 #: packages/admin/src/components/SignupPage.tsx:139
 msgid "Click the link in the email to continue setting up your account."
 msgstr "Haz clic en el enlace del correo electrónico para continuar configurando tu cuenta."
@@ -2080,7 +2076,7 @@ msgid "Create your passkey"
 msgstr "Crea tu Passkey"
 
 #: packages/admin/src/lib/api/marketplace.ts:280
-#: packages/admin/src/lib/api/marketplace.ts:290
+#: packages/admin/src/lib/api/marketplace.ts:289
 msgid "Create, update, and delete content"
 msgstr "Crear, actualizar y eliminar contenido"
 
@@ -4763,13 +4759,13 @@ msgstr "Letras minúsculas, números y guiones bajos únicamente, comenzando con
 msgid "Main Sidebar"
 msgstr "Barra lateral principal"
 
-#: packages/admin/src/lib/api/marketplace.ts:286
-#: packages/admin/src/lib/api/marketplace.ts:294
+#: packages/admin/src/lib/api/marketplace.ts:285
+#: packages/admin/src/lib/api/marketplace.ts:293
 msgid "Make network requests"
 msgstr "Realizar peticiones de red"
 
-#: packages/admin/src/lib/api/marketplace.ts:287
-#: packages/admin/src/lib/api/marketplace.ts:295
+#: packages/admin/src/lib/api/marketplace.ts:286
+#: packages/admin/src/lib/api/marketplace.ts:294
 msgid "Make network requests to any host (unrestricted)"
 msgstr "Realizar peticiones de red a cualquier host (sin restricciones)"
 
@@ -6151,12 +6147,12 @@ msgid "Read site settings"
 msgstr "Leer los ajustes del sitio"
 
 #: packages/admin/src/lib/api/marketplace.ts:284
-#: packages/admin/src/lib/api/marketplace.ts:293
+#: packages/admin/src/lib/api/marketplace.ts:292
 msgid "Read user accounts"
 msgstr "Leer las cuentas de usuario"
 
 #: packages/admin/src/lib/api/marketplace.ts:279
-#: packages/admin/src/lib/api/marketplace.ts:289
+#: packages/admin/src/lib/api/marketplace.ts:288
 msgid "Read your content"
 msgstr "Leer tu contenido"
 
@@ -8218,7 +8214,7 @@ msgid "Upload and delete media"
 msgstr "Cargar y eliminar medios"
 
 #: packages/admin/src/lib/api/marketplace.ts:283
-#: packages/admin/src/lib/api/marketplace.ts:292
+#: packages/admin/src/lib/api/marketplace.ts:291
 msgid "Upload and manage media"
 msgstr "Sube y gestiona medios"
 
