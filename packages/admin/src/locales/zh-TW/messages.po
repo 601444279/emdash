@@ -89,7 +89,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {# 則留言已匯入} other {# 則留言已匯入}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1465
+#: packages/admin/src/router.tsx:1467
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {# 則留言已更新} other {# 則留言已更新}}"
 
@@ -569,7 +569,7 @@ msgstr "接受邀請"
 msgid "Access denied"
 msgstr "存取遭拒"
 
-#: packages/admin/src/router.tsx:1485
+#: packages/admin/src/router.tsx:1487
 msgid "Access Denied"
 msgstr "存取遭拒"
 
@@ -964,10 +964,10 @@ msgstr "或者，您可以從 WordPress 匯出 (工具 → 匯出)，再上傳�
 #: packages/admin/src/router.tsx:1095
 #: packages/admin/src/router.tsx:1126
 #: packages/admin/src/router.tsx:1146
-#: packages/admin/src/router.tsx:1430
-#: packages/admin/src/router.tsx:1446
-#: packages/admin/src/router.tsx:1471
-#: packages/admin/src/router.tsx:1960
+#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1448
+#: packages/admin/src/router.tsx:1473
+#: packages/admin/src/router.tsx:1962
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -3067,7 +3067,7 @@ msgstr "輸入您的 WordPress 網站網址"
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2174
+#: packages/admin/src/router.tsx:2176
 msgid "Error"
 msgstr "錯誤"
 
@@ -3160,7 +3160,7 @@ msgstr "無法分析 WordPress 網站"
 msgid "Failed to communicate with plugin"
 msgstr "無法與外掛通訊"
 
-#: packages/admin/src/lib/api/media.ts:155
+#: packages/admin/src/lib/api/media.ts:179
 msgid "Failed to confirm upload"
 msgstr "無法確認上傳"
 
@@ -3229,7 +3229,7 @@ msgid "Failed to delete collection"
 msgstr "無法刪除內容集合"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1445
+#: packages/admin/src/router.tsx:1447
 msgid "Failed to delete comment"
 msgstr "刪除留言失敗"
 
@@ -3242,11 +3242,11 @@ msgstr "無法刪除內容"
 msgid "Failed to delete field"
 msgstr "無法刪除欄位"
 
-#: packages/admin/src/lib/api/media.ts:389
+#: packages/admin/src/lib/api/media.ts:416
 msgid "Failed to delete from provider"
 msgstr "無法從服務提供者刪除"
 
-#: packages/admin/src/lib/api/media.ts:259
+#: packages/admin/src/lib/api/media.ts:286
 msgid "Failed to delete media"
 msgstr "無法刪除媒體"
 
@@ -3353,15 +3353,15 @@ msgstr "無法擷取內容項目的分類項目"
 msgid "Failed to fetch manifest"
 msgstr "無法擷取資訊清單"
 
-#: packages/admin/src/lib/api/media.ts:76
+#: packages/admin/src/lib/api/media.ts:72
 msgid "Failed to fetch media"
 msgstr "擷取媒體失敗"
 
-#: packages/admin/src/lib/api/media.ts:89
+#: packages/admin/src/lib/api/media.ts:85
 msgid "Failed to fetch media item"
 msgstr "擷取媒體項目失敗"
 
-#: packages/admin/src/lib/api/media.ts:325
+#: packages/admin/src/lib/api/media.ts:352
 msgid "Failed to fetch media providers"
 msgstr "無法擷取媒體服務提供者"
 
@@ -3378,7 +3378,7 @@ msgstr "無法擷取外掛設定"
 msgid "Failed to fetch plugins"
 msgstr "無法擷取外掛"
 
-#: packages/admin/src/lib/api/media.ts:355
+#: packages/admin/src/lib/api/media.ts:382
 msgid "Failed to fetch provider media"
 msgstr "無法擷取服務提供者媒體"
 
@@ -3411,7 +3411,7 @@ msgstr "擷取分類項目失敗"
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
 #: packages/admin/src/router.tsx:852
-#: packages/admin/src/router.tsx:1376
+#: packages/admin/src/router.tsx:1378
 msgid "Failed to fetch user"
 msgstr "無法擷取使用者"
 
@@ -3431,7 +3431,7 @@ msgstr "無法取得驗證選項"
 msgid "Failed to get registration options"
 msgstr "無法取得註冊選項"
 
-#: packages/admin/src/lib/api/media.ts:131
+#: packages/admin/src/lib/api/media.ts:154
 msgid "Failed to get upload URL"
 msgstr "無法取得上傳網址"
 
@@ -3520,7 +3520,7 @@ msgstr "載入使用者失敗: {0}"
 msgid "Failed to load widget"
 msgstr "載入小工具失敗"
 
-#: packages/admin/src/router.tsx:1470
+#: packages/admin/src/router.tsx:1472
 msgid "Failed to perform bulk action"
 msgstr "執行批次操作失敗"
 
@@ -3589,7 +3589,7 @@ msgid "Failed to rewrite URLs"
 msgstr "重寫網址失敗"
 
 #: packages/admin/src/router.tsx:942
-#: packages/admin/src/router.tsx:1959
+#: packages/admin/src/router.tsx:1961
 msgid "Failed to save"
 msgstr "儲存失敗"
 
@@ -3672,7 +3672,7 @@ msgstr "無法更新署名欄位"
 msgid "Failed to update domain"
 msgstr "無法更新網域"
 
-#: packages/admin/src/lib/api/media.ts:276
+#: packages/admin/src/lib/api/media.ts:303
 msgid "Failed to update media"
 msgstr "更新媒體失敗"
 
@@ -3697,19 +3697,19 @@ msgstr "更新區段失敗"
 msgid "Failed to update settings"
 msgstr "無法更新設定"
 
-#: packages/admin/src/router.tsx:1429
+#: packages/admin/src/router.tsx:1431
 msgid "Failed to update status"
 msgstr "無法更新狀態"
 
-#: packages/admin/src/lib/api/media.ts:173
+#: packages/admin/src/lib/api/media.ts:197
 msgid "Failed to upload file"
 msgstr "上傳檔案失敗"
 
-#: packages/admin/src/lib/api/media.ts:218
+#: packages/admin/src/lib/api/media.ts:242
 msgid "Failed to upload media"
 msgstr "上傳媒體失敗"
 
-#: packages/admin/src/lib/api/media.ts:377
+#: packages/admin/src/lib/api/media.ts:404
 msgid "Failed to upload to provider"
 msgstr "無法上傳至服務提供者"
 
@@ -3917,7 +3917,7 @@ msgid "Go"
 msgstr "Go"
 
 #: packages/admin/src/components/WordPressImport.tsx:2418
-#: packages/admin/src/router.tsx:2194
+#: packages/admin/src/router.tsx:2196
 msgid "Go to Dashboard"
 msgstr "前往控制台"
 
@@ -4622,7 +4622,7 @@ msgstr "載入更多"
 msgid "Load More"
 msgstr "載入更多"
 
-#: packages/admin/src/router.tsx:2149
+#: packages/admin/src/router.tsx:2151
 msgid "Loading"
 msgstr "正在載入"
 
@@ -4638,8 +4638,8 @@ msgstr "正在載入內容集合…"
 msgid "Loading comments..."
 msgstr "正在載入留言..."
 
-#: packages/admin/src/router.tsx:2151
-#: packages/admin/src/router.tsx:2163
+#: packages/admin/src/router.tsx:2153
+#: packages/admin/src/router.tsx:2165
 msgid "Loading configuration..."
 msgstr "正在載入設定..."
 
@@ -5706,7 +5706,7 @@ msgstr "所有權"
 msgid "Package"
 msgstr "套件"
 
-#: packages/admin/src/router.tsx:2189
+#: packages/admin/src/router.tsx:2191
 msgid "Page Not Found"
 msgstr "找不到頁面"
 
@@ -6456,7 +6456,7 @@ msgstr "正在還原..."
 #: packages/admin/src/components/MarketplaceBrowse.tsx:143
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
-#: packages/admin/src/router.tsx:2177
+#: packages/admin/src/router.tsx:2179
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "重試"
@@ -7649,7 +7649,7 @@ msgstr "選單已刪除。"
 msgid "The name of your site, used in the header and metadata"
 msgstr "您的網站名稱，用於頁首及中繼資料"
 
-#: packages/admin/src/router.tsx:2191
+#: packages/admin/src/router.tsx:2193
 msgid "The page you're looking for doesn't exist."
 msgstr "您要找的頁面不存在。"
 
@@ -8733,7 +8733,7 @@ msgstr "您擁有管理此網站的完整存取權，包括使用者、設定及
 msgid "You need admin permissions to manage byline schema."
 msgstr "您需要管理員權限才能管理署名結構描述。"
 
-#: packages/admin/src/router.tsx:1486
+#: packages/admin/src/router.tsx:1488
 msgid "You need Editor permissions to moderate comments."
 msgstr "您需要編輯者權限才能審核留言。"
 

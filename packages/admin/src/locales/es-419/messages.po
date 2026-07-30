@@ -89,7 +89,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {# comentario importado} other {# comentarios importados}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1465
+#: packages/admin/src/router.tsx:1467
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {# comentario actualizado} other {# comentarios actualizados}}"
 
@@ -569,7 +569,7 @@ msgstr "Aceptar invitación"
 msgid "Access denied"
 msgstr "Acceso denegado"
 
-#: packages/admin/src/router.tsx:1485
+#: packages/admin/src/router.tsx:1487
 msgid "Access Denied"
 msgstr "Acceso denegado"
 
@@ -964,10 +964,10 @@ msgstr "Alternativamente, puede exportar desde WordPress (Herramientas → Expor
 #: packages/admin/src/router.tsx:1095
 #: packages/admin/src/router.tsx:1126
 #: packages/admin/src/router.tsx:1146
-#: packages/admin/src/router.tsx:1430
-#: packages/admin/src/router.tsx:1446
-#: packages/admin/src/router.tsx:1471
-#: packages/admin/src/router.tsx:1960
+#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1448
+#: packages/admin/src/router.tsx:1473
+#: packages/admin/src/router.tsx:1962
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -3067,7 +3067,7 @@ msgstr "Ingrese la URL de su sitio de WordPress"
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2174
+#: packages/admin/src/router.tsx:2176
 msgid "Error"
 msgstr "Error"
 
@@ -3160,7 +3160,7 @@ msgstr "No se pudo analizar el sitio de WordPress"
 msgid "Failed to communicate with plugin"
 msgstr "No se pudo comunicar con el plugin"
 
-#: packages/admin/src/lib/api/media.ts:155
+#: packages/admin/src/lib/api/media.ts:179
 msgid "Failed to confirm upload"
 msgstr "No se pudo confirmar la subida"
 
@@ -3229,7 +3229,7 @@ msgid "Failed to delete collection"
 msgstr "No se pudo eliminar la colección"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1445
+#: packages/admin/src/router.tsx:1447
 msgid "Failed to delete comment"
 msgstr "No se pudo eliminar el comentario"
 
@@ -3242,11 +3242,11 @@ msgstr "No se pudo eliminar el contenido"
 msgid "Failed to delete field"
 msgstr "No se pudo eliminar el campo"
 
-#: packages/admin/src/lib/api/media.ts:389
+#: packages/admin/src/lib/api/media.ts:416
 msgid "Failed to delete from provider"
 msgstr "No se pudo eliminar del proveedor"
 
-#: packages/admin/src/lib/api/media.ts:259
+#: packages/admin/src/lib/api/media.ts:286
 msgid "Failed to delete media"
 msgstr "No se pudieron eliminar los medios"
 
@@ -3353,15 +3353,15 @@ msgstr "No se pudieron obtener los términos de la entrada"
 msgid "Failed to fetch manifest"
 msgstr "No se pudo obtener el manifiesto"
 
-#: packages/admin/src/lib/api/media.ts:76
+#: packages/admin/src/lib/api/media.ts:72
 msgid "Failed to fetch media"
 msgstr "No se pudieron obtener los medios"
 
-#: packages/admin/src/lib/api/media.ts:89
+#: packages/admin/src/lib/api/media.ts:85
 msgid "Failed to fetch media item"
 msgstr "No se pudo obtener el elemento multimedia"
 
-#: packages/admin/src/lib/api/media.ts:325
+#: packages/admin/src/lib/api/media.ts:352
 msgid "Failed to fetch media providers"
 msgstr "No se pudieron obtener los proveedores de medios"
 
@@ -3378,7 +3378,7 @@ msgstr "No se pudo obtener la configuración del plugin"
 msgid "Failed to fetch plugins"
 msgstr "No se pudieron obtener los plugins"
 
-#: packages/admin/src/lib/api/media.ts:355
+#: packages/admin/src/lib/api/media.ts:382
 msgid "Failed to fetch provider media"
 msgstr "No se pudieron obtener los medios del proveedor"
 
@@ -3411,7 +3411,7 @@ msgstr "No se pudieron obtener los términos"
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
 #: packages/admin/src/router.tsx:852
-#: packages/admin/src/router.tsx:1376
+#: packages/admin/src/router.tsx:1378
 msgid "Failed to fetch user"
 msgstr "No se pudo obtener el usuario"
 
@@ -3431,7 +3431,7 @@ msgstr "No se pudieron obtener las opciones de autenticación"
 msgid "Failed to get registration options"
 msgstr "No se pudieron obtener las opciones de registro"
 
-#: packages/admin/src/lib/api/media.ts:131
+#: packages/admin/src/lib/api/media.ts:154
 msgid "Failed to get upload URL"
 msgstr "No se pudo obtener la URL de subida"
 
@@ -3520,7 +3520,7 @@ msgstr "No se pudieron cargar los usuarios: {0}"
 msgid "Failed to load widget"
 msgstr "No se pudo cargar el widget"
 
-#: packages/admin/src/router.tsx:1470
+#: packages/admin/src/router.tsx:1472
 msgid "Failed to perform bulk action"
 msgstr "No se pudo realizar la acción masiva"
 
@@ -3589,7 +3589,7 @@ msgid "Failed to rewrite URLs"
 msgstr "No se pudieron reescribir las URL"
 
 #: packages/admin/src/router.tsx:942
-#: packages/admin/src/router.tsx:1959
+#: packages/admin/src/router.tsx:1961
 msgid "Failed to save"
 msgstr "No se pudo guardar"
 
@@ -3672,7 +3672,7 @@ msgstr "No se pudo actualizar el campo de firma"
 msgid "Failed to update domain"
 msgstr "No se pudo actualizar el dominio"
 
-#: packages/admin/src/lib/api/media.ts:276
+#: packages/admin/src/lib/api/media.ts:303
 msgid "Failed to update media"
 msgstr "No se pudieron actualizar los medios"
 
@@ -3697,19 +3697,19 @@ msgstr "No se pudo actualizar la sección"
 msgid "Failed to update settings"
 msgstr "No se pudo actualizar la configuración"
 
-#: packages/admin/src/router.tsx:1429
+#: packages/admin/src/router.tsx:1431
 msgid "Failed to update status"
 msgstr "No se pudo actualizar el estado"
 
-#: packages/admin/src/lib/api/media.ts:173
+#: packages/admin/src/lib/api/media.ts:197
 msgid "Failed to upload file"
 msgstr "No se pudo subir el archivo"
 
-#: packages/admin/src/lib/api/media.ts:218
+#: packages/admin/src/lib/api/media.ts:242
 msgid "Failed to upload media"
 msgstr "No se pudieron subir los medios"
 
-#: packages/admin/src/lib/api/media.ts:377
+#: packages/admin/src/lib/api/media.ts:404
 msgid "Failed to upload to provider"
 msgstr "No se pudo subir al proveedor"
 
@@ -3917,7 +3917,7 @@ msgid "Go"
 msgstr "Go"
 
 #: packages/admin/src/components/WordPressImport.tsx:2418
-#: packages/admin/src/router.tsx:2194
+#: packages/admin/src/router.tsx:2196
 msgid "Go to Dashboard"
 msgstr "Ir al panel"
 
@@ -4622,7 +4622,7 @@ msgstr "Cargar más"
 msgid "Load More"
 msgstr "Cargar más"
 
-#: packages/admin/src/router.tsx:2149
+#: packages/admin/src/router.tsx:2151
 msgid "Loading"
 msgstr "Cargando"
 
@@ -4638,8 +4638,8 @@ msgstr "Cargando colecciones..."
 msgid "Loading comments..."
 msgstr "Cargando comentarios..."
 
-#: packages/admin/src/router.tsx:2151
-#: packages/admin/src/router.tsx:2163
+#: packages/admin/src/router.tsx:2153
+#: packages/admin/src/router.tsx:2165
 msgid "Loading configuration..."
 msgstr "Cargando configuración..."
 
@@ -5706,7 +5706,7 @@ msgstr "Propiedad"
 msgid "Package"
 msgstr "Paquete"
 
-#: packages/admin/src/router.tsx:2189
+#: packages/admin/src/router.tsx:2191
 msgid "Page Not Found"
 msgstr "Página no encontrada"
 
@@ -6456,7 +6456,7 @@ msgstr "Restaurando..."
 #: packages/admin/src/components/MarketplaceBrowse.tsx:143
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
-#: packages/admin/src/router.tsx:2177
+#: packages/admin/src/router.tsx:2179
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "Rever"
@@ -7649,7 +7649,7 @@ msgstr "El menú ha sido eliminado."
 msgid "The name of your site, used in the header and metadata"
 msgstr "El nombre de su sitio, utilizado en el encabezado y los metadatos."
 
-#: packages/admin/src/router.tsx:2191
+#: packages/admin/src/router.tsx:2193
 msgid "The page you're looking for doesn't exist."
 msgstr "La página que busca no existe."
 
@@ -8733,7 +8733,7 @@ msgstr "Tiene acceso completo para administrar este sitio, incluidos los usuario
 msgid "You need admin permissions to manage byline schema."
 msgstr "Necesita permisos de administrador para gestionar el esquema de firmas."
 
-#: packages/admin/src/router.tsx:1486
+#: packages/admin/src/router.tsx:1488
 msgid "You need Editor permissions to moderate comments."
 msgstr "Necesita permisos de editor para moderar comentarios."
 

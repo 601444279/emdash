@@ -89,7 +89,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {# коментар імпортовано} few {# коментарі імпортовано} many {# коментарів імпортовано} other {# коментарів імпортовано}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1465
+#: packages/admin/src/router.tsx:1467
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {# коментар оновлено} few {# коментарі оновлено} many {# коментарів оновлено} other {# коментарів оновлено}}"
 
@@ -569,7 +569,7 @@ msgstr "Прийняти запрошення"
 msgid "Access denied"
 msgstr "Доступ заборонено"
 
-#: packages/admin/src/router.tsx:1485
+#: packages/admin/src/router.tsx:1487
 msgid "Access Denied"
 msgstr "Доступ заборонено"
 
@@ -964,10 +964,10 @@ msgstr "Або експортуйте з WordPress (Інструменти → �
 #: packages/admin/src/router.tsx:1095
 #: packages/admin/src/router.tsx:1126
 #: packages/admin/src/router.tsx:1146
-#: packages/admin/src/router.tsx:1430
-#: packages/admin/src/router.tsx:1446
-#: packages/admin/src/router.tsx:1471
-#: packages/admin/src/router.tsx:1960
+#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1448
+#: packages/admin/src/router.tsx:1473
+#: packages/admin/src/router.tsx:1962
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -3067,7 +3067,7 @@ msgstr "Введіть URL сайту WordPress"
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2174
+#: packages/admin/src/router.tsx:2176
 msgid "Error"
 msgstr "Помилка"
 
@@ -3160,7 +3160,7 @@ msgstr "Не вдалося проаналізувати сайт WordPress"
 msgid "Failed to communicate with plugin"
 msgstr "Не вдалося зв'язатися з плагіном"
 
-#: packages/admin/src/lib/api/media.ts:155
+#: packages/admin/src/lib/api/media.ts:179
 msgid "Failed to confirm upload"
 msgstr "Не вдалося підтвердити завантаження"
 
@@ -3229,7 +3229,7 @@ msgid "Failed to delete collection"
 msgstr "Не вдалося видалити колекцію"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1445
+#: packages/admin/src/router.tsx:1447
 msgid "Failed to delete comment"
 msgstr "Не вдалося видалити коментар"
 
@@ -3242,11 +3242,11 @@ msgstr "Не вдалося видалити вміст"
 msgid "Failed to delete field"
 msgstr "Не вдалося видалити поле"
 
-#: packages/admin/src/lib/api/media.ts:389
+#: packages/admin/src/lib/api/media.ts:416
 msgid "Failed to delete from provider"
 msgstr "Не вдалося видалити з провайдера"
 
-#: packages/admin/src/lib/api/media.ts:259
+#: packages/admin/src/lib/api/media.ts:286
 msgid "Failed to delete media"
 msgstr "Не вдалося видалити медіа"
 
@@ -3353,15 +3353,15 @@ msgstr "Не вдалося отримати терміни запису"
 msgid "Failed to fetch manifest"
 msgstr "Не вдалося отримати маніфест"
 
-#: packages/admin/src/lib/api/media.ts:76
+#: packages/admin/src/lib/api/media.ts:72
 msgid "Failed to fetch media"
 msgstr "Не вдалося отримати медіа"
 
-#: packages/admin/src/lib/api/media.ts:89
+#: packages/admin/src/lib/api/media.ts:85
 msgid "Failed to fetch media item"
 msgstr "Не вдалося отримати медіа-елемент"
 
-#: packages/admin/src/lib/api/media.ts:325
+#: packages/admin/src/lib/api/media.ts:352
 msgid "Failed to fetch media providers"
 msgstr "Не вдалося отримати медіа-провайдерів"
 
@@ -3378,7 +3378,7 @@ msgstr ""
 msgid "Failed to fetch plugins"
 msgstr "Не вдалося отримати плагіни"
 
-#: packages/admin/src/lib/api/media.ts:355
+#: packages/admin/src/lib/api/media.ts:382
 msgid "Failed to fetch provider media"
 msgstr "Не вдалося отримати медіа від провайдера"
 
@@ -3411,7 +3411,7 @@ msgstr "Не вдалося отримати терміни"
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
 #: packages/admin/src/router.tsx:852
-#: packages/admin/src/router.tsx:1376
+#: packages/admin/src/router.tsx:1378
 msgid "Failed to fetch user"
 msgstr "Не вдалося отримати користувача"
 
@@ -3431,7 +3431,7 @@ msgstr "Не вдалося отримати параметри автентиф
 msgid "Failed to get registration options"
 msgstr "Не вдалося отримати параметри реєстрації"
 
-#: packages/admin/src/lib/api/media.ts:131
+#: packages/admin/src/lib/api/media.ts:154
 msgid "Failed to get upload URL"
 msgstr "Не вдалося отримати URL завантаження"
 
@@ -3520,7 +3520,7 @@ msgstr "Не вдалося завантажити користувачів: {0}
 msgid "Failed to load widget"
 msgstr "Не вдалося завантажити віджет"
 
-#: packages/admin/src/router.tsx:1470
+#: packages/admin/src/router.tsx:1472
 msgid "Failed to perform bulk action"
 msgstr "Не вдалося виконати масову дію"
 
@@ -3589,7 +3589,7 @@ msgid "Failed to rewrite URLs"
 msgstr "Не вдалося переписати URL"
 
 #: packages/admin/src/router.tsx:942
-#: packages/admin/src/router.tsx:1959
+#: packages/admin/src/router.tsx:1961
 msgid "Failed to save"
 msgstr "Не вдалося зберегти"
 
@@ -3672,7 +3672,7 @@ msgstr "Не вдалося оновити поле підпису"
 msgid "Failed to update domain"
 msgstr "Не вдалося оновити домен"
 
-#: packages/admin/src/lib/api/media.ts:276
+#: packages/admin/src/lib/api/media.ts:303
 msgid "Failed to update media"
 msgstr "Не вдалося оновити медіа"
 
@@ -3697,19 +3697,19 @@ msgstr "Не вдалося оновити секцію"
 msgid "Failed to update settings"
 msgstr "Не вдалося оновити налаштування"
 
-#: packages/admin/src/router.tsx:1429
+#: packages/admin/src/router.tsx:1431
 msgid "Failed to update status"
 msgstr "Не вдалося оновити статус"
 
-#: packages/admin/src/lib/api/media.ts:173
+#: packages/admin/src/lib/api/media.ts:197
 msgid "Failed to upload file"
 msgstr "Не вдалося завантажити файл"
 
-#: packages/admin/src/lib/api/media.ts:218
+#: packages/admin/src/lib/api/media.ts:242
 msgid "Failed to upload media"
 msgstr "Не вдалося завантажити медіа"
 
-#: packages/admin/src/lib/api/media.ts:377
+#: packages/admin/src/lib/api/media.ts:404
 msgid "Failed to upload to provider"
 msgstr "Не вдалося завантажити до провайдера"
 
@@ -3917,7 +3917,7 @@ msgid "Go"
 msgstr "Перейти"
 
 #: packages/admin/src/components/WordPressImport.tsx:2418
-#: packages/admin/src/router.tsx:2194
+#: packages/admin/src/router.tsx:2196
 msgid "Go to Dashboard"
 msgstr "Перейти до панелі"
 
@@ -4622,7 +4622,7 @@ msgstr "Завантажити ще"
 msgid "Load More"
 msgstr "Завантажити ще"
 
-#: packages/admin/src/router.tsx:2149
+#: packages/admin/src/router.tsx:2151
 msgid "Loading"
 msgstr ""
 
@@ -4638,8 +4638,8 @@ msgstr "Завантаження колекцій..."
 msgid "Loading comments..."
 msgstr "Завантаження коментарів..."
 
-#: packages/admin/src/router.tsx:2151
-#: packages/admin/src/router.tsx:2163
+#: packages/admin/src/router.tsx:2153
+#: packages/admin/src/router.tsx:2165
 msgid "Loading configuration..."
 msgstr "Завантаження конфігурації..."
 
@@ -5706,7 +5706,7 @@ msgstr "Власність"
 msgid "Package"
 msgstr "Пакет"
 
-#: packages/admin/src/router.tsx:2189
+#: packages/admin/src/router.tsx:2191
 msgid "Page Not Found"
 msgstr "Сторінку не знайдено"
 
@@ -6456,7 +6456,7 @@ msgstr "Відновлення..."
 #: packages/admin/src/components/MarketplaceBrowse.tsx:143
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
-#: packages/admin/src/router.tsx:2177
+#: packages/admin/src/router.tsx:2179
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "Повторити"
@@ -7649,7 +7649,7 @@ msgstr "Меню видалено."
 msgid "The name of your site, used in the header and metadata"
 msgstr "Назва вашого сайту, що використовується в заголовку та метаданих"
 
-#: packages/admin/src/router.tsx:2191
+#: packages/admin/src/router.tsx:2193
 msgid "The page you're looking for doesn't exist."
 msgstr "Сторінку, яку ви шукаєте, не знайдено."
 
@@ -8733,7 +8733,7 @@ msgstr "У вас повний доступ до керування сайтом
 msgid "You need admin permissions to manage byline schema."
 msgstr "Для керування схемою підписів авторів потрібні права адміністратора."
 
-#: packages/admin/src/router.tsx:1486
+#: packages/admin/src/router.tsx:1488
 msgid "You need Editor permissions to moderate comments."
 msgstr "Для модерації коментарів потрібні права редактора."
 

@@ -89,7 +89,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {# reactie geïmporteerd} other {# reacties geïmporteerd}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1465
+#: packages/admin/src/router.tsx:1467
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {# reactie bijgewerkt} other {# reacties bijgewerkt}}"
 
@@ -569,7 +569,7 @@ msgstr "Uitnodiging accepteren"
 msgid "Access denied"
 msgstr "Toegang geweigerd"
 
-#: packages/admin/src/router.tsx:1485
+#: packages/admin/src/router.tsx:1487
 msgid "Access Denied"
 msgstr "Toegang geweigerd"
 
@@ -964,10 +964,10 @@ msgstr "Je kunt ook exporteren vanuit WordPress (Extra → Exporteren) en het be
 #: packages/admin/src/router.tsx:1095
 #: packages/admin/src/router.tsx:1126
 #: packages/admin/src/router.tsx:1146
-#: packages/admin/src/router.tsx:1430
-#: packages/admin/src/router.tsx:1446
-#: packages/admin/src/router.tsx:1471
-#: packages/admin/src/router.tsx:1960
+#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1448
+#: packages/admin/src/router.tsx:1473
+#: packages/admin/src/router.tsx:1962
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -3067,7 +3067,7 @@ msgstr "Voer de URL van je WordPress-site in"
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2174
+#: packages/admin/src/router.tsx:2176
 msgid "Error"
 msgstr "Fout"
 
@@ -3160,7 +3160,7 @@ msgstr "Analyseren van WordPress-site mislukt"
 msgid "Failed to communicate with plugin"
 msgstr "Communicatie met plugin mislukt"
 
-#: packages/admin/src/lib/api/media.ts:155
+#: packages/admin/src/lib/api/media.ts:179
 msgid "Failed to confirm upload"
 msgstr "Bevestigen van upload mislukt"
 
@@ -3229,7 +3229,7 @@ msgid "Failed to delete collection"
 msgstr "Verwijderen van collectie mislukt"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1445
+#: packages/admin/src/router.tsx:1447
 msgid "Failed to delete comment"
 msgstr "Verwijderen van reactie mislukt"
 
@@ -3242,11 +3242,11 @@ msgstr "Verwijderen van content mislukt"
 msgid "Failed to delete field"
 msgstr "Verwijderen van veld mislukt"
 
-#: packages/admin/src/lib/api/media.ts:389
+#: packages/admin/src/lib/api/media.ts:416
 msgid "Failed to delete from provider"
 msgstr "Verwijderen bij provider mislukt"
 
-#: packages/admin/src/lib/api/media.ts:259
+#: packages/admin/src/lib/api/media.ts:286
 msgid "Failed to delete media"
 msgstr "Verwijderen van media mislukt"
 
@@ -3353,15 +3353,15 @@ msgstr "Ophalen van termen van item mislukt"
 msgid "Failed to fetch manifest"
 msgstr "Ophalen van manifest mislukt"
 
-#: packages/admin/src/lib/api/media.ts:76
+#: packages/admin/src/lib/api/media.ts:72
 msgid "Failed to fetch media"
 msgstr "Ophalen van media mislukt"
 
-#: packages/admin/src/lib/api/media.ts:89
+#: packages/admin/src/lib/api/media.ts:85
 msgid "Failed to fetch media item"
 msgstr "Ophalen van media-item mislukt"
 
-#: packages/admin/src/lib/api/media.ts:325
+#: packages/admin/src/lib/api/media.ts:352
 msgid "Failed to fetch media providers"
 msgstr "Ophalen van mediaproviders mislukt"
 
@@ -3378,7 +3378,7 @@ msgstr ""
 msgid "Failed to fetch plugins"
 msgstr "Ophalen van plugins mislukt"
 
-#: packages/admin/src/lib/api/media.ts:355
+#: packages/admin/src/lib/api/media.ts:382
 msgid "Failed to fetch provider media"
 msgstr "Ophalen van media van provider mislukt"
 
@@ -3411,7 +3411,7 @@ msgstr "Ophalen van termen mislukt"
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
 #: packages/admin/src/router.tsx:852
-#: packages/admin/src/router.tsx:1376
+#: packages/admin/src/router.tsx:1378
 msgid "Failed to fetch user"
 msgstr "Ophalen van gebruiker mislukt"
 
@@ -3431,7 +3431,7 @@ msgstr "Ophalen van authenticatieopties mislukt"
 msgid "Failed to get registration options"
 msgstr "Ophalen van registratieopties mislukt"
 
-#: packages/admin/src/lib/api/media.ts:131
+#: packages/admin/src/lib/api/media.ts:154
 msgid "Failed to get upload URL"
 msgstr "Ophalen van upload-URL mislukt"
 
@@ -3520,7 +3520,7 @@ msgstr "Laden van gebruikers mislukt: {0}"
 msgid "Failed to load widget"
 msgstr "Laden van widget mislukt"
 
-#: packages/admin/src/router.tsx:1470
+#: packages/admin/src/router.tsx:1472
 msgid "Failed to perform bulk action"
 msgstr "Uitvoeren van bulkactie mislukt"
 
@@ -3589,7 +3589,7 @@ msgid "Failed to rewrite URLs"
 msgstr "Herschrijven van URL's mislukt"
 
 #: packages/admin/src/router.tsx:942
-#: packages/admin/src/router.tsx:1959
+#: packages/admin/src/router.tsx:1961
 msgid "Failed to save"
 msgstr "Opslaan mislukt"
 
@@ -3672,7 +3672,7 @@ msgstr "Bijwerken van auteursvermeldingsveld mislukt"
 msgid "Failed to update domain"
 msgstr "Bijwerken van domein mislukt"
 
-#: packages/admin/src/lib/api/media.ts:276
+#: packages/admin/src/lib/api/media.ts:303
 msgid "Failed to update media"
 msgstr "Bijwerken van media mislukt"
 
@@ -3697,19 +3697,19 @@ msgstr "Bijwerken van sectie mislukt"
 msgid "Failed to update settings"
 msgstr "Bijwerken van instellingen mislukt"
 
-#: packages/admin/src/router.tsx:1429
+#: packages/admin/src/router.tsx:1431
 msgid "Failed to update status"
 msgstr "Bijwerken van status mislukt"
 
-#: packages/admin/src/lib/api/media.ts:173
+#: packages/admin/src/lib/api/media.ts:197
 msgid "Failed to upload file"
 msgstr "Uploaden van bestand mislukt"
 
-#: packages/admin/src/lib/api/media.ts:218
+#: packages/admin/src/lib/api/media.ts:242
 msgid "Failed to upload media"
 msgstr "Uploaden van media mislukt"
 
-#: packages/admin/src/lib/api/media.ts:377
+#: packages/admin/src/lib/api/media.ts:404
 msgid "Failed to upload to provider"
 msgstr "Uploaden naar provider mislukt"
 
@@ -3917,7 +3917,7 @@ msgid "Go"
 msgstr "Go"
 
 #: packages/admin/src/components/WordPressImport.tsx:2418
-#: packages/admin/src/router.tsx:2194
+#: packages/admin/src/router.tsx:2196
 msgid "Go to Dashboard"
 msgstr "Ga naar dashboard"
 
@@ -4622,7 +4622,7 @@ msgstr "Meer laden"
 msgid "Load More"
 msgstr "Meer laden"
 
-#: packages/admin/src/router.tsx:2149
+#: packages/admin/src/router.tsx:2151
 msgid "Loading"
 msgstr ""
 
@@ -4638,8 +4638,8 @@ msgstr "Collecties laden..."
 msgid "Loading comments..."
 msgstr "Reacties laden..."
 
-#: packages/admin/src/router.tsx:2151
-#: packages/admin/src/router.tsx:2163
+#: packages/admin/src/router.tsx:2153
+#: packages/admin/src/router.tsx:2165
 msgid "Loading configuration..."
 msgstr "Configuratie laden..."
 
@@ -5706,7 +5706,7 @@ msgstr "Eigenaarschap"
 msgid "Package"
 msgstr "Pakket"
 
-#: packages/admin/src/router.tsx:2189
+#: packages/admin/src/router.tsx:2191
 msgid "Page Not Found"
 msgstr "Pagina niet gevonden"
 
@@ -6456,7 +6456,7 @@ msgstr "Herstellen..."
 #: packages/admin/src/components/MarketplaceBrowse.tsx:143
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
-#: packages/admin/src/router.tsx:2177
+#: packages/admin/src/router.tsx:2179
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "Opnieuw proberen"
@@ -7649,7 +7649,7 @@ msgstr "Het menu is verwijderd."
 msgid "The name of your site, used in the header and metadata"
 msgstr "De naam van je site, gebruikt in de header en metadata"
 
-#: packages/admin/src/router.tsx:2191
+#: packages/admin/src/router.tsx:2193
 msgid "The page you're looking for doesn't exist."
 msgstr "De pagina die je zoekt bestaat niet."
 
@@ -8733,7 +8733,7 @@ msgstr "Je hebt volledige toegang om deze site te beheren, inclusief gebruikers,
 msgid "You need admin permissions to manage byline schema."
 msgstr "Je hebt admin-rechten nodig om het schema voor auteursvermeldingen te beheren."
 
-#: packages/admin/src/router.tsx:1486
+#: packages/admin/src/router.tsx:1488
 msgid "You need Editor permissions to moderate comments."
 msgstr "Je hebt redacteursrechten nodig om reacties te modereren."
 

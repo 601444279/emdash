@@ -89,7 +89,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr ""
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1465
+#: packages/admin/src/router.tsx:1467
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {# yorum güncellendi} other {# yorum güncellendi}}"
 
@@ -569,7 +569,7 @@ msgstr "Daveti Kabul Et"
 msgid "Access denied"
 msgstr "Erişim engellendi"
 
-#: packages/admin/src/router.tsx:1485
+#: packages/admin/src/router.tsx:1487
 msgid "Access Denied"
 msgstr "Erişim engellendi"
 
@@ -964,10 +964,10 @@ msgstr "Alternatif olarak WordPress'ten (Araçlar → Dışa Aktar) dışa aktar
 #: packages/admin/src/router.tsx:1095
 #: packages/admin/src/router.tsx:1126
 #: packages/admin/src/router.tsx:1146
-#: packages/admin/src/router.tsx:1430
-#: packages/admin/src/router.tsx:1446
-#: packages/admin/src/router.tsx:1471
-#: packages/admin/src/router.tsx:1960
+#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1448
+#: packages/admin/src/router.tsx:1473
+#: packages/admin/src/router.tsx:1962
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -3067,7 +3067,7 @@ msgstr "WordPress site URL'nizi girin"
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2174
+#: packages/admin/src/router.tsx:2176
 msgid "Error"
 msgstr "Hata"
 
@@ -3160,7 +3160,7 @@ msgstr "WordPress sitesi analiz edilemedi"
 msgid "Failed to communicate with plugin"
 msgstr "Eklentiyle iletişim kurulamadı"
 
-#: packages/admin/src/lib/api/media.ts:155
+#: packages/admin/src/lib/api/media.ts:179
 msgid "Failed to confirm upload"
 msgstr "Yükleme onaylanamadı"
 
@@ -3229,7 +3229,7 @@ msgid "Failed to delete collection"
 msgstr "Koleksiyon silinemedi"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1445
+#: packages/admin/src/router.tsx:1447
 msgid "Failed to delete comment"
 msgstr "Yorum silinemedi"
 
@@ -3242,11 +3242,11 @@ msgstr "İçerik silinemedi"
 msgid "Failed to delete field"
 msgstr "Alan silinemedi"
 
-#: packages/admin/src/lib/api/media.ts:389
+#: packages/admin/src/lib/api/media.ts:416
 msgid "Failed to delete from provider"
 msgstr "Sağlayıcıdan silinemedi"
 
-#: packages/admin/src/lib/api/media.ts:259
+#: packages/admin/src/lib/api/media.ts:286
 msgid "Failed to delete media"
 msgstr "Medya silinemedi"
 
@@ -3353,15 +3353,15 @@ msgstr "Kayıt terimleri getirilemedi"
 msgid "Failed to fetch manifest"
 msgstr "Manifest getirilemedi"
 
-#: packages/admin/src/lib/api/media.ts:76
+#: packages/admin/src/lib/api/media.ts:72
 msgid "Failed to fetch media"
 msgstr "Medya getirilemedi"
 
-#: packages/admin/src/lib/api/media.ts:89
+#: packages/admin/src/lib/api/media.ts:85
 msgid "Failed to fetch media item"
 msgstr "Medya öğesi getirilemedi"
 
-#: packages/admin/src/lib/api/media.ts:325
+#: packages/admin/src/lib/api/media.ts:352
 msgid "Failed to fetch media providers"
 msgstr "Medya sağlayıcıları getirilemedi"
 
@@ -3378,7 +3378,7 @@ msgstr ""
 msgid "Failed to fetch plugins"
 msgstr "Eklentiler getirilemedi"
 
-#: packages/admin/src/lib/api/media.ts:355
+#: packages/admin/src/lib/api/media.ts:382
 msgid "Failed to fetch provider media"
 msgstr "Sağlayıcı medyası getirilemedi"
 
@@ -3411,7 +3411,7 @@ msgstr "Terimler getirilemedi"
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
 #: packages/admin/src/router.tsx:852
-#: packages/admin/src/router.tsx:1376
+#: packages/admin/src/router.tsx:1378
 msgid "Failed to fetch user"
 msgstr "Kullanıcı getirilemedi"
 
@@ -3431,7 +3431,7 @@ msgstr "Kimlik doğrulama seçenekleri alınamadı"
 msgid "Failed to get registration options"
 msgstr "Kayıt seçenekleri alınamadı"
 
-#: packages/admin/src/lib/api/media.ts:131
+#: packages/admin/src/lib/api/media.ts:154
 msgid "Failed to get upload URL"
 msgstr "Yükleme URL'si alınamadı"
 
@@ -3520,7 +3520,7 @@ msgstr "Kullanıcılar yüklenemedi: {0}"
 msgid "Failed to load widget"
 msgstr "Widget yüklenemedi"
 
-#: packages/admin/src/router.tsx:1470
+#: packages/admin/src/router.tsx:1472
 msgid "Failed to perform bulk action"
 msgstr "Toplu işlem gerçekleştirilemedi"
 
@@ -3589,7 +3589,7 @@ msgid "Failed to rewrite URLs"
 msgstr "URL'ler yeniden yazılamadı"
 
 #: packages/admin/src/router.tsx:942
-#: packages/admin/src/router.tsx:1959
+#: packages/admin/src/router.tsx:1961
 msgid "Failed to save"
 msgstr "Kaydedilemedi"
 
@@ -3672,7 +3672,7 @@ msgstr "Yazar bilgisi alanı güncellenemedi"
 msgid "Failed to update domain"
 msgstr "Alan adı güncellenemedi"
 
-#: packages/admin/src/lib/api/media.ts:276
+#: packages/admin/src/lib/api/media.ts:303
 msgid "Failed to update media"
 msgstr "Medya güncellenemedi"
 
@@ -3697,19 +3697,19 @@ msgstr "Bölüm güncellenemedi"
 msgid "Failed to update settings"
 msgstr "Ayarlar güncellenemedi"
 
-#: packages/admin/src/router.tsx:1429
+#: packages/admin/src/router.tsx:1431
 msgid "Failed to update status"
 msgstr "Durum güncellenemedi"
 
-#: packages/admin/src/lib/api/media.ts:173
+#: packages/admin/src/lib/api/media.ts:197
 msgid "Failed to upload file"
 msgstr "Dosya yüklenemedi"
 
-#: packages/admin/src/lib/api/media.ts:218
+#: packages/admin/src/lib/api/media.ts:242
 msgid "Failed to upload media"
 msgstr "Medya yüklenemedi"
 
-#: packages/admin/src/lib/api/media.ts:377
+#: packages/admin/src/lib/api/media.ts:404
 msgid "Failed to upload to provider"
 msgstr "Sağlayıcıya yüklenemedi"
 
@@ -3917,7 +3917,7 @@ msgid "Go"
 msgstr "Git"
 
 #: packages/admin/src/components/WordPressImport.tsx:2418
-#: packages/admin/src/router.tsx:2194
+#: packages/admin/src/router.tsx:2196
 msgid "Go to Dashboard"
 msgstr "Kontrol Paneline Git"
 
@@ -4622,7 +4622,7 @@ msgstr "Daha fazlasını yükle"
 msgid "Load More"
 msgstr "Daha Fazla Yükle"
 
-#: packages/admin/src/router.tsx:2149
+#: packages/admin/src/router.tsx:2151
 msgid "Loading"
 msgstr ""
 
@@ -4638,8 +4638,8 @@ msgstr "Koleksiyonlar yükleniyor..."
 msgid "Loading comments..."
 msgstr "Yorumlar yükleniyor..."
 
-#: packages/admin/src/router.tsx:2151
-#: packages/admin/src/router.tsx:2163
+#: packages/admin/src/router.tsx:2153
+#: packages/admin/src/router.tsx:2165
 msgid "Loading configuration..."
 msgstr "Yapılandırma yükleniyor..."
 
@@ -5706,7 +5706,7 @@ msgstr "Mülkiyet"
 msgid "Package"
 msgstr "Paket"
 
-#: packages/admin/src/router.tsx:2189
+#: packages/admin/src/router.tsx:2191
 msgid "Page Not Found"
 msgstr "Sayfa Bulunamadı"
 
@@ -6456,7 +6456,7 @@ msgstr "Geri yükleniyor..."
 #: packages/admin/src/components/MarketplaceBrowse.tsx:143
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
-#: packages/admin/src/router.tsx:2177
+#: packages/admin/src/router.tsx:2179
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "Yeniden dene"
@@ -7649,7 +7649,7 @@ msgstr "Menü silindi."
 msgid "The name of your site, used in the header and metadata"
 msgstr "Başlıkta ve meta verilerde kullanılan sitenizin adı"
 
-#: packages/admin/src/router.tsx:2191
+#: packages/admin/src/router.tsx:2193
 msgid "The page you're looking for doesn't exist."
 msgstr "Aradığınız sayfa mevcut değil."
 
@@ -8733,7 +8733,7 @@ msgstr "Kullanıcılar, ayarlar ve tüm içerik dahil olmak üzere bu siteyi yö
 msgid "You need admin permissions to manage byline schema."
 msgstr "Yazar bilgisi şemasını yönetmek için yönetici izinleri gerekir."
 
-#: packages/admin/src/router.tsx:1486
+#: packages/admin/src/router.tsx:1488
 msgid "You need Editor permissions to moderate comments."
 msgstr "Yorumları denetlemek için Editör izinlerine ihtiyacınız var."
 

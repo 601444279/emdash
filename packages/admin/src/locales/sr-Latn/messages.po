@@ -89,7 +89,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {# komentar uvezen} few {# komentara uvezeno} other {# komentara uvezeno}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1465
+#: packages/admin/src/router.tsx:1467
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {# komentar ažuriran} few {# komentara ažurirano} other {# komentara ažurirano}}"
 
@@ -569,7 +569,7 @@ msgstr "Prihvati pozivnicu"
 msgid "Access denied"
 msgstr "Pristup odbijen"
 
-#: packages/admin/src/router.tsx:1485
+#: packages/admin/src/router.tsx:1487
 msgid "Access Denied"
 msgstr "Pristup odbijen"
 
@@ -964,10 +964,10 @@ msgstr "Alternativno, možete izvesti iz WordPress-a (Alati → Izvoz) i otpremi
 #: packages/admin/src/router.tsx:1095
 #: packages/admin/src/router.tsx:1126
 #: packages/admin/src/router.tsx:1146
-#: packages/admin/src/router.tsx:1430
-#: packages/admin/src/router.tsx:1446
-#: packages/admin/src/router.tsx:1471
-#: packages/admin/src/router.tsx:1960
+#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1448
+#: packages/admin/src/router.tsx:1473
+#: packages/admin/src/router.tsx:1962
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -3067,7 +3067,7 @@ msgstr "Unesite URL WordPress sajta"
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2174
+#: packages/admin/src/router.tsx:2176
 msgid "Error"
 msgstr "Greška"
 
@@ -3160,7 +3160,7 @@ msgstr "Analiza WordPress sajta nije uspela"
 msgid "Failed to communicate with plugin"
 msgstr "Komunikacija sa dodatkom nije uspela"
 
-#: packages/admin/src/lib/api/media.ts:155
+#: packages/admin/src/lib/api/media.ts:179
 msgid "Failed to confirm upload"
 msgstr "Potvrda otpremanja nije uspela"
 
@@ -3229,7 +3229,7 @@ msgid "Failed to delete collection"
 msgstr "Brisanje kolekcije nije uspelo"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1445
+#: packages/admin/src/router.tsx:1447
 msgid "Failed to delete comment"
 msgstr "Brisanje komentara nije uspelo"
 
@@ -3242,11 +3242,11 @@ msgstr "Brisanje sadržaja nije uspelo"
 msgid "Failed to delete field"
 msgstr "Brisanje polja nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:389
+#: packages/admin/src/lib/api/media.ts:416
 msgid "Failed to delete from provider"
 msgstr "Brisanje od provajdera nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:259
+#: packages/admin/src/lib/api/media.ts:286
 msgid "Failed to delete media"
 msgstr "Brisanje medija nije uspelo"
 
@@ -3353,15 +3353,15 @@ msgstr "Preuzimanje termina unosa nije uspelo"
 msgid "Failed to fetch manifest"
 msgstr "Preuzimanje manifesta nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:76
+#: packages/admin/src/lib/api/media.ts:72
 msgid "Failed to fetch media"
 msgstr "Preuzimanje medija nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:89
+#: packages/admin/src/lib/api/media.ts:85
 msgid "Failed to fetch media item"
 msgstr "Preuzimanje stavke medija nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:325
+#: packages/admin/src/lib/api/media.ts:352
 msgid "Failed to fetch media providers"
 msgstr "Preuzimanje provajdera medija nije uspelo"
 
@@ -3378,7 +3378,7 @@ msgstr ""
 msgid "Failed to fetch plugins"
 msgstr "Preuzimanje dodataka nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:355
+#: packages/admin/src/lib/api/media.ts:382
 msgid "Failed to fetch provider media"
 msgstr "Preuzimanje medija od provajdera nije uspelo"
 
@@ -3411,7 +3411,7 @@ msgstr "Preuzimanje termina nije uspelo"
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
 #: packages/admin/src/router.tsx:852
-#: packages/admin/src/router.tsx:1376
+#: packages/admin/src/router.tsx:1378
 msgid "Failed to fetch user"
 msgstr "Preuzimanje korisnika nije uspelo"
 
@@ -3431,7 +3431,7 @@ msgstr "Preuzimanje opcija autentifikacije nije uspelo"
 msgid "Failed to get registration options"
 msgstr "Preuzimanje opcija registracije nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:131
+#: packages/admin/src/lib/api/media.ts:154
 msgid "Failed to get upload URL"
 msgstr "Preuzimanje URL-a za otpremanje nije uspelo"
 
@@ -3520,7 +3520,7 @@ msgstr "Učitavanje korisnika nije uspelo: {0}"
 msgid "Failed to load widget"
 msgstr "Učitavanje vidžeta nije uspelo"
 
-#: packages/admin/src/router.tsx:1470
+#: packages/admin/src/router.tsx:1472
 msgid "Failed to perform bulk action"
 msgstr "Izvršavanje grupne akcije nije uspelo"
 
@@ -3589,7 +3589,7 @@ msgid "Failed to rewrite URLs"
 msgstr "Prepisivanje URL-ova nije uspelo"
 
 #: packages/admin/src/router.tsx:942
-#: packages/admin/src/router.tsx:1959
+#: packages/admin/src/router.tsx:1961
 msgid "Failed to save"
 msgstr "Čuvanje nije uspelo"
 
@@ -3672,7 +3672,7 @@ msgstr "Ažuriranje polja potpisa autora nije uspelo"
 msgid "Failed to update domain"
 msgstr "Ažuriranje domena nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:276
+#: packages/admin/src/lib/api/media.ts:303
 msgid "Failed to update media"
 msgstr "Ažuriranje medija nije uspelo"
 
@@ -3697,19 +3697,19 @@ msgstr "Ažuriranje sekcije nije uspelo"
 msgid "Failed to update settings"
 msgstr "Ažuriranje podešavanja nije uspelo"
 
-#: packages/admin/src/router.tsx:1429
+#: packages/admin/src/router.tsx:1431
 msgid "Failed to update status"
 msgstr "Ažuriranje statusa nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:173
+#: packages/admin/src/lib/api/media.ts:197
 msgid "Failed to upload file"
 msgstr "Otpremanje fajla nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:218
+#: packages/admin/src/lib/api/media.ts:242
 msgid "Failed to upload media"
 msgstr "Otpremanje medija nije uspelo"
 
-#: packages/admin/src/lib/api/media.ts:377
+#: packages/admin/src/lib/api/media.ts:404
 msgid "Failed to upload to provider"
 msgstr "Otpremanje provajderu nije uspelo"
 
@@ -3917,7 +3917,7 @@ msgid "Go"
 msgstr "Idi"
 
 #: packages/admin/src/components/WordPressImport.tsx:2418
-#: packages/admin/src/router.tsx:2194
+#: packages/admin/src/router.tsx:2196
 msgid "Go to Dashboard"
 msgstr "Idi na kontrolnu tablu"
 
@@ -4622,7 +4622,7 @@ msgstr "Učitaj više"
 msgid "Load More"
 msgstr "Učitaj više"
 
-#: packages/admin/src/router.tsx:2149
+#: packages/admin/src/router.tsx:2151
 msgid "Loading"
 msgstr ""
 
@@ -4638,8 +4638,8 @@ msgstr "Učitavanje kolekcija..."
 msgid "Loading comments..."
 msgstr "Učitavanje komentara..."
 
-#: packages/admin/src/router.tsx:2151
-#: packages/admin/src/router.tsx:2163
+#: packages/admin/src/router.tsx:2153
+#: packages/admin/src/router.tsx:2165
 msgid "Loading configuration..."
 msgstr "Učitavanje konfiguracije..."
 
@@ -5706,7 +5706,7 @@ msgstr "Vlasništvo"
 msgid "Package"
 msgstr "Paket"
 
-#: packages/admin/src/router.tsx:2189
+#: packages/admin/src/router.tsx:2191
 msgid "Page Not Found"
 msgstr "Stranica nije pronađena"
 
@@ -6456,7 +6456,7 @@ msgstr "Vraćanje..."
 #: packages/admin/src/components/MarketplaceBrowse.tsx:143
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
-#: packages/admin/src/router.tsx:2177
+#: packages/admin/src/router.tsx:2179
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "Pokušaj ponovo"
@@ -7649,7 +7649,7 @@ msgstr "Meni je obrisan."
 msgid "The name of your site, used in the header and metadata"
 msgstr "Naziv tvog sajta, koristi se u zaglavlju i metapodacima"
 
-#: packages/admin/src/router.tsx:2191
+#: packages/admin/src/router.tsx:2193
 msgid "The page you're looking for doesn't exist."
 msgstr "Stranica koju tražiš ne postoji."
 
@@ -8733,7 +8733,7 @@ msgstr "Imaš pun pristup za upravljanje ovim sajtom, uključujući korisnike, p
 msgid "You need admin permissions to manage byline schema."
 msgstr "Potrebne su ti admin dozvole za upravljanje šemom potpisa autora."
 
-#: packages/admin/src/router.tsx:1486
+#: packages/admin/src/router.tsx:1488
 msgid "You need Editor permissions to moderate comments."
 msgstr "Potrebne su ti Editor dozvole za moderiranje komentara."
 
