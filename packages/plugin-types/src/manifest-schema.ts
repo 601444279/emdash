@@ -267,6 +267,7 @@ const declaredAccessSchema = z.object({
 		.optional(),
 	page: z.object({ fragments: accessConstraints.optional() }).optional(),
 	users: z.object({ read: accessConstraints.optional() }).optional(),
+	cache: z.object({ purge: accessConstraints.optional() }).optional(),
 });
 
 // ── Main schema ─────────────────────────────────────────────────

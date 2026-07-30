@@ -952,10 +952,6 @@ function toUserInfo(user: {
 }
 
 /**
- * Create read-only user access for plugins.
- * Excludes sensitive fields (password hashes, sessions, passkeys, avatar URL, data).
- */
-/**
  * Create cache purge access for plugins with `cache:purge`.
  */
 export function createCacheAccess(db: Kysely<Database>): CacheAccess {
@@ -995,6 +991,10 @@ export function createCacheAccess(db: Kysely<Database>): CacheAccess {
 	};
 }
 
+/**
+ * Create read-only user access for plugins.
+ * Excludes sensitive fields (password hashes, sessions, passkeys, avatar URL, data).
+ */
 export function createUserAccess(db: Kysely<Database>): UserAccess {
 	const userRepo = new UserRepository(db);
 

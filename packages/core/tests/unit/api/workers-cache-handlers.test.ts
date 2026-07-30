@@ -36,6 +36,13 @@ describe("normalizeWorkersCachePathPrefix", () => {
 			message: "Path is required",
 		});
 	});
+
+	it("rejects protocol-relative URLs", () => {
+		expect(normalizeWorkersCachePathPrefix("//example.com/posts")).toEqual({
+			ok: false,
+			message: "Protocol-relative URLs are not allowed",
+		});
+	});
 });
 
 describe("handleWorkersCacheStatus", () => {
