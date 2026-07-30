@@ -212,4 +212,4 @@ export {
 	normalizeCapability,
 	normalizeCapabilities,
 } from "./types.js";
-export type { CurrentPluginCapability, DeprecatedPluginCapability } from "./types.js";
+export type { CacheAccess, CurrentPluginCapability, DeprecatedPluginCapability } from "./types.js";

@@ -42,8 +42,8 @@ export interface WorkersCachePurgeApi {
 	}): Promise<unknown>;
 }
 
-/** Matches an absolute URL scheme prefix (e.g. `https://`). */
-const ABSOLUTE_URL_RE = /^[a-zA-Z][a-zA-Z+\-.]*:\/\//;
+/** Matches an absolute URL scheme prefix (RFC 3986, e.g. `https://`, `s3://`). */
+const ABSOLUTE_URL_RE = /^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//;
 
 /**
  * Normalize a user-supplied path or full URL into a Workers Caching path prefix.

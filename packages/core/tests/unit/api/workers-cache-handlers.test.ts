@@ -30,6 +30,13 @@ describe("normalizeWorkersCachePathPrefix", () => {
 		});
 	});
 
+	it("treats digit-containing schemes as absolute URLs", () => {
+		expect(normalizeWorkersCachePathPrefix("s3://bucket/object")).toEqual({
+			ok: true,
+			path: "/object",
+		});
+	});
+
 	it("rejects empty input", () => {
 		expect(normalizeWorkersCachePathPrefix("   ")).toEqual({
 			ok: false,

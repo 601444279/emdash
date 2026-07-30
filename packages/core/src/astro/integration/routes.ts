@@ -350,7 +350,7 @@ export function injectCoreRoutes(
 		entrypoint: resolveRoute("api/settings.ts"),
 	});
 
-	// Object-cache purge (KV / memory CMS read cache)
+	// Cache purge routes (object cache + native Workers Caching)
 	injectRoute({
 		pattern: "/_emdash/api/admin/cache/object",
 		entrypoint: resolveRoute("api/admin/cache/object.ts"),

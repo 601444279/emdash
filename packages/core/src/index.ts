@@ -253,6 +253,7 @@ export type {
 	MediaAccess,
 	HttpAccess,
 	LogAccess,
+	CacheAccess,
 	TaxonomyAccess,
 	TaxonomyDefInfo,
 	TaxonomyTermInfo,
