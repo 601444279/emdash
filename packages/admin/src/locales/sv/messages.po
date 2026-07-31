@@ -288,7 +288,7 @@ msgid "{0} system + {1} custom {2}"
 msgstr "{0} system + {1} anpassade {2}"
 
 #. placeholder {0}: taxonomy.label
-#: packages/admin/src/components/TaxonomySidebar.tsx:360
+#: packages/admin/src/components/TaxonomySidebar.tsx:365
 msgid "{0} updated"
 msgstr "{0} uppdaterad"
 
@@ -602,7 +602,7 @@ msgstr "ACF-fält"
 #: packages/admin/src/components/ContentList.tsx:528
 #: packages/admin/src/components/ContentList.tsx:649
 #: packages/admin/src/components/ContentTypeList.tsx:108
-#: packages/admin/src/components/TaxonomyManager.tsx:843
+#: packages/admin/src/components/TaxonomyManager.tsx:845
 #: packages/admin/src/routes/byline-schema.tsx:249
 msgid "Actions"
 msgstr "Åtgärder"
@@ -615,7 +615,7 @@ msgstr "Aktiv"
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
 #: packages/admin/src/components/ContentSettingsPanel.tsx:871
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:491
+#: packages/admin/src/components/TaxonomySidebar.tsx:496
 msgid "Add"
 msgstr "Lägg till"
 
@@ -623,11 +623,11 @@ msgstr "Lägg till"
 #. placeholder {0}: taxonomyDef.labelSingular || t`Term`
 #: packages/admin/src/components/PortableTextEditor.tsx:1874
 #: packages/admin/src/components/TaxonomyManager.tsx:378
-#: packages/admin/src/components/TaxonomyManager.tsx:834
+#: packages/admin/src/components/TaxonomyManager.tsx:836
 msgid "Add {0}"
 msgstr "Lägg till {0}"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:279
+#: packages/admin/src/components/TaxonomySidebar.tsx:282
 msgid "Add {label}"
 msgstr "Lägg till {label}"
 
@@ -726,7 +726,7 @@ msgid "Add New"
 msgstr "Lägg till ny"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:503
+#: packages/admin/src/components/TaxonomySidebar.tsx:508
 msgid "Add new {0}"
 msgstr "Lägg till ny {0}"
 
@@ -758,7 +758,7 @@ msgstr "Lägg till SEO-metadatafält (titel, beskrivning, bild) och inkludera i 
 msgid "Add Sub-Field"
 msgstr "Lägg till underfält"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:278
+#: packages/admin/src/components/TaxonomySidebar.tsx:281
 msgid "Add tags..."
 msgstr "Lägg till taggar …"
 
@@ -949,7 +949,7 @@ msgstr "Alternativt kan du exportera från WordPress (Verktyg → Exportera) och
 #: packages/admin/src/components/settings/SecuritySettings.tsx:71
 #: packages/admin/src/components/settings/SeoSettings.tsx:45
 #: packages/admin/src/components/settings/SocialSettings.tsx:43
-#: packages/admin/src/components/TaxonomySidebar.tsx:365
+#: packages/admin/src/components/TaxonomySidebar.tsx:370
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
 #: packages/admin/src/router.tsx:423
 #: packages/admin/src/router.tsx:438
@@ -1934,7 +1934,7 @@ msgstr "Kunde inte söka bland bylines. Försök igen."
 msgid "Couldn't verify how many values reference \"{0}\". Deleting will still remove every stored value for this field — but the count above could not be checked."
 msgstr "Kunde inte kontrollera hur många värden som refererar till \"{0}\". Borttagning tar fortfarande bort alla lagrade värden för detta fält — men antalet ovan kunde inte kontrolleras."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:842
+#: packages/admin/src/components/TaxonomyManager.tsx:844
 msgid "Count"
 msgstr "Antal"
 
@@ -1948,7 +1948,7 @@ msgstr "Antal"
 msgid "Create"
 msgstr "Skapa"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:305
+#: packages/admin/src/components/TaxonomySidebar.tsx:308
 msgid "Create \"{trimmedInput}\""
 msgstr "Skapa \"{trimmedInput}\""
 
@@ -2129,7 +2129,7 @@ msgstr "Skapar samlingar och fält …"
 #: packages/admin/src/components/Sections.tsx:212
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:477
 #: packages/admin/src/components/TaxonomyManager.tsx:711
-#: packages/admin/src/components/TaxonomySidebar.tsx:305
+#: packages/admin/src/components/TaxonomySidebar.tsx:308
 msgid "Creating..."
 msgstr "Skapar …"
 
@@ -2267,7 +2267,7 @@ msgstr "Definierad i kod"
 #: packages/admin/src/components/Sections.tsx:308
 #: packages/admin/src/components/Sections.tsx:407
 #: packages/admin/src/components/settings/BackupSettings.tsx:284
-#: packages/admin/src/components/TaxonomyManager.tsx:906
+#: packages/admin/src/components/TaxonomyManager.tsx:908
 #: packages/admin/src/components/Widgets.tsx:716
 #: packages/admin/src/routes/byline-schema.tsx:378
 #: packages/admin/src/routes/bylines.tsx:588
@@ -2309,7 +2309,7 @@ msgid "Delete {0} widget area"
 msgstr "Ta bort widgetområdet {0}"
 
 #. placeholder {0}: taxonomyDef.labelSingular || "Term"
-#: packages/admin/src/components/TaxonomyManager.tsx:902
+#: packages/admin/src/components/TaxonomyManager.tsx:904
 msgid "Delete {0}?"
 msgstr "Ta bort {0}?"
 
@@ -2429,7 +2429,7 @@ msgstr "Att ta bort \"{0}\" tar även bort {1, plural, one {# lagrat värde} oth
 #: packages/admin/src/components/Redirects.tsx:586
 #: packages/admin/src/components/Sections.tsx:309
 #: packages/admin/src/components/settings/BackupSettings.tsx:285
-#: packages/admin/src/components/TaxonomyManager.tsx:907
+#: packages/admin/src/components/TaxonomyManager.tsx:909
 #: packages/admin/src/components/Widgets.tsx:717
 #: packages/admin/src/routes/bylines.tsx:625
 msgid "Deleting..."
@@ -3193,7 +3193,7 @@ msgstr "Det gick inte att skapa sektion"
 msgid "Failed to create some collections"
 msgstr "Det gick inte att skapa vissa samlingar"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:510
+#: packages/admin/src/components/TaxonomySidebar.tsx:515
 msgid "Failed to create term"
 msgstr "Det gick inte att skapa term"
 
@@ -3345,7 +3345,7 @@ msgstr "Det gick inte att hämta översiktsstatistik"
 msgid "Failed to fetch email settings"
 msgstr "Det gick inte att hämta e-postinställningar"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:106
+#: packages/admin/src/components/TaxonomySidebar.tsx:109
 msgid "Failed to fetch entry terms"
 msgstr "Det gick inte att hämta termer för posten"
 
@@ -3403,7 +3403,7 @@ msgstr "Det gick inte att hämta inställningar"
 msgid "Failed to fetch setup status"
 msgstr "Det gick inte att hämta konfigurationsstatus"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:87
+#: packages/admin/src/components/TaxonomySidebar.tsx:90
 msgid "Failed to fetch terms"
 msgstr "Det gick inte att hämta termer"
 
@@ -3630,7 +3630,7 @@ msgstr "Det gick inte att skicka testmejlet"
 msgid "Failed to send verification email"
 msgstr "Det gick inte att skicka bekräftelsemejlet"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:129
+#: packages/admin/src/components/TaxonomySidebar.tsx:132
 msgid "Failed to set entry terms"
 msgstr "Det gick inte att ange termer för posten"
 
@@ -3652,7 +3652,7 @@ msgid "Failed to update"
 msgstr "Det gick inte att uppdatera"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:364
+#: packages/admin/src/components/TaxonomySidebar.tsx:369
 msgid "Failed to update {0}"
 msgstr "Det gick inte att uppdatera {0}"
 
@@ -4683,7 +4683,7 @@ msgstr "Läser in inställningar …"
 msgid "Loading setup..."
 msgstr "Läser in konfiguration …"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:847
+#: packages/admin/src/components/TaxonomyManager.tsx:849
 msgid "Loading terms..."
 msgstr "Läser in termer …"
 
@@ -4703,7 +4703,7 @@ msgstr "Läser in widgetar …"
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:161
 #: packages/admin/src/components/settings/SecuritySettings.tsx:104
-#: packages/admin/src/components/TaxonomyManager.tsx:801
+#: packages/admin/src/components/TaxonomyManager.tsx:803
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
@@ -4778,7 +4778,7 @@ msgstr "Hantera"
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
 #. placeholder {1}: taxonomyDef.collections.join(", ")
-#: packages/admin/src/components/TaxonomyManager.tsx:818
+#: packages/admin/src/components/TaxonomyManager.tsx:820
 msgid "Manage {0} for {1}"
 msgstr "Hantera {0} för {1}"
 
@@ -5123,7 +5123,7 @@ msgstr "Min fantastiska blogg"
 #: packages/admin/src/components/MenuList.tsx:157
 #: packages/admin/src/components/TaxonomyManager.tsx:405
 #: packages/admin/src/components/TaxonomyManager.tsx:654
-#: packages/admin/src/components/TaxonomyManager.tsx:841
+#: packages/admin/src/components/TaxonomyManager.tsx:843
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:37
 #: packages/admin/src/components/users/UserDetail.tsx:148
 #: packages/admin/src/components/Widgets.tsx:430
@@ -5160,7 +5160,7 @@ msgid "NEW"
 msgstr "NY"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:479
+#: packages/admin/src/components/TaxonomySidebar.tsx:484
 msgid "New {0}"
 msgstr "Ny {0}"
 
@@ -5202,7 +5202,7 @@ msgstr "Ny sektion"
 msgid "new tab"
 msgstr "ny flik"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:831
+#: packages/admin/src/components/TaxonomyManager.tsx:833
 msgid "New Taxonomy"
 msgstr "Ny taxonomi"
 
@@ -5245,7 +5245,7 @@ msgid "No (shared across translations)"
 msgstr "Nej (delat mellan översättningar)"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:449
+#: packages/admin/src/components/TaxonomySidebar.tsx:454
 msgid "No {0} available."
 msgstr "Ingen {0} tillgänglig."
 
@@ -5255,7 +5255,7 @@ msgid "No {0} yet."
 msgstr "Ingen {0} ännu."
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:850
+#: packages/admin/src/components/TaxonomyManager.tsx:852
 msgid "No {0} yet. Create one to get started."
 msgstr "Ingen {0} ännu. Skapa en för att komma igång."
 
@@ -6268,7 +6268,7 @@ msgstr "Ta bort"
 #. placeholder {0}: passkey.name
 #. placeholder {0}: term.label
 #: packages/admin/src/components/settings/PasskeyItem.tsx:186
-#: packages/admin/src/components/TaxonomySidebar.tsx:259
+#: packages/admin/src/components/TaxonomySidebar.tsx:262
 msgid "Remove {0}"
 msgstr "Ta bort {0}"
 
@@ -7568,7 +7568,7 @@ msgid "Target locale"
 msgstr "Målspråk"
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:610
-#: packages/admin/src/components/TaxonomySidebar.tsx:550
+#: packages/admin/src/components/TaxonomySidebar.tsx:555
 msgid "Taxonomies"
 msgstr "Taxonomier"
 
@@ -7576,11 +7576,11 @@ msgstr "Taxonomier"
 msgid "Taxonomies Manage"
 msgstr "Hantera taxonomier"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:918
+#: packages/admin/src/components/TaxonomyManager.tsx:920
 msgid "Taxonomy created"
 msgstr "Taxonomi skapad"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:807
+#: packages/admin/src/components/TaxonomyManager.tsx:809
 msgid "Taxonomy not found:"
 msgstr "Taxonomi hittades inte:"
 
@@ -7594,17 +7594,17 @@ msgstr "Mall:"
 
 #: packages/admin/src/components/TaxonomyManager.tsx:377
 #: packages/admin/src/components/TaxonomyManager.tsx:378
-#: packages/admin/src/components/TaxonomyManager.tsx:834
+#: packages/admin/src/components/TaxonomyManager.tsx:836
 msgid "Term"
 msgstr "Term"
 
 #. placeholder {0}: term.label
 #. placeholder {1}: term.locale.toUpperCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:781
+#: packages/admin/src/components/TaxonomyManager.tsx:783
 msgid "Term \"{0}\" created in {1}."
 msgstr "Termen \"{0}\" skapades i {1}."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:763
+#: packages/admin/src/components/TaxonomyManager.tsx:765
 msgid "Term deleted"
 msgstr "Term borttagen"
 
@@ -7798,7 +7798,7 @@ msgid "This will move the item to trash. You can restore it later from the trash
 msgstr "Detta flyttar objektet till papperskorgen. Du kan återställa det senare från papperskorgen."
 
 #. placeholder {0}: deleteTarget?.label
-#: packages/admin/src/components/TaxonomyManager.tsx:904
+#: packages/admin/src/components/TaxonomyManager.tsx:906
 msgid "This will permanently delete \"{0}\" and remove it from all content."
 msgstr "Detta tar bort \"{0}\" permanent och tar bort det från allt innehåll."
 
@@ -7925,7 +7925,7 @@ msgid "Translating..."
 msgstr "Översätter …"
 
 #: packages/admin/src/components/MenuEditor.tsx:143
-#: packages/admin/src/components/TaxonomyManager.tsx:780
+#: packages/admin/src/components/TaxonomyManager.tsx:782
 #: packages/admin/src/router.tsx:1119
 msgid "Translation created"
 msgstr "Översättning skapad"

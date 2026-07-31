@@ -288,7 +288,7 @@ msgid "{0} system + {1} custom {2}"
 msgstr "{0} del sistema + {1} {2}"
 
 #. placeholder {0}: taxonomy.label
-#: packages/admin/src/components/TaxonomySidebar.tsx:360
+#: packages/admin/src/components/TaxonomySidebar.tsx:365
 msgid "{0} updated"
 msgstr "Se actualizó {0}"
 
@@ -602,7 +602,7 @@ msgstr "Campos ACF"
 #: packages/admin/src/components/ContentList.tsx:528
 #: packages/admin/src/components/ContentList.tsx:649
 #: packages/admin/src/components/ContentTypeList.tsx:108
-#: packages/admin/src/components/TaxonomyManager.tsx:843
+#: packages/admin/src/components/TaxonomyManager.tsx:845
 #: packages/admin/src/routes/byline-schema.tsx:249
 msgid "Actions"
 msgstr "Acciones"
@@ -615,7 +615,7 @@ msgstr "Activo"
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
 #: packages/admin/src/components/ContentSettingsPanel.tsx:871
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:491
+#: packages/admin/src/components/TaxonomySidebar.tsx:496
 msgid "Add"
 msgstr "Agregar"
 
@@ -623,11 +623,11 @@ msgstr "Agregar"
 #. placeholder {0}: taxonomyDef.labelSingular || t`Term`
 #: packages/admin/src/components/PortableTextEditor.tsx:1874
 #: packages/admin/src/components/TaxonomyManager.tsx:378
-#: packages/admin/src/components/TaxonomyManager.tsx:834
+#: packages/admin/src/components/TaxonomyManager.tsx:836
 msgid "Add {0}"
 msgstr "Agregar {0}"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:279
+#: packages/admin/src/components/TaxonomySidebar.tsx:282
 msgid "Add {label}"
 msgstr "Añadir {label}"
 
@@ -726,7 +726,7 @@ msgid "Add New"
 msgstr "Agregar nuevo"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:503
+#: packages/admin/src/components/TaxonomySidebar.tsx:508
 msgid "Add new {0}"
 msgstr "Agregar nuevo {0}"
 
@@ -758,7 +758,7 @@ msgstr "Agregar campos de metadatos SEO (título, descripción, imagen) e inclui
 msgid "Add Sub-Field"
 msgstr "Agregar subcampo"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:278
+#: packages/admin/src/components/TaxonomySidebar.tsx:281
 msgid "Add tags..."
 msgstr "Añadir etiquetas..."
 
@@ -949,7 +949,7 @@ msgstr "Alternativamente, puede exportar desde WordPress (Herramientas → Expor
 #: packages/admin/src/components/settings/SecuritySettings.tsx:71
 #: packages/admin/src/components/settings/SeoSettings.tsx:45
 #: packages/admin/src/components/settings/SocialSettings.tsx:43
-#: packages/admin/src/components/TaxonomySidebar.tsx:365
+#: packages/admin/src/components/TaxonomySidebar.tsx:370
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
 #: packages/admin/src/router.tsx:423
 #: packages/admin/src/router.tsx:438
@@ -1934,7 +1934,7 @@ msgstr "No se pudieron buscar las firmas. Inténtelo de nuevo."
 msgid "Couldn't verify how many values reference \"{0}\". Deleting will still remove every stored value for this field — but the count above could not be checked."
 msgstr "No se pudo verificar cuántos valores hacen referencia a \"{0}\". La eliminación quitará igualmente todos los valores almacenados de este campo, pero no se pudo comprobar el conteo mostrado arriba."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:842
+#: packages/admin/src/components/TaxonomyManager.tsx:844
 msgid "Count"
 msgstr "Contar"
 
@@ -1948,7 +1948,7 @@ msgstr "Contar"
 msgid "Create"
 msgstr "Crear"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:305
+#: packages/admin/src/components/TaxonomySidebar.tsx:308
 msgid "Create \"{trimmedInput}\""
 msgstr "Crear \"{trimmedInput}\""
 
@@ -2129,7 +2129,7 @@ msgstr "Creando colecciones y campos..."
 #: packages/admin/src/components/Sections.tsx:212
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:477
 #: packages/admin/src/components/TaxonomyManager.tsx:711
-#: packages/admin/src/components/TaxonomySidebar.tsx:305
+#: packages/admin/src/components/TaxonomySidebar.tsx:308
 msgid "Creating..."
 msgstr "Creando..."
 
@@ -2267,7 +2267,7 @@ msgstr "Definido en código"
 #: packages/admin/src/components/Sections.tsx:308
 #: packages/admin/src/components/Sections.tsx:407
 #: packages/admin/src/components/settings/BackupSettings.tsx:284
-#: packages/admin/src/components/TaxonomyManager.tsx:906
+#: packages/admin/src/components/TaxonomyManager.tsx:908
 #: packages/admin/src/components/Widgets.tsx:716
 #: packages/admin/src/routes/byline-schema.tsx:378
 #: packages/admin/src/routes/bylines.tsx:588
@@ -2309,7 +2309,7 @@ msgid "Delete {0} widget area"
 msgstr "Eliminar el área de widgets {0}"
 
 #. placeholder {0}: taxonomyDef.labelSingular || "Term"
-#: packages/admin/src/components/TaxonomyManager.tsx:902
+#: packages/admin/src/components/TaxonomyManager.tsx:904
 msgid "Delete {0}?"
 msgstr "¿Eliminar {0}?"
 
@@ -2429,7 +2429,7 @@ msgstr "Eliminar \"{0}\" también quitará {1, plural, one {# valor almacenado} 
 #: packages/admin/src/components/Redirects.tsx:586
 #: packages/admin/src/components/Sections.tsx:309
 #: packages/admin/src/components/settings/BackupSettings.tsx:285
-#: packages/admin/src/components/TaxonomyManager.tsx:907
+#: packages/admin/src/components/TaxonomyManager.tsx:909
 #: packages/admin/src/components/Widgets.tsx:717
 #: packages/admin/src/routes/bylines.tsx:625
 msgid "Deleting..."
@@ -3193,7 +3193,7 @@ msgstr "No se pudo crear la sección"
 msgid "Failed to create some collections"
 msgstr "No se pudieron crear algunas colecciones."
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:510
+#: packages/admin/src/components/TaxonomySidebar.tsx:515
 msgid "Failed to create term"
 msgstr "No se pudo crear el término"
 
@@ -3345,7 +3345,7 @@ msgstr "No se pudieron obtener las estadísticas del panel"
 msgid "Failed to fetch email settings"
 msgstr "No se pudo obtener la configuración de correo electrónico"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:106
+#: packages/admin/src/components/TaxonomySidebar.tsx:109
 msgid "Failed to fetch entry terms"
 msgstr "No se pudieron obtener los términos de la entrada"
 
@@ -3403,7 +3403,7 @@ msgstr "No se pudo obtener la configuración"
 msgid "Failed to fetch setup status"
 msgstr "No se pudo obtener el estado de la configuración"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:87
+#: packages/admin/src/components/TaxonomySidebar.tsx:90
 msgid "Failed to fetch terms"
 msgstr "No se pudieron obtener los términos"
 
@@ -3630,7 +3630,7 @@ msgstr "No se pudo enviar el correo electrónico de prueba"
 msgid "Failed to send verification email"
 msgstr "No se pudo enviar el correo electrónico de verificación"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:129
+#: packages/admin/src/components/TaxonomySidebar.tsx:132
 msgid "Failed to set entry terms"
 msgstr "No se pudieron establecer los términos de la entrada"
 
@@ -3652,7 +3652,7 @@ msgid "Failed to update"
 msgstr "No se pudo actualizar"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:364
+#: packages/admin/src/components/TaxonomySidebar.tsx:369
 msgid "Failed to update {0}"
 msgstr "No se pudo actualizar {0}"
 
@@ -4683,7 +4683,7 @@ msgstr "Cargando configuración..."
 msgid "Loading setup..."
 msgstr "Cargando configuración..."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:847
+#: packages/admin/src/components/TaxonomyManager.tsx:849
 msgid "Loading terms..."
 msgstr "Cargando términos..."
 
@@ -4703,7 +4703,7 @@ msgstr "Cargando widgets..."
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:161
 #: packages/admin/src/components/settings/SecuritySettings.tsx:104
-#: packages/admin/src/components/TaxonomyManager.tsx:801
+#: packages/admin/src/components/TaxonomyManager.tsx:803
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
@@ -4778,7 +4778,7 @@ msgstr "Administrar"
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
 #. placeholder {1}: taxonomyDef.collections.join(", ")
-#: packages/admin/src/components/TaxonomyManager.tsx:818
+#: packages/admin/src/components/TaxonomyManager.tsx:820
 msgid "Manage {0} for {1}"
 msgstr "Administrar {0} para {1}"
 
@@ -5123,7 +5123,7 @@ msgstr "Mi blog impresionante"
 #: packages/admin/src/components/MenuList.tsx:157
 #: packages/admin/src/components/TaxonomyManager.tsx:405
 #: packages/admin/src/components/TaxonomyManager.tsx:654
-#: packages/admin/src/components/TaxonomyManager.tsx:841
+#: packages/admin/src/components/TaxonomyManager.tsx:843
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:37
 #: packages/admin/src/components/users/UserDetail.tsx:148
 #: packages/admin/src/components/Widgets.tsx:430
@@ -5160,7 +5160,7 @@ msgid "NEW"
 msgstr "NUEVO"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:479
+#: packages/admin/src/components/TaxonomySidebar.tsx:484
 msgid "New {0}"
 msgstr "Nuevo {0}"
 
@@ -5202,7 +5202,7 @@ msgstr "Nueva sección"
 msgid "new tab"
 msgstr "nueva pestaña"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:831
+#: packages/admin/src/components/TaxonomyManager.tsx:833
 msgid "New Taxonomy"
 msgstr "Nueva taxonomía"
 
@@ -5245,7 +5245,7 @@ msgid "No (shared across translations)"
 msgstr "No (compartido entre traducciones)"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:449
+#: packages/admin/src/components/TaxonomySidebar.tsx:454
 msgid "No {0} available."
 msgstr "No hay {0} disponible."
 
@@ -5255,7 +5255,7 @@ msgid "No {0} yet."
 msgstr "Aún no hay {0}."
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:850
+#: packages/admin/src/components/TaxonomyManager.tsx:852
 msgid "No {0} yet. Create one to get started."
 msgstr "Aún no hay {0}. Crea uno para comenzar."
 
@@ -6268,7 +6268,7 @@ msgstr "Eliminar"
 #. placeholder {0}: passkey.name
 #. placeholder {0}: term.label
 #: packages/admin/src/components/settings/PasskeyItem.tsx:186
-#: packages/admin/src/components/TaxonomySidebar.tsx:259
+#: packages/admin/src/components/TaxonomySidebar.tsx:262
 msgid "Remove {0}"
 msgstr "Eliminar {0}"
 
@@ -7568,7 +7568,7 @@ msgid "Target locale"
 msgstr "Locale de destino"
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:610
-#: packages/admin/src/components/TaxonomySidebar.tsx:550
+#: packages/admin/src/components/TaxonomySidebar.tsx:555
 msgid "Taxonomies"
 msgstr "Taxonomías"
 
@@ -7576,11 +7576,11 @@ msgstr "Taxonomías"
 msgid "Taxonomies Manage"
 msgstr "Administración de taxonomías"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:918
+#: packages/admin/src/components/TaxonomyManager.tsx:920
 msgid "Taxonomy created"
 msgstr "Taxonomía creada"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:807
+#: packages/admin/src/components/TaxonomyManager.tsx:809
 msgid "Taxonomy not found:"
 msgstr "Taxonomía no encontrada:"
 
@@ -7594,17 +7594,17 @@ msgstr "Plantilla:"
 
 #: packages/admin/src/components/TaxonomyManager.tsx:377
 #: packages/admin/src/components/TaxonomyManager.tsx:378
-#: packages/admin/src/components/TaxonomyManager.tsx:834
+#: packages/admin/src/components/TaxonomyManager.tsx:836
 msgid "Term"
 msgstr "Término"
 
 #. placeholder {0}: term.label
 #. placeholder {1}: term.locale.toUpperCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:781
+#: packages/admin/src/components/TaxonomyManager.tsx:783
 msgid "Term \"{0}\" created in {1}."
 msgstr "Término \"{0}\" creado en {1}."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:763
+#: packages/admin/src/components/TaxonomyManager.tsx:765
 msgid "Term deleted"
 msgstr "Término eliminado"
 
@@ -7798,7 +7798,7 @@ msgid "This will move the item to trash. You can restore it later from the trash
 msgstr "Esto moverá el artículo a la papelera. Puedes restaurarlo más tarde desde la papelera."
 
 #. placeholder {0}: deleteTarget?.label
-#: packages/admin/src/components/TaxonomyManager.tsx:904
+#: packages/admin/src/components/TaxonomyManager.tsx:906
 msgid "This will permanently delete \"{0}\" and remove it from all content."
 msgstr "Esto eliminará permanentemente \"{0}\" y ​​lo eliminará de todo el contenido."
 
@@ -7925,7 +7925,7 @@ msgid "Translating..."
 msgstr "Traduciendo..."
 
 #: packages/admin/src/components/MenuEditor.tsx:143
-#: packages/admin/src/components/TaxonomyManager.tsx:780
+#: packages/admin/src/components/TaxonomyManager.tsx:782
 #: packages/admin/src/router.tsx:1119
 msgid "Translation created"
 msgstr "Traducción creada"
