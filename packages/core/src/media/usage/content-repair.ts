@@ -469,6 +469,7 @@ async function repairSnapshotSources(
 		);
 		if (result.replaced) {
 			counts.indexedSourceCount++;
+			if (snapshot.source.sourceCompleteness === "partial") counts.skippedSourceCount++;
 		} else {
 			markRepairConflict(counts);
 		}

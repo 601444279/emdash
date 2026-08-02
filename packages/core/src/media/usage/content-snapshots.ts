@@ -19,7 +19,7 @@ import {
 	type MediaUsageContentSourceVariant,
 } from "./source-key.js";
 
-export const CONTENT_SOURCE_SCHEMA_VERSION = 2;
+export const CONTENT_SOURCE_SCHEMA_VERSION = 3;
 
 const CONTENT_SYSTEM_COLUMNS = [
 	"id",
@@ -100,16 +100,12 @@ export async function loadContentMediaUsageSnapshots(
 			data: columnsData,
 		}),
 	);
-	if (!columnsOccurrences.success) {
-		return {
-			success: false,
-			error: "LOCAL_MEDIA_NOT_FOUND",
-			source: columnsSource,
-		};
-	}
 	const snapshots: ContentMediaUsageSnapshot[] = [
 		{
-			source: columnsSource,
+			source: {
+				...columnsSource,
+				...(columnsOccurrences.hasUnresolved ? { sourceCompleteness: "partial" } : {}),
+			},
 			occurrences: columnsOccurrences.occurrences,
 			fields: discovery.extractionFields,
 		},
@@ -182,16 +178,11 @@ export async function loadContentMediaUsageSnapshots(
 				data: draftOverlayData,
 			}),
 		);
-		if (!draftOccurrences.success) {
-			return {
-				success: false,
-				error: "LOCAL_MEDIA_NOT_FOUND",
-				source: draftSource,
-				snapshots,
-			};
-		}
 		snapshots.push({
-			source: draftSource,
+			source: {
+				...draftSource,
+				...(draftOccurrences.hasUnresolved ? { sourceCompleteness: "partial" } : {}),
+			},
 			occurrences: draftOccurrences.occurrences,
 			fields: discovery.extractionFields,
 		});
@@ -206,7 +197,7 @@ export async function loadContentMediaUsageSnapshots(
 async function canonicalizeLocalMediaOccurrences(
 	db: Kysely<Database>,
 	occurrences: ReturnType<typeof extractMediaUsageOccurrences>,
-): Promise<{ success: true; occurrences: MediaUsageOccurrenceInput[] } | { success: false }> {
+): Promise<{ occurrences: MediaUsageOccurrenceInput[]; hasUnresolved: boolean }> {
 	const storageKeys = [
 		...new Set(
 			occurrences
@@ -217,8 +208,8 @@ async function canonicalizeLocalMediaOccurrences(
 	];
 	if (storageKeys.length === 0) {
 		return {
-			success: true,
 			occurrences: occurrences.map(({ storageKey: _storageKey, ...occurrence }) => occurrence),
+			hasUnresolved: false,
 		};
 	}
 
@@ -231,17 +222,17 @@ async function canonicalizeLocalMediaOccurrences(
 			.execute();
 		for (const row of mediaRows) mediaIdByStorageKey.set(row.storage_key, row.id);
 	}
-	if (storageKeys.some((storageKey) => !mediaIdByStorageKey.has(storageKey))) {
-		return { success: false };
-	}
-
 	return {
-		success: true,
 		occurrences: occurrences.map(({ storageKey, ...occurrence }) => {
 			const canonicalId = storageKey ? mediaIdByStorageKey.get(storageKey) : undefined;
-			if (!canonicalId) return occurrence;
-			return { ...occurrence, mediaId: canonicalId, providerAssetId: canonicalId };
+			if (!storageKey || canonicalId) {
+				return canonicalId
+					? { ...occurrence, mediaId: canonicalId, providerAssetId: canonicalId }
+					: occurrence;
+			}
+			return { ...occurrence, mediaId: null };
 		}),
+		hasUnresolved: storageKeys.some((storageKey) => !mediaIdByStorageKey.has(storageKey)),
 	};
 }
 

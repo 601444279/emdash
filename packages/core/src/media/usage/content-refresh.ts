@@ -161,6 +161,11 @@ async function refreshContentMediaUsageAttempt(
 			});
 		}
 	}
+	if (
+		snapshotsResult.snapshots.some((snapshot) => snapshot.source.sourceCompleteness === "partial")
+	) {
+		await markContentMediaUsageCollectionPartial(db, collectionSlug);
+	}
 
 	return {
 		success: true,
@@ -369,6 +374,31 @@ export async function markContentMediaUsageCollectionStale(
 		indexedSourceCount: existing?.indexedSourceCount ?? 0,
 		failedSourceCount: existing?.failedSourceCount ?? 0,
 		lastErrorCode,
+	});
+}
+
+async function markContentMediaUsageCollectionPartial(
+	db: Kysely<Database>,
+	collectionSlug: string,
+): Promise<void> {
+	validateIdentifier(collectionSlug, "collection slug");
+	const repo = new MediaUsageRepository(db);
+	const identity = {
+		adapterId: CONTENT_MEDIA_USAGE_ADAPTER_ID,
+		scopeType: CONTENT_MEDIA_USAGE_COLLECTION_SCOPE,
+		scopeKey: collectionSlug,
+	};
+	const existing = await repo.findIndexStatus(identity);
+	await repo.upsertIndexStatus({
+		...identity,
+		status: "partial",
+		schemaVersion: CONTENT_SOURCE_SCHEMA_VERSION,
+		startedAt: existing?.startedAt ?? null,
+		completedAt: existing?.completedAt ?? null,
+		cursor: existing?.cursor ?? null,
+		indexedSourceCount: existing?.indexedSourceCount ?? 0,
+		failedSourceCount: existing?.failedSourceCount ?? 0,
+		lastErrorCode: null,
 	});
 }
 

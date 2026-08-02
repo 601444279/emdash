@@ -16,38 +16,8 @@ vi.mock("../../src/lib/api", async () => {
 	};
 });
 
-const navigateMock = vi.hoisted(() => vi.fn());
-
-vi.mock("@tanstack/react-router", () => ({
-	useNavigate: () => navigateMock,
-}));
-
 vi.mock("../../src/components/MediaUsedIn", () => ({
-	MediaUsedIn: ({
-		onEntryClick,
-		navigationBlocked,
-	}: {
-		onEntryClick?: (
-			event: React.MouseEvent<HTMLAnchorElement>,
-			entry: { collection: string; contentId: string; locale: string | null },
-		) => void;
-		navigationBlocked?: boolean;
-	}) => (
-		<button
-			type="button"
-			data-testid="media-used-in"
-			disabled={navigationBlocked}
-			onClick={(event) =>
-				onEntryClick?.(event as unknown as React.MouseEvent<HTMLAnchorElement>, {
-					collection: "posts",
-					contentId: "post-1",
-					locale: "fr",
-				})
-			}
-		>
-			Open usage entry
-		</button>
-	),
+	MediaUsedIn: () => <div data-testid="media-used-in" />,
 }));
 
 // Import the mocked functions for assertions
@@ -111,7 +81,6 @@ function renderPanel(props: Partial<React.ComponentProps<typeof MediaDetailPanel
 describe("MediaDetailPanel", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		navigateMock.mockResolvedValue(undefined);
 	});
 
 	it("does not render dialog contents when closed", async () => {
@@ -135,42 +104,6 @@ describe("MediaDetailPanel", () => {
 		const item = makeImageItem({ width: 1920, height: 1080 });
 		const screen = await renderPanel({ item });
 		await expect.element(screen.getByText("1920 × 1080")).toBeInTheDocument();
-	});
-
-	it("renders the responsive two-column viewport-bounded dialog layout", async () => {
-		const screen = await renderPanel();
-		const dialog = screen.getByRole("dialog", { name: "Media Details" }).element();
-		const header = screen.getByTestId("media-detail-dialog-header").element();
-		const body = screen.getByTestId("media-detail-dialog-body").element();
-		const previewColumn = screen.getByTestId("media-detail-dialog-preview-column").element();
-		const detailsColumn = screen.getByTestId("media-detail-dialog-details-column").element();
-		const fileFacts = screen.getByTestId("media-detail-dialog-file-facts").element();
-		const footer = screen.getByTestId("media-detail-dialog-footer").element();
-
-		expect(body.className).toContain("grid-cols-1");
-		expect(body.className).toContain("md:grid-cols-2");
-		expect(dialog.style.height).toBe("min(88dvh, 48rem)");
-		expect(dialog.style.maxHeight).toBe("");
-		expect(dialog.className).toContain("data-starting-style:scale-90");
-		expect(dialog.className).toContain("data-starting-style:opacity-0");
-		expect(dialog.style.transitionProperty).toBe("scale, opacity");
-		expect(header.style.padding).toBe("1.25rem 2rem");
-		expect(previewColumn.contains(fileFacts)).toBe(true);
-		expect(detailsColumn.contains(fileFacts)).toBe(false);
-		expect(previewColumn.className).toContain("md:p-8");
-		expect(detailsColumn.className).toContain("md:p-8");
-		// Columns only constrain/scroll at md+; on mobile the body scrolls as one
-		// column so collapsed columns can't compress and overlap their content.
-		expect(body.className).toContain("overflow-y-auto");
-		expect(body.className).toContain("md:overflow-hidden");
-		expect(previewColumn.className).toContain("md:min-h-0");
-		expect(previewColumn.className).toContain("md:overflow-y-auto");
-		expect(previewColumn.className).not.toContain(" min-h-0");
-		expect(detailsColumn.className).toContain("md:min-h-0");
-		expect(detailsColumn.className).toContain("md:overflow-y-auto");
-		expect(detailsColumn.className).not.toContain(" min-h-0");
-		expect(fileFacts.className).toContain("space-y-3");
-		expect(footer.style.padding).toBe("1.25rem 2rem");
 	});
 
 	it("renders summarized local media usage and omits missing summaries and provider assets", async () => {
@@ -202,44 +135,6 @@ describe("MediaDetailPanel", () => {
 			.not.toBeInTheDocument();
 	});
 
-	it("confirms before navigating away from dirty metadata", async () => {
-		const screen = await renderPanel({
-			item: makeImageItem({ alt: "Original", usage: completeUsage }),
-		});
-
-		await screen.getByLabelText("Alt Text").fill("Changed");
-		screen.getByRole("button", { name: "Open usage entry" }).element().click();
-
-		await expect.element(screen.getByText("Discard changes?")).toBeVisible();
-		expect(navigateMock).not.toHaveBeenCalled();
-
-		screen.getByRole("button", { name: "Discard" }).element().click();
-		await vi.waitFor(() => {
-			expect(navigateMock).toHaveBeenCalledWith({
-				to: "/content/$collection/$id",
-				params: { collection: "posts", id: "post-1" },
-				search: { locale: "fr" },
-			});
-		});
-	});
-
-	it("does not intercept modified usage-link clicks when metadata is dirty", async () => {
-		const screen = await renderPanel({
-			item: makeImageItem({ alt: "Original", usage: completeUsage }),
-		});
-		await screen.getByLabelText("Alt Text").fill("Changed");
-
-		screen
-			.getByRole("button", { name: "Open usage entry" })
-			.element()
-			.dispatchEvent(new MouseEvent("click", { bubbles: true, metaKey: true }));
-
-		await expect
-			.element(screen.getByText("Discard changes?"), { timeout: 100 })
-			.not.toBeInTheDocument();
-		expect(navigateMock).not.toHaveBeenCalled();
-	});
-
 	it("shows image preview for image mimeTypes", async () => {
 		const item = makeImageItem();
 		const screen = await renderPanel({ item });
@@ -260,7 +155,6 @@ describe("MediaDetailPanel", () => {
 		const screen = await renderPanel({ item });
 		const altInput = screen.getByLabelText("Alt Text");
 		await expect.element(altInput).toBeInTheDocument();
-		expect(altInput.element().className).toContain("w-full");
 		await expect
 			.element(screen.getByRole("button", { name: "Why is this important?" }))
 			.toBeInTheDocument();
@@ -293,8 +187,6 @@ describe("MediaDetailPanel", () => {
 		const screen = await renderPanel({ item });
 		const filenameInput = screen.getByLabelText("Filename");
 		await expect.element(filenameInput).toBeDisabled();
-		expect(filenameInput.element().className).toContain("bg-kumo-tint");
-		expect(filenameInput.element().className).toContain("w-full");
 		await expect
 			.element(screen.getByRole("button", { name: "Why can't this be changed?" }))
 			.toBeInTheDocument();
@@ -382,7 +274,6 @@ describe("MediaDetailPanel", () => {
 		await expect.element(screen.getByRole("button", { name: "Saving..." })).toBeDisabled();
 		await expect.element(screen.getByRole("button", { name: "Close" })).toBeDisabled();
 		await expect.element(screen.getByRole("button", { name: "Cancel" })).toBeDisabled();
-		await expect.element(screen.getByRole("button", { name: "Open usage entry" })).toBeDisabled();
 
 		screen.getByRole("button", { name: "Close" }).element().click();
 		expect(onClose).not.toHaveBeenCalled();

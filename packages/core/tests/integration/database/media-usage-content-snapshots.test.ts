@@ -230,29 +230,63 @@ describeEachDialect("content media usage snapshots", (dialect) => {
 		);
 	});
 
-	it("fails when a local media storage key cannot be resolved", async () => {
-		const storageKey = `${ulid()}.jpg`;
+	it("retains resolvable legacy media when another storage key is missing", async () => {
+		const mediaId = ulid();
+		const resolvedStorageKey = `${ulid()}.jpg`;
+		const missingStorageKey = `${ulid()}.jpg`;
+		await ctx.db
+			.insertInto("media")
+			.values({
+				id: mediaId,
+				filename: "resolved.jpg",
+				mime_type: "image/jpeg",
+				size: null,
+				width: null,
+				height: null,
+				alt: null,
+				caption: null,
+				storage_key: resolvedStorageKey,
+				status: "ready",
+				content_hash: null,
+				blurhash: null,
+				dominant_color: null,
+				created_at: new Date().toISOString(),
+				author_id: null,
+			})
+			.execute();
 		const item = await insertPost(ctx, {
-			slug: "missing-legacy-media",
+			slug: "partially-resolved-legacy-media",
 			status: "published",
 			data: {
-				title: "Missing legacy media",
+				title: "Partially resolved legacy media",
 				hero: {
 					provider: "local",
-					id: storageKey.slice(0, -4),
-					meta: { storageKey },
+					id: missingStorageKey.slice(0, -4),
+					meta: { storageKey: missingStorageKey },
+				},
+				attachment: {
+					provider: "local",
+					id: resolvedStorageKey.slice(0, -4),
+					meta: { storageKey: resolvedStorageKey },
 				},
 			},
 		});
 
 		const result = await loadContentMediaUsageSnapshots(ctx.db, "posts", item.id);
 
-		expect(result).toEqual(
-			expect.objectContaining({
-				success: false,
-				error: "LOCAL_MEDIA_NOT_FOUND",
-				source: expect.objectContaining({ sourceVariant: "columns" }),
-			}),
+		expect(result.success).toBe(true);
+		if (!result.success) throw new Error(result.error);
+		const snapshot = getSnapshot(result, "columns");
+		expect(snapshot.source.sourceCompleteness).toBe("partial");
+		expect(snapshot.occurrences).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ fieldPath: "attachment", mediaId, providerAssetId: mediaId }),
+				expect.objectContaining({
+					fieldPath: "hero",
+					mediaId: null,
+					providerAssetId: missingStorageKey.slice(0, -4),
+				}),
+			]),
 		);
 	});
 
@@ -572,8 +606,8 @@ describeEachDialect("content media usage snapshots", (dialect) => {
 		const secondColumns = getSnapshot(secondResult, "columns");
 		const secondOverlay = getSnapshot(secondResult, "draft_overlay");
 
-		expect(firstColumns.source.schemaVersion).toBe(2);
-		expect(firstOverlay.source.schemaVersion).toBe(2);
+		expect(firstColumns.source.schemaVersion).toBe(3);
+		expect(firstOverlay.source.schemaVersion).toBe(3);
 		expect(firstColumns.source.sourceFingerprint).toEqual(expect.stringMatching(/^[a-f0-9]{16}$/));
 		expect(firstOverlay.source.sourceFingerprint).toEqual(expect.stringMatching(/^[a-f0-9]{16}$/));
 		expect(firstOverlay.source.sourceFingerprint).not.toBe(firstColumns.source.sourceFingerprint);
