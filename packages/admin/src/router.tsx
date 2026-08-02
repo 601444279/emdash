@@ -1344,7 +1344,9 @@ function MediaPage() {
 			isLoading={isLoading || isFetchingNextPage}
 			hasMore={!!hasNextPage}
 			onLoadMore={() => void fetchNextPage()}
-			onUpload={(file) => uploadMutation.mutate(file)}
+			onUpload={async (file) => {
+				await uploadMutation.mutateAsync(file);
+			}}
 			onLocalSearchChange={setSearch}
 			onLocalMimeFilterChange={setMimeFilter}
 		/>
@@ -1485,8 +1487,8 @@ function CommentsPage() {
 		return (
 			<div className="flex items-center justify-center min-h-[50vh]">
 				<div className="text-center">
-					<h1 className="text-2xl font-bold">{t`Access Denied`}</h1>
-					<p className="mt-2 text-kumo-subtle">{t`You need Editor permissions to moderate comments.`}</p>
+					<h1 className="text-2xl font-semibold leading-tight">{t`Access Denied`}</h1>
+					<p className="mt-2 text-sm text-kumo-subtle">{t`You need Editor permissions to moderate comments.`}</p>
 				</div>
 			</div>
 		);
@@ -2174,8 +2176,8 @@ function ErrorScreen({ error }: { error: string }) {
 	return (
 		<div className="flex items-center justify-center min-h-screen">
 			<div className="text-center">
-				<h1 className="text-xl font-bold text-kumo-danger">{t`Error`}</h1>
-				<p className="mt-2 text-kumo-subtle">{error}</p>
+				<h1 className="text-2xl font-semibold leading-tight text-kumo-danger">{t`Error`}</h1>
+				<p className="mt-2 text-sm text-kumo-subtle">{error}</p>
 				<Button onClick={() => window.location.reload()} className="mt-4">
 					{t`Retry`}
 				</Button>
@@ -2189,11 +2191,11 @@ function NotFoundPage({ message }: { message?: string }) {
 	return (
 		<div className="flex items-center justify-center min-h-[50vh]">
 			<div className="text-center">
-				<h1 className="text-2xl font-bold">{t`Page Not Found`}</h1>
-				<p className="mt-2 text-kumo-subtle">
+				<h1 className="text-2xl font-semibold leading-tight">{t`Page Not Found`}</h1>
+				<p className="mt-2 text-sm text-kumo-subtle">
 					{message ?? t`The page you're looking for doesn't exist.`}
 				</p>
-				<Link to="/" className="mt-4 inline-block text-kumo-brand">
+				<Link to="/" className="mt-4 inline-block text-kumo-link">
 					{t`Go to Dashboard`}
 				</Link>
 			</div>
