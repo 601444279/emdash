@@ -1,4 +1,4 @@
-import { Badge, Banner, Button, SkeletonLine } from "@cloudflare/kumo";
+import { Badge, Banner, Button, SkeletonLine, Tooltip } from "@cloudflare/kumo";
 import { useLingui } from "@lingui/react/macro";
 import { Warning } from "@phosphor-icons/react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -66,6 +66,7 @@ export function MediaUsedIn({
 		summary.coverage.status,
 	);
 	const coverageComplete = coverageStatus === "complete";
+	const incompleteCoverageTooltip = t`Some content may not appear here yet.`;
 	const countLabel =
 		summary.count === 0 && (!usageQuery.isSuccess || entries.length > 0 || !coverageComplete)
 			? null
@@ -74,10 +75,28 @@ export function MediaUsedIn({
 	return (
 		<section className="space-y-3" aria-labelledby={headingId} data-testid="media-used-in">
 			<div className="flex items-center gap-2">
-				<h3 id={headingId} className="text-sm font-medium text-kumo-default">
+				<h3 id={headingId} className="text-base font-medium text-kumo-default">
 					{t`Used in`}
 				</h3>
-				{countLabel !== null && <span className="text-sm text-kumo-subtle">{countLabel}</span>}
+				{countLabel !== null && <span className="text-base text-kumo-subtle">{countLabel}</span>}
+				{!coverageComplete && (
+					<Tooltip
+						content={incompleteCoverageTooltip}
+						delay={0}
+						closeDelay={0}
+						render={
+							<Button
+								type="button"
+								variant="ghost"
+								shape="square"
+								size="xs"
+								icon={<Warning weight="fill" aria-hidden="true" />}
+								className="text-kumo-warning hover:text-kumo-warning"
+								aria-label={incompleteCoverageTooltip}
+							/>
+						}
+					/>
+				)}
 			</div>
 
 			{!canReadDetails ? (
@@ -98,15 +117,6 @@ export function MediaUsedIn({
 				/>
 			) : (
 				<div className="space-y-4">
-					{!coverageComplete && (
-						<Banner
-							variant="alert"
-							icon={<Warning weight="fill" aria-hidden="true" />}
-							title={t`Usage may be incomplete`}
-							description={t`Some content references may not be indexed yet.`}
-						/>
-					)}
-
 					{entries.length === 0 ? (
 						<p className="text-sm text-kumo-subtle">
 							{coverageComplete
@@ -197,14 +207,14 @@ function UsageEntry({
 						</Badge>
 					)}
 				</span>
-				<span className="flex min-w-0 items-center gap-1.5 text-base text-kumo-subtle">
+				<span className="flex min-w-0 items-center gap-1.5 text-sm text-kumo-subtle">
 					<span className="min-w-0 truncate" dir="auto">
 						{collectionLabel}
 					</span>
 					<span className="shrink-0 text-kumo-inactive" aria-hidden="true">
 						·
 					</span>
-					<span className="min-w-0 truncate font-mono text-[0.9em]" dir="ltr" title={identifier}>
+					<span className="min-w-0 truncate font-mono" dir="ltr" title={identifier}>
 						{identifier}
 					</span>
 					{showLocale && (

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
 
 import { MediaUsedIn } from "../../src/components/MediaUsedIn";
 import {
@@ -228,7 +229,7 @@ describe("MediaUsedIn", () => {
 		expect(fetchMediaUsageDetails).not.toHaveBeenCalled();
 	});
 
-	it("labels indexed counts and warns when coverage is incomplete", async () => {
+	it("explains incomplete coverage from a header warning tooltip", async () => {
 		const staleSummary: MediaUsageSummary = {
 			count: 4,
 			coverage: { scope: "all_content_collections", status: "stale" },
@@ -242,10 +243,32 @@ describe("MediaUsedIn", () => {
 		const screen = await renderUsedIn({ summary: staleSummary });
 
 		await expect.element(screen.getByText("4")).toBeVisible();
-		await expect.element(screen.getByText("Usage may be incomplete")).toBeVisible();
+		await expect.element(screen.getByText("Used in")).toBeVisible();
+		const warningTrigger = screen.getByRole("button", {
+			name: "Some content may not appear here yet.",
+		});
+		await expect.element(warningTrigger).toBeVisible();
+		expect(warningTrigger.element().parentElement).toBe(
+			screen.getByRole("heading", { name: "Used in" }).element().parentElement,
+		);
 		await expect
-			.element(screen.getByText("Some content references may not be indexed yet."))
-			.toBeVisible();
+			.element(screen.getByText("Some content may not appear here yet."), {
+				timeout: 100,
+			})
+			.not.toBeInTheDocument();
+
+		await userEvent.hover(warningTrigger.element());
+		await expect.element(screen.getByText("Some content may not appear here yet.")).toBeVisible();
+	});
+
+	it("does not show an incomplete-coverage warning when coverage is complete", async () => {
+		const screen = await renderUsedIn();
+
+		await expect
+			.element(screen.getByRole("button", { name: "Some content may not appear here yet." }), {
+				timeout: 100,
+			})
+			.not.toBeInTheDocument();
 	});
 
 	it("shows an inline error and retries the initial request", async () => {

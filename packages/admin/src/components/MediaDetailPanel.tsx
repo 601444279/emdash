@@ -5,9 +5,9 @@
  * Opens when clicking an item in the MediaLibrary.
  */
 
-import { Button, ClipboardText, Dialog, Input, InputArea, Tooltip } from "@cloudflare/kumo";
+import { Button, ClipboardText, Dialog, Input, InputArea } from "@cloudflare/kumo";
 import { useLingui } from "@lingui/react/macro";
-import { X, Trash, Calendar, HardDrive, LinkSimple, Ruler, Info } from "@phosphor-icons/react";
+import { X, Trash, Calendar, HardDrive, LinkSimple, Ruler } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import * as React from "react";
@@ -23,6 +23,7 @@ import { useStableCallback } from "../lib/hooks";
 import { getFileIcon, formatFileSize } from "../lib/media-utils";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { DialogError, getMutationError } from "./DialogError.js";
+import { FieldHelpLabel } from "./FieldHelpLabel.js";
 import { MediaUsedIn } from "./MediaUsedIn.js";
 
 const CLOSE_FALLBACK_MS = 500;
@@ -75,6 +76,8 @@ export function MediaDetailPanel({
 	const [pendingUsageEntry, setPendingUsageEntry] = React.useState<MediaUsageEntryDetail | null>(
 		null,
 	);
+	const filenameInputId = React.useId();
+	const altTextInputId = React.useId();
 
 	React.useEffect(() => {
 		if (!open) return;
@@ -359,26 +362,17 @@ export function MediaDetailPanel({
 							)}
 
 							<div className="space-y-4">
-								<div className="w-full space-y-2">
-									<div className="flex items-center gap-1.5">
-										<span className="text-sm font-medium text-kumo-default">{t`Filename`}</span>
-										<Tooltip
-											content={filenameHelp}
-											delay={0}
-											closeDelay={0}
-											render={
-												<button
-													type="button"
-													className="inline-flex cursor-help rounded-full text-kumo-subtle hover:text-kumo-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kumo-brand"
-													aria-label={filenameHelpLabel}
-												>
-													<Info className="h-4 w-4" aria-hidden="true" />
-												</button>
-											}
-										/>
-									</div>
+								<div className="grid gap-2">
+									<FieldHelpLabel
+										htmlFor={filenameInputId}
+										help={filenameHelp}
+										helpLabel={filenameHelpLabel}
+										labelClassName="m-0 text-base font-medium text-kumo-default"
+									>
+										{t`Filename`}
+									</FieldHelpLabel>
 									<Input
-										aria-label={t`Filename`}
+										id={filenameInputId}
 										value={filename}
 										onChange={(event) => setFilename(event.target.value)}
 										disabled
@@ -388,26 +382,17 @@ export function MediaDetailPanel({
 
 								{canEditMetadata && (
 									<>
-										<div className="w-full space-y-2">
-											<div className="flex items-center gap-1.5">
-												<span className="text-sm font-medium text-kumo-default">{t`Alt Text`}</span>
-												<Tooltip
-													content={altTextHelp}
-													delay={0}
-													closeDelay={0}
-													render={
-														<button
-															type="button"
-															className="inline-flex cursor-help rounded-full text-kumo-subtle hover:text-kumo-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kumo-brand"
-															aria-label={altTextHelpLabel}
-														>
-															<Info className="h-4 w-4" aria-hidden="true" />
-														</button>
-													}
-												/>
-											</div>
+										<div className="grid gap-2">
+											<FieldHelpLabel
+												htmlFor={altTextInputId}
+												help={altTextHelp}
+												helpLabel={altTextHelpLabel}
+												labelClassName="m-0 text-base font-medium text-kumo-default"
+											>
+												{t`Alt Text`}
+											</FieldHelpLabel>
 											<Input
-												aria-label={t`Alt Text`}
+												id={altTextInputId}
 												value={alt}
 												onChange={(event) => setAlt(event.target.value)}
 												placeholder={t`Describe this image for accessibility`}
