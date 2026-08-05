@@ -187,12 +187,12 @@ msgid "{0, plural, one {field} other {fields}}"
 msgstr "{0, plural, one {veld} other {velden}}"
 
 #. placeholder {0}: stats.mediaCount
-#: packages/admin/src/components/Dashboard.tsx:164
+#: packages/admin/src/components/Dashboard.tsx:179
 msgid "{0, plural, one {Media file} other {Media files}}"
 msgstr "{0, plural, one {Mediabestand} other {Mediabestanden}}"
 
 #. placeholder {0}: stats.userCount
-#: packages/admin/src/components/Dashboard.tsx:168
+#: packages/admin/src/components/Dashboard.tsx:183
 msgid "{0, plural, one {User} other {Users}}"
 msgstr "{0, plural, one {Gebruiker} other {Gebruikers}}"
 
@@ -333,7 +333,7 @@ msgstr "{current} van {total}"
 
 #. placeholder {0}: hasMore ? "+" : ""
 #. placeholder {1}: hasMore ? "+" : ""
-#: packages/admin/src/components/ContentList.tsx:933
+#: packages/admin/src/components/ContentList.tsx:945
 msgid "{filteredCount, plural, one {#{0} item} other {#{1} items}}"
 msgstr "{filteredCount, plural, one {#{0} item} other {#{1} items}}"
 
@@ -345,7 +345,7 @@ msgstr "{label} — geen vertaling"
 msgid "{label} — view translation"
 msgstr "{label} — vertaling bekijken"
 
-#: packages/admin/src/components/ContentList.tsx:922
+#: packages/admin/src/components/ContentList.tsx:934
 msgid "{matchCount, plural, one {# item matching \"{searchQuery}\"} other {# items matching \"{searchQuery}\"}}"
 msgstr "{matchCount, plural, one {# item dat overeenkomt met \"{searchQuery}\"} other {# items die overeenkomen met \"{searchQuery}\"}}"
 
@@ -383,15 +383,15 @@ msgstr ""
 msgid "{resultCount, plural, one {# item} other {# items}}"
 msgstr "{resultCount, plural, one {# item} other {# items}}"
 
-#: packages/admin/src/components/ContentList.tsx:405
+#: packages/admin/src/components/ContentList.tsx:411
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr "{selectedCount, plural, one {# geselecteerd} other {# geselecteerd}}"
 
-#: packages/admin/src/components/ContentList.tsx:446
+#: packages/admin/src/components/ContentList.tsx:453
 msgid "{selectedCount, plural, one {Move # item to trash? You can restore it later.} other {Move # items to trash? You can restore them later.}}"
 msgstr "{selectedCount, plural, one {# item naar de prullenbak verplaatsen? Je kunt het later terugzetten.} other {# items naar de prullenbak verplaatsen? Je kunt ze later terugzetten.}}"
 
-#: packages/admin/src/components/ContentList.tsx:928
+#: packages/admin/src/components/ContentList.tsx:940
 msgid "{total, plural, one {# item} other {# items}}"
 msgstr "{total, plural, one {# item} other {# items}}"
 
@@ -409,11 +409,11 @@ msgstr "{total, plural, one {Bestand geüpload} other {# bestanden geüpload}}"
 msgid "{total, plural, one {Upload failed} other {All # uploads failed}}"
 msgstr "{total, plural, one {Upload mislukt} other {Alle # uploads mislukt}}"
 
-#: packages/admin/src/components/Dashboard.tsx:152
+#: packages/admin/src/components/Dashboard.tsx:167
 msgid "{totalDrafts, plural, one {Draft} other {Drafts}}"
 msgstr "{totalDrafts, plural, one {Concept} other {Concepten}}"
 
-#: packages/admin/src/components/Dashboard.tsx:158
+#: packages/admin/src/components/Dashboard.tsx:173
 msgid "{totalScheduled, plural, one {Scheduled} other {Scheduled}}"
 msgstr "{totalScheduled, plural, one {Ingepland} other {Ingepland}}"
 
@@ -599,8 +599,8 @@ msgid "ACF Fields"
 msgstr "ACF-velden"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:300
-#: packages/admin/src/components/ContentList.tsx:528
-#: packages/admin/src/components/ContentList.tsx:649
+#: packages/admin/src/components/ContentList.tsx:535
+#: packages/admin/src/components/ContentList.tsx:656
 #: packages/admin/src/components/ContentTypeList.tsx:108
 #: packages/admin/src/components/TaxonomyManager.tsx:845
 #: packages/admin/src/routes/byline-schema.tsx:249
@@ -613,7 +613,7 @@ msgid "Active"
 msgstr "Actief"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:916
+#: packages/admin/src/components/ContentSettingsPanel.tsx:919
 #: packages/admin/src/components/MenuEditor.tsx:441
 #: packages/admin/src/components/TaxonomySidebar.tsx:496
 msgid "Add"
@@ -721,7 +721,7 @@ msgstr "Voeg links toe om je navigatiemenu op te bouwen"
 msgid "Add MIME type or extension"
 msgstr "MIME-type of extensie toevoegen"
 
-#: packages/admin/src/components/ContentList.tsx:342
+#: packages/admin/src/components/ContentList.tsx:348
 msgid "Add New"
 msgstr "Nieuwe toevoegen"
 
@@ -831,12 +831,12 @@ msgstr "Rechts uitlijnen"
 msgid "Alignment"
 msgstr "Uitlijning"
 
-#: packages/admin/src/components/ContentList.tsx:369
+#: packages/admin/src/components/ContentList.tsx:375
 msgid "All"
 msgstr "Alle"
 
-#: packages/admin/src/components/ContentList.tsx:773
-#: packages/admin/src/components/ContentList.tsx:777
+#: packages/admin/src/components/ContentList.tsx:785
+#: packages/admin/src/components/ContentList.tsx:789
 msgid "All authors"
 msgstr "Alle auteurs"
 
@@ -873,7 +873,7 @@ msgstr "Alle rollen"
 msgid "All Sources"
 msgstr "Alle bronnen"
 
-#: packages/admin/src/components/ContentList.tsx:728
+#: packages/admin/src/components/ContentList.tsx:735
 #: packages/admin/src/components/Redirects.tsx:421
 msgid "All statuses"
 msgstr "Alle statussen"
@@ -1040,12 +1040,8 @@ msgstr "Goedgekeurd"
 msgid "Arbitrary JSON data"
 msgstr "Willekeurige JSON-data"
 
-#: packages/admin/src/components/ContentList.tsx:1166
-msgid "archived"
-msgstr "gearchiveerd"
-
-#: packages/admin/src/components/ContentList.tsx:732
-#: packages/admin/src/components/Dashboard.tsx:355
+#: packages/admin/src/components/ContentList.tsx:739
+#: packages/admin/src/components/ContentStatusBadge.tsx:65
 msgid "Archived"
 msgstr "Gearchiveerd"
 
@@ -1115,7 +1111,7 @@ msgstr "Authenticatie is geannuleerd of verlopen. Probeer het opnieuw."
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1126
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1129
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1339,8 +1335,8 @@ msgstr "Schema voor auteursvermeldingen"
 msgid "Byline Schema"
 msgstr "Schema voor auteursvermeldingen"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:610
 #: packages/admin/src/components/ContentSettingsPanel.tsx:613
+#: packages/admin/src/components/ContentSettingsPanel.tsx:616
 #: packages/admin/src/components/Sidebar.tsx:242
 #: packages/admin/src/routes/bylines.tsx:375
 msgid "Bylines"
@@ -1377,15 +1373,15 @@ msgstr "Kan content bekijken"
 #: packages/admin/src/components/BylineFieldEditor.tsx:315
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:192
 #: packages/admin/src/components/ConfirmDialog.tsx:57
-#: packages/admin/src/components/ContentList.tsx:455
-#: packages/admin/src/components/ContentList.tsx:1054
-#: packages/admin/src/components/ContentList.tsx:1125
-#: packages/admin/src/components/ContentPickerModal.tsx:248
-#: packages/admin/src/components/ContentSettingsPanel.tsx:91
-#: packages/admin/src/components/ContentSettingsPanel.tsx:531
-#: packages/admin/src/components/ContentSettingsPanel.tsx:727
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1030
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1083
+#: packages/admin/src/components/ContentList.tsx:462
+#: packages/admin/src/components/ContentList.tsx:1066
+#: packages/admin/src/components/ContentList.tsx:1137
+#: packages/admin/src/components/ContentPickerModal.tsx:241
+#: packages/admin/src/components/ContentSettingsPanel.tsx:92
+#: packages/admin/src/components/ContentSettingsPanel.tsx:534
+#: packages/admin/src/components/ContentSettingsPanel.tsx:730
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1033
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1086
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1551,11 +1547,11 @@ msgstr "Kies hoe je wilt inloggen"
 msgid "Choose your preferred admin language"
 msgstr "Kies je voorkeurstaal voor de admin"
 
-#: packages/admin/src/components/ContentList.tsx:481
+#: packages/admin/src/components/ContentList.tsx:488
 msgid "Clear"
 msgstr "Wissen"
 
-#: packages/admin/src/components/ContentList.tsx:825
+#: packages/admin/src/components/ContentList.tsx:837
 #: packages/admin/src/components/MediaLibrary.tsx:497
 #: packages/admin/src/components/users/UserList.tsx:129
 msgid "Clear filters"
@@ -1586,9 +1582,9 @@ msgstr "Klik op de link in de e-mail om in te loggen."
 #: packages/admin/src/components/BylineFieldEditor.tsx:218
 #: packages/admin/src/components/BylineFieldEditor.tsx:222
 #: packages/admin/src/components/comments/CommentDetail.tsx:59
-#: packages/admin/src/components/ContentPickerModal.tsx:120
-#: packages/admin/src/components/ContentPickerModal.tsx:126
-#: packages/admin/src/components/ContentPickerModal.tsx:130
+#: packages/admin/src/components/ContentPickerModal.tsx:121
+#: packages/admin/src/components/ContentPickerModal.tsx:127
+#: packages/admin/src/components/ContentPickerModal.tsx:131
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:227
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:229
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:412
@@ -1683,7 +1679,7 @@ msgstr "Details inklappen"
 msgid "colleague@example.com"
 msgstr "collega@example.com"
 
-#: packages/admin/src/components/ContentPickerModal.tsx:156
+#: packages/admin/src/components/ContentPickerModal.tsx:157
 msgid "Collection"
 msgstr "Collectie"
 
@@ -1765,14 +1761,14 @@ msgstr "Verbinden met WordPress"
 msgid "Connected {0}"
 msgstr "Verbonden op {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:184
+#: packages/admin/src/components/ContentSettingsPanel.tsx:185
 msgid "content"
 msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:378
 #: packages/admin/src/components/comments/CommentDetail.tsx:103
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
-#: packages/admin/src/components/Dashboard.tsx:220
+#: packages/admin/src/components/Dashboard.tsx:235
 #: packages/admin/src/components/PortableTextEditor.tsx:2472
 #: packages/admin/src/components/SectionEditor.tsx:195
 #: packages/admin/src/components/Sidebar.tsx:365
@@ -1901,7 +1897,7 @@ msgstr "URL kopiëren"
 msgid "Could not copy automatically. Please select the URL above and copy manually."
 msgstr "Kan niet automatisch kopiëren. Selecteer de URL hierboven en kopieer handmatig."
 
-#: packages/admin/src/components/Dashboard.tsx:75
+#: packages/admin/src/components/Dashboard.tsx:90
 msgid "Could not load dashboard data"
 msgstr "Kan dashboardgegevens niet laden"
 
@@ -1925,7 +1921,7 @@ msgstr "Kan aangepaste velden niet laden."
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "Kan \"{draft}\" niet aan een MIME-type koppelen. Typ het MIME-type direct."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:922
+#: packages/admin/src/components/ContentSettingsPanel.tsx:925
 msgid "Couldn't search bylines. Please try again."
 msgstr "Kan auteursvermeldingen niet doorzoeken. Probeer het opnieuw."
 
@@ -1938,7 +1934,7 @@ msgstr "Kan niet verifiëren hoeveel waarden naar \"{0}\" verwijzen. Verwijderen
 msgid "Count"
 msgstr "Aantal"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1054
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1057
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -1974,7 +1970,7 @@ msgstr "Account aanmaken"
 msgid "Create an account"
 msgstr "Een account aanmaken"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1002
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1005
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "Auteursvermelding aanmaken"
@@ -2061,7 +2057,7 @@ msgstr "Maak je account aan"
 msgid "Create your first navigation menu to get started"
 msgstr "Maak je eerste navigatiemenu aan om te beginnen"
 
-#: packages/admin/src/components/ContentList.tsx:556
+#: packages/admin/src/components/ContentList.tsx:563
 #: packages/admin/src/components/ContentTypeList.tsx:124
 msgid "Create your first one"
 msgstr "Maak je eerste aan"
@@ -2092,8 +2088,8 @@ msgstr "Taxonomietermen aanmaken, bijwerken en verwijderen"
 msgid "Create, update, delete content"
 msgstr "Content aanmaken, bijwerken, verwijderen"
 
-#: packages/admin/src/components/ContentList.tsx:736
-#: packages/admin/src/components/ContentSettingsPanel.tsx:582
+#: packages/admin/src/components/ContentList.tsx:745
+#: packages/admin/src/components/ContentSettingsPanel.tsx:585
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
 msgstr "Aangemaakt"
@@ -2123,7 +2119,7 @@ msgstr "Aangemaakt op"
 msgid "Creating collections and fields..."
 msgstr "Collecties en velden aanmaken..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1054
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1057
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
@@ -2183,14 +2179,14 @@ msgstr "Donker"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:130
 #: packages/admin/src/components/ContentTypeList.tsx:246
-#: packages/admin/src/components/Dashboard.tsx:41
+#: packages/admin/src/components/Dashboard.tsx:56
 #: packages/admin/src/components/Sidebar.tsx:206
 #: packages/admin/src/components/Sidebar.tsx:356
 msgid "Dashboard"
 msgstr "Dashboard"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:297
-#: packages/admin/src/components/ContentList.tsx:525
+#: packages/admin/src/components/ContentList.tsx:532
 msgid "Date"
 msgstr "Datum"
 
@@ -2203,7 +2199,7 @@ msgstr "Datum & tijd"
 msgid "Date and time picker"
 msgstr "Datum- en tijdkiezer"
 
-#: packages/admin/src/components/ContentList.tsx:790
+#: packages/admin/src/components/ContentList.tsx:802
 msgid "Date field to filter on"
 msgstr "Datumveld om op te filteren"
 
@@ -2373,11 +2369,11 @@ msgid "Delete permanently"
 msgstr "Definitief verwijderen"
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:182
-#: packages/admin/src/components/ContentList.tsx:1136
+#: packages/admin/src/components/ContentList.tsx:1148
 msgid "Delete Permanently"
 msgstr "Definitief verwijderen"
 
-#: packages/admin/src/components/ContentList.tsx:1116
+#: packages/admin/src/components/ContentList.tsx:1128
 msgid "Delete Permanently?"
 msgstr "Definitief verwijderen?"
 
@@ -2410,7 +2406,7 @@ msgstr "Tabel verwijderen"
 msgid "Delete Widget Area?"
 msgstr "Widgetgebied verwijderen?"
 
-#: packages/admin/src/components/ContentList.tsx:646
+#: packages/admin/src/components/ContentList.tsx:653
 msgid "Deleted"
 msgstr "Verwijderd"
 
@@ -2580,8 +2576,8 @@ msgstr "Uitschakelen..."
 msgid "Discard"
 msgstr "Verwerpen"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:78
-#: packages/admin/src/components/ContentSettingsPanel.tsx:98
+#: packages/admin/src/components/ContentSettingsPanel.tsx:79
+#: packages/admin/src/components/ContentSettingsPanel.tsx:99
 msgid "Discard changes"
 msgstr "Wijzigingen verwerpen"
 
@@ -2589,7 +2585,7 @@ msgstr "Wijzigingen verwerpen"
 msgid "Discard changes?"
 msgstr "Wijzigingen verwerpen?"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:83
+#: packages/admin/src/components/ContentSettingsPanel.tsx:84
 msgid "Discard draft changes?"
 msgstr "Conceptwijzigingen verwerpen?"
 
@@ -2614,8 +2610,8 @@ msgstr "Een navigatiemenu weergeven"
 msgid "Display category list"
 msgstr "Een lijst met categorieën weergeven"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1005
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1067
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1008
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1070
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "Weergavenaam"
@@ -2680,7 +2676,7 @@ msgstr "Nog geen account? <0>Registreren</0>"
 msgid "Done"
 msgstr "Klaar"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:948
+#: packages/admin/src/components/ContentSettingsPanel.tsx:951
 msgid "Down"
 msgstr "Omlaag"
 
@@ -2713,14 +2709,8 @@ msgstr "SBOM downloaden"
 msgid "Downloading"
 msgstr "Downloaden"
 
-#: packages/admin/src/components/ContentList.tsx:1162
-msgid "draft"
-msgstr "concept"
-
-#: packages/admin/src/components/ContentList.tsx:730
-#: packages/admin/src/components/ContentPickerModal.tsx:212
-#: packages/admin/src/components/ContentSettingsPanel.tsx:473
-#: packages/admin/src/components/Dashboard.tsx:351
+#: packages/admin/src/components/ContentList.tsx:737
+#: packages/admin/src/components/ContentStatusBadge.tsx:61
 msgid "Draft"
 msgstr "Concept"
 
@@ -2729,7 +2719,7 @@ msgid "draft, published, or archived"
 msgstr "concept, gepubliceerd of gearchiveerd"
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:71
-#: packages/admin/src/components/Dashboard.tsx:254
+#: packages/admin/src/components/Dashboard.tsx:269
 msgid "Drafts"
 msgstr "Concepten"
 
@@ -2785,7 +2775,7 @@ msgstr "Sleep je WordPress-exportbestand hierheen"
 msgid "Duplicate"
 msgstr "Dupliceren"
 
-#: packages/admin/src/components/ContentList.tsx:1027
+#: packages/admin/src/components/ContentList.tsx:1039
 msgid "Duplicate {title}"
 msgstr "{title} dupliceren"
 
@@ -2805,7 +2795,7 @@ msgstr "bijv. CI/CD Pipeline"
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "bijv. MacBook Pro, iPhone"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:957
+#: packages/admin/src/components/ContentSettingsPanel.tsx:960
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2837,11 +2827,11 @@ msgstr "Veld {0} bewerken"
 msgid "Edit {itemLabel}"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1019
+#: packages/admin/src/components/ContentList.tsx:1031
 msgid "Edit {title}"
 msgstr "{title} bewerken"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1064
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1067
 msgid "Edit byline"
 msgstr "Auteursvermelding bewerken"
 
@@ -3173,7 +3163,7 @@ msgstr "Aanmaken van admin mislukt"
 msgid "Failed to create backup"
 msgstr "Aanmaken van back-up mislukt"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1048
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1051
 msgid "Failed to create byline"
 msgstr "Aanmaken van auteursvermelding mislukt"
 
@@ -3660,7 +3650,7 @@ msgstr "Bijwerken van {0} mislukt"
 msgid "Failed to update backup settings"
 msgstr "Bijwerken van back-upinstellingen mislukt"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1098
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1101
 msgid "Failed to update byline"
 msgstr "Bijwerken van auteursvermelding mislukt"
 
@@ -3810,7 +3800,7 @@ msgstr "Bestandsnaam kan na het uploaden niet meer worden gewijzigd"
 msgid "files imported"
 msgstr "bestanden geïmporteerd"
 
-#: packages/admin/src/components/ContentList.tsx:769
+#: packages/admin/src/components/ContentList.tsx:781
 msgid "Filter by author"
 msgstr "Filteren op auteur"
 
@@ -3830,7 +3820,7 @@ msgstr "Filteren op rol"
 msgid "Filter by source"
 msgstr "Filteren op bron"
 
-#: packages/admin/src/components/ContentList.tsx:754
+#: packages/admin/src/components/ContentList.tsx:763
 #: packages/admin/src/components/Redirects.tsx:422
 msgid "Filter by status"
 msgstr "Filteren op status"
@@ -3860,7 +3850,7 @@ msgstr "Voor een volledige import inclusief concepten en alle content, exporteer
 msgid "For the best import experience, install the"
 msgstr "Voor de beste importervaring installeer je de"
 
-#: packages/admin/src/components/ContentList.tsx:806
+#: packages/admin/src/components/ContentList.tsx:818
 msgid "From date"
 msgstr "Vanaf datum"
 
@@ -4451,7 +4441,7 @@ msgstr "JSX"
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr "Houd dit tabblad open. De import verloopt in kleine stappen en kan bij onderbreking veilig opnieuw worden uitgevoerd."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:927
+#: packages/admin/src/components/ContentSettingsPanel.tsx:930
 msgid "Keep typing to narrow down more bylines."
 msgstr "Typ verder om de lijst met auteursvermeldingen te verfijnen."
 
@@ -4602,11 +4592,11 @@ msgstr "Lijstweergave"
 
 #: packages/admin/src/components/ContentEditor.tsx:683
 #: packages/admin/src/components/ContentEditor.tsx:726
-#: packages/admin/src/components/ContentSettingsPanel.tsx:257
+#: packages/admin/src/components/ContentSettingsPanel.tsx:258
 msgid "Live View"
 msgstr "Live weergave"
 
-#: packages/admin/src/components/ContentPickerModal.tsx:236
+#: packages/admin/src/components/ContentPickerModal.tsx:229
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
@@ -4614,8 +4604,8 @@ msgstr "Live weergave"
 msgid "Load more"
 msgstr "Meer laden"
 
-#: packages/admin/src/components/ContentList.tsx:630
-#: packages/admin/src/components/ContentList.tsx:687
+#: packages/admin/src/components/ContentList.tsx:637
+#: packages/admin/src/components/ContentList.tsx:694
 #: packages/admin/src/components/MediaLibrary.tsx:635
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/users/UserList.tsx:169
@@ -4643,7 +4633,7 @@ msgstr "Reacties laden..."
 msgid "Loading configuration..."
 msgstr "Configuratie laden..."
 
-#: packages/admin/src/components/ContentPickerModal.tsx:164
+#: packages/admin/src/components/ContentPickerModal.tsx:165
 msgid "Loading content..."
 msgstr "Content laden..."
 
@@ -4691,11 +4681,11 @@ msgstr "Termen laden..."
 msgid "Loading widgets..."
 msgstr "Widgets laden..."
 
-#: packages/admin/src/components/ContentList.tsx:538
-#: packages/admin/src/components/ContentList.tsx:630
-#: packages/admin/src/components/ContentList.tsx:659
-#: packages/admin/src/components/ContentList.tsx:687
-#: packages/admin/src/components/ContentPickerModal.tsx:233
+#: packages/admin/src/components/ContentList.tsx:545
+#: packages/admin/src/components/ContentList.tsx:637
+#: packages/admin/src/components/ContentList.tsx:666
+#: packages/admin/src/components/ContentList.tsx:694
+#: packages/admin/src/components/ContentPickerModal.tsx:226
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/MediaLibrary.tsx:635
 #: packages/admin/src/components/MediaPickerModal.tsx:775
@@ -4712,7 +4702,7 @@ msgstr "Widgets laden..."
 msgid "Loading..."
 msgstr "Laden..."
 
-#: packages/admin/src/components/ContentList.tsx:518
+#: packages/admin/src/components/ContentList.tsx:525
 #: packages/admin/src/components/LocaleSwitcher.tsx:60
 msgid "Locale"
 msgstr "Taal"
@@ -4782,7 +4772,7 @@ msgstr "Beheren"
 msgid "Manage {0} for {1}"
 msgstr "Beheer {0} voor {1}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:889
+#: packages/admin/src/components/ContentSettingsPanel.tsx:892
 msgid "Manage bylines in {entryLocale}"
 msgstr "Auteursvermeldingen beheren in {entryLocale}"
 
@@ -5027,10 +5017,6 @@ msgstr "Moderatie"
 msgid "Moderation Signals"
 msgstr "Moderatiesignalen"
 
-#: packages/admin/src/components/ContentPickerModal.tsx:211
-msgid "Modified"
-msgstr "Gewijzigd"
-
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:72
 msgid "Modify collection schemas"
 msgstr "Collectieschema's wijzigen"
@@ -5061,11 +5047,11 @@ msgstr "\"{0}\" omlaag verplaatsen"
 msgid "Move \"{0}\" up"
 msgstr "\"{0}\" omhoog verplaatsen"
 
-#: packages/admin/src/components/ContentList.tsx:1048
+#: packages/admin/src/components/ContentList.tsx:1060
 msgid "Move \"{title}\" to trash? You can restore it later."
 msgstr "\"{title}\" naar de prullenbak verplaatsen? Je kunt het later terugzetten."
 
-#: packages/admin/src/components/ContentList.tsx:1039
+#: packages/admin/src/components/ContentList.tsx:1051
 msgid "Move {title} to trash"
 msgstr "{title} naar de prullenbak verplaatsen"
 
@@ -5073,20 +5059,20 @@ msgstr "{title} naar de prullenbak verplaatsen"
 msgid "Move down"
 msgstr "Omlaag verplaatsen"
 
-#: packages/admin/src/components/ContentList.tsx:439
+#: packages/admin/src/components/ContentList.tsx:446
 msgid "Move to trash"
 msgstr "Naar prullenbak verplaatsen"
 
-#: packages/admin/src/components/ContentList.tsx:466
-#: packages/admin/src/components/ContentList.tsx:1061
-#: packages/admin/src/components/ContentSettingsPanel.tsx:714
-#: packages/admin/src/components/ContentSettingsPanel.tsx:734
+#: packages/admin/src/components/ContentList.tsx:473
+#: packages/admin/src/components/ContentList.tsx:1073
+#: packages/admin/src/components/ContentSettingsPanel.tsx:717
+#: packages/admin/src/components/ContentSettingsPanel.tsx:737
 msgid "Move to Trash"
 msgstr "Naar prullenbak verplaatsen"
 
-#: packages/admin/src/components/ContentList.tsx:444
-#: packages/admin/src/components/ContentList.tsx:1046
-#: packages/admin/src/components/ContentSettingsPanel.tsx:719
+#: packages/admin/src/components/ContentList.tsx:451
+#: packages/admin/src/components/ContentList.tsx:1058
+#: packages/admin/src/components/ContentSettingsPanel.tsx:722
 msgid "Move to Trash?"
 msgstr "Naar prullenbak verplaatsen?"
 
@@ -5227,7 +5213,7 @@ msgid "Next"
 msgstr "Volgende"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:372
-#: packages/admin/src/components/ContentList.tsx:618
+#: packages/admin/src/components/ContentList.tsx:625
 msgid "Next page"
 msgstr "Volgende pagina"
 
@@ -5250,7 +5236,7 @@ msgid "No {0} available."
 msgstr "Geen {0} beschikbaar."
 
 #. placeholder {0}: collectionLabel.toLowerCase()
-#: packages/admin/src/components/ContentList.tsx:549
+#: packages/admin/src/components/ContentList.tsx:556
 msgid "No {0} yet."
 msgstr "Nog geen {0}."
 
@@ -5280,7 +5266,7 @@ msgstr "Nog geen goedgekeurde reacties."
 msgid "No byline fields yet."
 msgstr "Nog geen auteursvermeldingsvelden."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:881
+#: packages/admin/src/components/ContentSettingsPanel.tsx:884
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "Geen auteursvermeldingen beschikbaar in {entryLocale}. Maak een variant aan via de pagina Auteursvermeldingen voordat je er een aan dit item toekent."
 
@@ -5288,11 +5274,11 @@ msgstr "Geen auteursvermeldingen beschikbaar in {entryLocale}. Maak een variant 
 msgid "No bylines found"
 msgstr "Geen auteursvermeldingen gevonden"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:989
+#: packages/admin/src/components/ContentSettingsPanel.tsx:992
 msgid "No bylines selected."
 msgstr "Geen auteursvermeldingen geselecteerd."
 
-#: packages/admin/src/components/Dashboard.tsx:226
+#: packages/admin/src/components/Dashboard.tsx:241
 msgid "No collections configured"
 msgstr "Geen collecties geconfigureerd"
 
@@ -5308,11 +5294,11 @@ msgstr "Geen reacties gevonden voor je zoekopdracht."
 msgid "No content"
 msgstr "Geen content"
 
-#: packages/admin/src/components/ContentPickerModal.tsx:171
+#: packages/admin/src/components/ContentPickerModal.tsx:172
 msgid "No content found"
 msgstr "Geen content gevonden"
 
-#: packages/admin/src/components/ContentPickerModal.tsx:177
+#: packages/admin/src/components/ContentPickerModal.tsx:178
 msgid "No content in this collection"
 msgstr "Geen content in deze collectie"
 
@@ -5385,7 +5371,7 @@ msgstr "Geen gekoppelde gebruiker"
 msgid "No matches"
 msgstr "Geen overeenkomsten"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:924
+#: packages/admin/src/components/ContentSettingsPanel.tsx:927
 msgid "No matching bylines."
 msgstr "Geen overeenkomende auteursvermeldingen."
 
@@ -5469,7 +5455,7 @@ msgstr "Geen voorbeeld"
 msgid "No public URL available"
 msgstr "Geen openbare URL beschikbaar"
 
-#: packages/admin/src/components/Dashboard.tsx:305
+#: packages/admin/src/components/Dashboard.tsx:320
 msgid "No recent activity"
 msgstr "Geen recente activiteit"
 
@@ -5482,8 +5468,8 @@ msgstr "Nog geen omleidingen"
 msgid "No results"
 msgstr "Geen resultaten"
 
-#: packages/admin/src/components/ContentList.tsx:546
-#: packages/admin/src/components/ContentList.tsx:565
+#: packages/admin/src/components/ContentList.tsx:553
+#: packages/admin/src/components/ContentList.tsx:572
 msgid "No results for \"{activeSearch}\""
 msgstr "Geen resultaten voor \"{activeSearch}\""
 
@@ -5688,7 +5674,7 @@ msgstr "Volgorde opgeslagen"
 msgid "Original:"
 msgstr "Origineel:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:681
+#: packages/admin/src/components/ContentSettingsPanel.tsx:684
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "Overzicht"
@@ -5697,8 +5683,8 @@ msgstr "Overzicht"
 msgid "Overrides the page title in search engine results"
 msgstr "Overschrijft de paginatitel in zoekmachineresultaten"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:595
 #: packages/admin/src/components/ContentSettingsPanel.tsx:598
+#: packages/admin/src/components/ContentSettingsPanel.tsx:601
 msgid "Ownership"
 msgstr "Eigenaarschap"
 
@@ -5821,24 +5807,22 @@ msgid "PDF"
 msgstr "PDF"
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:196
-#: packages/admin/src/components/ContentList.tsx:1185
 msgid "pending"
 msgstr "in afwachting"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:198
-#: packages/admin/src/components/Dashboard.tsx:353
 msgid "Pending"
 msgstr "In afwachting"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:472
+#: packages/admin/src/components/ContentStatusBadge.tsx:67
 msgid "Pending changes"
 msgstr "Openstaande wijzigingen"
 
-#: packages/admin/src/components/ContentList.tsx:1119
+#: packages/admin/src/components/ContentList.tsx:1131
 msgid "Permanently delete \"{title}\"? This cannot be undone."
 msgstr "\"{title}\" permanent verwijderen? Dit kan niet ongedaan worden gemaakt."
 
-#: packages/admin/src/components/ContentList.tsx:1108
+#: packages/admin/src/components/ContentList.tsx:1120
 msgid "Permanently delete {title}"
 msgstr "{title} permanent verwijderen"
 
@@ -6026,7 +6010,7 @@ msgstr "Voorbereiden om bestanden van WordPress te downloaden..."
 msgid "Preparing..."
 msgstr "Voorbereiden..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:159
+#: packages/admin/src/components/ContentSettingsPanel.tsx:160
 #: packages/admin/src/components/ContentTypeEditor.tsx:81
 #: packages/admin/src/components/MediaLibrary.tsx:585
 msgid "Preview"
@@ -6036,7 +6020,7 @@ msgstr "Voorbeeld"
 msgid "Preview content before publishing"
 msgstr "Bekijk een voorbeeld van de content vóór het publiceren"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:159
+#: packages/admin/src/components/ContentSettingsPanel.tsx:160
 msgid "Preview draft"
 msgstr "Voorbeeld van concept bekijken"
 
@@ -6045,7 +6029,7 @@ msgid "Previous"
 msgstr "Vorige"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:353
-#: packages/admin/src/components/ContentList.tsx:606
+#: packages/admin/src/components/ContentList.tsx:613
 msgid "Previous page"
 msgstr "Vorige pagina"
 
@@ -6057,7 +6041,7 @@ msgstr "Vorige screenshot"
 msgid "Primary Navigation"
 msgstr "Primaire navigatie"
 
-#: packages/admin/src/components/Dashboard.tsx:354
+#: packages/admin/src/components/ContentStatusBadge.tsx:69
 msgid "Private"
 msgstr "Privé"
 
@@ -6065,34 +6049,22 @@ msgstr "Privé"
 msgid "Provider:"
 msgstr "Provider:"
 
-#: packages/admin/src/components/ContentList.tsx:415
-#: packages/admin/src/components/ContentSettingsPanel.tsx:454
-#: packages/admin/src/components/ContentSettingsPanel.tsx:457
+#: packages/admin/src/components/ContentList.tsx:422
+#: packages/admin/src/components/ContentList.tsx:736
+#: packages/admin/src/components/ContentSettingsPanel.tsx:191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:198
+#: packages/admin/src/components/ContentSettingsPanel.tsx:455
+#: packages/admin/src/components/ContentSettingsPanel.tsx:458
+#: packages/admin/src/components/ContentStatusBadge.tsx:59
+#: packages/admin/src/components/Dashboard.tsx:263
 msgid "Publish"
 msgstr "Publiceren"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:190
-msgid "Publish {itemLabel}"
-msgstr ""
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:552
+#: packages/admin/src/components/ContentSettingsPanel.tsx:555
 msgid "Publish date"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:197
-msgid "Publish updates"
-msgstr ""
-
-#: packages/admin/src/components/ContentList.tsx:1160
-msgid "published"
-msgstr "gepubliceerd"
-
-#: packages/admin/src/components/ContentList.tsx:729
-#: packages/admin/src/components/ContentList.tsx:738
-#: packages/admin/src/components/ContentPickerModal.tsx:209
-#: packages/admin/src/components/ContentSettingsPanel.tsx:471
-#: packages/admin/src/components/Dashboard.tsx:248
-#: packages/admin/src/components/Dashboard.tsx:350
+#: packages/admin/src/components/ContentList.tsx:747
 #: packages/admin/src/router.tsx:1018
 msgid "Published"
 msgstr "Gepubliceerd"
@@ -6118,7 +6090,7 @@ msgstr "Gepubliceerd door"
 msgid "Python"
 msgstr "Python"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:997
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1000
 msgid "Quick create byline"
 msgstr "Snel auteursvermelding aanmaken"
 
@@ -6175,7 +6147,7 @@ msgstr "Lezen"
 msgid "Ready"
 msgstr "Gereed"
 
-#: packages/admin/src/components/Dashboard.tsx:299
+#: packages/admin/src/components/Dashboard.tsx:314
 msgid "Recent Activity"
 msgstr "Recente activiteit"
 
@@ -6223,7 +6195,7 @@ msgstr "Referentie"
 msgid "Referenced favicon unavailable."
 msgstr "Favicon waarnaar wordt verwezen is niet beschikbaar."
 
-#: packages/admin/src/components/Dashboard.tsx:76
+#: packages/admin/src/components/Dashboard.tsx:91
 msgid "Refresh the page or try again."
 msgstr "Vernieuw de pagina of probeer het opnieuw."
 
@@ -6258,7 +6230,7 @@ msgstr "Release is te nieuw om te installeren"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:966
+#: packages/admin/src/components/ContentSettingsPanel.tsx:969
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/PortableTextEditor.tsx:3872
 #: packages/admin/src/components/settings/GeneralSettings.tsx:194
@@ -6431,7 +6403,7 @@ msgstr "Terugzetten naar origineel"
 msgid "Restore"
 msgstr "Herstellen"
 
-#: packages/admin/src/components/ContentList.tsx:1096
+#: packages/admin/src/components/ContentList.tsx:1108
 msgid "Restore {title}"
 msgstr "{title} herstellen"
 
@@ -6485,7 +6457,7 @@ msgstr "Nieuwe rechten controleren"
 msgid "Revision restored"
 msgstr "Revisie hersteld"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:689
+#: packages/admin/src/components/ContentSettingsPanel.tsx:692
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6535,7 +6507,7 @@ msgstr "Rol"
 msgid "Role {role}"
 msgstr "Rol {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:971
+#: packages/admin/src/components/ContentSettingsPanel.tsx:974
 msgid "Role label"
 msgstr "Rollabel"
 
@@ -6561,7 +6533,7 @@ msgstr "Rust"
 msgid "Same window"
 msgstr "Zelfde venster"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1104
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1107
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:264
@@ -6626,7 +6598,7 @@ msgstr "Opgeslagen"
 msgid "Saved \"{0}\"."
 msgstr "\"{0}\" opgeslagen."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1104
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1107
 #: packages/admin/src/components/FieldEditor.tsx:660
 #: packages/admin/src/components/MediaDetailPanel.tsx:425
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6661,31 +6633,26 @@ msgstr "SBOM"
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:520
+#: packages/admin/src/components/ContentSettingsPanel.tsx:523
 msgid "Schedule"
 msgstr "Inplannen"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:506
+#: packages/admin/src/components/ContentSettingsPanel.tsx:509
 msgid "Schedule for"
 msgstr "Inplannen voor"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:543
+#: packages/admin/src/components/ContentSettingsPanel.tsx:546
 msgid "Schedule for later"
 msgstr "Inplannen voor later"
 
-#: packages/admin/src/components/ContentList.tsx:1164
-msgid "scheduled"
-msgstr "ingepland"
-
-#: packages/admin/src/components/ContentList.tsx:731
-#: packages/admin/src/components/ContentSettingsPanel.tsx:474
-#: packages/admin/src/components/Dashboard.tsx:352
+#: packages/admin/src/components/ContentList.tsx:738
+#: packages/admin/src/components/ContentStatusBadge.tsx:63
 #: packages/admin/src/router.tsx:1076
 msgid "Scheduled"
 msgstr "Ingepland"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:494
+#: packages/admin/src/components/ContentSettingsPanel.tsx:497
 msgid "Scheduled for: {0}"
 msgstr "Ingepland voor: {0}"
 
@@ -6753,12 +6720,12 @@ msgid "Search"
 msgstr "Zoeken"
 
 #. placeholder {0}: collectionLabel.toLowerCase()
-#: packages/admin/src/components/ContentList.tsx:353
+#: packages/admin/src/components/ContentList.tsx:359
 msgid "Search {0}"
 msgstr "Zoeken in {0}"
 
 #. placeholder {0}: collectionLabel.toLowerCase()
-#: packages/admin/src/components/ContentList.tsx:352
+#: packages/admin/src/components/ContentList.tsx:358
 msgid "Search {0}..."
 msgstr "Zoeken in {0}..."
 
@@ -6771,12 +6738,12 @@ msgstr "Zoeken op bestandsnaam..."
 msgid "Search by name or email..."
 msgstr "Zoeken op naam of e-mailadres..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:898
+#: packages/admin/src/components/ContentSettingsPanel.tsx:901
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr "Auteursvermeldingen zoeken"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:897
+#: packages/admin/src/components/ContentSettingsPanel.tsx:900
 msgid "Search bylines to add..."
 msgstr "Zoek auteursvermeldingen om toe te voegen..."
 
@@ -6788,7 +6755,7 @@ msgstr "Reacties zoeken"
 msgid "Search comments..."
 msgstr "Reacties zoeken..."
 
-#: packages/admin/src/components/ContentPickerModal.tsx:141
+#: packages/admin/src/components/ContentPickerModal.tsx:142
 msgid "Search content..."
 msgstr "Content zoeken..."
 
@@ -6854,7 +6821,7 @@ msgstr "Zoeken..."
 msgid "Searchable"
 msgstr "Doorzoekbaar"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:902
+#: packages/admin/src/components/ContentSettingsPanel.tsx:905
 msgid "Searching..."
 msgstr "Zoeken..."
 
@@ -6958,7 +6925,7 @@ msgstr "Selecteren"
 msgid "Select {label}"
 msgstr "{label} selecteren"
 
-#: packages/admin/src/components/ContentList.tsx:973
+#: packages/admin/src/components/ContentList.tsx:985
 msgid "Select {title}"
 msgstr "{title} selecteren"
 
@@ -6974,7 +6941,7 @@ msgstr "Selecteer een menu..."
 msgid "Select all"
 msgstr "Alles selecteren"
 
-#: packages/admin/src/components/ContentList.tsx:497
+#: packages/admin/src/components/ContentList.tsx:504
 msgid "Select all on this page"
 msgstr "Alles op deze pagina selecteren"
 
@@ -6983,7 +6950,7 @@ msgstr "Alles op deze pagina selecteren"
 msgid "Select comment by {0}"
 msgstr "Reactie van {0} selecteren"
 
-#: packages/admin/src/components/ContentPickerModal.tsx:117
+#: packages/admin/src/components/ContentPickerModal.tsx:118
 msgid "Select Content"
 msgstr "Content selecteren"
 
@@ -7095,8 +7062,8 @@ msgstr "Test-e-mail versturen"
 msgid "Sending..."
 msgstr "Versturen..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:666
 #: packages/admin/src/components/ContentSettingsPanel.tsx:669
+#: packages/admin/src/components/ContentSettingsPanel.tsx:672
 #: packages/admin/src/components/ContentTypeEditor.tsx:472
 #: packages/admin/src/components/Settings.tsx:82
 msgid "SEO"
@@ -7138,7 +7105,7 @@ msgstr "Taal instellen (huidig: {label})"
 msgid "Set to 0 to never close comments automatically."
 msgstr "Stel in op 0 om reacties nooit automatisch te sluiten."
 
-#: packages/admin/src/components/ContentList.tsx:425
+#: packages/admin/src/components/ContentList.tsx:432
 msgid "Set to draft"
 msgstr "Instellen als concept"
 
@@ -7334,9 +7301,9 @@ msgid "Skipped"
 msgstr "Overgeslagen"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
-#: packages/admin/src/components/ContentSettingsPanel.tsx:461
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1013
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1075
+#: packages/admin/src/components/ContentSettingsPanel.tsx:462
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1016
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1078
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:402
 #: packages/admin/src/components/ContentTypeList.tsx:99
@@ -7451,8 +7418,8 @@ msgstr "Import starten"
 msgid "Start writing, or type '/' for commands"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:511
-#: packages/admin/src/components/ContentSettingsPanel.tsx:468
+#: packages/admin/src/components/ContentList.tsx:518
+#: packages/admin/src/components/ContentSettingsPanel.tsx:469
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:474
 #: packages/admin/src/components/users/UserList.tsx:104
@@ -7463,7 +7430,7 @@ msgstr "Status"
 msgid "Status code"
 msgstr "Statuscode"
 
-#: packages/admin/src/components/Dashboard.tsx:362
+#: packages/admin/src/components/Dashboard.tsx:367
 msgid "Status: {status}"
 msgstr "Status: {status}"
 
@@ -7571,7 +7538,7 @@ msgstr "Doel"
 msgid "Target locale"
 msgstr "Doeltaal"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:655
+#: packages/admin/src/components/ContentSettingsPanel.tsx:658
 #: packages/admin/src/components/TaxonomySidebar.tsx:555
 msgid "Taxonomies"
 msgstr "Taxonomieën"
@@ -7797,7 +7764,7 @@ msgstr "Dit verwijdert het widgetgebied en alle bijbehorende widgets. Deze actie
 msgid "This will grant CLI access with your permissions."
 msgstr "Dit geeft CLI-toegang met jouw rechten."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:721
+#: packages/admin/src/components/ContentSettingsPanel.tsx:724
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "Dit verplaatst het item naar de prullenbak. Je kunt het later vanuit de prullenbak herstellen."
 
@@ -7819,7 +7786,7 @@ msgstr "Dit verwijdert deze reactie permanent. Deze actie kan niet ongedaan word
 msgid "This will remove the plugin and its bundle from your site."
 msgstr "Dit verwijdert de plugin en de bijbehorende bundle van je site."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:85
+#: packages/admin/src/components/ContentSettingsPanel.tsx:86
 msgid "This will revert to the published version. Your draft changes will be lost."
 msgstr "Dit herstelt de gepubliceerde versie. Je conceptwijzigingen gaan verloren."
 
@@ -7835,8 +7802,8 @@ msgstr "Tijdzone"
 msgid "Timezone for displaying dates (e.g., America/New_York)"
 msgstr "Tijdzone voor het weergeven van datums (bijv. America/New_York)"
 
-#: packages/admin/src/components/ContentList.tsx:505
-#: packages/admin/src/components/ContentList.tsx:643
+#: packages/admin/src/components/ContentList.tsx:512
+#: packages/admin/src/components/ContentList.tsx:650
 #: packages/admin/src/components/SectionEditor.tsx:251
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
@@ -7852,7 +7819,7 @@ msgstr "Titel (tooltip)"
 msgid "Title Separator"
 msgstr "Titelscheidingsteken"
 
-#: packages/admin/src/components/ContentList.tsx:811
+#: packages/admin/src/components/ContentList.tsx:823
 msgid "to"
 msgstr "tot"
 
@@ -7860,7 +7827,7 @@ msgstr "tot"
 msgid "to close"
 msgstr "om te sluiten"
 
-#: packages/admin/src/components/ContentList.tsx:815
+#: packages/admin/src/components/ContentList.tsx:827
 msgid "To date"
 msgstr "Einddatum"
 
@@ -7934,7 +7901,7 @@ msgstr "Vertalen..."
 msgid "Translation created"
 msgstr "Vertaling aangemaakt"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:633
+#: packages/admin/src/components/ContentSettingsPanel.tsx:636
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "Vertalingen"
@@ -7947,11 +7914,11 @@ msgstr "prullenbak"
 #: packages/admin/src/components/comments/CommentInbox.tsx:217
 #: packages/admin/src/components/comments/CommentInbox.tsx:258
 #: packages/admin/src/components/comments/CommentInbox.tsx:514
-#: packages/admin/src/components/ContentList.tsx:375
+#: packages/admin/src/components/ContentList.tsx:381
 msgid "Trash"
 msgstr "Prullenbak"
 
-#: packages/admin/src/components/ContentList.tsx:666
+#: packages/admin/src/components/ContentList.tsx:673
 msgid "Trash is empty"
 msgstr "Prullenbak is leeg"
 
@@ -7971,7 +7938,7 @@ msgstr "Probeer een breder mediatype of wis je filters."
 msgid "Try a different search term"
 msgstr "Probeer een andere zoekterm"
 
-#: packages/admin/src/components/ContentPickerModal.tsx:172
+#: packages/admin/src/components/ContentPickerModal.tsx:173
 #: packages/admin/src/components/SectionPickerModal.tsx:103
 msgid "Try adjusting your search"
 msgstr "Pas je zoekopdracht aan"
@@ -8043,8 +8010,8 @@ msgstr "TypeScript"
 msgid "Unable to reach marketplace"
 msgstr "Kan de marketplace niet bereiken"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1118
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1121
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1138
 msgid "Unassigned"
 msgstr "Niet toegewezen"
 
@@ -8104,7 +8071,7 @@ msgstr "Beeldverhouding ontgrendelen"
 msgid "Unnamed passkey"
 msgstr "Naamloze passkey"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:203
+#: packages/admin/src/components/ContentSettingsPanel.tsx:204
 msgid "Unpublish {itemLabel}"
 msgstr ""
 
@@ -8116,7 +8083,7 @@ msgstr "Gedepubliceerd"
 msgid "Unregistered Content Tables Found"
 msgstr "Niet-geregistreerde contenttabellen gevonden"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:496
+#: packages/admin/src/components/ContentSettingsPanel.tsx:499
 msgid "Unschedule"
 msgstr "Planning ongedaan maken"
 
@@ -8129,7 +8096,7 @@ msgstr "Planning ongedaan gemaakt"
 msgid "Unsupported widget element type: {0}"
 msgstr "Niet-ondersteund elementtype voor widget: {0}"
 
-#: packages/admin/src/components/Dashboard.tsx:319
+#: packages/admin/src/components/Dashboard.tsx:334
 msgid "Untitled"
 msgstr "Zonder titel"
 
@@ -8146,7 +8113,7 @@ msgstr "Widget zonder titel"
 msgid "Unverified publisher"
 msgstr "Niet-geverifieerde uitgever"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:945
+#: packages/admin/src/components/ContentSettingsPanel.tsx:948
 msgid "Up"
 msgstr "Omhoog"
 
@@ -8158,7 +8125,7 @@ msgstr "Bijwerken"
 msgid "Update Field"
 msgstr "Veld bijwerken"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:570
+#: packages/admin/src/components/ContentSettingsPanel.tsx:573
 msgid "Update publish date"
 msgstr ""
 
@@ -8185,8 +8152,8 @@ msgstr "Werk deze omleidingsregel bij."
 msgid "Update to v{0}"
 msgstr "Bijwerken naar v{0}"
 
-#: packages/admin/src/components/ContentList.tsx:737
-#: packages/admin/src/components/ContentSettingsPanel.tsx:586
+#: packages/admin/src/components/ContentList.tsx:746
+#: packages/admin/src/components/ContentSettingsPanel.tsx:589
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
 msgstr "Bijgewerkt"
@@ -8263,7 +8230,7 @@ msgstr "Afbeelding uploaden"
 msgid "Upload images, videos, and documents to keep reusable assets in one place."
 msgstr "Upload afbeeldingen, video's en documenten om herbruikbare assets op één plek te bewaren."
 
-#: packages/admin/src/components/Dashboard.tsx:114
+#: packages/admin/src/components/Dashboard.tsx:129
 msgid "Upload Media"
 msgstr "Media uploaden"
 
@@ -8465,7 +8432,7 @@ msgstr "Bekijken in Marketplace"
 msgid "View mode"
 msgstr "Weergavemodus"
 
-#: packages/admin/src/components/ContentList.tsx:1011
+#: packages/admin/src/components/ContentList.tsx:1023
 msgid "View published {title}"
 msgstr "Gepubliceerde {title} bekijken"
 
@@ -8671,7 +8638,7 @@ msgstr "WordPress-autorisatie is geweigerd"
 msgid "WordPress Username"
 msgstr "WordPress-gebruikersnaam"
 
-#: packages/admin/src/components/ContentList.tsx:404
+#: packages/admin/src/components/ContentList.tsx:410
 msgid "Working on {selectedCount} items…"
 msgstr "Bezig met {selectedCount} items…"
 
