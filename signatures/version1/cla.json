@@ -1415,6 +1415,14 @@
       "created_at": "2026-08-03T17:30:10Z",
       "repoId": 1198246700,
       "pullRequestNo": 2301
+    },
+    {
+      "name": "fbartolitsch",
+      "id": 3288220,
+      "comment_id": 5191116042,
+      "created_at": "2026-08-05T11:24:38Z",
+      "repoId": 1198246700,
+      "pullRequestNo": 2342
     }
   ]
 }
