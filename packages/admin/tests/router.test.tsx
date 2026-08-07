@@ -25,7 +25,7 @@ import { RouterProvider } from "@tanstack/react-router";
 import * as React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-import type { AdminManifest } from "../src/lib/api";
+import type { AdminManifest, ContentItem } from "../src/lib/api";
 import { ConfigurationLoadingScreen, createAdminRouter } from "../src/router";
 import { render } from "./utils/render.tsx";
 import { createTestQueryClient, createMockFetch, waitFor } from "./utils/test-helpers";
@@ -161,6 +161,40 @@ const MANIFEST: AdminManifest = {
 	},
 };
 
+const CONTENT_LIST_MANIFEST: AdminManifest = {
+	...MANIFEST,
+	collections: {
+		...MANIFEST.collections,
+		pages: {
+			label: "Pages",
+			labelSingular: "Page",
+			supports: ["drafts"],
+			hasSeo: false,
+			fields: {
+				title: { kind: "string", label: "Title" },
+			},
+		},
+	},
+};
+
+function makeContentItem(overrides: Partial<ContentItem> = {}): ContentItem {
+	return {
+		id: "post_01",
+		type: "posts",
+		slug: "about",
+		status: "draft",
+		data: { title: "About" },
+		authorId: "user_01",
+		createdAt: "2025-01-01T00:00:00Z",
+		updatedAt: "2025-01-02T00:00:00Z",
+		publishedAt: null,
+		scheduledAt: null,
+		liveRevisionId: null,
+		draftRevisionId: "rev_01",
+		...overrides,
+	};
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -255,6 +289,217 @@ describe("MediaPage – upload completion", () => {
 			rejectUploadUrl(new Error("connection closed"));
 			await expect.element(screen.getByText("error")).toBeInTheDocument();
 		} finally {
+			globalThis.fetch = interceptedFetch;
+		}
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Tests: ContentListPage – sorting keeps the table geometry stable
+// ---------------------------------------------------------------------------
+
+describe("ContentListPage – sorting loading state", () => {
+	let mockFetch: ReturnType<typeof createMockFetch>;
+
+	beforeEach(() => {
+		mockFetch = createMockFetch();
+		mockFetch
+			.on("GET", "/_emdash/api/manifest", { data: CONTENT_LIST_MANIFEST })
+			.on("GET", "/_emdash/api/auth/me", {
+				data: { id: "user_01", role: 60 },
+			})
+			.on("GET", "/_emdash/api/content/posts", {
+				data: { items: [makeContentItem()], nextCursor: undefined, total: 1 },
+			})
+			.on("GET", "/_emdash/api/content/posts/authors", { data: { items: [] } })
+			.on("GET", "/_emdash/api/content/posts/trashed", { data: { items: [] } })
+			.on("GET", "/_emdash/api/content/pages/authors", { data: { items: [] } })
+			.on("GET", "/_emdash/api/content/pages/trashed", { data: { items: [] } });
+	});
+
+	afterEach(() => {
+		mockFetch.restore();
+	});
+
+	it("shows cell-aligned skeletons without changing column widths while a sort loads", async () => {
+		const { router, TestApp } = buildRouter();
+		await router.navigate({
+			to: "/content/$collection",
+			params: { collection: "posts" },
+		});
+
+		const screen = await render(<TestApp />);
+		await expect.element(screen.getByText("About")).toBeVisible();
+
+		const table = screen.getByRole("table").element() as HTMLTableElement;
+		const widthsBefore = Array.from(table.querySelectorAll("th"), (header) =>
+			Math.round(header.getBoundingClientRect().width),
+		);
+		const interceptedFetch = globalThis.fetch;
+		let resolveSort: ((response: Response) => void) | undefined;
+		let markSortStarted: () => void = () => undefined;
+		const sortStarted = new Promise<void>((resolve) => {
+			markSortStarted = resolve;
+		});
+		let sortSettled = false;
+
+		globalThis.fetch = ((input: string | URL | Request, init?: RequestInit) => {
+			const requestUrl =
+				typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+			const url = new URL(requestUrl, window.location.origin);
+			if (
+				(init?.method ?? "GET") === "GET" &&
+				url.pathname === "/_emdash/api/content/posts" &&
+				url.searchParams.get("orderBy") === "title"
+			) {
+				markSortStarted();
+				return new Promise<Response>((resolve) => {
+					resolveSort = resolve;
+				});
+			}
+			return interceptedFetch(input, init);
+		}) as typeof fetch;
+
+		try {
+			await screen.getByRole("button", { name: "Title" }).click();
+			await sortStarted;
+			await waitFor(() => table.getAttribute("aria-busy") === "true");
+
+			const rowsBeforeDisclosure = [...table.tBodies[0]!.rows].filter(
+				(row) => getComputedStyle(row).visibility !== "collapse",
+			);
+			expect(rowsBeforeDisclosure).toHaveLength(1);
+			await expect.element(screen.getByText("About")).toBeVisible();
+
+			await new Promise((resolve) => setTimeout(resolve, 250));
+
+			const visibleRows = [...table.tBodies[0]!.rows].filter(
+				(row) => getComputedStyle(row).visibility !== "collapse",
+			);
+			const widthsDuring = Array.from(table.querySelectorAll("th"), (header) =>
+				Math.round(header.getBoundingClientRect().width),
+			);
+
+			expect(visibleRows).toHaveLength(5);
+			expect(visibleRows.every((row) => row.cells.length === widthsBefore.length)).toBe(true);
+			expect(widthsDuring).toEqual(widthsBefore);
+			expect(screen.getByText("About").element()).not.toBeVisible();
+
+			if (!resolveSort) throw new Error("Sorted content request was not intercepted");
+			sortSettled = true;
+			resolveSort(
+				new Response(
+					JSON.stringify({
+						data: {
+							items: [
+								makeContentItem({
+									id: "post_02",
+									slug: "zebra",
+									data: { title: "Zebra" },
+								}),
+							],
+							nextCursor: undefined,
+							total: 1,
+						},
+					}),
+					{ status: 200, headers: { "Content-Type": "application/json" } },
+				),
+			);
+
+			await expect.element(screen.getByText("Zebra")).toBeVisible();
+			await expect.element(screen.getByRole("table")).toHaveAttribute("aria-busy", "false");
+		} finally {
+			if (!sortSettled && resolveSort) {
+				resolveSort(
+					new Response(JSON.stringify({ data: { items: [], nextCursor: undefined, total: 0 } }), {
+						status: 200,
+						headers: { "Content-Type": "application/json" },
+					}),
+				);
+			}
+			globalThis.fetch = interceptedFetch;
+		}
+	});
+
+	it("does not retain rows when navigating to another collection", async () => {
+		const { router, TestApp } = buildRouter();
+		await router.navigate({
+			to: "/content/$collection",
+			params: { collection: "posts" },
+		});
+
+		const screen = await render(<TestApp />);
+		await expect.element(screen.getByText("About")).toBeVisible();
+
+		const interceptedFetch = globalThis.fetch;
+		let resolvePages: ((response: Response) => void) | undefined;
+		let markPagesStarted: () => void = () => undefined;
+		const pagesStarted = new Promise<void>((resolve) => {
+			markPagesStarted = resolve;
+		});
+
+		globalThis.fetch = ((input: string | URL | Request, init?: RequestInit) => {
+			const requestUrl =
+				typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+			const url = new URL(requestUrl, window.location.origin);
+			if (
+				(init?.method ?? "GET") === "GET" &&
+				url.pathname === "/_emdash/api/content/pages" &&
+				!url.searchParams.has("cursor")
+			) {
+				markPagesStarted();
+				return new Promise<Response>((resolve) => {
+					resolvePages = resolve;
+				});
+			}
+			return interceptedFetch(input, init);
+		}) as typeof fetch;
+
+		try {
+			await router.navigate({
+				to: "/content/$collection",
+				params: { collection: "pages" },
+			});
+			await pagesStarted;
+			await expect.element(screen.getByRole("heading", { name: "Pages" })).toBeVisible();
+
+			expect(screen.getByText("About").query()).toBeNull();
+			const pageTable = screen.getByRole("table").element() as HTMLTableElement;
+			expect(
+				[...pageTable.tBodies[0]!.rows].filter(
+					(row) => getComputedStyle(row).visibility !== "collapse",
+				),
+			).toHaveLength(5);
+
+			if (!resolvePages) throw new Error("Pages content request was not intercepted");
+			resolvePages(
+				new Response(
+					JSON.stringify({
+						data: {
+							items: [
+								makeContentItem({
+									id: "page_01",
+									type: "pages",
+									slug: "home",
+									data: { title: "Home" },
+								}),
+							],
+							nextCursor: undefined,
+							total: 1,
+						},
+					}),
+					{ status: 200, headers: { "Content-Type": "application/json" } },
+				),
+			);
+
+			await expect.element(screen.getByText("Home")).toBeVisible();
+		} finally {
+			resolvePages?.(
+				new Response(JSON.stringify({ data: { items: [], nextCursor: undefined, total: 0 } }), {
+					status: 200,
+					headers: { "Content-Type": "application/json" },
+				}),
+			);
 			globalThis.fetch = interceptedFetch;
 		}
 	});

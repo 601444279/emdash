@@ -70,6 +70,12 @@ const defaultProps = {
 	items: [] as ContentItem[],
 };
 
+function getVisibleBodyRows(table: HTMLTableElement) {
+	const body = table.tBodies.item(0);
+	if (!body) return [];
+	return [...body.rows].filter((row) => getComputedStyle(row).visibility !== "collapse");
+}
+
 describe("ContentList", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -605,7 +611,94 @@ describe("ContentList", () => {
 		});
 	});
 
+	describe("loading states", () => {
+		it("keeps existing rows visible when a result change finishes before the skeleton delay", async () => {
+			const items = Array.from({ length: 8 }, (_, index) =>
+				makeItem({ id: `item_${index}`, data: { title: `Post ${index}` } }),
+			);
+			const screen = await render(<ContentList {...defaultProps} items={items} isLoading={true} />);
+			const table = screen.getByRole("table").element() as HTMLTableElement;
+
+			await expect.element(screen.getByText("Post 0")).toBeVisible();
+			expect(getVisibleBodyRows(table)).toHaveLength(8);
+			expect(table.querySelectorAll(".skeleton-line")).toHaveLength(0);
+			await expect.element(screen.getByRole("table")).toHaveAttribute("aria-busy", "true");
+
+			await new Promise((resolve) => setTimeout(resolve, 100));
+			await screen.rerender(<ContentList {...defaultProps} items={items} isLoading={false} />);
+			await new Promise((resolve) => setTimeout(resolve, 200));
+
+			await expect.element(screen.getByText("Post 0")).toBeVisible();
+			expect(getVisibleBodyRows(table)).toHaveLength(8);
+			expect(table.querySelectorAll(".skeleton-line")).toHaveLength(0);
+		});
+
+		it("shows five cell-aligned skeleton rows after the disclosure delay", async () => {
+			const items = [makeItem({ id: "1", data: { title: "Post" } })];
+			const screen = await render(<ContentList {...defaultProps} items={items} isLoading={true} />);
+			await new Promise((resolve) => setTimeout(resolve, 250));
+			const table = screen.getByRole("table").element() as HTMLTableElement;
+			const rows = getVisibleBodyRows(table);
+
+			await expect.element(screen.getByRole("table")).toHaveAttribute("aria-busy", "true");
+			expect(rows).toHaveLength(5);
+			expect(rows.every((row) => row.cells.length === 4)).toBe(true);
+			expect(table.querySelectorAll(".skeleton-line")).toHaveLength(20);
+			expect(screen.getByText("Post", { exact: true }).element()).not.toBeVisible();
+		});
+
+		it("uses the same skeleton state for the trash table", async () => {
+			const screen = await render(<ContentList {...defaultProps} isTrashedLoading={true} />);
+			await screen.getByText("Trash").click();
+
+			const table = screen.getByRole("table").element() as HTMLTableElement;
+			const rows = getVisibleBodyRows(table);
+
+			await expect.element(screen.getByRole("table")).toHaveAttribute("aria-busy", "true");
+			expect(rows).toHaveLength(5);
+			expect(rows.every((row) => row.cells.length === 3)).toBe(true);
+			expect(table.querySelectorAll(".skeleton-line")).toHaveLength(15);
+		});
+
+		it("keeps rows visible when only the next API page is loading", async () => {
+			const items = [makeItem({ id: "1", data: { title: "Post" } })];
+			const screen = await render(
+				<ContentList {...defaultProps} items={items} hasMore={true} isLoadingMore={true} />,
+			);
+			const table = screen.getByRole("table").element() as HTMLTableElement;
+
+			await expect.element(screen.getByRole("link", { name: "Post", exact: true })).toBeVisible();
+			await expect.element(screen.getByRole("table")).toHaveAttribute("aria-busy", "true");
+			expect(table.querySelectorAll(".skeleton-line")).toHaveLength(0);
+			await expect.element(screen.getByRole("button", { name: "Loading..." })).toBeDisabled();
+		});
+	});
+
 	describe("sortable headers", () => {
+		it("returns to the first page when the sort changes", async () => {
+			const items = Array.from({ length: 25 }, (_, i) =>
+				makeItem({ id: `item_${i}`, data: { title: `Post ${i}` } }),
+			);
+
+			function SortableList() {
+				const [sort, setSort] = React.useState({
+					field: "updatedAt" as const,
+					direction: "desc" as const,
+				});
+
+				return <ContentList {...defaultProps} items={items} sort={sort} onSortChange={setSort} />;
+			}
+
+			const screen = await render(<SortableList />);
+			await screen.getByRole("button", { name: "Next page" }).click();
+			await expect.element(screen.getByText("Post 20")).toBeInTheDocument();
+
+			await screen.getByRole("button", { name: "Title" }).click();
+
+			await expect.element(screen.getByText("1 / 2")).toBeInTheDocument();
+			await expect.element(screen.getByText("Post 0")).toBeInTheDocument();
+		});
+
 		it("calls onSortChange when a header is clicked", async () => {
 			const onSortChange = vi.fn();
 			const items = [makeItem({ id: "1", data: { title: "Post" } })];

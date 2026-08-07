@@ -5,8 +5,8 @@ import {
 	Dialog,
 	Input,
 	LinkButton,
-	Loader,
 	Select,
+	SkeletonLine,
 	Tabs,
 } from "@cloudflare/kumo";
 import { plural } from "@lingui/core/macro";
@@ -71,6 +71,8 @@ export interface ContentListProps {
 	items: ContentItem[];
 	trashedItems?: TrashedContentItem[];
 	isLoading?: boolean;
+	/** Whether an additional API page is loading without replacing existing rows. */
+	isLoadingMore?: boolean;
 	isTrashedLoading?: boolean;
 	onDelete?: (id: string) => void;
 	onDuplicate?: (id: string) => void;
@@ -144,6 +146,31 @@ type BulkActionHandler = (ids: string[]) => Promise<string[]>;
 type ViewTab = "all" | "trash";
 
 const PAGE_SIZE = 20;
+const SKELETON_ROW_COUNT = 5;
+const SKELETON_DISCLOSURE_DELAY_MS = 200;
+
+interface TableSkeletonColumn {
+	id: string;
+	blank?: boolean;
+	align?: "start" | "end";
+}
+
+function TableSkeletonRows({ columns }: { columns: TableSkeletonColumn[] }) {
+	return Array.from({ length: SKELETON_ROW_COUNT }, (_, rowIndex) => (
+		<tr key={`skeleton-${rowIndex}`} aria-hidden="true">
+			{columns.map((column) => (
+				<td key={column.id} className="px-4 py-3">
+					{!column.blank && (
+						<SkeletonLine
+							blockHeight={24}
+							className={column.align === "end" ? "ms-auto" : undefined}
+						/>
+					)}
+				</td>
+			))}
+		</tr>
+	));
+}
 
 function getItemTitle(item: { data: Record<string, unknown>; slug: string | null; id: string }) {
 	const rawTitle = item.data.title;
@@ -165,6 +192,7 @@ export function ContentList({
 	items,
 	trashedItems = [],
 	isLoading,
+	isLoadingMore,
 	isTrashedLoading,
 	onDelete,
 	onDuplicate,
@@ -199,6 +227,18 @@ export function ContentList({
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [page, setPage] = React.useState(0);
 	const [selectedIds, setSelectedIds] = React.useState<Set<string>>(() => new Set());
+	const [showDelayedSkeleton, setShowDelayedSkeleton] = React.useState(false);
+
+	React.useEffect(() => {
+		if (!isLoading || items.length === 0) {
+			setShowDelayedSkeleton(false);
+			return;
+		}
+		const timeout = setTimeout(setShowDelayedSkeleton, SKELETON_DISCLOSURE_DELAY_MS, true);
+		return () => clearTimeout(timeout);
+	}, [isLoading, items.length]);
+
+	const showContentSkeleton = !!isLoading && (items.length === 0 || showDelayedSkeleton);
 
 	// Bulk selection is opt-in: the checkbox column + toolbar only render when
 	// the parent wired at least one bulk handler.
@@ -219,6 +259,13 @@ export function ContentList({
 		setSearchQuery(e.target.value);
 		setPage(0);
 	};
+	const handleSortChange = React.useCallback(
+		(nextSort: ContentListSort) => {
+			setPage(0);
+			onSortChange?.(nextSort);
+		},
+		[onSortChange],
+	);
 
 	const filteredItems = React.useMemo(() => {
 		if (serverSearch || !searchQuery) return items;
@@ -322,6 +369,14 @@ export function ContentList({
 		})();
 	};
 	const colSpan = (i18n ? 5 : 4) + (bulkEnabled ? 1 : 0);
+	const contentSkeletonColumns: TableSkeletonColumn[] = [
+		...(bulkEnabled ? [{ id: "selection", blank: true }] : []),
+		{ id: "title" },
+		{ id: "status" },
+		...(i18n ? [{ id: "locale" }] : []),
+		{ id: "date" },
+		{ id: "actions", align: "end" },
+	];
 
 	return (
 		<div className="space-y-4">
@@ -493,7 +548,12 @@ export function ContentList({
 
 					{/* Table */}
 					<div className="rounded-md border bg-kumo-base overflow-x-auto">
-						<table className="w-full">
+						{showContentSkeleton && (
+							<span role="status" className="sr-only">
+								{t`Loading...`}
+							</span>
+						)}
+						<table className="w-full" aria-busy={!!(isLoading || isLoadingMore)}>
 							<thead>
 								<tr className="border-b bg-kumo-tint/50">
 									{bulkEnabled && (
@@ -508,27 +568,27 @@ export function ContentList({
 									<SortableTh
 										field="title"
 										sort={sort}
-										onSortChange={onSortChange}
+										onSortChange={onSortChange ? handleSortChange : undefined}
 										label={t`Title`}
 									/>
 									<SortableTh
 										field="status"
 										sort={sort}
-										onSortChange={onSortChange}
+										onSortChange={onSortChange ? handleSortChange : undefined}
 										label={t`Status`}
 									/>
 									{i18n && (
 										<SortableTh
 											field="locale"
 											sort={sort}
-											onSortChange={onSortChange}
+											onSortChange={onSortChange ? handleSortChange : undefined}
 											label={t`Locale`}
 										/>
 									)}
 									<SortableTh
 										field="updatedAt"
 										sort={sort}
-										onSortChange={onSortChange}
+										onSortChange={onSortChange ? handleSortChange : undefined}
 										label={t`Date`}
 									/>
 									<th scope="col" className="px-4 py-3 text-end text-sm font-medium">
@@ -537,15 +597,25 @@ export function ContentList({
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-kumo-line">
-								{isLoading && items.length === 0 ? (
-									<tr>
-										<td colSpan={colSpan} className="px-4 py-8 text-center text-kumo-subtle">
-											<span className="inline-flex items-center gap-2">
-												<Loader size="sm" />
-												{t`Loading...`}
-											</span>
-										</td>
-									</tr>
+								{showContentSkeleton ? (
+									<>
+										<TableSkeletonRows columns={contentSkeletonColumns} />
+										{paginatedItems.map((item) => (
+											<ContentListItem
+												key={item.id}
+												item={item}
+												collection={collection}
+												onDelete={onDelete}
+												onDuplicate={onDuplicate}
+												showLocale={!!i18n}
+												urlPattern={urlPattern}
+												selectable={bulkEnabled}
+												selected={selectedIds.has(item.id)}
+												onToggleSelect={toggleOne}
+												layoutOnly
+											/>
+										))}
+									</>
 								) : items.length === 0 ? (
 									<tr>
 										<td colSpan={colSpan} className="px-4 py-8 text-center text-kumo-subtle">
@@ -608,7 +678,7 @@ export function ContentList({
 								<Button
 									variant="outline"
 									shape="square"
-									disabled={clampedPage === 0}
+									disabled={!!isLoading || clampedPage === 0}
 									onClick={() => setPage(clampedPage - 1)}
 									aria-label={t`Previous page`}
 								>
@@ -620,7 +690,7 @@ export function ContentList({
 								<Button
 									variant="outline"
 									shape="square"
-									disabled={clampedPage >= totalPages - 1}
+									disabled={!!isLoading || clampedPage >= totalPages - 1}
 									onClick={() => setPage(clampedPage + 1)}
 									aria-label={t`Next page`}
 								>
@@ -633,8 +703,12 @@ export function ContentList({
 					{/* Load more */}
 					{hasMore && (
 						<div className="flex justify-center">
-							<Button variant="outline" onClick={onLoadMore} disabled={isLoading}>
-								{isLoading ? t`Loading...` : t`Load More`}
+							<Button
+								variant="outline"
+								onClick={onLoadMore}
+								disabled={!!(isLoading || isLoadingMore)}
+							>
+								{isLoadingMore ? t`Loading...` : t`Load More`}
 							</Button>
 						</div>
 					)}
@@ -643,7 +717,12 @@ export function ContentList({
 				<>
 					{/* Trash Table */}
 					<div className="rounded-md border bg-kumo-base overflow-x-auto">
-						<table className="w-full">
+						{isTrashedLoading && trashedItems.length === 0 && (
+							<span role="status" className="sr-only">
+								{t`Loading...`}
+							</span>
+						)}
+						<table className="w-full" aria-busy={!!isTrashedLoading}>
 							<thead>
 								<tr className="border-b bg-kumo-tint/50">
 									<th scope="col" className="px-4 py-3 text-start text-sm font-medium">
@@ -659,14 +738,9 @@ export function ContentList({
 							</thead>
 							<tbody className="divide-y divide-kumo-line">
 								{isTrashedLoading && trashedItems.length === 0 ? (
-									<tr>
-										<td colSpan={3} className="px-4 py-8 text-center text-kumo-subtle">
-											<span className="inline-flex items-center gap-2">
-												<Loader size="sm" />
-												{t`Loading...`}
-											</span>
-										</td>
-									</tr>
+									<TableSkeletonRows
+										columns={[{ id: "title" }, { id: "deleted" }, { id: "actions", align: "end" }]}
+									/>
 								) : trashedItems.length === 0 ? (
 									<tr>
 										<td colSpan={3} className="px-4 py-8 text-center text-kumo-subtle">
@@ -958,6 +1032,8 @@ interface ContentListItemProps {
 	selectable?: boolean;
 	selected?: boolean;
 	onToggleSelect?: (id: string) => void;
+	/** Preserve intrinsic column widths while skeleton rows replace visible data. */
+	layoutOnly?: boolean;
 }
 
 function ContentListItem({
@@ -970,13 +1046,18 @@ function ContentListItem({
 	selectable,
 	selected,
 	onToggleSelect,
+	layoutOnly,
 }: ContentListItemProps) {
 	const { t } = useLingui();
 	const title = getItemTitle(item);
 	const date = new Date(item.updatedAt || item.createdAt);
 
 	return (
-		<tr className={cn("hover:bg-kumo-tint/25", selected && "bg-kumo-tint/40")}>
+		<tr
+			aria-hidden={layoutOnly || undefined}
+			style={layoutOnly ? { visibility: "collapse" } : undefined}
+			className={cn("hover:bg-kumo-tint/25", selected && "bg-kumo-tint/40")}
+		>
 			{selectable && (
 				<td className="px-4 py-3">
 					<Checkbox

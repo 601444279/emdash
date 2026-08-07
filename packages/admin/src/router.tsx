@@ -8,7 +8,13 @@ import { Button, Loader, Toast } from "@cloudflare/kumo";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import type { QueryClient } from "@tanstack/react-query";
-import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+	keepPreviousData,
+	useQuery,
+	useInfiniteQuery,
+	useMutation,
+	useQueryClient,
+} from "@tanstack/react-query";
 import {
 	createRouter,
 	createRootRouteWithContext,
@@ -375,36 +381,56 @@ function ContentListPage() {
 		enabled: !!manifest,
 	});
 
-	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } =
-		useInfiniteQuery({
-			queryKey: [
-				"content",
-				collection,
-				{
-					locale: activeLocale,
-					sort,
-					search: searchTerm,
-					status: statusFilter,
-					author: authorFilter,
-					date: dateApiParams,
-				},
-			],
-			queryFn: ({ pageParam }) =>
-				fetchContentList(collection, {
-					locale: activeLocale,
-					cursor: pageParam,
-					limit: 100,
-					orderBy: sort.field,
-					order: sort.direction,
-					search: searchTerm || undefined,
-					status: statusFilter === "all" ? undefined : statusFilter,
-					authorId: authorFilter || undefined,
-					...dateApiParams,
-				}),
-			initialPageParam: undefined as string | undefined,
-			getNextPageParam: (lastPage) => lastPage.nextCursor,
-			enabled: !!manifest,
-		});
+	const {
+		data,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+		isLoading,
+		isPlaceholderData,
+		error,
+	} = useInfiniteQuery({
+		queryKey: [
+			"content",
+			collection,
+			{
+				locale: activeLocale,
+				sort,
+				search: searchTerm,
+				status: statusFilter,
+				author: authorFilter,
+				date: dateApiParams,
+			},
+		],
+		queryFn: ({ pageParam }) =>
+			fetchContentList(collection, {
+				locale: activeLocale,
+				cursor: pageParam,
+				limit: 100,
+				orderBy: sort.field,
+				order: sort.direction,
+				search: searchTerm || undefined,
+				status: statusFilter === "all" ? undefined : statusFilter,
+				authorId: authorFilter || undefined,
+				...dateApiParams,
+			}),
+		initialPageParam: undefined as string | undefined,
+		getNextPageParam: (lastPage) => lastPage.nextCursor,
+		enabled: !!manifest,
+		placeholderData: (previousData, previousQuery) => {
+			const previousParameters = previousQuery?.queryKey[2];
+			const previousLocale =
+				typeof previousParameters === "object" &&
+				previousParameters !== null &&
+				"locale" in previousParameters
+					? previousParameters.locale
+					: undefined;
+			const isSameContentScope =
+				previousQuery?.queryKey[1] === collection && previousLocale === activeLocale;
+
+			return isSameContentScope ? keepPreviousData(previousData) : undefined;
+		},
+	});
 
 	// Fetch trashed items
 	const { data: trashedData, isLoading: isTrashedLoading } = useQuery({
@@ -587,7 +613,8 @@ function ContentListPage() {
 			collectionLabel={collectionConfig.label}
 			items={items}
 			trashedItems={trashedData?.items || []}
-			isLoading={isLoading || isFetchingNextPage}
+			isLoading={isLoading || isPlaceholderData}
+			isLoadingMore={isFetchingNextPage}
 			isTrashedLoading={isTrashedLoading}
 			hasMore={!!hasNextPage}
 			onLoadMore={handleLoadMore}
