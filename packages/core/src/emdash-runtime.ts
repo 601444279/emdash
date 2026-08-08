@@ -183,6 +183,7 @@ import {
 	type Storage,
 } from "./index.js";
 import { getDb } from "./loader.js";
+import { isRecord } from "./plugin-utils.js";
 import { CronExecutor, type InvokeCronHookFn } from "./plugins/cron.js";
 import { definePlugin } from "./plugins/define-plugin.js";
 import { DEV_CONSOLE_EMAIL_PLUGIN_ID, devConsoleEmailDeliver } from "./plugins/email-console.js";
@@ -3758,7 +3759,13 @@ export class EmDashRuntime {
 		const imageFields = collectionInfo.fields.filter(
 			(f) => f.type === "image" || f.type === "file",
 		);
-		if (imageFields.length === 0) return data;
+		// Repeater fields can contain image sub-fields, whose values need the same normalization
+		// (a bare media id posted inside a repeater item would otherwise be stored verbatim and
+		// render as "Image not found" in the admin).
+		const repeaterFields = collectionInfo.fields.filter(
+			(f) => f.type === "repeater" && Array.isArray(f.validation?.subFields),
+		);
+		if (imageFields.length === 0 && repeaterFields.length === 0) return data;
 
 		const getProvider = (id: string) => this.getMediaProvider(id);
 		const result = { ...data };
@@ -3775,6 +3782,37 @@ export class EmDashRuntime {
 			} catch {
 				// Don't fail the save if normalization fails for a single field
 			}
+		}
+
+		for (const field of repeaterFields) {
+			const value = result[field.slug];
+			if (!Array.isArray(value)) continue;
+
+			const mediaSubFieldSlugs = (field.validation?.subFields ?? [])
+				.filter((sub) => sub.type === "image")
+				.map((sub) => sub.slug);
+			if (mediaSubFieldSlugs.length === 0) continue;
+
+			const items: unknown[] = value;
+			result[field.slug] = await Promise.all(
+				items.map(async (item) => {
+					if (!isRecord(item)) return item;
+					const normalizedItem: Record<string, unknown> = { ...item };
+					for (const slug of mediaSubFieldSlugs) {
+						const subValue = normalizedItem[slug];
+						if (subValue == null) continue;
+						try {
+							const normalized = await normalizeMediaValue(subValue, getProvider);
+							if (normalized) {
+								normalizedItem[slug] = normalized;
+							}
+						} catch {
+							// Don't fail the save if normalization fails for a single sub-field
+						}
+					}
+					return normalizedItem;
+				}),
+			);
 		}
 
 		return result;
