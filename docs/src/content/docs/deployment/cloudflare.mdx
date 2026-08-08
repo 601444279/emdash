@@ -330,9 +330,12 @@ the provider under **Settings → Email**.
 | `binding` | `string`                     | `"EMAIL"`    | Name of the `send_email` binding in `wrangler.jsonc`.                 |
 
 <Aside type="note">
-	BCC and attachments are out of scope (not modeled in EmDash's `EmailMessage`),
-	and the provider is never auto-selected — you must choose it under Settings →
-	Email.
+	BCC and attachments are out of scope (not modeled in EmDash's `EmailMessage`).
+	After you activate the plugin under **Admin → Extensions**, EmDash selects it
+	automatically if it is the only active email provider; with more than one,
+	choose the one you want under **Settings → Email**. Under `astro dev` the
+	built-in console provider counts as a second provider, so in dev you always
+	pick there.
 </Aside>
 
 ## Environment Variables
