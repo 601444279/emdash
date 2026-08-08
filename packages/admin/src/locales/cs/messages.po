@@ -89,7 +89,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {# komentář importován} few {# komentáře importovány} many {# komentáře importováno} other {# komentářů importováno}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1493
+#: packages/admin/src/router.tsx:1492
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {# komentář aktualizován} few {# komentáře aktualizovány} many {# komentáře aktualizováno} other {# komentářů aktualizováno}}"
 
@@ -306,7 +306,7 @@ msgid "{0}{1}"
 msgstr "{0}{1}"
 
 #. placeholder {0}: draft.description.length
-#: packages/admin/src/components/SeoPanel.tsx:195
+#: packages/admin/src/components/SeoPanel.tsx:206
 msgid "{0}/160 characters"
 msgstr "{0}/160 znaků"
 
@@ -569,7 +569,7 @@ msgstr "Přijmout pozvánku"
 msgid "Access denied"
 msgstr "Přístup odepřen"
 
-#: packages/admin/src/router.tsx:1513
+#: packages/admin/src/router.tsx:1512
 msgid "Access Denied"
 msgstr "Přístup odepřen"
 
@@ -613,7 +613,7 @@ msgid "Active"
 msgstr "Aktivní"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:919
+#: packages/admin/src/components/ContentSettingsPanel.tsx:923
 #: packages/admin/src/components/MenuEditor.tsx:441
 #: packages/admin/src/components/TaxonomySidebar.tsx:496
 msgid "Add"
@@ -726,7 +726,7 @@ msgstr "Přidat položku"
 msgid "Add new {0}"
 msgstr "Přidat novou položku: {0}"
 
-#: packages/admin/src/components/SeoPanel.tsx:227
+#: packages/admin/src/components/SeoPanel.tsx:239
 msgid "Add noindex meta tag"
 msgstr "Přidat metaznačku noindex"
 
@@ -965,18 +965,18 @@ msgstr "Případně můžete provést export z WordPressu (Nástroje → Export)
 #: packages/admin/src/router.tsx:467
 #: packages/admin/src/router.tsx:671
 #: packages/admin/src/router.tsx:953
-#: packages/admin/src/router.tsx:1014
-#: packages/admin/src/router.tsx:1032
-#: packages/admin/src/router.tsx:1050
-#: packages/admin/src/router.tsx:1071
-#: packages/admin/src/router.tsx:1092
-#: packages/admin/src/router.tsx:1113
-#: packages/admin/src/router.tsx:1144
-#: packages/admin/src/router.tsx:1164
-#: packages/admin/src/router.tsx:1458
-#: packages/admin/src/router.tsx:1474
-#: packages/admin/src/router.tsx:1499
-#: packages/admin/src/router.tsx:1988
+#: packages/admin/src/router.tsx:1013
+#: packages/admin/src/router.tsx:1031
+#: packages/admin/src/router.tsx:1049
+#: packages/admin/src/router.tsx:1070
+#: packages/admin/src/router.tsx:1091
+#: packages/admin/src/router.tsx:1112
+#: packages/admin/src/router.tsx:1143
+#: packages/admin/src/router.tsx:1163
+#: packages/admin/src/router.tsx:1457
+#: packages/admin/src/router.tsx:1473
+#: packages/admin/src/router.tsx:1498
+#: packages/admin/src/router.tsx:1987
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -1122,7 +1122,7 @@ msgstr "Ověření bylo zrušeno nebo vypršel jeho časový limit. Zkuste to pr
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1129
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1133
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1182,7 +1182,7 @@ msgstr "Automatické zálohy"
 msgid "Automatic backups need a storage backend (R2, S3, or local storage). Configure storage in your EmDash config to enable them."
 msgstr "Automatické zálohy vyžadují úložiště (R2, S3 nebo lokální). Povolíte je nastavením úložiště v konfiguraci EmDash."
 
-#: packages/admin/src/router.tsx:1013
+#: packages/admin/src/router.tsx:1012
 msgid "Autosave failed"
 msgstr "Automatické uložení selhalo"
 
@@ -1308,7 +1308,7 @@ msgstr "Tučné"
 msgid "Boolean"
 msgstr "Logická hodnota"
 
-#: packages/admin/src/components/SeoPanel.tsx:184
+#: packages/admin/src/components/SeoPanel.tsx:195
 msgid "Brief summary shown below the title in search results"
 msgstr "Stručný souhrn zobrazený pod titulkem ve výsledcích hledání"
 
@@ -1392,9 +1392,9 @@ msgstr "Může zobrazit obsah"
 #: packages/admin/src/components/ContentPickerModal.tsx:241
 #: packages/admin/src/components/ContentSettingsPanel.tsx:92
 #: packages/admin/src/components/ContentSettingsPanel.tsx:534
-#: packages/admin/src/components/ContentSettingsPanel.tsx:730
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1033
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1086
+#: packages/admin/src/components/ContentSettingsPanel.tsx:734
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1037
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1090
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1440,8 +1440,8 @@ msgstr "Sekce šablony nelze smazat"
 msgid "Cannot determine MIME type from URL. Use a URL ending in a recognized image extension (e.g. .jpg, .png, .webp)."
 msgstr "Z URL nelze určit typ MIME. Použijte URL končící rozpoznanou příponou obrázku (např. .jpg, .png, .webp)."
 
-#: packages/admin/src/components/SeoPanel.tsx:212
-#: packages/admin/src/components/SeoPanel.tsx:216
+#: packages/admin/src/components/SeoPanel.tsx:224
+#: packages/admin/src/components/SeoPanel.tsx:228
 msgid "Canonical URL"
 msgstr "Kanonická URL"
 
@@ -1515,7 +1515,7 @@ msgstr "Změnit logo"
 msgid "Changelog"
 msgstr "Seznam změn"
 
-#: packages/admin/src/router.tsx:1064
+#: packages/admin/src/router.tsx:1063
 msgid "Changes discarded"
 msgstr "Změny byly zahozeny"
 
@@ -1800,7 +1800,7 @@ msgstr "Chyby obsahu ({0})"
 msgid "Content found:"
 msgstr "Nalezený obsah:"
 
-#: packages/admin/src/router.tsx:1086
+#: packages/admin/src/router.tsx:1085
 msgid "Content has been scheduled for publishing"
 msgstr "Obsah byl naplánován k publikování"
 
@@ -1812,7 +1812,7 @@ msgstr "Obsah byl aktualizován na vybranou revizi."
 msgid "Content ID:"
 msgstr "ID obsahu:"
 
-#: packages/admin/src/router.tsx:1027
+#: packages/admin/src/router.tsx:1026
 msgid "Content is now live"
 msgstr "Obsah je nyní veřejný"
 
@@ -1824,11 +1824,11 @@ msgstr "– počet položek obsahu"
 msgid "Content Read"
 msgstr "Čtení obsahu"
 
-#: packages/admin/src/router.tsx:1045
+#: packages/admin/src/router.tsx:1044
 msgid "Content removed from public view"
 msgstr "Obsah byl odebrán z veřejného zobrazení"
 
-#: packages/admin/src/router.tsx:1107
+#: packages/admin/src/router.tsx:1106
 msgid "Content reverted to draft"
 msgstr "Obsah byl vrácen do konceptu"
 
@@ -1937,7 +1937,7 @@ msgstr "Nepodařilo se načíst vlastní pole."
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "Nepodařilo se přiřadit „{draft}“ k typu MIME. Zadejte MIME přímo."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:925
+#: packages/admin/src/components/ContentSettingsPanel.tsx:929
 msgid "Couldn't search bylines. Please try again."
 msgstr "Nepodařilo se vyhledat autorské podpisy. Zkuste to prosím znovu."
 
@@ -1950,7 +1950,7 @@ msgstr "Nepodařilo se ověřit, kolik hodnot odkazuje na „{0}“. Smazáním 
 msgid "Count"
 msgstr "Počet"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1057
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1061
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -1986,7 +1986,7 @@ msgstr "Vytvořit účet"
 msgid "Create an account"
 msgstr "Vytvořit účet"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1005
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1009
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "Vytvořit autorský podpis"
@@ -2124,7 +2124,7 @@ msgid "Created {0}"
 msgstr "Vytvořeno {0}"
 
 #. placeholder {0}: result.locale?.toUpperCase() ?? t`new`
-#: packages/admin/src/router.tsx:1138
+#: packages/admin/src/router.tsx:1137
 msgid "Created {0} translation"
 msgstr "Překlad vytvořen ({0})"
 
@@ -2136,7 +2136,7 @@ msgstr "Datum vytvoření"
 msgid "Creating collections and fields..."
 msgstr "Vytváření kolekcí a polí..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1057
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1061
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
@@ -2626,8 +2626,8 @@ msgstr "Zobrazí navigační nabídku"
 msgid "Display category list"
 msgstr "Zobrazí seznam kategorií"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1008
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1070
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1012
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1074
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "Zobrazované jméno"
@@ -2692,7 +2692,7 @@ msgstr "Nemáte účet? <0>Zaregistrujte se</0>"
 msgid "Done"
 msgstr "Hotovo"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:951
+#: packages/admin/src/components/ContentSettingsPanel.tsx:955
 msgid "Down"
 msgstr "Dolů"
 
@@ -2812,7 +2812,7 @@ msgstr "např. CI/CD Pipeline"
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "např. MacBook Pro, iPhone"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:960
+#: packages/admin/src/components/ContentSettingsPanel.tsx:964
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2848,7 +2848,7 @@ msgstr "Upravit položku ({itemLabel})"
 msgid "Edit {title}"
 msgstr "Upravit {title}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1067
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1071
 msgid "Edit byline"
 msgstr "Upravit autorský podpis"
 
@@ -3074,7 +3074,7 @@ msgstr "Zadejte URL svého webu na WordPressu"
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2202
+#: packages/admin/src/router.tsx:2201
 msgid "Error"
 msgstr "Chyba"
 
@@ -3185,7 +3185,7 @@ msgstr "Nepodařilo se vytvořit správce"
 msgid "Failed to create backup"
 msgstr "Nepodařilo se vytvořit zálohu"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1051
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1055
 msgid "Failed to create byline"
 msgstr "Nepodařilo se vytvořit autorský podpis"
 
@@ -3209,14 +3209,14 @@ msgstr "Nepodařilo se vytvořit některé kolekce"
 msgid "Failed to create term"
 msgstr "Nepodařilo se vytvořit položku taxonomie"
 
-#: packages/admin/src/router.tsx:1143
+#: packages/admin/src/router.tsx:1142
 msgid "Failed to create translation"
 msgstr "Nepodařilo se vytvořit překlad"
 
 #: packages/admin/src/router.tsx:423
 #: packages/admin/src/router.tsx:452
 #: packages/admin/src/router.tsx:535
-#: packages/admin/src/router.tsx:1163
+#: packages/admin/src/router.tsx:1162
 msgid "Failed to delete"
 msgstr "Nepodařilo se smazat"
 
@@ -3241,7 +3241,7 @@ msgid "Failed to delete collection"
 msgstr "Nepodařilo se smazat kolekci"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1473
+#: packages/admin/src/router.tsx:1472
 msgid "Failed to delete comment"
 msgstr "Nepodařilo se smazat komentář"
 
@@ -3307,7 +3307,7 @@ msgstr "Nepodařilo se vypnout hledání"
 msgid "Failed to disable user"
 msgstr "Nepodařilo se deaktivovat uživatele"
 
-#: packages/admin/src/router.tsx:1070
+#: packages/admin/src/router.tsx:1069
 msgid "Failed to discard changes"
 msgstr "Nepodařilo se zahodit změny"
 
@@ -3423,7 +3423,7 @@ msgstr "Nepodařilo se načíst položky taxonomie"
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
 #: packages/admin/src/router.tsx:862
-#: packages/admin/src/router.tsx:1404
+#: packages/admin/src/router.tsx:1403
 msgid "Failed to fetch user"
 msgstr "Nepodařilo se načíst uživatele"
 
@@ -3534,7 +3534,7 @@ msgstr "Nepodařilo se načíst uživatele: {0}"
 msgid "Failed to load widget"
 msgstr "Nepodařilo se načíst widget"
 
-#: packages/admin/src/router.tsx:1498
+#: packages/admin/src/router.tsx:1497
 msgid "Failed to perform bulk action"
 msgstr "Nepodařilo se provést hromadnou akci"
 
@@ -3547,7 +3547,7 @@ msgid "Failed to prepare import"
 msgstr "Nepodařilo se připravit import"
 
 #: packages/admin/src/router.tsx:491
-#: packages/admin/src/router.tsx:1031
+#: packages/admin/src/router.tsx:1030
 msgid "Failed to publish"
 msgstr "Nepodařilo se publikovat"
 
@@ -3604,7 +3604,7 @@ msgstr "Nepodařilo se přepsat URL"
 
 #: packages/admin/src/router.tsx:670
 #: packages/admin/src/router.tsx:952
-#: packages/admin/src/router.tsx:1987
+#: packages/admin/src/router.tsx:1986
 msgid "Failed to save"
 msgstr "Nepodařilo se uložit"
 
@@ -3623,7 +3623,7 @@ msgstr "Nepodařilo se uložit pole"
 msgid "Failed to save settings"
 msgstr "Nepodařilo se uložit nastavení"
 
-#: packages/admin/src/router.tsx:1091
+#: packages/admin/src/router.tsx:1090
 msgid "Failed to schedule"
 msgstr "Nepodařilo se naplánovat"
 
@@ -3654,11 +3654,11 @@ msgstr "Nepodařilo se nastavit položky taxonomie přiřazené k obsahu"
 msgid "Failed to uninstall plugin"
 msgstr "Nepodařilo se odinstalovat plugin"
 
-#: packages/admin/src/router.tsx:1049
+#: packages/admin/src/router.tsx:1048
 msgid "Failed to unpublish"
 msgstr "Nepodařilo se zrušit publikování"
 
-#: packages/admin/src/router.tsx:1112
+#: packages/admin/src/router.tsx:1111
 msgid "Failed to unschedule"
 msgstr "Nepodařilo se zrušit naplánování"
 
@@ -3675,7 +3675,7 @@ msgstr "Nepodařilo se aktualizovat {0}"
 msgid "Failed to update backup settings"
 msgstr "Nepodařilo se aktualizovat nastavení záloh"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1101
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1105
 msgid "Failed to update byline"
 msgstr "Nepodařilo se aktualizovat autorský podpis"
 
@@ -3712,7 +3712,7 @@ msgstr "Nepodařilo se aktualizovat sekci"
 msgid "Failed to update settings"
 msgstr "Nepodařilo se aktualizovat nastavení"
 
-#: packages/admin/src/router.tsx:1457
+#: packages/admin/src/router.tsx:1456
 msgid "Failed to update status"
 msgstr "Nepodařilo se aktualizovat stav"
 
@@ -3931,7 +3931,7 @@ msgid "Go"
 msgstr "Go"
 
 #: packages/admin/src/components/WordPressImport.tsx:2418
-#: packages/admin/src/router.tsx:2222
+#: packages/admin/src/router.tsx:2221
 msgid "Go to Dashboard"
 msgstr "Přejít na přehled"
 
@@ -4018,8 +4018,8 @@ msgstr "Hlavní banner"
 msgid "hero, banner, cta"
 msgstr "úvodní sekce, banner, výzva k akci"
 
-#: packages/admin/src/components/SeoPanel.tsx:230
-#: packages/admin/src/components/SeoPanel.tsx:233
+#: packages/admin/src/components/SeoPanel.tsx:242
+#: packages/admin/src/components/SeoPanel.tsx:245
 msgid "Hide from search engines"
 msgstr "Skrýt před vyhledávači"
 
@@ -4467,7 +4467,7 @@ msgstr "JSX"
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr "Ponechte tuto kartu otevřenou. Import probíhá po malých krocích a lze jej při přerušení bezpečně spustit znovu."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:930
+#: packages/admin/src/components/ContentSettingsPanel.tsx:934
 msgid "Keep typing to narrow down more bylines."
 msgstr "Pokračujte v psaní a výběr autorských podpisů dále zúžíte."
 
@@ -4638,7 +4638,7 @@ msgstr "Načíst další"
 msgid "Load More"
 msgstr "Načíst další"
 
-#: packages/admin/src/router.tsx:2177
+#: packages/admin/src/router.tsx:2176
 msgid "Loading"
 msgstr "Načítání"
 
@@ -4654,8 +4654,8 @@ msgstr "Načítání kolekcí..."
 msgid "Loading comments..."
 msgstr "Načítání komentářů..."
 
-#: packages/admin/src/router.tsx:2179
-#: packages/admin/src/router.tsx:2191
+#: packages/admin/src/router.tsx:2178
+#: packages/admin/src/router.tsx:2190
 msgid "Loading configuration..."
 msgstr "Načítání konfigurace..."
 
@@ -4801,7 +4801,7 @@ msgstr "Spravovat"
 msgid "Manage {0} for {1}"
 msgstr "Správa: {0}; pro: {1}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:892
+#: packages/admin/src/components/ContentSettingsPanel.tsx:896
 msgid "Manage bylines in {entryLocale}"
 msgstr "Spravovat autorské podpisy v jazyce {entryLocale}"
 
@@ -5002,8 +5002,8 @@ msgstr "Nabídky ({0})"
 msgid "Menus Manage"
 msgstr "Správa nabídek"
 
-#: packages/admin/src/components/SeoPanel.tsx:188
-#: packages/admin/src/components/SeoPanel.tsx:192
+#: packages/admin/src/components/SeoPanel.tsx:199
+#: packages/admin/src/components/SeoPanel.tsx:203
 msgid "Meta Description"
 msgstr "Meta popis"
 
@@ -5095,14 +5095,14 @@ msgstr "Přesunout do koše"
 
 #: packages/admin/src/components/ContentList.tsx:473
 #: packages/admin/src/components/ContentList.tsx:1073
-#: packages/admin/src/components/ContentSettingsPanel.tsx:717
-#: packages/admin/src/components/ContentSettingsPanel.tsx:737
+#: packages/admin/src/components/ContentSettingsPanel.tsx:721
+#: packages/admin/src/components/ContentSettingsPanel.tsx:741
 msgid "Move to Trash"
 msgstr "Přesunout do koše"
 
 #: packages/admin/src/components/ContentList.tsx:451
 #: packages/admin/src/components/ContentList.tsx:1058
-#: packages/admin/src/components/ContentSettingsPanel.tsx:722
+#: packages/admin/src/components/ContentSettingsPanel.tsx:726
 msgid "Move to Trash?"
 msgstr "Přesunout do koše?"
 
@@ -5163,7 +5163,7 @@ msgstr "Navigace"
 msgid "Never"
 msgstr "Nikdy"
 
-#: packages/admin/src/router.tsx:1138
+#: packages/admin/src/router.tsx:1137
 msgid "new"
 msgstr "nový"
 
@@ -5296,7 +5296,7 @@ msgstr "Zatím žádné schválené komentáře."
 msgid "No byline fields yet."
 msgstr "Zatím žádná pole autorského podpisu."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:884
+#: packages/admin/src/components/ContentSettingsPanel.tsx:888
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "V jazyce {entryLocale} nejsou k dispozici žádné autorské podpisy. Než některý u této položky uvedete, vytvořte variantu na stránce Autorské podpisy."
 
@@ -5304,7 +5304,7 @@ msgstr "V jazyce {entryLocale} nejsou k dispozici žádné autorské podpisy. Ne
 msgid "No bylines found"
 msgstr "Nenalezeny žádné autorské podpisy"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:992
+#: packages/admin/src/components/ContentSettingsPanel.tsx:996
 msgid "No bylines selected."
 msgstr "Není vybrán žádný autorský podpis."
 
@@ -5402,7 +5402,7 @@ msgstr "Žádný propojený uživatel"
 msgid "No matches"
 msgstr "Žádné shody"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:927
+#: packages/admin/src/components/ContentSettingsPanel.tsx:931
 msgid "No matching bylines."
 msgstr "Žádné odpovídající autorské podpisy."
 
@@ -5706,12 +5706,12 @@ msgstr "Pořadí uloženo"
 msgid "Original:"
 msgstr "Originál:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:684
+#: packages/admin/src/components/ContentSettingsPanel.tsx:688
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "Osnova"
 
-#: packages/admin/src/components/SeoPanel.tsx:164
+#: packages/admin/src/components/SeoPanel.tsx:174
 msgid "Overrides the page title in search engine results"
 msgstr "Přepíše název stránky ve výsledcích vyhledávání"
 
@@ -5724,7 +5724,7 @@ msgstr "Vlastnictví"
 msgid "Package"
 msgstr "Balíček"
 
-#: packages/admin/src/router.tsx:2217
+#: packages/admin/src/router.tsx:2216
 msgid "Page Not Found"
 msgstr "Stránka nenalezena"
 
@@ -6006,7 +6006,7 @@ msgstr "Pluginy"
 msgid "Point-in-Time Restore"
 msgstr "Obnovení k určitému okamžiku"
 
-#: packages/admin/src/components/SeoPanel.tsx:208
+#: packages/admin/src/components/SeoPanel.tsx:220
 msgid "Points search engines to the original version of this page, if it's duplicated from another URL"
 msgstr "Nasměruje vyhledávače na původní verzi této stránky, pokud je duplikátem jiné URL"
 
@@ -6099,7 +6099,7 @@ msgid "Publish date"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:747
-#: packages/admin/src/router.tsx:1027
+#: packages/admin/src/router.tsx:1026
 msgid "Published"
 msgstr "Publikováno"
 
@@ -6124,7 +6124,7 @@ msgstr "Vydavatel:"
 msgid "Python"
 msgstr "Python"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1000
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1004
 msgid "Quick create byline"
 msgstr "Rychle vytvořit autorský podpis"
 
@@ -6264,7 +6264,7 @@ msgstr "Toto vydání zatím nelze nainstalovat, protože je příliš nové"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:969
+#: packages/admin/src/components/ContentSettingsPanel.tsx:973
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/PortableTextEditor.tsx:4129
 #: packages/admin/src/components/settings/GeneralSettings.tsx:229
@@ -6471,7 +6471,7 @@ msgstr "Obnovování..."
 #: packages/admin/src/components/MarketplaceBrowse.tsx:143
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
-#: packages/admin/src/router.tsx:2205
+#: packages/admin/src/router.tsx:2204
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "Zkusit znovu"
@@ -6480,7 +6480,7 @@ msgstr "Zkusit znovu"
 msgid "Reusable content blocks you can insert into any content"
 msgstr "Znovupoužitelné bloky obsahu, které lze vložit do libovolného obsahu"
 
-#: packages/admin/src/router.tsx:1065
+#: packages/admin/src/router.tsx:1064
 msgid "Reverted to published version"
 msgstr "Obnovena publikovaná verze"
 
@@ -6496,7 +6496,7 @@ msgstr "Zkontrolovat nová oprávnění"
 msgid "Revision restored"
 msgstr "Revize obnovena"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:692
+#: packages/admin/src/components/ContentSettingsPanel.tsx:696
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6558,7 +6558,7 @@ msgstr "Role"
 msgid "Role {role}"
 msgstr "Role {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:974
+#: packages/admin/src/components/ContentSettingsPanel.tsx:978
 msgid "Role label"
 msgstr "Označení role"
 
@@ -6584,7 +6584,7 @@ msgstr "Rust"
 msgid "Same window"
 msgstr "Stejné okno"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1107
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1111
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:264
@@ -6636,7 +6636,7 @@ msgstr "Uloženo"
 msgid "Saved \"{0}\"."
 msgstr "Uloženo „{0}“."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1107
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1111
 #: packages/admin/src/components/FieldEditor.tsx:660
 #: packages/admin/src/components/MediaDetailPanel.tsx:425
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6678,7 +6678,7 @@ msgstr "Naplánovat na později"
 
 #: packages/admin/src/components/ContentList.tsx:738
 #: packages/admin/src/components/ContentStatusBadge.tsx:63
-#: packages/admin/src/router.tsx:1085
+#: packages/admin/src/router.tsx:1084
 msgid "Scheduled"
 msgstr "Naplánováno"
 
@@ -6767,12 +6767,12 @@ msgstr "Hledat podle názvu souboru..."
 msgid "Search by name or email..."
 msgstr "Hledat podle jména nebo e-mailu..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:901
+#: packages/admin/src/components/ContentSettingsPanel.tsx:905
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr "Hledat autorské podpisy"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:900
+#: packages/admin/src/components/ContentSettingsPanel.tsx:904
 msgid "Search bylines to add..."
 msgstr "Hledat autorské podpisy k přidání..."
 
@@ -6851,7 +6851,7 @@ msgstr "Hledat..."
 msgid "Searchable"
 msgstr "Prohledávatelné"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:905
+#: packages/admin/src/components/ContentSettingsPanel.tsx:909
 msgid "Searching..."
 msgstr "Hledání..."
 
@@ -7115,8 +7115,8 @@ msgstr "Nastavení SEO (Yoast)"
 msgid "SEO settings saved"
 msgstr "Nastavení SEO uloženo"
 
-#: packages/admin/src/components/SeoPanel.tsx:168
-#: packages/admin/src/components/SeoPanel.tsx:172
+#: packages/admin/src/components/SeoPanel.tsx:178
+#: packages/admin/src/components/SeoPanel.tsx:182
 msgid "SEO Title"
 msgstr "SEO titulek"
 
@@ -7338,8 +7338,8 @@ msgstr "Přeskočeno"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
 #: packages/admin/src/components/ContentSettingsPanel.tsx:462
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1016
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1078
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1020
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1082
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:402
 #: packages/admin/src/components/ContentTypeList.tsx:99
@@ -7656,7 +7656,7 @@ msgstr "Nabídka byla smazána."
 msgid "The name of your site, used in the header and metadata"
 msgstr "Název vašeho webu, používaný v hlavičce a metadatech"
 
-#: packages/admin/src/router.tsx:2219
+#: packages/admin/src/router.tsx:2218
 msgid "The page you're looking for doesn't exist."
 msgstr "Hledaná stránka neexistuje."
 
@@ -7800,7 +7800,7 @@ msgstr "Smaže oblast widgetů i všechny její widgety. Tuto akci nelze vrátit
 msgid "This will grant CLI access with your permissions."
 msgstr "Udělí přístup z CLI s vašimi oprávněními."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:724
+#: packages/admin/src/components/ContentSettingsPanel.tsx:728
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "Položka bude přesunuta do koše. Později ji lze z koše obnovit."
 
@@ -7933,7 +7933,7 @@ msgstr "Překládání..."
 
 #: packages/admin/src/components/MenuEditor.tsx:143
 #: packages/admin/src/components/TaxonomyManager.tsx:782
-#: packages/admin/src/router.tsx:1137
+#: packages/admin/src/router.tsx:1136
 msgid "Translation created"
 msgstr "Překlad vytvořen"
 
@@ -8046,8 +8046,8 @@ msgstr "TypeScript"
 msgid "Unable to reach marketplace"
 msgstr "Tržiště není dostupné"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1121
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1138
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1125
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1142
 msgid "Unassigned"
 msgstr "Nepřiřazeno"
 
@@ -8112,7 +8112,7 @@ msgstr "Nepojmenovaný přístupový klíč"
 msgid "Unpublish {itemLabel}"
 msgstr "Zrušit publikování položky ({itemLabel})"
 
-#: packages/admin/src/router.tsx:1045
+#: packages/admin/src/router.tsx:1044
 msgid "Unpublished"
 msgstr "Nepublikováno"
 
@@ -8124,7 +8124,7 @@ msgstr "Nalezeny neregistrované tabulky obsahu"
 msgid "Unschedule"
 msgstr "Zrušit naplánování"
 
-#: packages/admin/src/router.tsx:1106
+#: packages/admin/src/router.tsx:1105
 msgid "Unscheduled"
 msgstr "Nenaplánováno"
 
@@ -8150,7 +8150,7 @@ msgstr "Widget bez názvu"
 msgid "Unverified publisher"
 msgstr "Neověřený vydavatel"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:948
+#: packages/admin/src/components/ContentSettingsPanel.tsx:952
 msgid "Up"
 msgstr "Nahoru"
 
@@ -8582,19 +8582,19 @@ msgstr "Celé číslo"
 msgid "Why can't this be changed?"
 msgstr "Proč to nelze změnit?"
 
-#: packages/admin/src/components/SeoPanel.tsx:209
+#: packages/admin/src/components/SeoPanel.tsx:221
 msgid "Why is this important for duplicate pages?"
 msgstr "Proč je to důležité u duplicitních stránek?"
 
-#: packages/admin/src/components/SeoPanel.tsx:185
+#: packages/admin/src/components/SeoPanel.tsx:196
 msgid "Why is this important for search result summaries?"
 msgstr "Proč je to důležité pro souhrny ve výsledcích hledání?"
 
-#: packages/admin/src/components/SeoPanel.tsx:165
+#: packages/admin/src/components/SeoPanel.tsx:175
 msgid "Why is this important for search result titles?"
 msgstr "Proč je to důležité pro názvy ve výsledcích hledání?"
 
-#: packages/admin/src/components/SeoPanel.tsx:228
+#: packages/admin/src/components/SeoPanel.tsx:240
 msgid "Why is this important for search visibility?"
 msgstr "Proč je to důležité pro viditelnost ve vyhledávání?"
 
@@ -8746,7 +8746,7 @@ msgstr "Máte plný přístup ke správě tohoto webu včetně uživatelů, nast
 msgid "You need admin permissions to manage byline schema."
 msgstr "Ke správě schématu autorských podpisů jsou potřeba oprávnění správce."
 
-#: packages/admin/src/router.tsx:1514
+#: packages/admin/src/router.tsx:1513
 msgid "You need Editor permissions to moderate comments."
 msgstr "K moderování komentářů potřebujete oprávnění editora."
 
