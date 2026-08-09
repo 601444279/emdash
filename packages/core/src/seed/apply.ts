@@ -180,6 +180,7 @@ export async function applySeed(
 						supports: collection.supports || [],
 						urlPattern: collection.urlPattern,
 						hidden: collection.hidden,
+						sortOrder: collection.sortOrder,
 						commentsEnabled: collection.commentsEnabled,
 					});
 					result.collections.updated++;
@@ -249,6 +250,7 @@ export async function applySeed(
 					supports: collection.supports || [],
 					urlPattern: collection.urlPattern,
 					hidden: collection.hidden,
+					sortOrder: collection.sortOrder,
 					commentsEnabled: collection.commentsEnabled,
 				},
 				fields,

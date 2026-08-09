@@ -38,6 +38,8 @@ export interface SchemaCollection {
 	hasSeo: boolean;
 	/** Sidebar entry omitted in the admin; the collection stays reachable by URL */
 	hidden: boolean;
+	/** Explicit sidebar position; absent means the alphabetical fallback */
+	sortOrder?: number;
 	commentsEnabled: boolean;
 	commentsModeration: "all" | "first_time" | "none";
 	commentsClosedAfterDays: number;
@@ -86,6 +88,7 @@ export interface CreateCollectionInput {
 	urlPattern?: string;
 	hasSeo?: boolean;
 	hidden?: boolean;
+	sortOrder?: number | null;
 }
 
 export interface UpdateCollectionInput {
@@ -97,6 +100,7 @@ export interface UpdateCollectionInput {
 	urlPattern?: string;
 	hasSeo?: boolean;
 	hidden?: boolean;
+	sortOrder?: number | null;
 	commentsEnabled?: boolean;
 	commentsModeration?: "all" | "first_time" | "none";
 	commentsClosedAfterDays?: number;
@@ -295,6 +299,23 @@ export async function reorderFields(collectionSlug: string, fieldSlugs: string[]
 		},
 	);
 	if (!response.ok) await throwResponseError(response, i18n._(msg`Failed to reorder fields`));
+}
+
+/**
+ * Reorder collections in the admin sidebar.
+ *
+ * `slugs` is the full desired order — collections left out lose their
+ * explicit position and fall back to alphabetical order after the ordered
+ * ones.
+ */
+export async function reorderCollections(slugs: string[]): Promise<void> {
+	const response = await apiFetch(`${API_BASE}/schema/collections/reorder`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ slugs }),
+	});
+	if (!response.ok)
+		await throwResponseError(response, i18n._(msg`Failed to reorder content types`));
 }
 
 // ============================================
