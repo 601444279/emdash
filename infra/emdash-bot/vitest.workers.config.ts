@@ -43,5 +43,8 @@ export default defineConfig({
 	],
 	test: {
 		include: ["tests/integration/**/*.test.ts"],
+		// Below ~20s the first test flakes: the AI binding's remote-proxy warmup
+		// overruns vitest's 5s default.
+		testTimeout: 20_000,
 	},
 });
