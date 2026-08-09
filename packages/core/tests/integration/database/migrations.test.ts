@@ -143,6 +143,7 @@ describe("Database Migrations (Integration)", () => {
 			"054_media_upload_attempts",
 			"055_content_translation_group_locale_index",
 			"056_taxonomy_term_sort_order",
+			"057_collection_hidden",
 		];
 
 		await db.deleteFrom("_emdash_migrations").where("name", "in", trailing).execute();
