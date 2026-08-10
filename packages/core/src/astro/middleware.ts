@@ -47,6 +47,7 @@ import {
 import { setI18nConfig } from "../i18n/config.js";
 import type { Database, Storage } from "../index.js";
 import { createPublicMediaUrlResolver } from "../media/url.js";
+import { getLastContentWriteAt } from "../object-cache/index.js";
 import type { SandboxRunnerFactory } from "../plugins/sandbox/types.js";
 import type { ResolvedPlugin } from "../plugins/types.js";
 import { invalidateUrlPatternCache } from "../query.js";
@@ -352,6 +353,7 @@ async function runOutsideRequest<T>(
 		// Event handlers publish, clean up, or run jobs — a write workload —
 		// so a connection-backed adapter routes them to the primary.
 		isWrite: true,
+		canUseCachedBinding: false,
 		cookies: NOOP_COOKIE_JAR,
 		url: CRON_EVENT_URL,
 	});
@@ -561,6 +563,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		const hasBearerAuth = (request.headers.get("authorization") ?? "")
 			.toLowerCase()
 			.startsWith("bearer ");
+		const isWrite = request.method !== "GET" && request.method !== "HEAD";
+		const isAuthenticated = !!sessionUser || hasBearerAuth;
+		const canUseCachedBinding =
+			!isAuthenticated &&
+			!isWrite &&
+			!playgroundDb &&
+			!isEmDashRoute &&
+			!hasEditCookie &&
+			!hasPreviewToken;
 
 		if (!isEmDashRoute && !isPublicRuntimeRoute && !hasEditCookie && !hasPreviewToken) {
 			if (!sessionUser && !playgroundDb) {
@@ -647,12 +658,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
 				// Even on the anonymous fast path we ask the adapter for a per-request
 				// scoped db. For D1 with read replication this routes anonymous reads
 				// to the nearest replica; for other adapters it's a no-op.
+				const lastContentWriteAt =
+					canUseCachedBinding && config?.database?.needsLastContentWriteAt
+						? await getLastContentWriteAt()
+						: undefined;
 				const anonScoped = createRequestScopedDb({
 					config: config?.database?.config,
-					isAuthenticated: false,
-					isWrite: request.method !== "GET" && request.method !== "HEAD",
+					isAuthenticated,
+					isWrite,
+					canUseCachedBinding,
 					cookies,
 					url,
+					lastContentWriteAt,
 				});
 				const runAnon = async () => {
 					const t0 = performance.now();
@@ -855,12 +872,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			// it in ALS so the runtime's db getter and loader's getDb() pick it up,
 			// then call commit() after next() so the adapter can persist any
 			// per-request state (e.g. a D1 bookmark cookie for read-your-writes).
+			const lastContentWriteAt =
+				canUseCachedBinding && config?.database?.needsLastContentWriteAt
+					? await getLastContentWriteAt()
+					: undefined;
 			const scoped = createRequestScopedDb({
 				config: config?.database?.config,
-				isAuthenticated: !!sessionUser || hasBearerAuth,
-				isWrite: request.method !== "GET" && request.method !== "HEAD",
+				isAuthenticated,
+				isWrite,
+				canUseCachedBinding,
 				cookies: context.cookies,
 				url,
+				lastContentWriteAt,
 			});
 
 			const renderAndFinalize = async () => {
