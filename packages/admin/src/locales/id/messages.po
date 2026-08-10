@@ -157,7 +157,7 @@ msgid "{0, plural, one {# post} other {# posts}}"
 msgstr "{0, plural, other {# pos}}"
 
 #. placeholder {0}: loopRedirectIds.size
-#: packages/admin/src/components/Redirects.tsx:447
+#: packages/admin/src/components/Redirects.tsx:452
 msgid "{0, plural, one {# redirect is part of a loop.} other {# redirects are part of a loop.}}"
 msgstr "{0, plural, other {# pengalihan adalah bagian dari loop.}}"
 
@@ -518,7 +518,7 @@ msgstr "4. Klik \"Unduh File Ekspor\""
 msgid "4. Enter \"EmDash\" and click \"Add New\""
 msgstr "4. Masukkan \"EmDash\" dan klik \"Tambah Baru\""
 
-#: packages/admin/src/components/Redirects.tsx:397
+#: packages/admin/src/components/Redirects.tsx:402
 msgid "404 Errors"
 msgstr "Kesalahan 404"
 
@@ -875,12 +875,12 @@ msgid "All Sources"
 msgstr "Semua Sumber"
 
 #: packages/admin/src/components/ContentList.tsx:735
-#: packages/admin/src/components/Redirects.tsx:421
+#: packages/admin/src/components/Redirects.tsx:426
 msgid "All statuses"
 msgstr "Semua status"
 
 #: packages/admin/src/components/MediaLibrary.tsx:433
-#: packages/admin/src/components/Redirects.tsx:427
+#: packages/admin/src/components/Redirects.tsx:432
 msgid "All types"
 msgstr "Semua tipe"
 
@@ -1161,11 +1161,11 @@ msgstr "Mengotorisasi..."
 msgid "Authors"
 msgstr "Penulis"
 
-#: packages/admin/src/components/Redirects.tsx:524
+#: packages/admin/src/components/Redirects.tsx:530
 msgid "auto"
 msgstr "otomatis"
 
-#: packages/admin/src/components/Redirects.tsx:427
+#: packages/admin/src/components/Redirects.tsx:432
 msgid "Auto (slug change)"
 msgstr "Otomatis (perubahan slug)"
 
@@ -1673,7 +1673,7 @@ msgstr "Tutup pengaturan"
 
 #: packages/admin/src/components/ContentTypeList.tsx:356
 #: packages/admin/src/components/PortableTextEditor.tsx:3560
-#: packages/admin/src/components/Redirects.tsx:472
+#: packages/admin/src/components/Redirects.tsx:478
 msgid "Code"
 msgstr "Kode"
 
@@ -2041,7 +2041,7 @@ msgstr "Buat pengalihan untuk {0}"
 msgid "Create redirect for this path"
 msgstr "Buat pengalihan untuk jalur ini"
 
-#: packages/admin/src/components/Redirects.tsx:464
+#: packages/admin/src/components/Redirects.tsx:469
 msgid "Create redirect rules to manage URL changes."
 msgstr "Buat aturan pengalihan untuk mengelola perubahan URL."
 
@@ -2281,7 +2281,7 @@ msgstr "Ditetapkan dalam kode"
 #: packages/admin/src/components/MediaDetailPanel.tsx:453
 #: packages/admin/src/components/MenuEditor.tsx:549
 #: packages/admin/src/components/MenuList.tsx:258
-#: packages/admin/src/components/Redirects.tsx:585
+#: packages/admin/src/components/Redirects.tsx:603
 #: packages/admin/src/components/Sections.tsx:308
 #: packages/admin/src/components/Sections.tsx:407
 #: packages/admin/src/components/settings/BackupSettings.tsx:352
@@ -2399,16 +2399,16 @@ msgstr "Hapus Permanen"
 msgid "Delete Permanently?"
 msgstr "Hapus Permanen?"
 
-#: packages/admin/src/components/Redirects.tsx:538
+#: packages/admin/src/components/Redirects.tsx:544
 msgid "Delete redirect"
 msgstr "Hapus pengalihan"
 
 #. placeholder {0}: r.source
-#: packages/admin/src/components/Redirects.tsx:539
+#: packages/admin/src/components/Redirects.tsx:545
 msgid "Delete redirect {0}"
 msgstr "Hapus pengalihan {0}"
 
-#: packages/admin/src/components/Redirects.tsx:583
+#: packages/admin/src/components/Redirects.tsx:601
 msgid "Delete Redirect?"
 msgstr "Hapus Pengalihan?"
 
@@ -2444,7 +2444,7 @@ msgstr "Menghapus \"{0}\" juga akan menghapus {1, plural, one {# nilai tersimpan
 #: packages/admin/src/components/MediaDetailPanel.tsx:410
 #: packages/admin/src/components/MediaDetailPanel.tsx:454
 #: packages/admin/src/components/MenuList.tsx:259
-#: packages/admin/src/components/Redirects.tsx:586
+#: packages/admin/src/components/Redirects.tsx:604
 #: packages/admin/src/components/Sections.tsx:309
 #: packages/admin/src/components/settings/BackupSettings.tsx:353
 #: packages/admin/src/components/TaxonomyManager.tsx:1113
@@ -2505,7 +2505,7 @@ msgstr "Deskripsi"
 msgid "Description (optional)"
 msgstr "Deskripsi (opsional)"
 
-#: packages/admin/src/components/Redirects.tsx:471
+#: packages/admin/src/components/Redirects.tsx:477
 msgid "Destination"
 msgstr "Tujuan"
 
@@ -2562,7 +2562,7 @@ msgstr "Nonaktifkan plugin"
 msgid "Disable plugin MCP tools"
 msgstr ""
 
-#: packages/admin/src/components/Redirects.tsx:507
+#: packages/admin/src/components/Redirects.tsx:513
 msgid "Disable redirect"
 msgstr "Nonaktifkan pengalihan"
 
@@ -2575,7 +2575,7 @@ msgid "Disable User?"
 msgstr "Nonaktifkan Pengguna?"
 
 #: packages/admin/src/components/PluginManager.tsx:383
-#: packages/admin/src/components/Redirects.tsx:421
+#: packages/admin/src/components/Redirects.tsx:426
 #: packages/admin/src/components/users/UserDetail.tsx:201
 #: packages/admin/src/components/users/UserList.tsx:212
 msgid "Disabled"
@@ -2886,7 +2886,7 @@ msgstr "Sunting Item Menu"
 msgid "Edit menu items"
 msgstr "Sunting item menu"
 
-#: packages/admin/src/components/Redirects.tsx:530
+#: packages/admin/src/components/Redirects.tsx:536
 msgid "Edit redirect"
 msgstr "Sunting pengalihan"
 
@@ -2895,7 +2895,7 @@ msgid "Edit Redirect"
 msgstr "Sunting Pengalihan"
 
 #. placeholder {0}: r.source
-#: packages/admin/src/components/Redirects.tsx:531
+#: packages/admin/src/components/Redirects.tsx:537
 msgid "Edit redirect {0}"
 msgstr "Sunting pengalihan {0}"
 
@@ -3011,12 +3011,12 @@ msgstr "Aktifkan plugin"
 msgid "Enable plugin MCP tools"
 msgstr ""
 
-#: packages/admin/src/components/Redirects.tsx:507
+#: packages/admin/src/components/Redirects.tsx:513
 msgid "Enable redirect"
 msgstr "Aktifkan pengalihan"
 
 #: packages/admin/src/components/Redirects.tsx:176
-#: packages/admin/src/components/Redirects.tsx:421
+#: packages/admin/src/components/Redirects.tsx:426
 msgid "Enabled"
 msgstr "Diaktifkan"
 
@@ -3856,12 +3856,12 @@ msgid "Filter by source"
 msgstr "Filter berdasarkan sumber"
 
 #: packages/admin/src/components/ContentList.tsx:763
-#: packages/admin/src/components/Redirects.tsx:422
+#: packages/admin/src/components/Redirects.tsx:427
 msgid "Filter by status"
 msgstr "Filter berdasarkan status"
 
 #: packages/admin/src/components/MediaLibrary.tsx:439
-#: packages/admin/src/components/Redirects.tsx:428
+#: packages/admin/src/components/Redirects.tsx:433
 msgid "Filter by type"
 msgstr "Filter berdasarkan tipe"
 
@@ -4043,7 +4043,7 @@ msgid "Hierarchical (like categories, with parent/child relationships)"
 msgstr "Hierarkis (seperti kategori, dengan hubungan induk/anak)"
 
 #: packages/admin/src/components/Redirects.tsx:226
-#: packages/admin/src/components/Redirects.tsx:473
+#: packages/admin/src/components/Redirects.tsx:479
 msgid "Hits"
 msgstr "Kunjungan"
 
@@ -4634,6 +4634,7 @@ msgstr "Tampilan Langsung"
 
 #: packages/admin/src/components/ContentPickerModal.tsx:229
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
+#: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/routes/bylines.tsx:468
@@ -4689,7 +4690,7 @@ msgstr "Memuat menu..."
 msgid "Loading plugins..."
 msgstr "Memuat plugin..."
 
-#: packages/admin/src/components/Redirects.tsx:459
+#: packages/admin/src/components/Redirects.tsx:464
 msgid "Loading redirects..."
 msgstr "Memuat pengalihan..."
 
@@ -4726,6 +4727,7 @@ msgstr "Memuat widget..."
 #: packages/admin/src/components/MediaLibrary.tsx:635
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/PortableTextEditor.tsx:2397
+#: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:205
@@ -4827,7 +4829,7 @@ msgstr "Kelola plugin yang terpasang. Aktifkan atau nonaktifkan plugin untuk men
 msgid "Manage navigation menus for your site"
 msgstr "Kelola menu navigasi untuk situs Anda"
 
-#: packages/admin/src/components/Redirects.tsx:361
+#: packages/admin/src/components/Redirects.tsx:366
 msgid "Manage URL redirects and view 404 errors."
 msgstr "Kelola pengalihan URL dan lihat kesalahan 404."
 
@@ -4844,7 +4846,7 @@ msgstr "Dikelola oleh {providerName}"
 msgid "Managed by an external media provider"
 msgstr "Dikelola oleh penyedia media eksternal"
 
-#: packages/admin/src/components/Redirects.tsx:427
+#: packages/admin/src/components/Redirects.tsx:432
 msgid "Manual"
 msgstr "Manual"
 
@@ -5236,7 +5238,7 @@ msgid "New public routes"
 msgstr "Rute publik baru"
 
 #: packages/admin/src/components/Redirects.tsx:106
-#: packages/admin/src/components/Redirects.tsx:365
+#: packages/admin/src/components/Redirects.tsx:370
 msgid "New Redirect"
 msgstr "Pengalihan Baru"
 
@@ -5520,7 +5522,7 @@ msgstr "Tidak ada URL publik yang tersedia"
 msgid "No recent activity"
 msgstr "Tidak ada aktivitas terbaru"
 
-#: packages/admin/src/components/Redirects.tsx:463
+#: packages/admin/src/components/Redirects.tsx:468
 msgid "No redirects yet"
 msgstr "Belum ada pengalihan"
 
@@ -5772,8 +5774,8 @@ msgstr "Paragraf"
 msgid "Parent"
 msgstr "Induk"
 
-#: packages/admin/src/components/Redirects.tsx:512
 #: packages/admin/src/components/Redirects.tsx:518
+#: packages/admin/src/components/Redirects.tsx:524
 msgid "Part of a redirect loop"
 msgstr "Bagian dari loop pengalihan"
 
@@ -6233,7 +6235,7 @@ msgstr "Email penerima"
 msgid "Recovery link sent to {0}"
 msgstr "Tautan pemulihan dikirim ke {0}"
 
-#: packages/admin/src/components/Redirects.tsx:445
+#: packages/admin/src/components/Redirects.tsx:450
 msgid "Redirect loop detected"
 msgstr "Loop pengalihan terdeteksi"
 
@@ -6241,8 +6243,8 @@ msgstr "Loop pengalihan terdeteksi"
 msgid "Redirecting to login..."
 msgstr "Mengalihkan ke login..."
 
-#: packages/admin/src/components/Redirects.tsx:359
-#: packages/admin/src/components/Redirects.tsx:380
+#: packages/admin/src/components/Redirects.tsx:364
+#: packages/admin/src/components/Redirects.tsx:385
 #: packages/admin/src/components/Sidebar.tsx:244
 msgid "Redirects"
 msgstr "Pengalihan"
@@ -6864,7 +6866,7 @@ msgstr "Cari plugin..."
 msgid "Search sections..."
 msgstr "Cari bagian..."
 
-#: packages/admin/src/components/Redirects.tsx:412
+#: packages/admin/src/components/Redirects.tsx:417
 msgid "Search source or destination..."
 msgstr "Cari sumber atau tujuan..."
 
@@ -7452,7 +7454,7 @@ msgstr "Urutkan tema"
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:560
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:580
-#: packages/admin/src/components/Redirects.tsx:469
+#: packages/admin/src/components/Redirects.tsx:475
 #: packages/admin/src/components/SectionEditor.tsx:294
 msgid "Source"
 msgstr "Sumber"
@@ -7496,7 +7498,7 @@ msgstr "Mulai menulis, atau ketik '/' untuk perintah"
 #: packages/admin/src/components/ContentList.tsx:518
 #: packages/admin/src/components/ContentSettingsPanel.tsx:469
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
-#: packages/admin/src/components/Redirects.tsx:474
+#: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
 msgid "Status"
 msgstr "Status"
@@ -7807,7 +7809,7 @@ msgstr "Plugin ini tidak memerlukan izin khusus."
 msgid "This publisher claims a name they couldn't prove they own — possibly impersonating someone else. Install is disabled. If you know the publisher and trust them, ask them to fix their identity setup before retrying."
 msgstr "Penerbit ini mengklaim nama yang tidak dapat mereka buktikan kepemilikannya — mungkin meniru orang lain. Pemasangan dinonaktifkan. Jika Anda mengenal penerbit ini dan mempercayainya, minta mereka memperbaiki pengaturan identitasnya sebelum mencoba lagi."
 
-#: packages/admin/src/components/Redirects.tsx:584
+#: packages/admin/src/components/Redirects.tsx:602
 msgid "This redirect rule will be permanently removed."
 msgstr "Aturan pengalihan ini akan dihapus permanen."
 
@@ -8525,7 +8527,7 @@ msgstr "Lihat sumber"
 msgid "View the {license} license on spdx.org"
 msgstr "Lihat lisensi {license} di spdx.org"
 
-#: packages/admin/src/components/Redirects.tsx:451
+#: packages/admin/src/components/Redirects.tsx:456
 msgid "Visitors hitting these paths will see an error."
 msgstr "Pengunjung yang mengakses jalur ini akan melihat kesalahan."
 

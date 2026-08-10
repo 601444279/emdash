@@ -157,7 +157,7 @@ msgid "{0, plural, one {# post} other {# posts}}"
 msgstr "{0, plural, one {# 篇文章} other {# 篇文章}}"
 
 #. placeholder {0}: loopRedirectIds.size
-#: packages/admin/src/components/Redirects.tsx:447
+#: packages/admin/src/components/Redirects.tsx:452
 msgid "{0, plural, one {# redirect is part of a loop.} other {# redirects are part of a loop.}}"
 msgstr "{0, plural, one {# 個重新導向屬於迴圈的一部分。} other {# 個重新導向屬於迴圈的一部分。}}"
 
@@ -518,7 +518,7 @@ msgstr "4. 按一下「下載匯出檔案」"
 msgid "4. Enter \"EmDash\" and click \"Add New\""
 msgstr "4. 輸入「EmDash」，然後按一下「新增」"
 
-#: packages/admin/src/components/Redirects.tsx:397
+#: packages/admin/src/components/Redirects.tsx:402
 msgid "404 Errors"
 msgstr "404 錯誤"
 
@@ -875,12 +875,12 @@ msgid "All Sources"
 msgstr "所有來源"
 
 #: packages/admin/src/components/ContentList.tsx:735
-#: packages/admin/src/components/Redirects.tsx:421
+#: packages/admin/src/components/Redirects.tsx:426
 msgid "All statuses"
 msgstr "所有狀態"
 
 #: packages/admin/src/components/MediaLibrary.tsx:433
-#: packages/admin/src/components/Redirects.tsx:427
+#: packages/admin/src/components/Redirects.tsx:432
 msgid "All types"
 msgstr "所有類型"
 
@@ -1161,11 +1161,11 @@ msgstr "正在授權…"
 msgid "Authors"
 msgstr "作者"
 
-#: packages/admin/src/components/Redirects.tsx:524
+#: packages/admin/src/components/Redirects.tsx:530
 msgid "auto"
 msgstr "自動"
 
-#: packages/admin/src/components/Redirects.tsx:427
+#: packages/admin/src/components/Redirects.tsx:432
 msgid "Auto (slug change)"
 msgstr "自動 (代稱變更)"
 
@@ -1673,7 +1673,7 @@ msgstr "關閉設定"
 
 #: packages/admin/src/components/ContentTypeList.tsx:356
 #: packages/admin/src/components/PortableTextEditor.tsx:3560
-#: packages/admin/src/components/Redirects.tsx:472
+#: packages/admin/src/components/Redirects.tsx:478
 msgid "Code"
 msgstr "代碼"
 
@@ -2041,7 +2041,7 @@ msgstr "為 {0} 建立重新導向"
 msgid "Create redirect for this path"
 msgstr "為這個路徑建立重新導向"
 
-#: packages/admin/src/components/Redirects.tsx:464
+#: packages/admin/src/components/Redirects.tsx:469
 msgid "Create redirect rules to manage URL changes."
 msgstr "建立重新導向規則以管理網址變更。"
 
@@ -2281,7 +2281,7 @@ msgstr "在程式碼中定義"
 #: packages/admin/src/components/MediaDetailPanel.tsx:453
 #: packages/admin/src/components/MenuEditor.tsx:549
 #: packages/admin/src/components/MenuList.tsx:258
-#: packages/admin/src/components/Redirects.tsx:585
+#: packages/admin/src/components/Redirects.tsx:603
 #: packages/admin/src/components/Sections.tsx:308
 #: packages/admin/src/components/Sections.tsx:407
 #: packages/admin/src/components/settings/BackupSettings.tsx:352
@@ -2399,16 +2399,16 @@ msgstr "永久刪除"
 msgid "Delete Permanently?"
 msgstr "要永久刪除嗎？"
 
-#: packages/admin/src/components/Redirects.tsx:538
+#: packages/admin/src/components/Redirects.tsx:544
 msgid "Delete redirect"
 msgstr "刪除重新導向"
 
 #. placeholder {0}: r.source
-#: packages/admin/src/components/Redirects.tsx:539
+#: packages/admin/src/components/Redirects.tsx:545
 msgid "Delete redirect {0}"
 msgstr "刪除重新導向 {0}"
 
-#: packages/admin/src/components/Redirects.tsx:583
+#: packages/admin/src/components/Redirects.tsx:601
 msgid "Delete Redirect?"
 msgstr "要刪除重新導向嗎？"
 
@@ -2444,7 +2444,7 @@ msgstr "刪除「{0}」也會移除所有署名資料中的 {1, plural, one {# �
 #: packages/admin/src/components/MediaDetailPanel.tsx:410
 #: packages/admin/src/components/MediaDetailPanel.tsx:454
 #: packages/admin/src/components/MenuList.tsx:259
-#: packages/admin/src/components/Redirects.tsx:586
+#: packages/admin/src/components/Redirects.tsx:604
 #: packages/admin/src/components/Sections.tsx:309
 #: packages/admin/src/components/settings/BackupSettings.tsx:353
 #: packages/admin/src/components/TaxonomyManager.tsx:1113
@@ -2505,7 +2505,7 @@ msgstr "說明"
 msgid "Description (optional)"
 msgstr "說明 (選填)"
 
-#: packages/admin/src/components/Redirects.tsx:471
+#: packages/admin/src/components/Redirects.tsx:477
 msgid "Destination"
 msgstr "目的地"
 
@@ -2562,7 +2562,7 @@ msgstr "停用外掛"
 msgid "Disable plugin MCP tools"
 msgstr "停用外掛 MCP 工具"
 
-#: packages/admin/src/components/Redirects.tsx:507
+#: packages/admin/src/components/Redirects.tsx:513
 msgid "Disable redirect"
 msgstr "停用重新導向"
 
@@ -2575,7 +2575,7 @@ msgid "Disable User?"
 msgstr "要停用使用者嗎？"
 
 #: packages/admin/src/components/PluginManager.tsx:383
-#: packages/admin/src/components/Redirects.tsx:421
+#: packages/admin/src/components/Redirects.tsx:426
 #: packages/admin/src/components/users/UserDetail.tsx:201
 #: packages/admin/src/components/users/UserList.tsx:212
 msgid "Disabled"
@@ -2886,7 +2886,7 @@ msgstr "編輯選單項目"
 msgid "Edit menu items"
 msgstr "編輯選單項目"
 
-#: packages/admin/src/components/Redirects.tsx:530
+#: packages/admin/src/components/Redirects.tsx:536
 msgid "Edit redirect"
 msgstr "編輯重新導向"
 
@@ -2895,7 +2895,7 @@ msgid "Edit Redirect"
 msgstr "編輯重新導向"
 
 #. placeholder {0}: r.source
-#: packages/admin/src/components/Redirects.tsx:531
+#: packages/admin/src/components/Redirects.tsx:537
 msgid "Edit redirect {0}"
 msgstr "編輯重新導向 {0}"
 
@@ -3011,12 +3011,12 @@ msgstr "啟用外掛"
 msgid "Enable plugin MCP tools"
 msgstr "啟用外掛 MCP 工具"
 
-#: packages/admin/src/components/Redirects.tsx:507
+#: packages/admin/src/components/Redirects.tsx:513
 msgid "Enable redirect"
 msgstr "啟用重新導向"
 
 #: packages/admin/src/components/Redirects.tsx:176
-#: packages/admin/src/components/Redirects.tsx:421
+#: packages/admin/src/components/Redirects.tsx:426
 msgid "Enabled"
 msgstr "已啟用"
 
@@ -3856,12 +3856,12 @@ msgid "Filter by source"
 msgstr "依來源篩選"
 
 #: packages/admin/src/components/ContentList.tsx:763
-#: packages/admin/src/components/Redirects.tsx:422
+#: packages/admin/src/components/Redirects.tsx:427
 msgid "Filter by status"
 msgstr "依狀態篩選"
 
 #: packages/admin/src/components/MediaLibrary.tsx:439
-#: packages/admin/src/components/Redirects.tsx:428
+#: packages/admin/src/components/Redirects.tsx:433
 msgid "Filter by type"
 msgstr "依類型篩選"
 
@@ -4043,7 +4043,7 @@ msgid "Hierarchical (like categories, with parent/child relationships)"
 msgstr "階層式 (類似分類，具有上層/子層關係)"
 
 #: packages/admin/src/components/Redirects.tsx:226
-#: packages/admin/src/components/Redirects.tsx:473
+#: packages/admin/src/components/Redirects.tsx:479
 msgid "Hits"
 msgstr "命中次數"
 
@@ -4634,6 +4634,7 @@ msgstr "即時檢視"
 
 #: packages/admin/src/components/ContentPickerModal.tsx:229
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
+#: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/routes/bylines.tsx:468
@@ -4689,7 +4690,7 @@ msgstr "正在載入選單..."
 msgid "Loading plugins..."
 msgstr "正在載入外掛…"
 
-#: packages/admin/src/components/Redirects.tsx:459
+#: packages/admin/src/components/Redirects.tsx:464
 msgid "Loading redirects..."
 msgstr "正在載入重新導向…"
 
@@ -4726,6 +4727,7 @@ msgstr "正在載入小工具…"
 #: packages/admin/src/components/MediaLibrary.tsx:635
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/PortableTextEditor.tsx:2397
+#: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:205
@@ -4827,7 +4829,7 @@ msgstr "管理已安裝的外掛。啟用或停用外掛以控制其功能。"
 msgid "Manage navigation menus for your site"
 msgstr "管理網站導覽選單"
 
-#: packages/admin/src/components/Redirects.tsx:361
+#: packages/admin/src/components/Redirects.tsx:366
 msgid "Manage URL redirects and view 404 errors."
 msgstr "管理網址重新導向並檢視 404 錯誤。"
 
@@ -4844,7 +4846,7 @@ msgstr "由 {providerName} 管理"
 msgid "Managed by an external media provider"
 msgstr "由外部媒體服務提供者管理"
 
-#: packages/admin/src/components/Redirects.tsx:427
+#: packages/admin/src/components/Redirects.tsx:432
 msgid "Manual"
 msgstr "手動"
 
@@ -5236,7 +5238,7 @@ msgid "New public routes"
 msgstr "新增公開路由"
 
 #: packages/admin/src/components/Redirects.tsx:106
-#: packages/admin/src/components/Redirects.tsx:365
+#: packages/admin/src/components/Redirects.tsx:370
 msgid "New Redirect"
 msgstr "新增重新導向"
 
@@ -5520,7 +5522,7 @@ msgstr "沒有可用的公開網址"
 msgid "No recent activity"
 msgstr "沒有近期活動"
 
-#: packages/admin/src/components/Redirects.tsx:463
+#: packages/admin/src/components/Redirects.tsx:468
 msgid "No redirects yet"
 msgstr "目前沒有重新導向"
 
@@ -5772,8 +5774,8 @@ msgstr "段落"
 msgid "Parent"
 msgstr "上層項目"
 
-#: packages/admin/src/components/Redirects.tsx:512
 #: packages/admin/src/components/Redirects.tsx:518
+#: packages/admin/src/components/Redirects.tsx:524
 msgid "Part of a redirect loop"
 msgstr "屬於重新導向迴圈的一部分"
 
@@ -6233,7 +6235,7 @@ msgstr "收件者電子郵件"
 msgid "Recovery link sent to {0}"
 msgstr "復原連結已傳送至 {0}"
 
-#: packages/admin/src/components/Redirects.tsx:445
+#: packages/admin/src/components/Redirects.tsx:450
 msgid "Redirect loop detected"
 msgstr "偵測到重新導向迴圈"
 
@@ -6241,8 +6243,8 @@ msgstr "偵測到重新導向迴圈"
 msgid "Redirecting to login..."
 msgstr "正在重新導向至登入頁面..."
 
-#: packages/admin/src/components/Redirects.tsx:359
-#: packages/admin/src/components/Redirects.tsx:380
+#: packages/admin/src/components/Redirects.tsx:364
+#: packages/admin/src/components/Redirects.tsx:385
 #: packages/admin/src/components/Sidebar.tsx:244
 msgid "Redirects"
 msgstr "重新導向"
@@ -6864,7 +6866,7 @@ msgstr "搜尋外掛…"
 msgid "Search sections..."
 msgstr "搜尋區段..."
 
-#: packages/admin/src/components/Redirects.tsx:412
+#: packages/admin/src/components/Redirects.tsx:417
 msgid "Search source or destination..."
 msgstr "搜尋來源或目的地..."
 
@@ -7452,7 +7454,7 @@ msgstr "排序佈景主題"
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:560
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:580
-#: packages/admin/src/components/Redirects.tsx:469
+#: packages/admin/src/components/Redirects.tsx:475
 #: packages/admin/src/components/SectionEditor.tsx:294
 msgid "Source"
 msgstr "來源"
@@ -7496,7 +7498,7 @@ msgstr "開始撰寫，或輸入「/」使用命令"
 #: packages/admin/src/components/ContentList.tsx:518
 #: packages/admin/src/components/ContentSettingsPanel.tsx:469
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
-#: packages/admin/src/components/Redirects.tsx:474
+#: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
 msgid "Status"
 msgstr "狀態"
@@ -7807,7 +7809,7 @@ msgstr "此外掛不需要特殊權限。"
 msgid "This publisher claims a name they couldn't prove they own — possibly impersonating someone else. Install is disabled. If you know the publisher and trust them, ask them to fix their identity setup before retrying."
 msgstr "此發佈者聲稱擁有某個名稱，但無法證明其所有權，可能是在冒充他人。因此已停用安裝功能。如果您認識並信任此發佈者，請要求對方修正身分設定後再試一次。"
 
-#: packages/admin/src/components/Redirects.tsx:584
+#: packages/admin/src/components/Redirects.tsx:602
 msgid "This redirect rule will be permanently removed."
 msgstr "此重新導向規則將永久移除。"
 
@@ -8525,7 +8527,7 @@ msgstr "檢視原始碼"
 msgid "View the {license} license on spdx.org"
 msgstr "在 spdx.org 檢視 {license} 授權條款"
 
-#: packages/admin/src/components/Redirects.tsx:451
+#: packages/admin/src/components/Redirects.tsx:456
 msgid "Visitors hitting these paths will see an error."
 msgstr "瀏覽者存取這些路徑時會看到錯誤。"
 
