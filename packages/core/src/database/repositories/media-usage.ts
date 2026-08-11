@@ -9,6 +9,7 @@ import {
 } from "kysely";
 import { ulid } from "ulidx";
 
+import { isMediaUsageProjectionFingerprint } from "../../media/usage/projection-fingerprint.js";
 import type { MediaUsageContentSourceVariant } from "../../media/usage/source-key.js";
 import type { MediaKind, MediaUsageReferenceType } from "../../media/usage/types.js";
 import { chunks, SQL_BATCH_SIZE } from "../../utils/chunks.js";
@@ -25,6 +26,7 @@ import { decodeCursor, encodeCursor, InvalidCursorError, type FindManyResult } f
 
 type DatabaseExecutor = Kysely<Database> | Transaction<Database>;
 type MediaUsageSourceNullableStringColumn =
+	| "collection_id"
 	| "source_fingerprint"
 	| "source_updated_at"
 	| "revision_id"
@@ -67,14 +69,37 @@ const CONTENT_SOURCE_ELIGIBILITY = sql<boolean>`(
 					AND overlay.collection_slug = s.collection_slug
 					AND overlay.content_id = s.content_id
 					AND overlay.source_variant = 'draft_overlay'
+					AND ${contentSourceMatchesActiveCollection("overlay", "s.collection_id")}
 			)
 		)
 	)
 )`;
 
+type ContentSourceAlias = "deleted_source" | "overlay" | "s" | "state";
+type CurrentCollectionIdReference = "collection.id" | "page.collection_id" | "s.collection_id";
+
+function contentSourceMatchesActiveCollection(
+	source: ContentSourceAlias,
+	currentCollectionId: CurrentCollectionIdReference,
+): RawBuilder<boolean> {
+	return sql<boolean>`(
+		NOT EXISTS (
+			SELECT 1
+			FROM _emdash_media_usage_activation AS activation
+			WHERE activation.task_key = 'incremental_capture'
+				AND activation.state = 'active'
+		)
+		OR (
+			${sql.ref(`${source}.collection_id`)} = ${sql.ref(currentCollectionId)}
+			AND ${sql.ref(`${source}.identity_version`)} = 1
+		)
+	)`;
+}
+
 export interface MediaUsageSourceInput {
 	sourceKey: string;
 	sourceType: string;
+	collectionId?: string | null;
 	collectionSlug?: string | null;
 	contentId?: string | null;
 	sourceVariant: MediaUsageContentSourceVariant;
@@ -90,6 +115,7 @@ export interface MediaUsageSourceInput {
 	sourceUpdatedAt?: string | null;
 	sourceVersion?: number | null;
 	sourceFingerprint?: string | null;
+	identityVersion?: number | null;
 	sourceCompleteness?: MediaUsageSourceCompleteness;
 	lastAttemptedAt?: string | null;
 	lastErrorCode?: string | null;
@@ -110,6 +136,7 @@ export interface MediaUsageOccurrenceInput {
 export interface MediaUsageSource {
 	sourceKey: string;
 	sourceType: string;
+	collectionId: string | null;
 	collectionSlug: string | null;
 	contentId: string | null;
 	sourceVariant: string;
@@ -126,6 +153,7 @@ export interface MediaUsageSource {
 	sourceUpdatedAt: string | null;
 	sourceVersion: number | null;
 	sourceFingerprint: string | null;
+	identityVersion: number | null;
 	sourceCompleteness: string;
 	lastAttemptedAt: string | null;
 	lastErrorCode: string | null;
@@ -136,6 +164,7 @@ export interface MediaUsageSource {
 
 export interface MediaUsageGuardedReplaceResult {
 	replaced: boolean;
+	unchanged: boolean;
 	/** Populated only when a guarded replacement did not win the current source row. */
 	source: MediaUsageSource | null;
 }
@@ -220,6 +249,30 @@ export interface MediaUsageIndexStatusFinalizeInput extends MediaUsageIndexStatu
 	updatedAt?: string;
 }
 
+export interface MediaUsageIndexStatusEpochRepairInput extends MediaUsageIndexStatusIdentity {
+	collectionId: string;
+	runToken: string;
+	schemaVersion: number;
+}
+
+export interface MediaUsageIndexStatusEpochRepairRun {
+	changeEpoch: number | string;
+	startedAt: string;
+}
+
+export interface MediaUsageIndexStatusEpochFinalizeInput extends MediaUsageIndexStatusEpochRepairInput {
+	startingEpoch: number | string;
+	status: Exclude<MediaUsageIndexStatusValue, "never" | "running" | "stale">;
+	indexedSourceCount: number;
+	failedSourceCount: number;
+	lastErrorCode: string | null;
+}
+
+export interface MediaUsageIncrementalStatusIdentity {
+	collectionId: string;
+	collectionSlug: string;
+}
+
 export interface MediaUsageGuardedIndexStatusResult {
 	finalized: boolean;
 	status: MediaUsageIndexStatus | null;
@@ -279,6 +332,7 @@ export interface MediaUsageCollectionIndexStatusScope {
 	collectionSlug: string;
 	status: string | null;
 	schemaVersion: number | null;
+	reconciliationRequired: boolean;
 }
 
 export interface MediaUsageEntrySource {
@@ -296,6 +350,7 @@ export interface MediaUsageEntryGroup {
 interface MediaUsageSourceRow {
 	source_key: string;
 	source_type: string;
+	collection_id: string | null;
 	collection_slug: string | null;
 	content_id: string | null;
 	source_variant: string;
@@ -312,6 +367,7 @@ interface MediaUsageSourceRow {
 	source_updated_at: string | null;
 	source_version: number | null;
 	source_fingerprint: string | null;
+	identity_version: number | null;
 	source_completeness: string;
 	last_attempted_at: string | null;
 	last_error_code: string | null;
@@ -344,6 +400,7 @@ export interface MediaUsageRecord {
 interface JoinedUsageRow {
 	source_key: string;
 	source_type: string;
+	collection_id: string | null;
 	collection_slug: string | null;
 	content_id: string | null;
 	source_variant: string;
@@ -360,6 +417,7 @@ interface JoinedUsageRow {
 	source_updated_at: string | null;
 	source_version: number | null;
 	source_fingerprint: string | null;
+	identity_version: number | null;
 	source_completeness: string;
 	last_attempted_at: string | null;
 	last_error_code: string | null;
@@ -416,6 +474,12 @@ export class MediaUsageRepository {
 		occurrences: readonly MediaUsageOccurrenceInput[],
 		expectedCurrentGeneration: string | null,
 	): Promise<MediaUsageGuardedReplaceResult> {
+		if (
+			expectedCurrentGeneration !== null &&
+			(await this.projectionMatchesCurrentGeneration(source, expectedCurrentGeneration))
+		) {
+			return { replaced: false, unchanged: true, source: null };
+		}
 		const generation = ulid();
 		let replaced = false;
 
@@ -438,6 +502,7 @@ export class MediaUsageRepository {
 
 		return {
 			replaced,
+			unchanged: false,
 			source: replaced ? null : await this.findSource(source.sourceKey),
 		};
 	}
@@ -477,6 +542,12 @@ export class MediaUsageRepository {
 		occurrences: readonly MediaUsageOccurrenceInput[],
 		expectedSource: MediaUsageSource | null,
 	): Promise<MediaUsageGuardedReplaceResult> {
+		if (
+			expectedSource !== null &&
+			(await this.projectionMatchesExpectedSource(source, expectedSource))
+		) {
+			return { replaced: false, unchanged: true, source: null };
+		}
 		const generation = ulid();
 		let replaced = false;
 
@@ -494,11 +565,25 @@ export class MediaUsageRepository {
 
 		return {
 			replaced,
+			unchanged: false,
 			source: replaced ? null : await this.findSource(source.sourceKey),
 		};
 	}
 
 	async markSourceAttempted(source: MediaUsageSourceInput): Promise<MediaUsageSource> {
+		if (source.collectionId !== undefined && source.collectionId !== null) {
+			const expectedSource = await this.findSource(source.sourceKey);
+			const result = await this.markSourceAttemptedIfMatching(source, expectedSource);
+			if (!result.attempted) {
+				throw new Error(`Canonical media usage source ${source.sourceKey} is no longer current`);
+			}
+			const attempted = await this.findSource(source.sourceKey);
+			if (!attempted) {
+				throw new Error(`Media usage source ${source.sourceKey} was not persisted`);
+			}
+			return attempted;
+		}
+
 		const generation = ulid();
 		await this.withGenerationWriteLease(source.sourceKey, generation, async (leaseToken, now) => {
 			const row = this.buildAttemptedSourceRow(source, generation, now);
@@ -530,12 +615,12 @@ export class MediaUsageRepository {
 		if (expectedSource === null) {
 			await this.withGenerationWriteLease(source.sourceKey, generation, async (leaseToken, now) => {
 				const row = this.buildAttemptedSourceRow(source, generation, now);
-				const result = await this.db
-					.insertInto("_emdash_media_usage_sources")
-					.values(row)
-					.onConflict((oc) => oc.column("source_key").doNothing())
-					.executeTakeFirst();
-				attempted = (result.numInsertedOrUpdatedRows ?? 0n) > 0n;
+				attempted = await this.persistSourceIfWriteLease(
+					this.db,
+					row,
+					leaseToken,
+					sql`ON CONFLICT (source_key) DO NOTHING`,
+				);
 			});
 		} else {
 			const row = this.buildAttemptedSourceRow(source, generation, new Date().toISOString());
@@ -570,6 +655,7 @@ export class MediaUsageRepository {
 								.whereRef("deleted_source.collection_slug", "=", "s.collection_slug")
 								.whereRef("deleted_source.content_id", "=", "s.content_id")
 								.where("deleted_source.source_variant", "in", ["columns", "draft_overlay"])
+								.where(contentSourceMatchesActiveCollection("deleted_source", "collection.id"))
 								.where("deleted_source.content_deleted_at", "is not", null),
 						),
 					),
@@ -607,6 +693,7 @@ export class MediaUsageRepository {
 				"collection.slug as collection_slug",
 				"status.status as status",
 				"status.schema_version as schema_version",
+				"status.reconciliation_required as reconciliation_required",
 			])
 			.orderBy("collection.slug", "asc")
 			.execute();
@@ -615,6 +702,8 @@ export class MediaUsageRepository {
 			collectionSlug: row.collection_slug,
 			status: row.status,
 			schemaVersion: row.schema_version === null ? null : Number(row.schema_version),
+			reconciliationRequired:
+				row.reconciliation_required !== null && Number(row.reconciliation_required) !== 0,
 		}));
 	}
 
@@ -629,7 +718,11 @@ export class MediaUsageRepository {
 			throw new InvalidCursorError(options.cursor ?? "");
 		}
 		let matchedGroups = this.currentContentMediaUsageBaseQuery()
-			.select(["s.collection_slug as collection_slug", "s.content_id as content_id"])
+			.select([
+				"collection.id as collection_id",
+				"s.collection_slug as collection_slug",
+				"s.content_id as content_id",
+			])
 			.where("u.media_id", "=", mediaId)
 			.distinct();
 		if (cursor) {
@@ -662,7 +755,7 @@ export class MediaUsageRepository {
 				db
 					.selectFrom("page_groups as page")
 					.crossJoin("_emdash_media_usage_sources as state")
-					.select(["page.collection_slug", "page.content_id"])
+					.select(["page.collection_id", "page.collection_slug", "page.content_id"])
 					.select((eb) =>
 						eb.fn.max<string | null>("state.content_deleted_at").as("entry_deleted_at"),
 					)
@@ -670,13 +763,15 @@ export class MediaUsageRepository {
 					.whereRef("page.content_id", "=", "state.content_id")
 					.where("state.source_type", "=", "content")
 					.where("state.source_variant", "in", ["columns", "draft_overlay"])
-					.groupBy(["page.collection_slug", "page.content_id"]),
+					.where(contentSourceMatchesActiveCollection("state", "page.collection_id"))
+					.groupBy(["page.collection_id", "page.collection_slug", "page.content_id"]),
 			)
 			.selectFrom("entry_state as page")
 			.crossJoin("_emdash_media_usage_sources as s")
 			.crossJoin("_emdash_media_usage as u")
 			.whereRef("page.collection_slug", "=", "s.collection_slug")
 			.whereRef("page.content_id", "=", "s.content_id")
+			.where(contentSourceMatchesActiveCollection("s", "page.collection_id"))
 			.whereRef("s.source_key", "=", "u.source_key")
 			.whereRef("s.current_generation", "=", "u.generation")
 			.select(currentUsageSelect)
@@ -808,6 +903,9 @@ export class MediaUsageRepository {
 				.deleteFrom("_emdash_media_usage_sources")
 				.where("source_key", "=", sourceKey)
 				.where(this.sourceMatchExpression(expectedSource))
+				.where(
+					this.currentCollectionExists(expectedSource.collectionId, expectedSource.collectionSlug),
+				)
 				.executeTakeFirst();
 			deleted = Number(result.numDeletedRows ?? 0) > 0;
 			if (!deleted) return;
@@ -839,6 +937,9 @@ export class MediaUsageRepository {
 				.deleteFrom("_emdash_media_usage_sources")
 				.where("source_key", "=", sourceKey)
 				.where(this.sourceMatchExpression(expectedSource))
+				.where(
+					this.currentCollectionExists(expectedSource.collectionId, expectedSource.collectionSlug),
+				)
 				.where(
 					sql<boolean>`NOT EXISTS (SELECT 1 FROM ${sql.ref(tableName)} WHERE id = ${contentId})`,
 				)
@@ -894,14 +995,18 @@ export class MediaUsageRepository {
 		return deleted;
 	}
 
-	async findCollectionContentSources(collectionSlug: string): Promise<MediaUsageSource[]> {
-		const rows = await this.db
+	async findCollectionContentSources(
+		collectionSlug: string,
+		collectionId?: string,
+	): Promise<MediaUsageSource[]> {
+		let query = this.db
 			.selectFrom("_emdash_media_usage_sources")
 			.selectAll()
 			.where("source_type", "=", "content")
 			.where("collection_slug", "=", collectionSlug)
-			.orderBy("source_key", "asc")
-			.execute();
+			.orderBy("source_key", "asc");
+		if (collectionId !== undefined) query = query.where("collection_id", "=", collectionId);
+		const rows = await query.execute();
 		return rows.map((row) => rowToSource(row));
 	}
 
@@ -1290,6 +1395,43 @@ export class MediaUsageRepository {
 		return status;
 	}
 
+	async invalidateIndexStatusForSchemaChange(collectionSlug: string): Promise<boolean> {
+		const result = await this.db
+			.updateTable("_emdash_media_usage_index_status as status")
+			.set({
+				change_epoch: sql<number>`change_epoch + 1`,
+				status: "stale",
+				completed_at: null,
+				cursor: null,
+				last_error_code: "CONTENT_USAGE_STALE",
+				reconciliation_required: 1,
+				updated_at: this.sortableUtcTimestamp(),
+			})
+			.where("status.adapter_id", "=", "content-media")
+			.where("status.scope_type", "=", "collection")
+			.where("status.scope_key", "=", collectionSlug)
+			.where("status.capture_state", "=", "active")
+			.where((eb) =>
+				eb.exists(
+					eb
+						.selectFrom("_emdash_collections as collection")
+						.select("collection.id")
+						.whereRef("collection.id", "=", "status.collection_id")
+						.whereRef("collection.slug", "=", "status.scope_key"),
+				),
+			)
+			.where(
+				sql<boolean>`EXISTS (
+					SELECT 1
+					FROM _emdash_media_usage_activation AS activation
+					WHERE activation.task_key = 'incremental_capture'
+						AND activation.state = 'active'
+				)`,
+			)
+			.executeTakeFirst();
+		return Number(result.numUpdatedRows ?? 0) === 1;
+	}
+
 	async beginIndexStatusRepair(
 		input: MediaUsageIndexStatusRepairInput,
 	): Promise<MediaUsageIndexStatus> {
@@ -1340,6 +1482,235 @@ export class MediaUsageRepository {
 		};
 	}
 
+	async beginIndexStatusRepairAtCurrentEpoch(
+		input: MediaUsageIndexStatusEpochRepairInput,
+	): Promise<MediaUsageIndexStatusEpochRepairRun | null> {
+		const now = this.sortableUtcTimestamp();
+		const row = await this.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set({
+				status: "running",
+				schema_version: input.schemaVersion,
+				started_at: now,
+				completed_at: null,
+				cursor: input.runToken,
+				indexed_source_count: 0,
+				failed_source_count: 0,
+				last_error_code: null,
+				reconciliation_required: 1,
+				updated_at: now,
+			})
+			.where("adapter_id", "=", input.adapterId)
+			.where("scope_type", "=", input.scopeType)
+			.where("scope_key", "=", input.scopeKey)
+			.where("collection_id", "=", input.collectionId)
+			.where("capture_state", "=", "active")
+			.where(
+				sql<boolean>`EXISTS (
+					SELECT 1
+					FROM _emdash_collections AS collection
+					WHERE collection.id = ${input.collectionId}
+						AND collection.slug = ${input.scopeKey}
+				)`,
+			)
+			.where(
+				sql<boolean>`EXISTS (
+					SELECT 1
+					FROM _emdash_media_usage_activation AS activation
+					WHERE activation.task_key = 'incremental_capture'
+						AND activation.state = 'active'
+				)`,
+			)
+			.returning(["change_epoch", "started_at"])
+			.executeTakeFirst();
+		if (!row?.started_at) return null;
+		return { changeEpoch: row.change_epoch, startedAt: row.started_at };
+	}
+
+	async finalizeIndexStatusRepairAtEpoch(
+		input: MediaUsageIndexStatusEpochFinalizeInput,
+	): Promise<MediaUsageGuardedIndexStatusResult> {
+		const now = this.sortableUtcTimestamp();
+		const updates = {
+			status: input.status,
+			schema_version: input.schemaVersion,
+			completed_at: now,
+			cursor: null,
+			indexed_source_count: input.indexedSourceCount,
+			failed_source_count: input.failedSourceCount,
+			last_error_code: input.lastErrorCode,
+			reconciliation_required: input.status === "complete" ? 0 : 1,
+			updated_at: now,
+		};
+
+		let query = this.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set(updates)
+			.where("adapter_id", "=", input.adapterId)
+			.where("scope_type", "=", input.scopeType)
+			.where("scope_key", "=", input.scopeKey)
+			.where("collection_id", "=", input.collectionId)
+			.where("status", "=", "running")
+			.where("cursor", "=", input.runToken)
+			.where("change_epoch", "=", input.startingEpoch)
+			.where(
+				sql<boolean>`EXISTS (
+					SELECT 1
+					FROM _emdash_collections AS collection
+					WHERE collection.id = ${input.collectionId}
+						AND collection.slug = ${input.scopeKey}
+				)`,
+			);
+		if (input.status === "complete") {
+			query = query.where(
+				sql<boolean>`NOT EXISTS (
+					SELECT 1
+					FROM _emdash_media_usage_work AS work
+					WHERE work.collection_id = ${input.collectionId}
+				)`,
+			);
+		}
+		const result = await query.executeTakeFirst();
+		const finalized = Number(result.numUpdatedRows ?? 0) > 0;
+
+		if (!finalized) {
+			await this.db
+				.updateTable("_emdash_media_usage_index_status")
+				.set({
+					status: "stale",
+					completed_at: null,
+					cursor: null,
+					last_error_code: "CONTENT_USAGE_REPAIR_CONFLICT",
+					reconciliation_required: 1,
+					updated_at: this.sortableUtcTimestamp(),
+				})
+				.where("adapter_id", "=", input.adapterId)
+				.where("scope_type", "=", input.scopeType)
+				.where("scope_key", "=", input.scopeKey)
+				.where("collection_id", "=", input.collectionId)
+				.where("status", "=", "running")
+				.where("cursor", "=", input.runToken)
+				.execute();
+		}
+
+		return {
+			finalized,
+			status: await this.findIndexStatusForCollection(input, input.collectionId),
+		};
+	}
+
+	async recordIncrementalSuccess(input: MediaUsageIncrementalStatusIdentity): Promise<boolean> {
+		const observed = await this.db
+			.selectFrom("_emdash_media_usage_index_status")
+			.select("change_epoch")
+			.where("adapter_id", "=", "content-media")
+			.where("scope_type", "=", "collection")
+			.where("scope_key", "=", input.collectionSlug)
+			.where("collection_id", "=", input.collectionId)
+			.where("capture_state", "=", "active")
+			.where(
+				sql<boolean>`EXISTS (
+					SELECT 1
+					FROM _emdash_collections AS collection
+					WHERE collection.id = ${input.collectionId}
+						AND collection.slug = ${input.collectionSlug}
+				)`,
+			)
+			.executeTakeFirst();
+		if (!observed) return false;
+
+		const canComplete = sql<boolean>`(
+			reconciliation_required = 0
+			AND status IN ('complete', 'stale', 'partial')
+			AND NOT EXISTS (
+				SELECT 1
+				FROM _emdash_media_usage_work AS work
+				WHERE work.collection_id = ${input.collectionId}
+			)
+		)`;
+		const now = this.sortableUtcTimestamp();
+		const result = await this.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set({
+				status: sql<string>`CASE WHEN ${canComplete} THEN 'complete' ELSE status END`,
+				completed_at: sql<
+					string | null
+				>`CASE WHEN ${canComplete} THEN ${now} ELSE completed_at END`,
+				last_error_code: sql<
+					string | null
+				>`CASE WHEN ${canComplete} THEN NULL ELSE last_error_code END`,
+				last_incremental_success_at: now,
+				updated_at: now,
+			})
+			.where("adapter_id", "=", "content-media")
+			.where("scope_type", "=", "collection")
+			.where("scope_key", "=", input.collectionSlug)
+			.where("collection_id", "=", input.collectionId)
+			.where("change_epoch", "=", observed.change_epoch)
+			.where("capture_state", "=", "active")
+			.where(
+				sql<boolean>`EXISTS (
+					SELECT 1
+					FROM _emdash_collections AS collection
+					WHERE collection.id = ${input.collectionId}
+						AND collection.slug = ${input.collectionSlug}
+				)`,
+			)
+			.executeTakeFirst();
+		return Number(result.numUpdatedRows ?? 0) > 0;
+	}
+
+	async recordIncrementalFailure(
+		input: MediaUsageIncrementalStatusIdentity & {
+			contentId: string;
+			workVersion: number | string;
+			errorCode: string;
+		},
+	): Promise<boolean> {
+		const now = this.sortableUtcTimestamp();
+		const result = await this.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set({
+				status: sql<string>`CASE
+					WHEN reconciliation_required = 0 THEN 'partial'
+					WHEN status = 'running' THEN 'stale'
+					ELSE status
+				END`,
+				completed_at: sql<string | null>`CASE
+					WHEN reconciliation_required = 0 OR status = 'running' THEN NULL
+					ELSE completed_at
+				END`,
+				cursor: sql<string | null>`CASE WHEN status = 'running' THEN NULL ELSE cursor END`,
+				last_error_code: input.errorCode,
+				updated_at: now,
+			})
+			.where("adapter_id", "=", "content-media")
+			.where("scope_type", "=", "collection")
+			.where("scope_key", "=", input.collectionSlug)
+			.where("collection_id", "=", input.collectionId)
+			.where(
+				sql<boolean>`EXISTS (
+					SELECT 1
+					FROM _emdash_media_usage_work AS work
+					WHERE work.collection_id = ${input.collectionId}
+						AND work.content_id = ${input.contentId}
+						AND work.work_version = ${input.workVersion}
+						AND work.state = 'failed'
+						AND work.last_error_code = ${input.errorCode}
+				)`,
+			)
+			.where(
+				sql<boolean>`EXISTS (
+					SELECT 1
+					FROM _emdash_collections AS collection
+					WHERE collection.id = ${input.collectionId}
+						AND collection.slug = ${input.collectionSlug}
+				)`,
+			)
+			.executeTakeFirst();
+		return Number(result.numUpdatedRows ?? 0) > 0;
+	}
+
 	async findIndexStatus(
 		identity: MediaUsageIndexStatusIdentity,
 	): Promise<MediaUsageIndexStatus | null> {
@@ -1354,14 +1725,39 @@ export class MediaUsageRepository {
 		return row ? rowToIndexStatus(row) : null;
 	}
 
-	async deleteIndexStatus(identity: MediaUsageIndexStatusIdentity): Promise<number> {
-		const result = await this.db
-			.deleteFrom("_emdash_media_usage_index_status")
+	private async findIndexStatusForCollection(
+		identity: MediaUsageIndexStatusIdentity,
+		collectionId: string,
+	): Promise<MediaUsageIndexStatus | null> {
+		const row = await this.db
+			.selectFrom("_emdash_media_usage_index_status")
+			.selectAll()
 			.where("adapter_id", "=", identity.adapterId)
 			.where("scope_type", "=", identity.scopeType)
 			.where("scope_key", "=", identity.scopeKey)
+			.where("collection_id", "=", collectionId)
 			.executeTakeFirst();
+		return row ? rowToIndexStatus(row) : null;
+	}
+
+	async deleteIndexStatus(
+		identity: MediaUsageIndexStatusIdentity,
+		collectionId?: string,
+	): Promise<number> {
+		let query = this.db
+			.deleteFrom("_emdash_media_usage_index_status")
+			.where("adapter_id", "=", identity.adapterId)
+			.where("scope_type", "=", identity.scopeType)
+			.where("scope_key", "=", identity.scopeKey);
+		if (collectionId !== undefined) query = query.where("collection_id", "=", collectionId);
+		const result = await query.executeTakeFirst();
 		return Number(result.numDeletedRows ?? 0);
+	}
+
+	private sortableUtcTimestamp(): RawBuilder<string> {
+		return isPostgres(this.db)
+			? sql<string>`to_char(clock_timestamp() AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`
+			: sql<string>`strftime('%Y-%m-%dT%H:%M:%fZ', 'now')`;
 	}
 
 	private async findCurrentUsagePage(
@@ -1414,6 +1810,7 @@ export class MediaUsageRepository {
 			.where("s.collection_slug", "is not", null)
 			.where("s.content_id", "is not", null)
 			.where("s.source_variant", "in", ["columns", "draft_overlay"])
+			.where(contentSourceMatchesActiveCollection("s", "collection.id"))
 			.where(CONTENT_SOURCE_ELIGIBILITY);
 	}
 
@@ -1755,6 +2152,7 @@ export class MediaUsageRepository {
 			sql`
 				ON CONFLICT (source_key) DO UPDATE SET
 					source_type = excluded.source_type,
+					collection_id = excluded.collection_id,
 					collection_slug = excluded.collection_slug,
 					content_id = excluded.content_id,
 					source_variant = excluded.source_variant,
@@ -1771,6 +2169,7 @@ export class MediaUsageRepository {
 					source_updated_at = excluded.source_updated_at,
 					source_version = excluded.source_version,
 					source_fingerprint = excluded.source_fingerprint,
+					identity_version = excluded.identity_version,
 					source_completeness = excluded.source_completeness,
 					last_attempted_at = excluded.last_attempted_at,
 					last_error_code = excluded.last_error_code,
@@ -1795,7 +2194,9 @@ export class MediaUsageRepository {
 
 	private async persistSourceIfWriteLease(
 		db: DatabaseExecutor,
-		row: ReturnType<MediaUsageRepository["buildSourceRow"]>,
+		row:
+			| ReturnType<MediaUsageRepository["buildSourceRow"]>
+			| ReturnType<MediaUsageRepository["buildAttemptedSourceRow"]>,
 		leaseToken: string,
 		conflict: RawBuilder<unknown>,
 	): Promise<boolean> {
@@ -1803,6 +2204,7 @@ export class MediaUsageRepository {
 			INSERT INTO _emdash_media_usage_sources (
 				source_key,
 				source_type,
+				collection_id,
 				collection_slug,
 				content_id,
 				source_variant,
@@ -1819,6 +2221,7 @@ export class MediaUsageRepository {
 				source_updated_at,
 				source_version,
 				source_fingerprint,
+				identity_version,
 				source_completeness,
 				last_attempted_at,
 				last_error_code,
@@ -1828,6 +2231,7 @@ export class MediaUsageRepository {
 			SELECT
 				${row.source_key},
 				${row.source_type},
+				${row.collection_id},
 				${row.collection_slug},
 				${row.content_id},
 				${row.source_variant},
@@ -1844,6 +2248,7 @@ export class MediaUsageRepository {
 				${row.source_updated_at},
 				${row.source_version},
 				${row.source_fingerprint},
+				${row.identity_version},
 				${row.source_completeness},
 				${row.last_attempted_at},
 				${row.last_error_code},
@@ -1857,6 +2262,7 @@ export class MediaUsageRepository {
 					AND lease_token = ${leaseToken}
 					AND ${this.generationWriteLeaseExpiryIsInFuture("expires_at")}
 			)
+			AND ${this.currentCollectionExists(row.collection_id, row.collection_slug)}
 			${conflict}
 		`.execute(db);
 		return Number(result.numAffectedRows ?? 0) > 0;
@@ -1951,6 +2357,7 @@ export class MediaUsageRepository {
 			.where("source_key", "=", row.source_key)
 			.where("current_generation", "=", expectedCurrentGeneration)
 			.where(this.generationWriteLeaseExpression(row, leaseToken))
+			.where(this.currentCollectionExists(row.collection_id, row.collection_slug))
 			.executeTakeFirst();
 		return Number(result.numUpdatedRows ?? 0) > 0;
 	}
@@ -1967,6 +2374,7 @@ export class MediaUsageRepository {
 			.where("source_key", "=", row.source_key)
 			.where(this.sourceMatchExpression(expectedSource))
 			.where(this.generationWriteLeaseExpression(row, leaseToken))
+			.where(this.currentCollectionExists(row.collection_id, row.collection_slug))
 			.executeTakeFirst();
 		return Number(result.numUpdatedRows ?? 0) > 0;
 	}
@@ -1982,6 +2390,7 @@ export class MediaUsageRepository {
 			.set(this.attemptedSourceUpdateSet(source, row))
 			.where("source_key", "=", row.source_key)
 			.where(this.sourceMatchExpression(expectedSource))
+			.where(this.currentCollectionExists(row.collection_id, row.collection_slug))
 			.executeTakeFirst();
 		return Number(result.numUpdatedRows ?? 0) > 0;
 	}
@@ -1991,14 +2400,62 @@ export class MediaUsageRepository {
 			eb.and([
 				eb("current_generation", "=", expectedSource.currentGeneration),
 				eb("source_completeness", "=", expectedSource.sourceCompleteness),
+				this.nullableStringExpression(eb, "collection_id", expectedSource.collectionId),
 				this.nullableStringExpression(eb, "updated_at", expectedSource.updatedAt),
 				this.nullableStringExpression(eb, "source_fingerprint", expectedSource.sourceFingerprint),
 				this.nullableStringExpression(eb, "source_updated_at", expectedSource.sourceUpdatedAt),
 				this.nullableNumberExpression(eb, "source_version", expectedSource.sourceVersion),
+				this.nullableNumberExpression(eb, "identity_version", expectedSource.identityVersion),
 				this.nullableStringExpression(eb, "revision_id", expectedSource.revisionId),
 				this.nullableStringExpression(eb, "last_attempted_at", expectedSource.lastAttemptedAt),
 				this.nullableStringExpression(eb, "last_error_code", expectedSource.lastErrorCode),
 			]);
+	}
+
+	private async projectionMatchesCurrentGeneration(
+		source: MediaUsageSourceInput,
+		expectedCurrentGeneration: string,
+	): Promise<boolean> {
+		const fingerprint = source.sourceFingerprint;
+		if (!isMediaUsageProjectionFingerprint(fingerprint)) return false;
+		const row = await this.db
+			.selectFrom("_emdash_media_usage_sources")
+			.select("source_key")
+			.where("source_key", "=", source.sourceKey)
+			.where("current_generation", "=", expectedCurrentGeneration)
+			.where("source_fingerprint", "=", fingerprint!)
+			.where("source_completeness", "=", source.sourceCompleteness ?? "complete")
+			.where("last_error_code", "is", null)
+			.where(
+				this.currentCollectionExists(source.collectionId ?? null, source.collectionSlug ?? null),
+			)
+			.executeTakeFirst();
+		return row !== undefined;
+	}
+
+	async projectionMatchesExpectedSource(
+		source: MediaUsageSourceInput,
+		expectedSource: MediaUsageSource,
+	): Promise<boolean> {
+		const fingerprint = source.sourceFingerprint;
+		if (
+			!isMediaUsageProjectionFingerprint(fingerprint) ||
+			expectedSource.sourceFingerprint !== fingerprint ||
+			expectedSource.sourceCompleteness !== (source.sourceCompleteness ?? "complete") ||
+			expectedSource.lastErrorCode !== null
+		) {
+			return false;
+		}
+		const row = await this.db
+			.selectFrom("_emdash_media_usage_sources")
+			.select("source_key")
+			.where("source_key", "=", source.sourceKey)
+			.where(this.sourceMatchExpression(expectedSource))
+			.where(
+				this.currentCollectionExists(source.collectionId ?? null, source.collectionSlug ?? null),
+			)
+			.executeTakeFirst();
+		return row !== undefined;
 	}
 
 	private nullableStringExpression(
@@ -2009,9 +2466,22 @@ export class MediaUsageRepository {
 		return value === null ? eb(column, "is", null) : eb(column, "=", value);
 	}
 
+	private currentCollectionExists(
+		collectionId: string | null,
+		collectionSlug: string | null,
+	): RawBuilder<boolean> {
+		if (collectionId === null) return sql<boolean>`1 = 1`;
+		return sql<boolean>`EXISTS (
+			SELECT 1
+			FROM _emdash_collections
+			WHERE id = ${collectionId}
+				AND slug = ${collectionSlug}
+		)`;
+	}
+
 	private nullableNumberExpression(
 		eb: ExpressionBuilder<Database, "_emdash_media_usage_sources">,
-		column: "source_version",
+		column: "source_version" | "identity_version",
 		value: number | null,
 	) {
 		return value === null ? eb(column, "is", null) : eb(column, "=", value);
@@ -2031,6 +2501,7 @@ export class MediaUsageRepository {
 		return {
 			source_key: source.sourceKey,
 			source_type: source.sourceType,
+			collection_id: source.collectionId ?? null,
 			collection_slug: source.collectionSlug ?? null,
 			content_id: source.contentId ?? null,
 			source_variant: source.sourceVariant,
@@ -2047,6 +2518,7 @@ export class MediaUsageRepository {
 			source_updated_at: source.sourceUpdatedAt ?? null,
 			source_version: source.sourceVersion ?? null,
 			source_fingerprint: source.sourceFingerprint ?? null,
+			identity_version: source.identityVersion ?? null,
 			// Complete means this source was fully refreshed for the extractor's current
 			// schema/version coverage, not that every possible reference shape is known.
 			source_completeness: source.sourceCompleteness ?? "complete",
@@ -2061,6 +2533,7 @@ export class MediaUsageRepository {
 		return {
 			source_key: source.sourceKey,
 			source_type: source.sourceType,
+			collection_id: source.collectionId ?? null,
 			collection_slug: source.collectionSlug ?? null,
 			content_id: source.contentId ?? null,
 			source_variant: source.sourceVariant,
@@ -2077,6 +2550,7 @@ export class MediaUsageRepository {
 			source_updated_at: source.sourceUpdatedAt ?? null,
 			source_version: source.sourceVersion ?? null,
 			source_fingerprint: source.sourceFingerprint ?? null,
+			identity_version: source.identityVersion ?? null,
 			source_completeness:
 				source.sourceCompleteness ?? (source.lastErrorCode ? "failed" : "unknown"),
 			last_attempted_at: source.lastAttemptedAt ?? now,
@@ -2100,6 +2574,7 @@ export class MediaUsageRepository {
 		};
 
 		if (source.collectionSlug !== undefined) updates.collection_slug = row.collection_slug;
+		if (source.collectionId !== undefined) updates.collection_id = row.collection_id;
 		if (source.contentId !== undefined) updates.content_id = row.content_id;
 		if (source.locale !== undefined) updates.locale = row.locale;
 		if (source.translationGroup !== undefined) updates.translation_group = row.translation_group;
@@ -2117,6 +2592,7 @@ export class MediaUsageRepository {
 		if (source.sourceFingerprint !== undefined) {
 			updates.source_fingerprint = row.source_fingerprint;
 		}
+		if (source.identityVersion !== undefined) updates.identity_version = row.identity_version;
 
 		return updates;
 	}
@@ -2126,6 +2602,7 @@ export class MediaUsageRepository {
 	): Updateable<MediaUsageSourceTable> {
 		return {
 			source_type: row.source_type,
+			collection_id: row.collection_id,
 			collection_slug: row.collection_slug,
 			content_id: row.content_id,
 			source_variant: row.source_variant,
@@ -2142,6 +2619,7 @@ export class MediaUsageRepository {
 			source_updated_at: row.source_updated_at,
 			source_version: row.source_version,
 			source_fingerprint: row.source_fingerprint,
+			identity_version: row.identity_version,
 			source_completeness: row.source_completeness,
 			last_attempted_at: row.last_attempted_at,
 			last_error_code: row.last_error_code,
@@ -2154,6 +2632,7 @@ export class MediaUsageRepository {
 const currentUsageSelect = [
 	"s.source_key as source_key",
 	"s.source_type as source_type",
+	"s.collection_id as collection_id",
 	"s.collection_slug as collection_slug",
 	"s.content_id as content_id",
 	"s.source_variant as source_variant",
@@ -2170,6 +2649,7 @@ const currentUsageSelect = [
 	"s.source_updated_at as source_updated_at",
 	"s.source_version as source_version",
 	"s.source_fingerprint as source_fingerprint",
+	"s.identity_version as identity_version",
 	"s.source_completeness as source_completeness",
 	"s.last_attempted_at as last_attempted_at",
 	"s.last_error_code as last_error_code",
@@ -2226,6 +2706,7 @@ function rowToSource(row: MediaUsageSourceRow): MediaUsageSource {
 	return {
 		sourceKey: row.source_key,
 		sourceType: row.source_type,
+		collectionId: row.collection_id,
 		collectionSlug: row.collection_slug,
 		contentId: row.content_id,
 		sourceVariant: row.source_variant,
@@ -2242,6 +2723,7 @@ function rowToSource(row: MediaUsageSourceRow): MediaUsageSource {
 		sourceUpdatedAt: row.source_updated_at,
 		sourceVersion: row.source_version === null ? null : Number(row.source_version),
 		sourceFingerprint: row.source_fingerprint,
+		identityVersion: row.identity_version === null ? null : Number(row.identity_version),
 		sourceCompleteness: row.source_completeness,
 		lastAttemptedAt: row.last_attempted_at,
 		lastErrorCode: row.last_error_code,
@@ -2274,6 +2756,7 @@ function rowToUsageRecord(row: JoinedUsageRow): MediaUsageRecord {
 		source: rowToSource({
 			source_key: row.source_key,
 			source_type: row.source_type,
+			collection_id: row.collection_id,
 			collection_slug: row.collection_slug,
 			content_id: row.content_id,
 			source_variant: row.source_variant,
@@ -2290,6 +2773,7 @@ function rowToUsageRecord(row: JoinedUsageRow): MediaUsageRecord {
 			source_updated_at: row.source_updated_at,
 			source_version: row.source_version,
 			source_fingerprint: row.source_fingerprint,
+			identity_version: row.identity_version,
 			source_completeness: row.source_completeness,
 			last_attempted_at: row.last_attempted_at,
 			last_error_code: row.last_error_code,

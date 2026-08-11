@@ -92,6 +92,88 @@ describeEachDialect("MediaUsageRepository", (dialect) => {
 		expect(rows).toContainEqual({ generation: second.currentGeneration, media_id: "media-new" });
 	});
 
+	it("updates canonical identity metadata when replacing a source", async () => {
+		const collectionId = "collection-posts";
+		await ctx.db
+			.insertInto("_emdash_collections")
+			.values({ id: collectionId, slug: "posts", label: "Posts" })
+			.execute();
+		const sourceKey = buildContentMediaUsageSourceKey({
+			collectionId,
+			collectionSlug: "posts",
+			contentId: "entry1",
+			sourceVariant: "columns",
+		});
+
+		await repo.replaceSource(
+			contentSource("entry1", "columns", {
+				sourceKey,
+				collectionId,
+				identityVersion: 1,
+			}),
+			[occurrence("hero", "media-old")],
+		);
+		const replaced = await repo.replaceSource(
+			contentSource("entry1", "columns", {
+				sourceKey,
+				collectionId,
+				identityVersion: 2,
+			}),
+			[occurrence("hero", "media-new")],
+		);
+
+		expect(replaced).toEqual(expect.objectContaining({ collectionId, identityVersion: 2 }));
+	});
+
+	it("refuses canonical attempted writes after collection identity disappears", async () => {
+		const collectionId = "collection-posts";
+		await ctx.db
+			.insertInto("_emdash_collections")
+			.values({ id: collectionId, slug: "posts", label: "Posts" })
+			.execute();
+		const source = contentSource("entry1", "columns", {
+			sourceKey: buildContentMediaUsageSourceKey({
+				collectionId,
+				collectionSlug: "posts",
+				contentId: "entry1",
+				sourceVariant: "columns",
+			}),
+			collectionId,
+			identityVersion: 1,
+		});
+		const observed = await repo.replaceSource(source, [occurrence("hero", "media-old")]);
+		await ctx.db.deleteFrom("_emdash_collections").where("id", "=", collectionId).execute();
+
+		const update = await repo.markSourceAttemptedIfMatching(
+			{ ...source, sourceCompleteness: "failed", lastErrorCode: "SNAPSHOT_FAILED" },
+			observed,
+		);
+		const absentSource = contentSource("entry2", "columns", {
+			sourceKey: buildContentMediaUsageSourceKey({
+				collectionId,
+				collectionSlug: "posts",
+				contentId: "entry2",
+				sourceVariant: "columns",
+			}),
+			collectionId,
+			identityVersion: 1,
+			sourceCompleteness: "failed",
+			lastErrorCode: "SNAPSHOT_FAILED",
+		});
+		const insert = await repo.markSourceAttemptedIfMatching(absentSource, null);
+
+		expect(update.attempted).toBe(false);
+		expect((await repo.findSource(source.sourceKey))?.sourceCompleteness).toBe("complete");
+		expect(insert).toEqual({ attempted: false, source: null });
+		await expect(
+			repo.markSourceAttempted({
+				...source,
+				sourceCompleteness: "failed",
+				lastErrorCode: "SNAPSHOT_FAILED",
+			}),
+		).rejects.toThrow(/no longer current/i);
+	});
+
 	it("does not replace a source when the expected generation is stale", async () => {
 		const first = await repo.replaceSource(contentSource("entry1", "columns"), [
 			occurrence("hero", "media-old"),
@@ -1221,6 +1303,57 @@ describeEachDialect("MediaUsageRepository", (dialect) => {
 		);
 	});
 
+	it("makes an active repair require reconciliation until guarded completion", async () => {
+		await ctx.db
+			.insertInto("_emdash_collections")
+			.values({ id: "active-posts-id", slug: "active_posts", label: "Active posts" })
+			.execute();
+		await repo.upsertIndexStatus({
+			adapterId: "content-media",
+			scopeType: "collection",
+			scopeKey: "active_posts",
+			status: "complete",
+		});
+		await ctx.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set({
+				collection_id: "active-posts-id",
+				capture_state: "active",
+				reconciliation_required: 0,
+			})
+			.where("scope_key", "=", "active_posts")
+			.execute();
+		await ctx.db
+			.updateTable("_emdash_media_usage_activation")
+			.set({ state: "active" })
+			.where("task_key", "=", "incremental_capture")
+			.execute();
+
+		const run = await repo.beginIndexStatusRepairAtCurrentEpoch({
+			adapterId: "content-media",
+			scopeType: "collection",
+			scopeKey: "active_posts",
+			collectionId: "active-posts-id",
+			runToken: "active-repair-run",
+			schemaVersion: 1,
+		});
+
+		expect(run).toEqual(
+			expect.objectContaining({ changeEpoch: expect.toSatisfy((value) => Number(value) === 0) }),
+		);
+		expect(
+			await ctx.db
+				.selectFrom("_emdash_media_usage_index_status")
+				.select(["status", "cursor", "reconciliation_required"])
+				.where("collection_id", "=", "active-posts-id")
+				.executeTakeFirstOrThrow(),
+		).toEqual({
+			status: "running",
+			cursor: "active-repair-run",
+			reconciliation_required: 1,
+		});
+	});
+
 	it("finalizes repair status only when status and run token still match", async () => {
 		await repo.beginIndexStatusRepair({
 			adapterId: "content-media",
@@ -1331,6 +1464,25 @@ describeEachDialect("MediaUsageRepository", (dialect) => {
 				startedAt: "2026-01-01T00:00:01.000Z",
 				cursor: "repair-run-2",
 			}),
+		);
+	});
+
+	it("does not delete a replacement collection's status through an old identity", async () => {
+		const identity = {
+			adapterId: "content-media",
+			scopeType: "collection",
+			scopeKey: "recreated",
+		};
+		await repo.upsertIndexStatus({ ...identity, status: "stale" });
+		await ctx.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set({ collection_id: "replacement-id" })
+			.where("scope_key", "=", "recreated")
+			.execute();
+
+		expect(await repo.deleteIndexStatus(identity, "old-id")).toBe(0);
+		expect(await repo.findIndexStatus(identity)).toEqual(
+			expect.objectContaining({ status: "stale" }),
 		);
 	});
 
