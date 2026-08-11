@@ -217,6 +217,46 @@ describeEachDialect("media usage collection deletion processor", (dialect) => {
 		expect(await deletionState("second-id")).toEqual(expect.objectContaining({ phase: "sources" }));
 	});
 
+	it.runIf(dialect === "sqlite")("uses every declared deletion selector index", async () => {
+		const plans = await Promise.all([
+			sql
+				.raw(
+					"EXPLAIN QUERY PLAN SELECT collection_id FROM _emdash_media_usage_collection_deletions WHERE state = 'pending' AND next_attempt_at <= '2026-01-01T00:00:00.000Z' ORDER BY next_attempt_at, updated_at, collection_id LIMIT 4",
+				)
+				.execute(ctx.db),
+			sql
+				.raw(
+					"EXPLAIN QUERY PLAN SELECT collection_id FROM _emdash_media_usage_collection_deletions WHERE state = 'leased' AND lease_expires_at <= '2026-01-01T00:00:00.000Z' ORDER BY lease_expires_at, updated_at, collection_id LIMIT 4",
+				)
+				.execute(ctx.db),
+			sql
+				.raw(
+					"EXPLAIN QUERY PLAN SELECT collection_id FROM _emdash_media_usage_collection_deletions WHERE state = 'failed' ORDER BY updated_at DESC, collection_id DESC LIMIT 50",
+				)
+				.execute(ctx.db),
+			sql
+				.raw(
+					"EXPLAIN QUERY PLAN SELECT source_key FROM _emdash_media_usage_sources WHERE source_type = 'content' AND collection_id = 'old-id' ORDER BY source_key LIMIT 1",
+				)
+				.execute(ctx.db),
+			sql
+				.raw(
+					"EXPLAIN QUERY PLAN SELECT id FROM _emdash_media_usage WHERE source_key = 'source' AND id > 'cursor' ORDER BY id LIMIT 51",
+				)
+				.execute(ctx.db),
+		]);
+		const indexes = [
+			"idx__emdash_media_usage_collection_deletions_due",
+			"idx__emdash_media_usage_collection_deletions_lease",
+			"idx__emdash_media_usage_collection_deletions_operator",
+			"idx__emdash_media_usage_sources_collection_cursor",
+			"idx__emdash_media_usage_source_cursor",
+		];
+		for (const [index, plan] of plans.entries()) {
+			expect(plan.rows.map((row) => JSON.stringify(row)).join(" ")).toContain(indexes[index]);
+		}
+	});
+
 	function runTick() {
 		return processDueMediaUsageCollectionDeletions(ctx.db);
 	}

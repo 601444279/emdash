@@ -2,6 +2,11 @@ import { sql, type Kysely, type RawBuilder, type Selectable, type Transaction } 
 import { ulid } from "ulidx";
 
 import { isPostgres } from "../../database/dialect-helpers.js";
+import {
+	decodeCursor,
+	encodeCursor,
+	type FindManyResult,
+} from "../../database/repositories/types.js";
 import { withTransaction } from "../../database/transaction.js";
 import type { Database, MediaUsageCollectionDeletionTable } from "../../database/types.js";
 import { validateIdentifier } from "../../database/validate.js";
@@ -10,6 +15,7 @@ import type {
 	CollectionDeletionGuardResult,
 } from "../../db/adapters.js";
 import { FTSManager } from "../../search/fts-manager.js";
+import { isMissingTableError } from "../../utils/db-errors.js";
 import { verifyMediaUsageCaptureTriggers } from "./capture-triggers.js";
 
 const ACTIVATION_KEY = "incremental_capture";
@@ -42,6 +48,24 @@ export interface MediaUsageCollectionDeletionRecord {
 	createdAt: string;
 	updatedAt: string;
 }
+
+export interface MediaUsageCollectionDeletionOperatorItem {
+	collectionId: string;
+	collectionSlug: string;
+	state: MediaUsageCollectionDeletionState;
+	phase: MediaUsageCollectionDeletionPhase;
+	attemptCount: number;
+	nextAttemptAt: string;
+	leaseExpiresAt: string | null;
+	lastErrorCode: string | null;
+	updatedAt: string;
+}
+
+export type MediaUsageCollectionDeletionRetryResult =
+	| { outcome: "pending"; changed: boolean; item: MediaUsageCollectionDeletionOperatorItem }
+	| { outcome: "lease_active"; leaseExpiresAt: string }
+	| { outcome: "not_found" }
+	| { outcome: "conflict" };
 
 export class MediaUsageCollectionDeletionRepository {
 	constructor(private db: Kysely<Database>) {}
@@ -120,12 +144,17 @@ export class MediaUsageCollectionDeletionRepository {
 
 	async findBySlug(collectionSlug: string): Promise<MediaUsageCollectionDeletionRecord | null> {
 		validateIdentifier(collectionSlug, "collection slug");
-		const row = await this.db
-			.selectFrom("_emdash_media_usage_collection_deletions")
-			.selectAll()
-			.where("collection_slug", "=", collectionSlug)
-			.executeTakeFirst();
-		return row ? rowToRecord(row) : null;
+		try {
+			const row = await this.db
+				.selectFrom("_emdash_media_usage_collection_deletions")
+				.selectAll()
+				.where("collection_slug", "=", collectionSlug)
+				.executeTakeFirst();
+			return row ? rowToRecord(row) : null;
+		} catch (error) {
+			if (isMissingTableError(error)) return null;
+			throw error;
+		}
 	}
 
 	async findDue(limit: number): Promise<MediaUsageCollectionDeletionRecord[]> {
@@ -162,6 +191,93 @@ export class MediaUsageCollectionDeletionRepository {
 			LIMIT ${limit}
 		`.execute(this.db);
 		return result.rows.map(rowToRecord);
+	}
+
+	async findOperatorPage(options: {
+		state?: MediaUsageCollectionDeletionState;
+		limit?: number;
+		cursor?: string;
+	}): Promise<FindManyResult<MediaUsageCollectionDeletionOperatorItem>> {
+		const state = options.state ?? "failed";
+		if (!isState(state)) throw new Error("Invalid collection deletion state");
+		const limit = options.limit ?? 50;
+		if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) {
+			throw new Error("Collection deletion operator limit must be from 1 to 100");
+		}
+		const cursor = options.cursor ? decodeCursor(options.cursor) : null;
+		let query = this.db
+			.selectFrom("_emdash_media_usage_collection_deletions")
+			.selectAll()
+			.where("state", "=", state);
+		if (cursor) {
+			query = query.where((eb) =>
+				eb.or([
+					eb("updated_at", "<", cursor.orderValue),
+					eb.and([eb("updated_at", "=", cursor.orderValue), eb("collection_id", "<", cursor.id)]),
+				]),
+			);
+		}
+		const rows = await query
+			.orderBy("updated_at", "desc")
+			.orderBy("collection_id", "desc")
+			.limit(limit + 1)
+			.execute();
+		const items = rows.slice(0, limit).map(rowToOperatorItem);
+		const result: FindManyResult<MediaUsageCollectionDeletionOperatorItem> = { items };
+		if (rows.length > limit && items.length > 0) {
+			const last = items.at(-1)!;
+			result.nextCursor = encodeCursor(last.updatedAt, last.collectionId);
+		}
+		return result;
+	}
+
+	async retryOperatorDeletion(input: {
+		collectionId: string;
+	}): Promise<MediaUsageCollectionDeletionRetryResult> {
+		if (!input.collectionId) throw new Error("Collection deletion retry requires an ID");
+		const observed = await this.db
+			.selectFrom("_emdash_media_usage_collection_deletions")
+			.selectAll()
+			.where("collection_id", "=", input.collectionId)
+			.executeTakeFirst();
+		if (!observed) return { outcome: "not_found" };
+		if (observed.state === "leased" && observed.lease_expires_at) {
+			const live = await this.db
+				.selectFrom("_emdash_media_usage_collection_deletions")
+				.select("lease_expires_at")
+				.where("collection_id", "=", input.collectionId)
+				.where("state", "=", "leased")
+				.where(liveLease(this.db))
+				.executeTakeFirst();
+			if (live?.lease_expires_at) {
+				return { outcome: "lease_active", leaseExpiresAt: live.lease_expires_at };
+			}
+		}
+		const now = timestampOffset(this.db, 0);
+		const reopened = await this.db
+			.updateTable("_emdash_media_usage_collection_deletions")
+			.set({
+				state: "pending",
+				attempt_count: 0,
+				next_attempt_at: now,
+				lease_token: null,
+				lease_expires_at: null,
+				last_error_code: null,
+				updated_at: now,
+			})
+			.where("collection_id", "=", input.collectionId)
+			.where((eb) =>
+				eb.or([
+					eb("state", "in", ["failed", "retry"]),
+					eb.and([eb("state", "=", "leased"), timestampIsDue(this.db, "lease_expires_at")]),
+				]),
+			)
+			.returningAll()
+			.executeTakeFirst();
+		if (reopened) {
+			return { outcome: "pending", changed: true, item: rowToOperatorItem(reopened) };
+		}
+		return { outcome: "conflict" };
 	}
 
 	async checkpoint(input: {
@@ -446,12 +562,17 @@ export async function isMediaUsageCollectionSlugDeleting(
 	collectionSlug: string,
 ): Promise<boolean> {
 	validateIdentifier(collectionSlug, "collection slug");
-	const row = await db
-		.selectFrom("_emdash_media_usage_collection_deletions")
-		.select("collection_id")
-		.where("collection_slug", "=", collectionSlug)
-		.executeTakeFirst();
-	return row !== undefined;
+	try {
+		const row = await db
+			.selectFrom("_emdash_media_usage_collection_deletions")
+			.select("collection_id")
+			.where("collection_slug", "=", collectionSlug)
+			.executeTakeFirst();
+		return row !== undefined;
+	} catch (error) {
+		if (isMissingTableError(error)) return false;
+		throw error;
+	}
 }
 
 async function assertActivatedCollectionDeletionReady(
@@ -667,6 +788,23 @@ function rowToRecord(
 		lastErrorCode: row.last_error_code,
 		createdAt: row.created_at,
 		updatedAt: row.updated_at,
+	};
+}
+
+function rowToOperatorItem(
+	row: Selectable<MediaUsageCollectionDeletionTable>,
+): MediaUsageCollectionDeletionOperatorItem {
+	const deletion = rowToRecord(row);
+	return {
+		collectionId: deletion.collectionId,
+		collectionSlug: deletion.collectionSlug,
+		state: deletion.state,
+		phase: deletion.phase,
+		attemptCount: deletion.attemptCount,
+		nextAttemptAt: deletion.nextAttemptAt,
+		leaseExpiresAt: deletion.leaseExpiresAt,
+		lastErrorCode: deletion.lastErrorCode,
+		updatedAt: deletion.updatedAt,
 	};
 }
 
