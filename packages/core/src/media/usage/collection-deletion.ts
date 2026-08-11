@@ -2,6 +2,7 @@ import { sql, type Kysely, type RawBuilder, type Selectable, type Transaction } 
 import { ulid } from "ulidx";
 
 import { isPostgres } from "../../database/dialect-helpers.js";
+import { withTransaction } from "../../database/transaction.js";
 import type { Database, MediaUsageCollectionDeletionTable } from "../../database/types.js";
 import { validateIdentifier } from "../../database/validate.js";
 import type {
@@ -9,6 +10,10 @@ import type {
 	CollectionDeletionGuardResult,
 } from "../../db/adapters.js";
 import { FTSManager } from "../../search/fts-manager.js";
+import { verifyMediaUsageCaptureTriggers } from "./capture-triggers.js";
+
+const ACTIVATION_KEY = "incremental_capture";
+const VIRTUAL_DIALECT_ID = "virtual:emdash/dialect";
 
 export type MediaUsageCollectionDeletionState = "pending" | "retry" | "leased" | "failed";
 export type MediaUsageCollectionDeletionPhase =
@@ -112,6 +117,306 @@ export class MediaUsageCollectionDeletionRepository {
 		if (!row) return null;
 		return { ...rowToRecord(row), leaseToken };
 	}
+
+	async findBySlug(collectionSlug: string): Promise<MediaUsageCollectionDeletionRecord | null> {
+		validateIdentifier(collectionSlug, "collection slug");
+		const row = await this.db
+			.selectFrom("_emdash_media_usage_collection_deletions")
+			.selectAll()
+			.where("collection_slug", "=", collectionSlug)
+			.executeTakeFirst();
+		return row ? rowToRecord(row) : null;
+	}
+
+	async checkpoint(input: {
+		collectionId: string;
+		leaseToken: string;
+		fromPhase: MediaUsageCollectionDeletionPhase;
+		toPhase: MediaUsageCollectionDeletionPhase;
+	}): Promise<boolean> {
+		const result = await this.db
+			.updateTable("_emdash_media_usage_collection_deletions")
+			.set({ phase: input.toPhase, updated_at: timestampOffset(this.db, 0) })
+			.where("collection_id", "=", input.collectionId)
+			.where("state", "=", "leased")
+			.where("phase", "=", input.fromPhase)
+			.where("lease_token", "=", input.leaseToken)
+			.where(liveLease(this.db))
+			.executeTakeFirst();
+		return Number(result.numUpdatedRows ?? 0) === 1;
+	}
+
+	async release(input: { collectionId: string; leaseToken: string }): Promise<boolean> {
+		const now = timestampOffset(this.db, 0);
+		const result = await this.db
+			.updateTable("_emdash_media_usage_collection_deletions")
+			.set({
+				state: "pending",
+				next_attempt_at: now,
+				lease_token: null,
+				lease_expires_at: null,
+				updated_at: now,
+			})
+			.where("collection_id", "=", input.collectionId)
+			.where("state", "=", "leased")
+			.where("lease_token", "=", input.leaseToken)
+			.where(liveLease(this.db))
+			.executeTakeFirst();
+		return Number(result.numUpdatedRows ?? 0) === 1;
+	}
+
+	async cancelFence(input: { collectionId: string; leaseToken: string }): Promise<boolean> {
+		const result = await this.db
+			.deleteFrom("_emdash_media_usage_collection_deletions")
+			.where("collection_id", "=", input.collectionId)
+			.where("state", "=", "leased")
+			.where("phase", "=", "fence")
+			.where("lease_token", "=", input.leaseToken)
+			.where(liveLease(this.db))
+			.executeTakeFirst();
+		return Number(result.numDeletedRows ?? 0) === 1;
+	}
+
+	async deleteRegistryAndCheckpoint(input: {
+		collectionId: string;
+		collectionSlug: string;
+		leaseToken: string;
+	}): Promise<boolean> {
+		return withTransaction(this.db, async (trx) => {
+			await trx
+				.deleteFrom("_emdash_collections")
+				.where("id", "=", input.collectionId)
+				.where("slug", "=", input.collectionSlug)
+				.where((eb) =>
+					eb.exists(
+						eb
+							.selectFrom("_emdash_media_usage_collection_deletions as deletion")
+							.select("deletion.collection_id")
+							.where("deletion.collection_id", "=", input.collectionId)
+							.where("deletion.collection_slug", "=", input.collectionSlug)
+							.where("deletion.state", "=", "leased")
+							.where("deletion.phase", "=", "registry")
+							.where("deletion.lease_token", "=", input.leaseToken)
+							.where(liveLease(this.db, "deletion.lease_expires_at")),
+					),
+				)
+				.execute();
+
+			const checkpoint = await trx
+				.updateTable("_emdash_media_usage_collection_deletions")
+				.set({ phase: "table", updated_at: timestampOffset(this.db, 0) })
+				.where("collection_id", "=", input.collectionId)
+				.where("collection_slug", "=", input.collectionSlug)
+				.where("state", "=", "leased")
+				.where("phase", "=", "registry")
+				.where("lease_token", "=", input.leaseToken)
+				.where(liveLease(this.db))
+				.executeTakeFirst();
+			return Number(checkpoint.numUpdatedRows ?? 0) === 1;
+		});
+	}
+}
+
+export type ActivatedCollectionDeletionOutcome =
+	| "inactive"
+	| "not_found"
+	| "in_progress"
+	| "deleted"
+	| "has_content";
+
+export async function deleteActivatedMediaUsageCollection(
+	db: Kysely<Database>,
+	input: {
+		collectionSlug: string;
+		collectionId?: string;
+		forceDelete: boolean;
+	},
+): Promise<ActivatedCollectionDeletionOutcome> {
+	validateIdentifier(input.collectionSlug, "collection slug");
+	const repository = new MediaUsageCollectionDeletionRepository(db);
+	let deletion = await repository.findBySlug(input.collectionSlug);
+	if (deletion && input.collectionId && deletion.collectionId !== input.collectionId) {
+		throw new Error("Collection deletion tombstone identity conflict");
+	}
+	if (!deletion) {
+		const activation = await db
+			.selectFrom("_emdash_media_usage_activation")
+			.select("state")
+			.where("task_key", "=", ACTIVATION_KEY)
+			.executeTakeFirst();
+		if (!activation || activation.state === "expanded") return "inactive";
+		if (activation.state !== "active") {
+			throw new Error("Media usage activation must be active before collection deletion");
+		}
+		if (!input.collectionId) return "not_found";
+		await assertActivatedCollectionDeletionReady(db, {
+			collectionId: input.collectionId,
+			collectionSlug: input.collectionSlug,
+		});
+		deletion = await repository.createTombstone({
+			collectionId: input.collectionId,
+			collectionSlug: input.collectionSlug,
+			forceDelete: input.forceDelete,
+		});
+	}
+
+	if (deletion.phase !== "fence" && deletion.phase !== "registry" && deletion.phase !== "table") {
+		return "deleted";
+	}
+	const claim = await repository.claim({
+		collectionId: deletion.collectionId,
+		phase: deletion.phase,
+		leaseDurationSeconds: 5 * 60,
+	});
+	if (!claim) return "in_progress";
+	let phase = claim.phase;
+	const lease = { collectionId: claim.collectionId, leaseToken: claim.leaseToken };
+
+	if (phase === "fence") {
+		const captureState = await findCollectionCaptureState(db, claim);
+		if (captureState !== "active" && captureState !== "deleting") {
+			throw new Error("Activated collection deletion requires a fenced capture lifecycle");
+		}
+		if (!(await verifyMediaUsageCaptureTriggers(db, claim))) {
+			throw new Error("Activated collection deletion requires the exact capture trigger set");
+		}
+		if (captureState === "active") {
+			const result = await executeCollectionDeletionGuard(db, {
+				action: "fence",
+				collectionId: claim.collectionId,
+				collectionSlug: claim.collectionSlug,
+				leaseToken: claim.leaseToken,
+				forceDelete: claim.forceDelete,
+			});
+			if (result.outcome === "has_content") {
+				if (!(await repository.cancelFence(lease))) {
+					throw new Error("Collection deletion lost its fence while preserving content");
+				}
+				return "has_content";
+			}
+			if (result.outcome !== "fenced") throw new Error("Collection deletion lost its fence");
+		}
+		if (
+			!(await repository.checkpoint({
+				...lease,
+				fromPhase: "fence",
+				toPhase: "registry",
+			}))
+		) {
+			throw new Error("Collection deletion lost its fence checkpoint");
+		}
+		phase = "registry";
+	}
+
+	if (phase === "registry") {
+		if (
+			!(await repository.deleteRegistryAndCheckpoint({
+				...lease,
+				collectionSlug: claim.collectionSlug,
+			}))
+		) {
+			throw new Error("Collection deletion lost its registry checkpoint");
+		}
+		phase = "table";
+	}
+
+	if (phase === "table") {
+		const result = await executeCollectionDeletionGuard(db, {
+			action: "drop",
+			collectionId: claim.collectionId,
+			collectionSlug: claim.collectionSlug,
+			leaseToken: claim.leaseToken,
+		});
+		if (result.outcome !== "dropped") throw new Error("Collection deletion lost its table fence");
+		if (
+			!(await repository.checkpoint({
+				...lease,
+				fromPhase: "table",
+				toPhase: "work",
+			}))
+		) {
+			throw new Error("Collection deletion lost its table checkpoint");
+		}
+	}
+
+	if (!(await repository.release(lease))) {
+		throw new Error("Collection deletion lost its cleanup handoff");
+	}
+	return "deleted";
+}
+
+export async function isMediaUsageCollectionSlugDeleting(
+	db: Kysely<Database>,
+	collectionSlug: string,
+): Promise<boolean> {
+	validateIdentifier(collectionSlug, "collection slug");
+	const row = await db
+		.selectFrom("_emdash_media_usage_collection_deletions")
+		.select("collection_id")
+		.where("collection_slug", "=", collectionSlug)
+		.executeTakeFirst();
+	return row !== undefined;
+}
+
+async function assertActivatedCollectionDeletionReady(
+	db: Kysely<Database>,
+	identity: { collectionId: string; collectionSlug: string },
+): Promise<void> {
+	const captureState = await findCollectionCaptureState(db, identity);
+	if (captureState !== "active") {
+		throw new Error("Activated collection deletion requires an active capture lifecycle");
+	}
+	if (!(await verifyMediaUsageCaptureTriggers(db, identity))) {
+		throw new Error("Activated collection deletion requires the exact capture trigger set");
+	}
+}
+
+async function findCollectionCaptureState(
+	db: Kysely<Database>,
+	identity: { collectionId: string; collectionSlug: string },
+): Promise<string | null> {
+	const lifecycle = await db
+		.selectFrom("_emdash_media_usage_index_status")
+		.select("capture_state")
+		.where("adapter_id", "=", "content-media")
+		.where("scope_type", "=", "collection")
+		.where("scope_key", "=", identity.collectionSlug)
+		.where("collection_id", "=", identity.collectionId)
+		.executeTakeFirst();
+	return lifecycle?.capture_state ?? null;
+}
+
+async function executeCollectionDeletionGuard(
+	db: Kysely<Database>,
+	input: CollectionDeletionGuardInput,
+): Promise<CollectionDeletionGuardResult> {
+	const executeAdapterGuard = await loadAdapterCollectionDeletionGuard();
+	if (executeAdapterGuard) {
+		const { default: config } = await import("virtual:emdash/config");
+		return executeAdapterGuard(config.database?.config, input);
+	}
+	return executeLocalCollectionDeletionGuard(db, input);
+}
+
+async function loadAdapterCollectionDeletionGuard(): Promise<
+	import("../../db/adapters.js").ExecuteCollectionDeletionGuard | undefined
+> {
+	try {
+		const dialect = await import("virtual:emdash/dialect");
+		return dialect.executeCollectionDeletionGuard;
+	} catch (error) {
+		if (isVirtualDialectUnavailableError(error)) return undefined;
+		throw error;
+	}
+}
+
+export function isVirtualDialectUnavailableError(error: unknown): boolean {
+	if (!(error instanceof Error) || !("code" in error)) return false;
+	if (error.code === "ERR_MODULE_NOT_FOUND") return error.message.includes(VIRTUAL_DIALECT_ID);
+	return (
+		error.code === "ERR_UNSUPPORTED_ESM_URL_SCHEME" &&
+		error.message.includes("Received protocol 'virtual:'")
+	);
 }
 
 export async function executeLocalCollectionDeletionGuard(
@@ -211,10 +516,11 @@ function assertGuardInput(input: CollectionDeletionGuardInput): void {
 	if (!input.leaseToken) throw new Error("Collection deletion requires a lease token");
 }
 
-function liveLease(db: Kysely<Database>): RawBuilder<boolean> {
+function liveLease(db: Kysely<Database>, column = "lease_expires_at"): RawBuilder<boolean> {
+	const leaseExpiresAt = sql.ref(column);
 	return isPostgres(db)
-		? sql<boolean>`lease_expires_at::timestamptz > clock_timestamp()`
-		: sql<boolean>`lease_expires_at > strftime('%Y-%m-%dT%H:%M:%fZ', 'now')`;
+		? sql<boolean>`${leaseExpiresAt}::timestamptz > clock_timestamp()`
+		: sql<boolean>`${leaseExpiresAt} > strftime('%Y-%m-%dT%H:%M:%fZ', 'now')`;
 }
 
 function timestampIsDue(

@@ -460,6 +460,9 @@ export class MediaUsageRepository {
 
 		await this.withGenerationWriteLease(source.sourceKey, generation, async (leaseToken, now) => {
 			await withTransaction(this.db, async (trx) => {
+				if (!(await this.lockCanonicalSourceCollection(trx, source))) {
+					throw new Error(`Media usage collection is no longer current for ${source.sourceKey}`);
+				}
 				await this.insertOccurrences(trx, source.sourceKey, generation, occurrences, now);
 				const promoted = await this.upsertSource(trx, source, generation, now, leaseToken);
 				if (!promoted) {
@@ -491,6 +494,7 @@ export class MediaUsageRepository {
 		await this.withGenerationWriteLease(source.sourceKey, generation, async (leaseToken, now) => {
 			const row = this.buildSourceRow(source, generation, now);
 			await withTransaction(this.db, async (trx) => {
+				if (!(await this.lockCanonicalSourceCollection(trx, source))) return;
 				await this.insertOccurrences(trx, source.sourceKey, generation, occurrences, now);
 				if (expectedCurrentGeneration === null) {
 					replaced = await this.insertSourceIfAbsent(trx, row, leaseToken);
@@ -591,6 +595,7 @@ export class MediaUsageRepository {
 		await this.withGenerationWriteLease(source.sourceKey, generation, async (leaseToken, now) => {
 			const row = this.buildSourceRow(source, generation, now);
 			await withTransaction(this.db, async (trx) => {
+				if (!(await this.lockCanonicalSourceCollection(trx, source))) return;
 				await this.insertOccurrences(trx, source.sourceKey, generation, occurrences, now);
 				if (expectedSource === null) {
 					replaced = await this.insertSourceIfAbsent(trx, row, leaseToken);
@@ -652,16 +657,22 @@ export class MediaUsageRepository {
 		if (expectedSource === null) {
 			await this.withGenerationWriteLease(source.sourceKey, generation, async (leaseToken, now) => {
 				const row = this.buildAttemptedSourceRow(source, generation, now);
-				attempted = await this.persistSourceIfWriteLease(
-					this.db,
-					row,
-					leaseToken,
-					sql`ON CONFLICT (source_key) DO NOTHING`,
-				);
+				await withTransaction(this.db, async (trx) => {
+					if (!(await this.lockCanonicalSourceCollection(trx, source))) return;
+					attempted = await this.persistSourceIfWriteLease(
+						trx,
+						row,
+						leaseToken,
+						sql`ON CONFLICT (source_key) DO NOTHING`,
+					);
+				});
 			});
 		} else {
 			const row = this.buildAttemptedSourceRow(source, generation, new Date().toISOString());
-			attempted = await this.updateAttemptedSourceIfMatching(this.db, source, row, expectedSource);
+			await withTransaction(this.db, async (trx) => {
+				if (!(await this.lockCanonicalSourceCollection(trx, source))) return;
+				attempted = await this.updateAttemptedSourceIfMatching(trx, source, row, expectedSource);
+			});
 		}
 
 		return {
@@ -2172,6 +2183,23 @@ export class MediaUsageRepository {
 		for (const rowBatch of chunks(rows, OCCURRENCE_INSERT_BATCH_SIZE)) {
 			await db.insertInto("_emdash_media_usage").values(rowBatch).execute();
 		}
+	}
+
+	private async lockCanonicalSourceCollection(
+		db: DatabaseExecutor,
+		source: MediaUsageSourceInput,
+	): Promise<boolean> {
+		if (source.collectionId === undefined || source.collectionId === null) return true;
+		if (!source.collectionSlug) return false;
+		if (!isPostgres(this.db)) return true;
+		const collection = await db
+			.selectFrom("_emdash_collections")
+			.select("id")
+			.where("id", "=", source.collectionId)
+			.where("slug", "=", source.collectionSlug)
+			.forKeyShare()
+			.executeTakeFirst();
+		return collection !== undefined;
 	}
 
 	private async upsertSource(
