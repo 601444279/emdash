@@ -6,6 +6,7 @@ import { RawBindingD1Dialect } from "../../../cloudflare/src/db/d1-dialect.js";
 import { executeCollectionDeletionGuard } from "../../../cloudflare/src/db/d1.js";
 import { runMigrations } from "../../src/database/migrations/runner.js";
 import type { Database } from "../../src/database/types.js";
+import { processDueMediaUsageCollectionDeletions } from "../../src/media/usage/collection-deletion-processor.js";
 
 declare module "cloudflare:test" {
 	interface ProvidedEnv {
@@ -143,6 +144,44 @@ it("atomically preserves content or fences an empty collection", async () => {
 		),
 	).resolves.toEqual({ outcome: "fenced" });
 	expect(await captureState()).toBe("deleting");
+});
+
+it("drains at most fifty exact-ID work rows in a real D1 tick", async () => {
+	await db
+		.insertInto("_emdash_media_usage_collection_deletions")
+		.values({
+			collection_id: "collection-d1-cleanup",
+			collection_slug: "d1_cleanup",
+			force_delete: 1,
+			state: "pending",
+			phase: "work",
+			next_attempt_at: "2000-01-01T00:00:00.000Z",
+		})
+		.execute();
+	const work = Array.from({ length: 51 }, (_, index) => ({
+		collection_id: "collection-d1-cleanup",
+		collection_slug: "d1_cleanup",
+		content_id: `d1-entry-${String(index).padStart(3, "0")}`,
+		change_epoch: 1,
+		next_attempt_at: "2000-01-01T00:00:00.000Z",
+	}));
+	for (let index = 0; index < work.length; index += 10) {
+		await db
+			.insertInto("_emdash_media_usage_work")
+			.values(work.slice(index, index + 10))
+			.execute();
+	}
+
+	await expect(processDueMediaUsageCollectionDeletions(db)).resolves.toMatchObject({
+		claimedCount: 1,
+		outcome: "progress",
+	});
+	const remaining = await db
+		.selectFrom("_emdash_media_usage_work")
+		.select("content_id")
+		.where("collection_id", "=", "collection-d1-cleanup")
+		.execute();
+	expect(remaining).toEqual([{ content_id: "d1-entry-050" }]);
 });
 
 async function ctxInsertCollection(): Promise<void> {

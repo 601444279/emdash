@@ -128,6 +128,42 @@ export class MediaUsageCollectionDeletionRepository {
 		return row ? rowToRecord(row) : null;
 	}
 
+	async findDue(limit: number): Promise<MediaUsageCollectionDeletionRecord[]> {
+		if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) {
+			throw new Error("Collection deletion candidate limit must be from 1 to 100");
+		}
+		const nextAttemptIsDue = timestampIsDue(this.db, "next_attempt_at");
+		const leaseIsDue = timestampIsDue(this.db, "lease_expires_at");
+		const result = await sql<Selectable<MediaUsageCollectionDeletionTable>>`
+			WITH pending_candidates AS (
+				SELECT * FROM _emdash_media_usage_collection_deletions
+				WHERE state = 'pending' AND ${nextAttemptIsDue}
+				ORDER BY next_attempt_at, updated_at, collection_id
+				LIMIT ${limit}
+			), retry_candidates AS (
+				SELECT * FROM _emdash_media_usage_collection_deletions
+				WHERE state = 'retry' AND ${nextAttemptIsDue}
+				ORDER BY next_attempt_at, updated_at, collection_id
+				LIMIT ${limit}
+			), leased_candidates AS (
+				SELECT * FROM _emdash_media_usage_collection_deletions
+				WHERE state = 'leased' AND ${leaseIsDue}
+				ORDER BY lease_expires_at, updated_at, collection_id
+				LIMIT ${limit}
+			), candidates AS (
+				SELECT * FROM pending_candidates
+				UNION ALL SELECT * FROM retry_candidates
+				UNION ALL SELECT * FROM leased_candidates
+			)
+			SELECT * FROM candidates
+			ORDER BY CASE WHEN state = 'leased' THEN lease_expires_at ELSE next_attempt_at END,
+				updated_at,
+				collection_id
+			LIMIT ${limit}
+		`.execute(this.db);
+		return result.rows.map(rowToRecord);
+	}
+
 	async checkpoint(input: {
 		collectionId: string;
 		leaseToken: string;
@@ -136,7 +172,12 @@ export class MediaUsageCollectionDeletionRepository {
 	}): Promise<boolean> {
 		const result = await this.db
 			.updateTable("_emdash_media_usage_collection_deletions")
-			.set({ phase: input.toPhase, updated_at: timestampOffset(this.db, 0) })
+			.set({
+				phase: input.toPhase,
+				attempt_count: 0,
+				last_error_code: null,
+				updated_at: timestampOffset(this.db, 0),
+			})
 			.where("collection_id", "=", input.collectionId)
 			.where("state", "=", "leased")
 			.where("phase", "=", input.fromPhase)
@@ -155,6 +196,8 @@ export class MediaUsageCollectionDeletionRepository {
 				next_attempt_at: now,
 				lease_token: null,
 				lease_expires_at: null,
+				attempt_count: 0,
+				last_error_code: null,
 				updated_at: now,
 			})
 			.where("collection_id", "=", input.collectionId)
@@ -175,6 +218,32 @@ export class MediaUsageCollectionDeletionRepository {
 			.where(liveLease(this.db))
 			.executeTakeFirst();
 		return Number(result.numDeletedRows ?? 0) === 1;
+	}
+
+	async recordFailure(input: {
+		collectionId: string;
+		leaseToken: string;
+		errorCode: string;
+		terminal: boolean;
+		retryDelaySeconds: number;
+	}): Promise<boolean> {
+		const result = await this.db
+			.updateTable("_emdash_media_usage_collection_deletions")
+			.set({
+				state: input.terminal ? "failed" : "retry",
+				attempt_count: sql<number>`attempt_count + 1`,
+				next_attempt_at: timestampOffset(this.db, input.retryDelaySeconds),
+				lease_token: null,
+				lease_expires_at: null,
+				last_error_code: input.errorCode,
+				updated_at: timestampOffset(this.db, 0),
+			})
+			.where("collection_id", "=", input.collectionId)
+			.where("state", "=", "leased")
+			.where("lease_token", "=", input.leaseToken)
+			.where(liveLease(this.db))
+			.executeTakeFirst();
+		return Number(result.numUpdatedRows ?? 0) === 1;
 	}
 
 	async deleteRegistryAndCheckpoint(input: {
@@ -221,6 +290,7 @@ export type ActivatedCollectionDeletionOutcome =
 	| "inactive"
 	| "not_found"
 	| "in_progress"
+	| "advanced"
 	| "deleted"
 	| "has_content";
 
@@ -231,7 +301,15 @@ export async function deleteActivatedMediaUsageCollection(
 		collectionId?: string;
 		forceDelete: boolean;
 	},
+	options: {
+		frontPhaseLimit?: number;
+		claimed?: MediaUsageCollectionDeletionRecord & { leaseToken: string };
+	} = {},
 ): Promise<ActivatedCollectionDeletionOutcome> {
+	const frontPhaseLimit = options.frontPhaseLimit ?? 3;
+	if (!Number.isSafeInteger(frontPhaseLimit) || frontPhaseLimit < 1 || frontPhaseLimit > 3) {
+		throw new Error("Collection deletion front-phase limit must be from 1 to 3");
+	}
 	validateIdentifier(input.collectionSlug, "collection slug");
 	const repository = new MediaUsageCollectionDeletionRepository(db);
 	let deletion = await repository.findBySlug(input.collectionSlug);
@@ -263,13 +341,19 @@ export async function deleteActivatedMediaUsageCollection(
 	if (deletion.phase !== "fence" && deletion.phase !== "registry" && deletion.phase !== "table") {
 		return "deleted";
 	}
-	const claim = await repository.claim({
-		collectionId: deletion.collectionId,
-		phase: deletion.phase,
-		leaseDurationSeconds: 5 * 60,
-	});
+	const claim =
+		options.claimed ??
+		(await repository.claim({
+			collectionId: deletion.collectionId,
+			phase: deletion.phase,
+			leaseDurationSeconds: 5 * 60,
+		}));
 	if (!claim) return "in_progress";
+	if (claim.collectionId !== deletion.collectionId || claim.phase !== deletion.phase) {
+		throw new Error("Collection deletion claim identity conflict");
+	}
 	let phase = claim.phase;
+	let processedFrontPhases = 0;
 	const lease = { collectionId: claim.collectionId, leaseToken: claim.leaseToken };
 
 	if (phase === "fence") {
@@ -306,6 +390,12 @@ export async function deleteActivatedMediaUsageCollection(
 			throw new Error("Collection deletion lost its fence checkpoint");
 		}
 		phase = "registry";
+		processedFrontPhases++;
+		if (processedFrontPhases >= frontPhaseLimit) {
+			if (!(await repository.release(lease)))
+				throw new Error("Collection deletion lost its handoff");
+			return "advanced";
+		}
 	}
 
 	if (phase === "registry") {
@@ -318,6 +408,12 @@ export async function deleteActivatedMediaUsageCollection(
 			throw new Error("Collection deletion lost its registry checkpoint");
 		}
 		phase = "table";
+		processedFrontPhases++;
+		if (processedFrontPhases >= frontPhaseLimit) {
+			if (!(await repository.release(lease)))
+				throw new Error("Collection deletion lost its handoff");
+			return "advanced";
+		}
 	}
 
 	if (phase === "table") {
@@ -528,7 +624,10 @@ function timestampIsDue(
 	column: "next_attempt_at" | "lease_expires_at",
 ): RawBuilder<boolean> {
 	return isPostgres(db)
-		? sql<boolean>`${sql.ref(column)}::timestamptz <= clock_timestamp()`
+		? sql<boolean>`${sql.ref(column)} <= to_char(
+			statement_timestamp() AT TIME ZONE 'UTC',
+			'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'
+		)`
 		: sql<boolean>`${sql.ref(column)} <= strftime('%Y-%m-%dT%H:%M:%fZ', 'now')`;
 }
 
