@@ -13,6 +13,7 @@
  */
 
 import { env } from "cloudflare:workers";
+import type { CollectionDeletionGuardInput, CollectionDeletionGuardResult } from "emdash";
 import { kyselyLogOption, recordRpc } from "emdash/database/instrumentation";
 import { type Dialect, Kysely } from "kysely";
 
@@ -59,6 +60,18 @@ function bindingError(binding: string): Error {
 			`For read replication also set:\n` +
 			`"compatibility_flags": ["experimental", "replica_routing"]`,
 	);
+}
+
+export async function executeCollectionDeletionGuard(
+	config: DurableObjectsConfig,
+	input: CollectionDeletionGuardInput,
+): Promise<CollectionDeletionGuardResult> {
+	const ns = getNamespace(config);
+	if (!ns) throw bindingError(config.binding);
+	const id = ns.idFromName(config.name ?? DEFAULT_NAME);
+	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- Rpc type limitation with unknown row types
+	const stub = ns.get(id) as unknown as EmDashDBStub;
+	return stub.executeCollectionDeletionGuard(input);
 }
 
 /**

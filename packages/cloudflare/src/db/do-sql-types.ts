@@ -86,6 +86,9 @@ export interface EmDashDBStub {
 		statements: DOQueryStatement[],
 		opts?: { bookmark?: string },
 	): Promise<DOQueryResult[]>;
+	executeCollectionDeletionGuard(
+		input: import("emdash").CollectionDeletionGuardInput,
+	): Promise<import("emdash").CollectionDeletionGuardResult>;
 }
 
 /**

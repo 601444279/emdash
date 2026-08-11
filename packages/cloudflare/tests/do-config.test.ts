@@ -7,6 +7,7 @@ describe("d1()", () => {
 		const result = d1({ binding: "DB" });
 		expect(result.supportsRequestScope).toBe(true);
 		expect(result.supportsCoalescing).toBe(true);
+		expect(result.supportsCollectionDeletionGuard).toBe(true);
 	});
 });
 
@@ -15,6 +16,7 @@ describe("durableObjects()", () => {
 		const result = durableObjects({ binding: "DB_DO" });
 		expect(result.supportsRequestScope).toBe(true);
 		expect(result.supportsCoalescing).toBe(true);
+		expect(result.supportsCollectionDeletionGuard).toBe(true);
 	});
 });
 

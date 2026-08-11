@@ -49,6 +49,9 @@ describeEachDialect("media usage incremental work migration", (dialect) => {
 	});
 
 	it("upgrades and reruns without rewriting legacy evidence or inventing work", async () => {
+		const collectionDeletionMigration =
+			await import("../../../src/database/migrations/065_media_usage_collection_deletion.js");
+		await collectionDeletionMigration.down(ctx.db);
 		const migration =
 			await import("../../../src/database/migrations/063_media_usage_incremental_work.js");
 		await migration.down(ctx.db);
@@ -191,6 +194,9 @@ describeEachDialect("media usage incremental work migration", (dialect) => {
 	});
 
 	it("purges a partially bound status if its collection is deleted or recreated before retry", async () => {
+		const collectionDeletionMigration =
+			await import("../../../src/database/migrations/065_media_usage_collection_deletion.js");
+		await collectionDeletionMigration.down(ctx.db);
 		const migration =
 			await import("../../../src/database/migrations/063_media_usage_incremental_work.js");
 		await migration.down(ctx.db);
