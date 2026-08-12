@@ -364,6 +364,56 @@ Content-Type: application/json
 DELETE /_emdash/api/media/:id
 ```
 
+### Activate Automatic Media Usage Indexing
+
+```http
+GET /_emdash/api/admin/media-usage/activation
+```
+
+Returns the redacted state of controlled Media Usage capture activation. The endpoint requires
+`schema:manage`; bearer tokens also require the `admin` scope. It does not start activation or
+return lease tokens, runtime generations, raw errors, content, media references, or a backlog
+count.
+
+```http
+POST /_emdash/api/admin/media-usage/activation
+Content-Type: application/json
+X-EmDash-Request: 1
+
+{
+	"writersDrained": true,
+	"maintenanceReady": true
+}
+```
+
+Each confirmed request starts, resumes, or retries at most one collection. Both confirmations must
+be literal `true` values. EmDash cannot verify either assertion: `writersDrained` means every
+application and external database writer is blocked and in-flight writes have finished;
+`maintenanceReady` means the deployment has a working Media Usage maintenance lane.
+
+Use this production runbook:
+
+1. Deploy one current EmDash version containing automatic reconciliation and controlled activation to every writer.
+2. Configure and verify the automatic maintenance lane: `mediaUsageCron` on Cloudflare, or a persistent Node process running the built-in scheduler.
+3. Block new application and external database writes, then wait for in-flight writes to finish.
+4. Call `GET` and record the current state.
+5. Call `POST` sequentially with both confirmations until the returned state is `active`.
+6. After a `409`, `500`, timeout, or lost response, call `GET` before deciding whether another confirmed `POST` is needed.
+7. If status still records failure, keep writers blocked, inspect operator logs, correct the deployment or database problem, and repeat the same confirmed `POST`. Never edit activation rows manually.
+8. Restore writers only after `GET` or `POST` reports `state: active`.
+9. Keep maintenance running while historical reconciliation catches up.
+
+Activation is forward-only. Once it starts, there is no abort, skip-collection, deactivate, or
+reset endpoint. Validate the procedure in staging and follow your normal database backup policy
+before production activation. Some corruption or incompatible-schema failures require a corrective
+deployment or database restoration because ordinary schema writes remain blocked while activation
+is incomplete.
+
+`active` means that current collections have incremental capture installed. It does not mean that
+historical Used in coverage is complete. A live activation lease returns
+`409 MEDIA_USAGE_ACTIVATION_BUSY` with only its expiry; ownership loss returns
+`409 MEDIA_USAGE_ACTIVATION_CONFLICT`. Read status before retrying either conflict.
+
 ### List Media Usage Work
 
 ```http

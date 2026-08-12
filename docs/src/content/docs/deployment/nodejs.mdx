@@ -53,6 +53,23 @@ export default defineConfig({
 
 The server runs on `http://localhost:4321` by default. Migrations are applied on the first request. If the database is empty and setup hasn't been completed, your seed file (or the built-in default if you don't have one) is also applied on that first request.
 
+## Scheduled Maintenance and Media Usage Activation
+
+The Node adapter runs scheduled publishing and Media Usage maintenance from its built-in timer.
+That timer requires at least one long-lived, current-version server process. A process that exits
+after each request, scales to zero between requests, or is routinely suspended is not maintenance
+ready.
+
+Before production activation, deploy the same current EmDash version to every process that can
+write to the database and verify that one persistent process remains healthy. Follow the
+[controlled activation runbook](/reference/rest-api/#activate-automatic-media-usage-indexing):
+block new application and external database writes, wait for in-flight writes, then call the
+activation endpoint sequentially while the persistent process stays running. Restore writers only
+after status is `active`.
+
+`active` confirms incremental capture, not complete historical coverage. Keep the persistent
+process and its scheduler running after writers resume so bounded reconciliation can continue.
+
 ## Production Storage
 
 For production, use S3-compatible storage instead of local filesystem:

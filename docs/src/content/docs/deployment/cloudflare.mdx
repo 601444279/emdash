@@ -107,6 +107,21 @@ Then add both Cron Triggers to `wrangler.jsonc` using the same expressions:
 	Without the general trigger, scheduled publishing and plugin cron do not run. Without the dedicated Media Usage trigger, automatic historical reconciliation cannot progress. Local `astro dev` still uses the in-process scheduler.
 </Aside>
 
+### Activate Media Usage capture
+
+Before production activation, deploy the same current EmDash version to every Worker that can
+write to the database and verify that the dedicated `mediaUsageCron` trigger is firing. The
+database cannot detect an old Worker deployment, external SQL writer, missing Cron Trigger, or a
+Cron expression that never reaches this Worker.
+
+Follow the [controlled activation runbook](/reference/rest-api/#activate-automatic-media-usage-indexing).
+Block new writes at your application or traffic-control layer and let in-flight requests finish;
+do not remove the dedicated Media Usage Cron Trigger. Call the activation endpoint sequentially
+while writes remain blocked, and restore traffic only after its status is `active`.
+
+`active` confirms incremental capture, not complete historical coverage. Keep the dedicated Cron
+Trigger running after restoring traffic so bounded reconciliation can continue.
+
 ## Deploy
 
 Deploy to Cloudflare Workers:
