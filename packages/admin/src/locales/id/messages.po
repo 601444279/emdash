@@ -1514,10 +1514,10 @@ msgstr "Tengah"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:76
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:107
-#: packages/admin/src/components/ContentEditor.tsx:1690
+#: packages/admin/src/components/ContentEditor.tsx:1691
 #: packages/admin/src/components/FieldEditor.tsx:402
-#: packages/admin/src/components/ImageFieldRenderer.tsx:133
-#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+#: packages/admin/src/components/ImageFieldRenderer.tsx:208
+#: packages/admin/src/components/ImageFieldRenderer.tsx:237
 #: packages/admin/src/components/SeoImageField.tsx:53
 msgid "Change"
 msgstr "Ubah"
@@ -3050,7 +3050,7 @@ msgstr "Diaktifkan"
 msgid "Enter a URL (https://…) or a relative path (/…)"
 msgstr "Masukkan URL (https://…) atau jalur relatif (/…)"
 
-#: packages/admin/src/components/ContentEditor.tsx:1468
+#: packages/admin/src/components/ContentEditor.tsx:1469
 msgid "Enter a valid URL (e.g. https://example.com)"
 msgstr "Masukkan URL yang valid (mis. https://contoh.com)"
 
@@ -4148,7 +4148,8 @@ msgid "Image from media library"
 msgstr "Gambar dari pustaka media"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:67
-#: packages/admin/src/components/ImageFieldRenderer.tsx:124
+#: packages/admin/src/components/ImageFieldRenderer.tsx:131
+#: packages/admin/src/components/ImageFieldRenderer.tsx:199
 msgid "Image not found"
 msgstr "Gambar tidak ditemukan"
 
@@ -4416,7 +4417,7 @@ msgstr "Bilangan Bulat"
 msgid "Invalid invite link"
 msgstr "Tautan undangan tidak valid"
 
-#: packages/admin/src/components/ContentEditor.tsx:1537
+#: packages/admin/src/components/ContentEditor.tsx:1538
 msgid "Invalid JSON"
 msgstr "JSON Tidak Valid"
 
@@ -5108,7 +5109,7 @@ msgstr "Bulanan"
 msgid "Monthly/yearly archives"
 msgstr "Arsip bulanan/tahunan"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:111
+#: packages/admin/src/components/ImageFieldRenderer.tsx:184
 msgid "More information about {label}"
 msgstr ""
 
@@ -6346,6 +6347,7 @@ msgstr "Rilis terlalu baru untuk dipasang"
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
 #: packages/admin/src/components/ContentSettingsPanel.tsx:973
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
+#: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4130
 #: packages/admin/src/components/settings/GeneralSettings.tsx:229
 #: packages/admin/src/components/settings/GeneralSettings.tsx:289
@@ -6366,7 +6368,7 @@ msgstr "Hapus {0}"
 msgid "Remove {entry}"
 msgstr "Hapus {entry}"
 
-#: packages/admin/src/components/ContentEditor.tsx:1698
+#: packages/admin/src/components/ContentEditor.tsx:1699
 msgid "Remove {label}"
 msgstr "Hapus {label}"
 
@@ -6378,8 +6380,9 @@ msgstr "Hapus Domain"
 msgid "Remove Domain?"
 msgstr "Hapus Domain?"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:141
 #: packages/admin/src/components/ImageFieldRenderer.tsx:170
+#: packages/admin/src/components/ImageFieldRenderer.tsx:216
+#: packages/admin/src/components/ImageFieldRenderer.tsx:245
 #: packages/admin/src/components/SeoImageField.tsx:61
 msgid "Remove image"
 msgstr "Hapus gambar"
@@ -6460,6 +6463,10 @@ msgstr "Pengulang"
 #: packages/admin/src/components/FieldEditor.tsx:241
 msgid "Repeating group of fields"
 msgstr "Grup field berulang"
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+msgid "Replace"
+msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:363
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:396
@@ -7050,9 +7057,9 @@ msgid "Select"
 msgstr "Pilih"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:140
-#: packages/admin/src/components/ContentEditor.tsx:1710
-#: packages/admin/src/components/ContentEditor.tsx:1726
-#: packages/admin/src/components/ImageFieldRenderer.tsx:198
+#: packages/admin/src/components/ContentEditor.tsx:1711
+#: packages/admin/src/components/ContentEditor.tsx:1727
+#: packages/admin/src/components/ImageFieldRenderer.tsx:273
 msgid "Select {label}"
 msgstr "Pilih {label}"
 
@@ -7094,7 +7101,7 @@ msgstr "Pilih Gambar Sosial Bawaan"
 msgid "Select Favicon"
 msgstr "Pilih Favicon"
 
-#: packages/admin/src/components/ContentEditor.tsx:1714
+#: packages/admin/src/components/ContentEditor.tsx:1715
 msgid "Select file"
 msgstr "Pilih file"
 
@@ -7106,7 +7113,7 @@ msgstr "Pilih File"
 msgid "Select Gallery Images"
 msgstr ""
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:186
+#: packages/admin/src/components/ImageFieldRenderer.tsx:261
 msgid "Select image"
 msgstr "Pilih gambar"
 
@@ -7146,6 +7153,10 @@ msgstr "Pilih..."
 #: packages/admin/src/components/PortableTextEditor.tsx:1734
 msgid "Selected {selectedItemTitle}"
 msgstr "{selectedItemTitle} dipilih"
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:116
+msgid "Selected image"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:795
 msgid "Selected:"
@@ -7824,8 +7835,8 @@ msgstr "Ini tidak tampak seperti kunci migrasi yang valid. Buat yang baru di plu
 msgid "This field does not accept {sniffedMime} files."
 msgstr "Bidang ini tidak menerima file {sniffedMime}."
 
-#: packages/admin/src/components/ContentEditor.tsx:1729
-#: packages/admin/src/components/ImageFieldRenderer.tsx:201
+#: packages/admin/src/components/ContentEditor.tsx:1730
+#: packages/admin/src/components/ImageFieldRenderer.tsx:276
 msgid "This field is required"
 msgstr "Field ini wajib diisi"
 
@@ -8235,7 +8246,7 @@ msgstr "Tipe elemen widget tidak didukung: {0}"
 msgid "Untitled"
 msgstr "Tanpa Judul"
 
-#: packages/admin/src/components/ContentEditor.tsx:1632
+#: packages/admin/src/components/ContentEditor.tsx:1633
 msgid "Untitled file"
 msgstr "File tanpa judul"
 

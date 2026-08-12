@@ -1514,10 +1514,10 @@ msgstr ""
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:76
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:107
-#: packages/admin/src/components/ContentEditor.tsx:1690
+#: packages/admin/src/components/ContentEditor.tsx:1691
 #: packages/admin/src/components/FieldEditor.tsx:402
-#: packages/admin/src/components/ImageFieldRenderer.tsx:133
-#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+#: packages/admin/src/components/ImageFieldRenderer.tsx:208
+#: packages/admin/src/components/ImageFieldRenderer.tsx:237
 #: packages/admin/src/components/SeoImageField.tsx:53
 msgid "Change"
 msgstr "Cambiar"
@@ -3047,7 +3047,7 @@ msgstr "Activado"
 msgid "Enter a URL (https://…) or a relative path (/…)"
 msgstr "Introduce una URL (https://…) o una ruta relativa (/…)"
 
-#: packages/admin/src/components/ContentEditor.tsx:1468
+#: packages/admin/src/components/ContentEditor.tsx:1469
 msgid "Enter a valid URL (e.g. https://example.com)"
 msgstr "Introduce una URL válida (p. ej. https://example.com)"
 
@@ -4145,7 +4145,8 @@ msgid "Image from media library"
 msgstr "Imagen de la biblioteca multimedia"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:67
-#: packages/admin/src/components/ImageFieldRenderer.tsx:124
+#: packages/admin/src/components/ImageFieldRenderer.tsx:131
+#: packages/admin/src/components/ImageFieldRenderer.tsx:199
 msgid "Image not found"
 msgstr "Imagen no encontrada"
 
@@ -4413,7 +4414,7 @@ msgstr "Entero"
 msgid "Invalid invite link"
 msgstr "Enlace de invitación no válido"
 
-#: packages/admin/src/components/ContentEditor.tsx:1537
+#: packages/admin/src/components/ContentEditor.tsx:1538
 msgid "Invalid JSON"
 msgstr "JSON no válido"
 
@@ -5105,7 +5106,7 @@ msgstr ""
 msgid "Monthly/yearly archives"
 msgstr ""
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:111
+#: packages/admin/src/components/ImageFieldRenderer.tsx:184
 msgid "More information about {label}"
 msgstr ""
 
@@ -6343,6 +6344,7 @@ msgstr "La versión es demasiado reciente para instalarse"
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
 #: packages/admin/src/components/ContentSettingsPanel.tsx:973
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
+#: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4130
 #: packages/admin/src/components/settings/GeneralSettings.tsx:229
 #: packages/admin/src/components/settings/GeneralSettings.tsx:289
@@ -6363,7 +6365,7 @@ msgstr "Eliminar {0}"
 msgid "Remove {entry}"
 msgstr "Quitar {entry}"
 
-#: packages/admin/src/components/ContentEditor.tsx:1698
+#: packages/admin/src/components/ContentEditor.tsx:1699
 msgid "Remove {label}"
 msgstr "Quitar {label}"
 
@@ -6375,8 +6377,9 @@ msgstr "Eliminar dominio"
 msgid "Remove Domain?"
 msgstr "¿Quitar dominio?"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:141
 #: packages/admin/src/components/ImageFieldRenderer.tsx:170
+#: packages/admin/src/components/ImageFieldRenderer.tsx:216
+#: packages/admin/src/components/ImageFieldRenderer.tsx:245
 #: packages/admin/src/components/SeoImageField.tsx:61
 msgid "Remove image"
 msgstr "Quitar imagen"
@@ -6457,6 +6460,10 @@ msgstr "Reloj de repetición"
 #: packages/admin/src/components/FieldEditor.tsx:241
 msgid "Repeating group of fields"
 msgstr "Grupo repetido de campos."
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+msgid "Replace"
+msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:363
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:396
@@ -7047,9 +7054,9 @@ msgid "Select"
 msgstr "Seleccionar"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:140
-#: packages/admin/src/components/ContentEditor.tsx:1710
-#: packages/admin/src/components/ContentEditor.tsx:1726
-#: packages/admin/src/components/ImageFieldRenderer.tsx:198
+#: packages/admin/src/components/ContentEditor.tsx:1711
+#: packages/admin/src/components/ContentEditor.tsx:1727
+#: packages/admin/src/components/ImageFieldRenderer.tsx:273
 msgid "Select {label}"
 msgstr "Selecciona {label}"
 
@@ -7091,7 +7098,7 @@ msgstr "Seleccionar imagen social predeterminada"
 msgid "Select Favicon"
 msgstr "Seleccionar favicon"
 
-#: packages/admin/src/components/ContentEditor.tsx:1714
+#: packages/admin/src/components/ContentEditor.tsx:1715
 msgid "Select file"
 msgstr "Seleccionar archivo"
 
@@ -7103,7 +7110,7 @@ msgstr "Seleccionar archivo"
 msgid "Select Gallery Images"
 msgstr ""
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:186
+#: packages/admin/src/components/ImageFieldRenderer.tsx:261
 msgid "Select image"
 msgstr "Seleccionar imagen"
 
@@ -7142,6 +7149,10 @@ msgstr "Seleccionar..."
 
 #: packages/admin/src/components/PortableTextEditor.tsx:1734
 msgid "Selected {selectedItemTitle}"
+msgstr ""
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:116
+msgid "Selected image"
 msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:795
@@ -7821,8 +7832,8 @@ msgstr ""
 msgid "This field does not accept {sniffedMime} files."
 msgstr "Este campo no acepta archivos {sniffedMime}."
 
-#: packages/admin/src/components/ContentEditor.tsx:1729
-#: packages/admin/src/components/ImageFieldRenderer.tsx:201
+#: packages/admin/src/components/ContentEditor.tsx:1730
+#: packages/admin/src/components/ImageFieldRenderer.tsx:276
 msgid "This field is required"
 msgstr "Este campo es obligatorio"
 
@@ -8232,7 +8243,7 @@ msgstr "Tipo de elemento de widget no admitido: {0}"
 msgid "Untitled"
 msgstr "Intitulado"
 
-#: packages/admin/src/components/ContentEditor.tsx:1632
+#: packages/admin/src/components/ContentEditor.tsx:1633
 msgid "Untitled file"
 msgstr "Archivo sin título"
 

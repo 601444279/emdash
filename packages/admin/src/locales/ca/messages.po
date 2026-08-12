@@ -1514,10 +1514,10 @@ msgstr "Centre"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:76
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:107
-#: packages/admin/src/components/ContentEditor.tsx:1690
+#: packages/admin/src/components/ContentEditor.tsx:1691
 #: packages/admin/src/components/FieldEditor.tsx:402
-#: packages/admin/src/components/ImageFieldRenderer.tsx:133
-#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+#: packages/admin/src/components/ImageFieldRenderer.tsx:208
+#: packages/admin/src/components/ImageFieldRenderer.tsx:237
 #: packages/admin/src/components/SeoImageField.tsx:53
 msgid "Change"
 msgstr "Canvia"
@@ -3050,7 +3050,7 @@ msgstr "Activat"
 msgid "Enter a URL (https://…) or a relative path (/…)"
 msgstr "Introdueix un URL (https://…) o una ruta relativa (/…)"
 
-#: packages/admin/src/components/ContentEditor.tsx:1468
+#: packages/admin/src/components/ContentEditor.tsx:1469
 msgid "Enter a valid URL (e.g. https://example.com)"
 msgstr "Introdueix un URL vàlid (p. ex. https://example.com)"
 
@@ -4148,7 +4148,8 @@ msgid "Image from media library"
 msgstr "Imatge de la biblioteca multimèdia"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:67
-#: packages/admin/src/components/ImageFieldRenderer.tsx:124
+#: packages/admin/src/components/ImageFieldRenderer.tsx:131
+#: packages/admin/src/components/ImageFieldRenderer.tsx:199
 msgid "Image not found"
 msgstr "No s'ha trobat la imatge"
 
@@ -4416,7 +4417,7 @@ msgstr "Enter"
 msgid "Invalid invite link"
 msgstr "Enllaç d'invitació no vàlid"
 
-#: packages/admin/src/components/ContentEditor.tsx:1537
+#: packages/admin/src/components/ContentEditor.tsx:1538
 msgid "Invalid JSON"
 msgstr "JSON no vàlid"
 
@@ -5108,7 +5109,7 @@ msgstr ""
 msgid "Monthly/yearly archives"
 msgstr ""
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:111
+#: packages/admin/src/components/ImageFieldRenderer.tsx:184
 msgid "More information about {label}"
 msgstr ""
 
@@ -6346,6 +6347,7 @@ msgstr "La versió és massa nova per instal·lar-la"
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
 #: packages/admin/src/components/ContentSettingsPanel.tsx:973
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
+#: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4130
 #: packages/admin/src/components/settings/GeneralSettings.tsx:229
 #: packages/admin/src/components/settings/GeneralSettings.tsx:289
@@ -6366,7 +6368,7 @@ msgstr "Treu {0}"
 msgid "Remove {entry}"
 msgstr "Treu {entry}"
 
-#: packages/admin/src/components/ContentEditor.tsx:1698
+#: packages/admin/src/components/ContentEditor.tsx:1699
 msgid "Remove {label}"
 msgstr "Treu {label}"
 
@@ -6378,8 +6380,9 @@ msgstr "Elimina el domini"
 msgid "Remove Domain?"
 msgstr "Vols eliminar el domini?"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:141
 #: packages/admin/src/components/ImageFieldRenderer.tsx:170
+#: packages/admin/src/components/ImageFieldRenderer.tsx:216
+#: packages/admin/src/components/ImageFieldRenderer.tsx:245
 #: packages/admin/src/components/SeoImageField.tsx:61
 msgid "Remove image"
 msgstr "Treu la imatge"
@@ -6460,6 +6463,10 @@ msgstr "Repetidor"
 #: packages/admin/src/components/FieldEditor.tsx:241
 msgid "Repeating group of fields"
 msgstr "Grup de camps repetible"
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+msgid "Replace"
+msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:363
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:396
@@ -7050,9 +7057,9 @@ msgid "Select"
 msgstr "Selecciona"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:140
-#: packages/admin/src/components/ContentEditor.tsx:1710
-#: packages/admin/src/components/ContentEditor.tsx:1726
-#: packages/admin/src/components/ImageFieldRenderer.tsx:198
+#: packages/admin/src/components/ContentEditor.tsx:1711
+#: packages/admin/src/components/ContentEditor.tsx:1727
+#: packages/admin/src/components/ImageFieldRenderer.tsx:273
 msgid "Select {label}"
 msgstr "Selecciona {label}"
 
@@ -7094,7 +7101,7 @@ msgstr "Selecciona la imatge social per defecte"
 msgid "Select Favicon"
 msgstr "Selecciona la icona del lloc"
 
-#: packages/admin/src/components/ContentEditor.tsx:1714
+#: packages/admin/src/components/ContentEditor.tsx:1715
 msgid "Select file"
 msgstr "Selecciona un fitxer"
 
@@ -7106,7 +7113,7 @@ msgstr "Selecciona un fitxer"
 msgid "Select Gallery Images"
 msgstr ""
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:186
+#: packages/admin/src/components/ImageFieldRenderer.tsx:261
 msgid "Select image"
 msgstr "Selecciona una imatge"
 
@@ -7145,6 +7152,10 @@ msgstr "Selecciona..."
 
 #: packages/admin/src/components/PortableTextEditor.tsx:1734
 msgid "Selected {selectedItemTitle}"
+msgstr ""
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:116
+msgid "Selected image"
 msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:795
@@ -7824,8 +7835,8 @@ msgstr ""
 msgid "This field does not accept {sniffedMime} files."
 msgstr "Aquest camp no accepta fitxers {sniffedMime}."
 
-#: packages/admin/src/components/ContentEditor.tsx:1729
-#: packages/admin/src/components/ImageFieldRenderer.tsx:201
+#: packages/admin/src/components/ContentEditor.tsx:1730
+#: packages/admin/src/components/ImageFieldRenderer.tsx:276
 msgid "This field is required"
 msgstr "Aquest camp és obligatori"
 
@@ -8235,7 +8246,7 @@ msgstr "Tipus d'element de giny no admès: {0}"
 msgid "Untitled"
 msgstr "Sense títol"
 
-#: packages/admin/src/components/ContentEditor.tsx:1632
+#: packages/admin/src/components/ContentEditor.tsx:1633
 msgid "Untitled file"
 msgstr "Fitxer sense títol"
 

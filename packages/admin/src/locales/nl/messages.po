@@ -1514,10 +1514,10 @@ msgstr "Midden"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:76
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:107
-#: packages/admin/src/components/ContentEditor.tsx:1690
+#: packages/admin/src/components/ContentEditor.tsx:1691
 #: packages/admin/src/components/FieldEditor.tsx:402
-#: packages/admin/src/components/ImageFieldRenderer.tsx:133
-#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+#: packages/admin/src/components/ImageFieldRenderer.tsx:208
+#: packages/admin/src/components/ImageFieldRenderer.tsx:237
 #: packages/admin/src/components/SeoImageField.tsx:53
 msgid "Change"
 msgstr "Wijzigen"
@@ -3050,7 +3050,7 @@ msgstr "Ingeschakeld"
 msgid "Enter a URL (https://…) or a relative path (/…)"
 msgstr "Voer een URL (https://…) of een relatief pad (/…) in"
 
-#: packages/admin/src/components/ContentEditor.tsx:1468
+#: packages/admin/src/components/ContentEditor.tsx:1469
 msgid "Enter a valid URL (e.g. https://example.com)"
 msgstr "Voer een geldige URL in (bijv. https://example.com)"
 
@@ -4148,7 +4148,8 @@ msgid "Image from media library"
 msgstr "Afbeelding uit mediabibliotheek"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:67
-#: packages/admin/src/components/ImageFieldRenderer.tsx:124
+#: packages/admin/src/components/ImageFieldRenderer.tsx:131
+#: packages/admin/src/components/ImageFieldRenderer.tsx:199
 msgid "Image not found"
 msgstr "Afbeelding niet gevonden"
 
@@ -4416,7 +4417,7 @@ msgstr "Geheel getal"
 msgid "Invalid invite link"
 msgstr "Ongeldige uitnodigingslink"
 
-#: packages/admin/src/components/ContentEditor.tsx:1537
+#: packages/admin/src/components/ContentEditor.tsx:1538
 msgid "Invalid JSON"
 msgstr "Ongeldige JSON"
 
@@ -5108,7 +5109,7 @@ msgstr "Maandelijks"
 msgid "Monthly/yearly archives"
 msgstr "Maandelijkse/jaarlijkse archieven"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:111
+#: packages/admin/src/components/ImageFieldRenderer.tsx:184
 msgid "More information about {label}"
 msgstr ""
 
@@ -6346,6 +6347,7 @@ msgstr "Release is te nieuw om te installeren"
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
 #: packages/admin/src/components/ContentSettingsPanel.tsx:973
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
+#: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4130
 #: packages/admin/src/components/settings/GeneralSettings.tsx:229
 #: packages/admin/src/components/settings/GeneralSettings.tsx:289
@@ -6366,7 +6368,7 @@ msgstr "{0} verwijderen"
 msgid "Remove {entry}"
 msgstr "{entry} verwijderen"
 
-#: packages/admin/src/components/ContentEditor.tsx:1698
+#: packages/admin/src/components/ContentEditor.tsx:1699
 msgid "Remove {label}"
 msgstr "{label} verwijderen"
 
@@ -6378,8 +6380,9 @@ msgstr "Domein verwijderen"
 msgid "Remove Domain?"
 msgstr "Domein verwijderen?"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:141
 #: packages/admin/src/components/ImageFieldRenderer.tsx:170
+#: packages/admin/src/components/ImageFieldRenderer.tsx:216
+#: packages/admin/src/components/ImageFieldRenderer.tsx:245
 #: packages/admin/src/components/SeoImageField.tsx:61
 msgid "Remove image"
 msgstr "Afbeelding verwijderen"
@@ -6460,6 +6463,10 @@ msgstr "Repeater"
 #: packages/admin/src/components/FieldEditor.tsx:241
 msgid "Repeating group of fields"
 msgstr "Herhalende groep velden"
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+msgid "Replace"
+msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:363
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:396
@@ -7050,9 +7057,9 @@ msgid "Select"
 msgstr "Selecteren"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:140
-#: packages/admin/src/components/ContentEditor.tsx:1710
-#: packages/admin/src/components/ContentEditor.tsx:1726
-#: packages/admin/src/components/ImageFieldRenderer.tsx:198
+#: packages/admin/src/components/ContentEditor.tsx:1711
+#: packages/admin/src/components/ContentEditor.tsx:1727
+#: packages/admin/src/components/ImageFieldRenderer.tsx:273
 msgid "Select {label}"
 msgstr "{label} selecteren"
 
@@ -7094,7 +7101,7 @@ msgstr "Standaard sociale afbeelding selecteren"
 msgid "Select Favicon"
 msgstr "Favicon selecteren"
 
-#: packages/admin/src/components/ContentEditor.tsx:1714
+#: packages/admin/src/components/ContentEditor.tsx:1715
 msgid "Select file"
 msgstr "Bestand selecteren"
 
@@ -7106,7 +7113,7 @@ msgstr "Bestand selecteren"
 msgid "Select Gallery Images"
 msgstr ""
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:186
+#: packages/admin/src/components/ImageFieldRenderer.tsx:261
 msgid "Select image"
 msgstr "Afbeelding selecteren"
 
@@ -7145,6 +7152,10 @@ msgstr "Selecteren..."
 
 #: packages/admin/src/components/PortableTextEditor.tsx:1734
 msgid "Selected {selectedItemTitle}"
+msgstr ""
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:116
+msgid "Selected image"
 msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:795
@@ -7824,8 +7835,8 @@ msgstr "Dit lijkt geen geldige migratiesleutel. Genereer een nieuwe in de plugin
 msgid "This field does not accept {sniffedMime} files."
 msgstr "Dit veld accepteert geen {sniffedMime}-bestanden."
 
-#: packages/admin/src/components/ContentEditor.tsx:1729
-#: packages/admin/src/components/ImageFieldRenderer.tsx:201
+#: packages/admin/src/components/ContentEditor.tsx:1730
+#: packages/admin/src/components/ImageFieldRenderer.tsx:276
 msgid "This field is required"
 msgstr "Dit veld is verplicht"
 
@@ -8235,7 +8246,7 @@ msgstr "Niet-ondersteund elementtype voor widget: {0}"
 msgid "Untitled"
 msgstr "Zonder titel"
 
-#: packages/admin/src/components/ContentEditor.tsx:1632
+#: packages/admin/src/components/ContentEditor.tsx:1633
 msgid "Untitled file"
 msgstr "Bestand zonder titel"
 

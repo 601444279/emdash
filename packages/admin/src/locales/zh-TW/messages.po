@@ -1514,10 +1514,10 @@ msgstr "置中"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:76
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:107
-#: packages/admin/src/components/ContentEditor.tsx:1690
+#: packages/admin/src/components/ContentEditor.tsx:1691
 #: packages/admin/src/components/FieldEditor.tsx:402
-#: packages/admin/src/components/ImageFieldRenderer.tsx:133
-#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+#: packages/admin/src/components/ImageFieldRenderer.tsx:208
+#: packages/admin/src/components/ImageFieldRenderer.tsx:237
 #: packages/admin/src/components/SeoImageField.tsx:53
 msgid "Change"
 msgstr "變更"
@@ -3050,7 +3050,7 @@ msgstr "已啟用"
 msgid "Enter a URL (https://…) or a relative path (/…)"
 msgstr "輸入 URL (https://…) 或相對路徑 (/…)"
 
-#: packages/admin/src/components/ContentEditor.tsx:1468
+#: packages/admin/src/components/ContentEditor.tsx:1469
 msgid "Enter a valid URL (e.g. https://example.com)"
 msgstr "輸入有效的網址 (例如 https://example.com)"
 
@@ -4148,7 +4148,8 @@ msgid "Image from media library"
 msgstr "來自媒體庫的圖片"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:67
-#: packages/admin/src/components/ImageFieldRenderer.tsx:124
+#: packages/admin/src/components/ImageFieldRenderer.tsx:131
+#: packages/admin/src/components/ImageFieldRenderer.tsx:199
 msgid "Image not found"
 msgstr "找不到圖片"
 
@@ -4416,7 +4417,7 @@ msgstr "整數"
 msgid "Invalid invite link"
 msgstr "無效的邀請連結"
 
-#: packages/admin/src/components/ContentEditor.tsx:1537
+#: packages/admin/src/components/ContentEditor.tsx:1538
 msgid "Invalid JSON"
 msgstr "無效的 JSON"
 
@@ -5108,7 +5109,7 @@ msgstr "每月"
 msgid "Monthly/yearly archives"
 msgstr "每月/每年彙整"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:111
+#: packages/admin/src/components/ImageFieldRenderer.tsx:184
 msgid "More information about {label}"
 msgstr "{label} 的詳細資訊"
 
@@ -6346,6 +6347,7 @@ msgstr "版本太新，無法安裝"
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
 #: packages/admin/src/components/ContentSettingsPanel.tsx:973
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
+#: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4130
 #: packages/admin/src/components/settings/GeneralSettings.tsx:229
 #: packages/admin/src/components/settings/GeneralSettings.tsx:289
@@ -6366,7 +6368,7 @@ msgstr "移除 {0}"
 msgid "Remove {entry}"
 msgstr "移除 {entry}"
 
-#: packages/admin/src/components/ContentEditor.tsx:1698
+#: packages/admin/src/components/ContentEditor.tsx:1699
 msgid "Remove {label}"
 msgstr "移除 {label}"
 
@@ -6378,8 +6380,9 @@ msgstr "移除網域"
 msgid "Remove Domain?"
 msgstr "要移除網域嗎？"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:141
 #: packages/admin/src/components/ImageFieldRenderer.tsx:170
+#: packages/admin/src/components/ImageFieldRenderer.tsx:216
+#: packages/admin/src/components/ImageFieldRenderer.tsx:245
 #: packages/admin/src/components/SeoImageField.tsx:61
 msgid "Remove image"
 msgstr "移除圖片"
@@ -6460,6 +6463,10 @@ msgstr "重複欄位"
 #: packages/admin/src/components/FieldEditor.tsx:241
 msgid "Repeating group of fields"
 msgstr "重複欄位群組"
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+msgid "Replace"
+msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:363
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:396
@@ -7050,9 +7057,9 @@ msgid "Select"
 msgstr "選取"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:140
-#: packages/admin/src/components/ContentEditor.tsx:1710
-#: packages/admin/src/components/ContentEditor.tsx:1726
-#: packages/admin/src/components/ImageFieldRenderer.tsx:198
+#: packages/admin/src/components/ContentEditor.tsx:1711
+#: packages/admin/src/components/ContentEditor.tsx:1727
+#: packages/admin/src/components/ImageFieldRenderer.tsx:273
 msgid "Select {label}"
 msgstr "選取 {label}"
 
@@ -7094,7 +7101,7 @@ msgstr "選取預設社群圖片"
 msgid "Select Favicon"
 msgstr "選取網站圖示"
 
-#: packages/admin/src/components/ContentEditor.tsx:1714
+#: packages/admin/src/components/ContentEditor.tsx:1715
 msgid "Select file"
 msgstr "選取檔案"
 
@@ -7106,7 +7113,7 @@ msgstr "選取檔案"
 msgid "Select Gallery Images"
 msgstr "選取圖庫圖片"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:186
+#: packages/admin/src/components/ImageFieldRenderer.tsx:261
 msgid "Select image"
 msgstr "選取圖片"
 
@@ -7146,6 +7153,10 @@ msgstr "選取..."
 #: packages/admin/src/components/PortableTextEditor.tsx:1734
 msgid "Selected {selectedItemTitle}"
 msgstr "已選取 {selectedItemTitle}"
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:116
+msgid "Selected image"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:795
 msgid "Selected:"
@@ -7824,8 +7835,8 @@ msgstr "這似乎不是有效的移轉金鑰。請在外掛中產生新的金鑰
 msgid "This field does not accept {sniffedMime} files."
 msgstr "此欄位不接受 {sniffedMime} 檔案。"
 
-#: packages/admin/src/components/ContentEditor.tsx:1729
-#: packages/admin/src/components/ImageFieldRenderer.tsx:201
+#: packages/admin/src/components/ContentEditor.tsx:1730
+#: packages/admin/src/components/ImageFieldRenderer.tsx:276
 msgid "This field is required"
 msgstr "此欄位為必填"
 
@@ -8235,7 +8246,7 @@ msgstr "不支援的小工具元素類型: {0}"
 msgid "Untitled"
 msgstr "未命名"
 
-#: packages/admin/src/components/ContentEditor.tsx:1632
+#: packages/admin/src/components/ContentEditor.tsx:1633
 msgid "Untitled file"
 msgstr "未命名檔案"
 

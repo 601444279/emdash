@@ -1514,10 +1514,10 @@ msgstr "Na střed"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:76
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:107
-#: packages/admin/src/components/ContentEditor.tsx:1690
+#: packages/admin/src/components/ContentEditor.tsx:1691
 #: packages/admin/src/components/FieldEditor.tsx:402
-#: packages/admin/src/components/ImageFieldRenderer.tsx:133
-#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+#: packages/admin/src/components/ImageFieldRenderer.tsx:208
+#: packages/admin/src/components/ImageFieldRenderer.tsx:237
 #: packages/admin/src/components/SeoImageField.tsx:53
 msgid "Change"
 msgstr "Změnit"
@@ -3050,7 +3050,7 @@ msgstr "Povoleno"
 msgid "Enter a URL (https://…) or a relative path (/…)"
 msgstr "Zadejte URL (https://…) nebo relativní cestu (/…)"
 
-#: packages/admin/src/components/ContentEditor.tsx:1468
+#: packages/admin/src/components/ContentEditor.tsx:1469
 msgid "Enter a valid URL (e.g. https://example.com)"
 msgstr "Zadejte platnou URL (např. https://example.com)"
 
@@ -4148,7 +4148,8 @@ msgid "Image from media library"
 msgstr "Obrázek z knihovny médií"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:67
-#: packages/admin/src/components/ImageFieldRenderer.tsx:124
+#: packages/admin/src/components/ImageFieldRenderer.tsx:131
+#: packages/admin/src/components/ImageFieldRenderer.tsx:199
 msgid "Image not found"
 msgstr "Obrázek nenalezen"
 
@@ -4416,7 +4417,7 @@ msgstr "Celé číslo"
 msgid "Invalid invite link"
 msgstr "Neplatný odkaz na pozvánku"
 
-#: packages/admin/src/components/ContentEditor.tsx:1537
+#: packages/admin/src/components/ContentEditor.tsx:1538
 msgid "Invalid JSON"
 msgstr "Neplatný JSON"
 
@@ -5108,7 +5109,7 @@ msgstr "Měsíčně"
 msgid "Monthly/yearly archives"
 msgstr "Měsíční/roční archivy"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:111
+#: packages/admin/src/components/ImageFieldRenderer.tsx:184
 msgid "More information about {label}"
 msgstr "Další informace – {label}"
 
@@ -6346,6 +6347,7 @@ msgstr "Toto vydání zatím nelze nainstalovat, protože je příliš nové"
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
 #: packages/admin/src/components/ContentSettingsPanel.tsx:973
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
+#: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4130
 #: packages/admin/src/components/settings/GeneralSettings.tsx:229
 #: packages/admin/src/components/settings/GeneralSettings.tsx:289
@@ -6366,7 +6368,7 @@ msgstr "Odebrat {0}"
 msgid "Remove {entry}"
 msgstr "Odebrat {entry}"
 
-#: packages/admin/src/components/ContentEditor.tsx:1698
+#: packages/admin/src/components/ContentEditor.tsx:1699
 msgid "Remove {label}"
 msgstr "Odebrat {label}"
 
@@ -6378,8 +6380,9 @@ msgstr "Odebrat doménu"
 msgid "Remove Domain?"
 msgstr "Odebrat doménu?"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:141
 #: packages/admin/src/components/ImageFieldRenderer.tsx:170
+#: packages/admin/src/components/ImageFieldRenderer.tsx:216
+#: packages/admin/src/components/ImageFieldRenderer.tsx:245
 #: packages/admin/src/components/SeoImageField.tsx:61
 msgid "Remove image"
 msgstr "Odebrat obrázek"
@@ -6460,6 +6463,10 @@ msgstr "Opakovaná skupina"
 #: packages/admin/src/components/FieldEditor.tsx:241
 msgid "Repeating group of fields"
 msgstr "Opakující se skupina polí"
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:162
+msgid "Replace"
+msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:363
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:396
@@ -7050,9 +7057,9 @@ msgid "Select"
 msgstr "Vybrat"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:140
-#: packages/admin/src/components/ContentEditor.tsx:1710
-#: packages/admin/src/components/ContentEditor.tsx:1726
-#: packages/admin/src/components/ImageFieldRenderer.tsx:198
+#: packages/admin/src/components/ContentEditor.tsx:1711
+#: packages/admin/src/components/ContentEditor.tsx:1727
+#: packages/admin/src/components/ImageFieldRenderer.tsx:273
 msgid "Select {label}"
 msgstr "Vybrat: {label}"
 
@@ -7094,7 +7101,7 @@ msgstr "Vybrat výchozí obrázek pro sociální sítě"
 msgid "Select Favicon"
 msgstr "Vybrat ikonu webu"
 
-#: packages/admin/src/components/ContentEditor.tsx:1714
+#: packages/admin/src/components/ContentEditor.tsx:1715
 msgid "Select file"
 msgstr "Vybrat soubor"
 
@@ -7106,7 +7113,7 @@ msgstr "Vybrat soubor"
 msgid "Select Gallery Images"
 msgstr "Vybrat obrázky galerie"
 
-#: packages/admin/src/components/ImageFieldRenderer.tsx:186
+#: packages/admin/src/components/ImageFieldRenderer.tsx:261
 msgid "Select image"
 msgstr "Vybrat obrázek"
 
@@ -7146,6 +7153,10 @@ msgstr "Vybrat..."
 #: packages/admin/src/components/PortableTextEditor.tsx:1734
 msgid "Selected {selectedItemTitle}"
 msgstr "Vybrána položka {selectedItemTitle}"
+
+#: packages/admin/src/components/ImageFieldRenderer.tsx:116
+msgid "Selected image"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:795
 msgid "Selected:"
@@ -7824,8 +7835,8 @@ msgstr "Toto nevypadá jako platný migrační klíč. Vygenerujte nový v plugi
 msgid "This field does not accept {sniffedMime} files."
 msgstr "Toto pole nepřijímá soubory typu {sniffedMime}."
 
-#: packages/admin/src/components/ContentEditor.tsx:1729
-#: packages/admin/src/components/ImageFieldRenderer.tsx:201
+#: packages/admin/src/components/ContentEditor.tsx:1730
+#: packages/admin/src/components/ImageFieldRenderer.tsx:276
 msgid "This field is required"
 msgstr "Toto pole je povinné"
 
@@ -8235,7 +8246,7 @@ msgstr "Nepodporovaný typ prvku widgetu: {0}"
 msgid "Untitled"
 msgstr "Bez názvu"
 
-#: packages/admin/src/components/ContentEditor.tsx:1632
+#: packages/admin/src/components/ContentEditor.tsx:1633
 msgid "Untitled file"
 msgstr "Soubor bez názvu"
 
