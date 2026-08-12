@@ -130,7 +130,7 @@ async function processWorkBatch(
 					"in",
 					batch.map((row) => row.content_id),
 				)
-				.where(liveLeaseGuard(db, claim))
+				.where(liveLeaseGuard(trx, claim))
 				.execute();
 		}
 		await updateDeletion(trx, claim, {
@@ -191,7 +191,7 @@ async function processSourceBatch(
 					"in",
 					batch.map((row) => row.id),
 				)
-				.where(liveLeaseGuard(db, claim))
+				.where(liveLeaseGuard(trx, claim))
 				.execute();
 		}
 		if (occurrences.length > MEDIA_USAGE_COLLECTION_DELETION_LIMITS.rowsPerBatch) {
@@ -206,7 +206,7 @@ async function processSourceBatch(
 			.where("source_key", "=", sourceKey)
 			.where("source_type", "=", "content")
 			.where("collection_id", "=", claim.collectionId)
-			.where(liveLeaseGuard(db, claim))
+			.where(liveLeaseGuard(trx, claim))
 			.execute();
 		await updateDeletion(trx, claim, { source_key: null, occurrence_cursor: null });
 	});
@@ -227,7 +227,7 @@ async function processStatus(
 			.where("scope_type", "=", "collection")
 			.where("scope_key", "=", claim.collectionSlug)
 			.where("collection_id", "=", claim.collectionId)
-			.where(liveLeaseGuard(db, claim))
+			.where(liveLeaseGuard(trx, claim))
 			.execute();
 		await updateDeletion(trx, claim, { phase: "finalize" });
 	});
