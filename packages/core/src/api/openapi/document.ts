@@ -44,6 +44,7 @@ import {
 	mediaUsageCollectionDeletionListResponseSchema,
 	mediaUsageCollectionDeletionRetryBody,
 	mediaUsageCollectionDeletionRetryResponseSchema,
+	mediaUsageActivationStatusSchema,
 	mediaUsageRepairBody,
 	mediaUsageRepairResponseSchema,
 	mediaUsageWorkListQuery,
@@ -819,6 +820,25 @@ function buildMediaPaths(maxUploadSize: number) {
 					},
 					...authErrors,
 					...standardErrors(400, 404, 500),
+				},
+			},
+		},
+		"/_emdash/api/admin/media-usage/activation": {
+			get: {
+				operationId: "getMediaUsageActivation",
+				summary: "Get media usage activation status",
+				description:
+					"Returns the redacted status of controlled Media Usage capture activation. This operation is read-only and does not start or resume activation. Requires `schema:manage`; bearer tokens also require the `admin` scope.",
+				tags: ["Media"],
+				responses: {
+					"200": {
+						description: "Media usage activation status",
+						content: {
+							[JSON_CONTENT]: { schema: successEnvelope(mediaUsageActivationStatusSchema) },
+						},
+					},
+					...authErrors,
+					...standardErrors(409, 500),
 				},
 			},
 		},

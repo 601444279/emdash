@@ -121,6 +121,26 @@ describe("OpenAPI document generation", () => {
 		);
 	});
 
+	it("documents the media usage activation status operation", () => {
+		const doc = generateOpenApiDocument();
+		const get = doc.paths?.["/_emdash/api/admin/media-usage/activation"]?.get as {
+			operationId?: string;
+			responses?: Record<string, unknown>;
+		};
+
+		expect(get.operationId).toBe("getMediaUsageActivation");
+		expect(get.responses).toEqual(
+			expect.objectContaining({
+				"200": expect.any(Object),
+				"401": expect.any(Object),
+				"403": expect.any(Object),
+				"409": expect.any(Object),
+				"500": expect.any(Object),
+			}),
+		);
+		expect(JSON.stringify(get.responses?.["200"])).toContain("MediaUsageActivationStatus");
+	});
+
 	it("includes schema paths", () => {
 		const doc = generateOpenApiDocument();
 		const paths = Object.keys(doc.paths ?? {});

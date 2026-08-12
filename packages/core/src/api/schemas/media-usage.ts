@@ -182,6 +182,24 @@ export const mediaUsageWorkRetryConflictSchema = z.object({
 	]),
 });
 
+export const mediaUsageActivationStateSchema = z
+	.enum(["expanded", "activating", "active"])
+	.meta({ id: "MediaUsageActivationState" });
+
+export const mediaUsageActivationStatusSchema = z
+	.object({
+		state: mediaUsageActivationStateSchema,
+		collectionCursor: z.string().nullable(),
+		attemptCount: z.number().int().min(0),
+		drainConfirmedAt: z.string().nullable(),
+		lastAttemptedAt: z.string().nullable(),
+		lastErrorCode: z.literal("MEDIA_USAGE_ACTIVATION_FAILED").nullable(),
+		leaseExpiresAt: z.string().nullable(),
+		activatedAt: z.string().nullable(),
+		updatedAt: z.string(),
+	})
+	.meta({ id: "MediaUsageActivationStatus" });
+
 export const mediaUsageCollectionDeletionStateSchema = z
 	.enum(["pending", "retry", "leased", "failed"])
 	.meta({ id: "MediaUsageCollectionDeletionState" });
@@ -232,6 +250,7 @@ export type MediaUsageWorkItem = z.infer<typeof mediaUsageWorkItemSchema>;
 export type MediaUsageWorkListResponse = z.infer<typeof mediaUsageWorkListResponseSchema>;
 export type MediaUsageWorkRetryRequest = z.infer<typeof mediaUsageWorkRetryBody>;
 export type MediaUsageWorkRetryResponse = z.infer<typeof mediaUsageWorkRetryResponseSchema>;
+export type MediaUsageActivationStatus = z.infer<typeof mediaUsageActivationStatusSchema>;
 export type MediaUsageCollectionDeletionListQuery = z.infer<
 	typeof mediaUsageCollectionDeletionListQuery
 >;
