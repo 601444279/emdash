@@ -182,48 +182,48 @@ export const mediaUsageWorkRetryConflictSchema = z.object({
 	]),
 });
 
-export const mediaUsageCollectionDeletionStateSchema = z.enum([
-	"pending",
-	"retry",
-	"leased",
-	"failed",
-]);
-export const mediaUsageCollectionDeletionPhaseSchema = z.enum([
-	"fence",
-	"registry",
-	"table",
-	"work",
-	"sources",
-	"status",
-	"finalize",
-]);
-export const mediaUsageCollectionDeletionListQuery = z.object({
-	state: mediaUsageCollectionDeletionStateSchema.optional().default("failed"),
-	cursor: z.string().min(1).max(2048).optional(),
-	limit: z.coerce.number().int().min(1).max(100).optional().default(50),
-});
-export const mediaUsageCollectionDeletionItemSchema = z.object({
-	collectionId: z.string(),
-	collectionSlug: z.string(),
-	state: mediaUsageCollectionDeletionStateSchema,
-	phase: mediaUsageCollectionDeletionPhaseSchema,
-	attemptCount: z.number().int().min(0),
-	nextAttemptAt: z.string(),
-	leaseExpiresAt: z.string().nullable(),
-	lastErrorCode: z.string().nullable(),
-	updatedAt: z.string(),
-});
-export const mediaUsageCollectionDeletionListResponseSchema = z.object({
-	items: z.array(mediaUsageCollectionDeletionItemSchema),
-	nextCursor: z.string().optional(),
-});
+export const mediaUsageCollectionDeletionStateSchema = z
+	.enum(["pending", "retry", "leased", "failed"])
+	.meta({ id: "MediaUsageCollectionDeletionState" });
+export const mediaUsageCollectionDeletionPhaseSchema = z
+	.enum(["fence", "registry", "table", "work", "sources", "status", "finalize"])
+	.meta({ id: "MediaUsageCollectionDeletionPhase" });
+export const mediaUsageCollectionDeletionListQuery = z
+	.object({
+		state: mediaUsageCollectionDeletionStateSchema.optional().default("failed"),
+		cursor: z.string().min(1).max(2048).optional(),
+		limit: z.coerce.number().int().min(1).max(100).optional().default(50),
+	})
+	.meta({ id: "MediaUsageCollectionDeletionListQuery" });
+export const mediaUsageCollectionDeletionItemSchema = z
+	.object({
+		collectionId: z.string(),
+		collectionSlug: z.string(),
+		state: mediaUsageCollectionDeletionStateSchema,
+		phase: mediaUsageCollectionDeletionPhaseSchema,
+		attemptCount: z.number().int().min(0),
+		nextAttemptAt: z.string(),
+		leaseExpiresAt: z.string().nullable(),
+		lastErrorCode: z.string().nullable(),
+		updatedAt: z.string(),
+	})
+	.meta({ id: "MediaUsageCollectionDeletionItem" });
+export const mediaUsageCollectionDeletionListResponseSchema = z
+	.object({
+		items: z.array(mediaUsageCollectionDeletionItemSchema),
+		nextCursor: z.string().optional(),
+	})
+	.meta({ id: "MediaUsageCollectionDeletionListResponse" });
 export const mediaUsageCollectionDeletionRetryBody = z
 	.object({ collectionId: boundedOpaqueMediaUsageId })
-	.strict();
-export const mediaUsageCollectionDeletionRetryResponseSchema = z.object({
-	changed: z.boolean(),
-	item: mediaUsageCollectionDeletionItemSchema,
-});
+	.strict()
+	.meta({ id: "MediaUsageCollectionDeletionRetryBody" });
+export const mediaUsageCollectionDeletionRetryResponseSchema = z
+	.object({
+		changed: z.boolean(),
+		item: mediaUsageCollectionDeletionItemSchema,
+	})
+	.meta({ id: "MediaUsageCollectionDeletionRetryResponse" });
 
 export type MediaUsageRepairRequest = z.infer<typeof mediaUsageRepairBody>;
 export type MediaUsageRepairResponse = z.infer<typeof mediaUsageRepairResponseSchema>;
