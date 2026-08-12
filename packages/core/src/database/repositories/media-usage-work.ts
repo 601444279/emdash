@@ -70,6 +70,7 @@ export class MediaUsageWorkRepository {
 		runToken: string;
 		leaseToken: string;
 		changeEpoch: number | string;
+		phase: "scan" | "sources";
 		contentIds: readonly string[];
 	}): Promise<void> {
 		if (!input.collectionId || !input.collectionSlug || !input.runToken || !input.leaseToken) {
@@ -113,7 +114,7 @@ export class MediaUsageWorkRepository {
 					AND reconciliation.run_token = ${input.runToken}
 					AND reconciliation.target_epoch = ${input.changeEpoch}
 					AND reconciliation.state = 'leased'
-					AND reconciliation.phase = 'scan'
+					AND reconciliation.phase = ${input.phase}
 					AND reconciliation.lease_token = ${input.leaseToken}
 					AND ${this.qualifiedLeaseIsLive("reconciliation.lease_expires_at")}
 					AND status.adapter_id = 'content-media'

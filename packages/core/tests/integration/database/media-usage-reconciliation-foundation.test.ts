@@ -180,14 +180,19 @@ describeEachDialect("media usage reconciliation foundation", (dialect) => {
 		).resolves.toBe(true);
 
 		expect(await repository.findDue(4)).toEqual([]);
-		expect(await repository.findFailed(4)).toEqual([
-			expect.objectContaining({
-				collectionId: candidate.collectionId,
-				state: "failed",
-				attemptCount: 2,
-				lastErrorCode: "MEDIA_USAGE_RECONCILIATION_INVALID_SOURCE",
-			}),
-		]);
+		expect(await repository.findFailed(4)).toEqual([]);
+		expect(
+			await ctx.db
+				.selectFrom("_emdash_media_usage_reconciliations")
+				.select(["collection_id", "state", "attempt_count", "last_error_code"])
+				.where("collection_id", "=", candidate.collectionId)
+				.executeTakeFirstOrThrow(),
+		).toEqual({
+			collection_id: candidate.collectionId,
+			state: "failed",
+			attempt_count: 2,
+			last_error_code: "MEDIA_USAGE_RECONCILIATION_INVALID_SOURCE",
+		});
 	});
 
 	it("reopens failed work only after a newer coverage epoch", async () => {

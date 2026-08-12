@@ -222,6 +222,12 @@ async function processStatus(
 			throw new Error("Collection deletion cleanup is incomplete");
 		}
 		await trx
+			.deleteFrom("_emdash_media_usage_reconciliations")
+			.where("collection_id", "=", claim.collectionId)
+			.where("collection_slug", "=", claim.collectionSlug)
+			.where(liveLeaseGuard(trx, claim))
+			.execute();
+		await trx
 			.deleteFrom("_emdash_media_usage_index_status")
 			.where("adapter_id", "=", "content-media")
 			.where("scope_type", "=", "collection")

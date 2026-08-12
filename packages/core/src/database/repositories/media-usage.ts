@@ -1716,19 +1716,31 @@ export class MediaUsageRepository {
 		},
 	): Promise<boolean> {
 		const now = this.sortableUtcTimestamp();
+		const automaticRunOwnsCoverage = sql<boolean>`EXISTS (
+			SELECT 1
+			FROM _emdash_media_usage_reconciliations AS reconciliation
+			WHERE reconciliation.collection_id = ${input.collectionId}
+				AND reconciliation.run_token = cursor
+		)`;
 		const result = await this.db
 			.updateTable("_emdash_media_usage_index_status")
 			.set({
 				status: sql<string>`CASE
+					WHEN ${automaticRunOwnsCoverage} THEN status
 					WHEN reconciliation_required = 0 THEN 'partial'
 					WHEN status = 'running' THEN 'stale'
 					ELSE status
 				END`,
 				completed_at: sql<string | null>`CASE
+					WHEN ${automaticRunOwnsCoverage} THEN completed_at
 					WHEN reconciliation_required = 0 OR status = 'running' THEN NULL
 					ELSE completed_at
 				END`,
-				cursor: sql<string | null>`CASE WHEN status = 'running' THEN NULL ELSE cursor END`,
+				cursor: sql<string | null>`CASE
+					WHEN ${automaticRunOwnsCoverage} THEN cursor
+					WHEN status = 'running' THEN NULL
+					ELSE cursor
+				END`,
 				last_error_code: input.errorCode,
 				updated_at: now,
 			})
