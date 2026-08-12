@@ -58,6 +58,22 @@ describe("media usage scheduled drivers", () => {
 		).not.toBeNull();
 	});
 
+	it("drains bounded work through a legacy Node scheduler cleanup callback", async () => {
+		const scheduler = new LegacyCapturingScheduler();
+		runtime = await EmDashRuntime.create(createDeps(() => scheduler));
+		const fixture = await activateCollection(runtime, "legacy_node_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+
+		await scheduler.runMaintenance();
+
+		expect(await countWork(runtime)).toBe(0);
+		expect(
+			await new MediaUsageRepository(runtime.db).findSource(
+				canonicalSourceKey(fixture.collectionId, "entry-1"),
+			),
+		).not.toBeNull();
+	});
+
 	it("advances bounded collection deletion from the Cloudflare scheduled entry point", async () => {
 		runtime = await EmDashRuntime.create(createDeps(null));
 		const fixture = await activateCollection(runtime, "cloudflare_delete");
@@ -209,6 +225,23 @@ class CapturingScheduler implements CronScheduler {
 		await this.maintenance();
 		if (!this.mediaUsageMaintenance) throw new Error("Expected Media Usage maintenance callback");
 		await this.mediaUsageMaintenance();
+	}
+}
+
+class LegacyCapturingScheduler implements CronScheduler {
+	private maintenance: SystemCleanupFn | null = null;
+
+	setSystemCleanup(fn: SystemCleanupFn): void {
+		this.maintenance = fn;
+	}
+
+	start(): void {}
+	stop(): void {}
+	reschedule(): void {}
+
+	async runMaintenance(): Promise<void> {
+		if (!this.maintenance) throw new Error("Expected Node maintenance callback");
+		await this.maintenance();
 	}
 }
 

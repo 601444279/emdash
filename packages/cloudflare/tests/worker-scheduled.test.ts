@@ -25,7 +25,7 @@ beforeEach(() => {
 it("keeps the unconfigured handler backwards-compatible", async () => {
 	await invoke(createScheduledHandler(), "custom expression");
 	expect(scheduled.general).toHaveBeenCalledOnce();
-	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
+	expect(scheduled.mediaUsage).toHaveBeenCalledOnce();
 });
 
 it("dispatches distinct configured cron expressions to exactly one lane", async () => {

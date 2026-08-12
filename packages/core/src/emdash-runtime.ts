@@ -1723,6 +1723,14 @@ export class EmDashRuntime {
 				if (deps.createScheduler) {
 					const scheduler = deps.createScheduler(cronExecutor);
 					cronScheduler = scheduler;
+					const runMediaUsageMaintenance = async () => {
+						const runtime = runtimeRef.current;
+						if (runtime) {
+							await runtime.runScheduledMediaUsageTasks();
+						} else {
+							await runScheduledMediaUsageLane(db);
+						}
+					};
 
 					// Run scheduled publishing and system cleanup alongside each tick.
 					// Pass storage so cleanupPendingUploads can delete orphaned files.
@@ -1755,15 +1763,15 @@ export class EmDashRuntime {
 						}
 						// Never throws; no-op unless scheduled backups are enabled and due.
 						await maybeRunScheduledBackup(db, storage ?? undefined);
-					});
-					scheduler.setMediaUsageMaintenance?.(async () => {
-						const runtime = runtimeRef.current;
-						if (runtime) {
-							await runtime.runScheduledMediaUsageTasks();
-						} else {
-							await runScheduledMediaUsageLane(db);
+						if (!scheduler.setMediaUsageMaintenance) {
+							try {
+								await runMediaUsageMaintenance();
+							} catch (error) {
+								console.error("[media-usage] Scheduled maintenance failed:", error);
+							}
 						}
 					});
+					scheduler.setMediaUsageMaintenance?.(runMediaUsageMaintenance);
 
 					// start() is void on the timer scheduler but the interface
 					// allows a promise (alarm-backed schedulers); we don't block on it.

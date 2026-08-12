@@ -81,6 +81,13 @@ export function createScheduledHandler(
 			console.warn(`[scheduled] Ignoring unexpected Cron expression: ${controller.cron}`);
 			return;
 		}
+		if (!options) {
+			ctx.waitUntil(
+				runScheduledMediaUsageTasks().catch((error: unknown) => {
+					console.error("[scheduled] Media Usage maintenance failed:", error);
+				}),
+			);
+		}
 		ctx.waitUntil(
 			// Invalidate incrementally as each collection batch publishes, so a
 			// scheduled() invocation killed mid-sweep (CPU/wall-clock limits on a
