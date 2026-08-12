@@ -111,6 +111,19 @@ describeEachDialect("media usage activated collection deletion", (dialect) => {
 		).toEqual([]);
 	});
 
+	it("detaches a collection whose only entries are trashed without force", async () => {
+		await registry.createCollection({ slug: "trashed", label: "Trashed" });
+		await sql`
+			INSERT INTO ${sql.ref("ec_trashed")} (id, slug, deleted_at)
+			VALUES ('entry-1', 'entry-1', '2026-08-12T00:00:00.000Z')
+		`.execute(ctx.db);
+
+		await registry.deleteCollection("trashed");
+
+		expect(await registry.getCollection("trashed")).toBeNull();
+		expect(await tableExists(ctx.db, "ec_trashed")).toBe(false);
+	});
+
 	it("detaches a non-empty activated collection only when force is explicit", async () => {
 		const collection = await registry.createCollection({ slug: "forced", label: "Forced" });
 		await sql`INSERT INTO ${sql.ref("ec_forced")} (id, slug) VALUES ('entry-1', 'entry-1')`.execute(

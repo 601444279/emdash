@@ -166,7 +166,7 @@ async function executeFenceBatch(
 	const tableName = `ec_${input.collectionSlug}`;
 	const contentPredicate = input.forceDelete
 		? ""
-		: `AND NOT EXISTS (SELECT 1 FROM "${tableName}" LIMIT 1)`;
+		: `AND NOT EXISTS (SELECT 1 FROM "${tableName}" WHERE deleted_at IS NULL LIMIT 1)`;
 	const update = binding
 		.prepare(`
 			UPDATE _emdash_media_usage_index_status
@@ -222,7 +222,7 @@ async function executeFenceBatch(
 						AND collection_id = ?
 						AND capture_state = 'active'
 				)
-				AND EXISTS (SELECT 1 FROM "${tableName}" LIMIT 1)
+				AND EXISTS (SELECT 1 FROM "${tableName}" WHERE deleted_at IS NULL LIMIT 1)
 				THEN 'has_content'
 				ELSE 'stale'
 			END AS outcome

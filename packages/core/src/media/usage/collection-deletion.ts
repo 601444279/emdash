@@ -433,11 +433,16 @@ export async function deleteActivatedMediaUsageCollection(
 		throw new Error("Collection deletion tombstone identity conflict");
 	}
 	if (!deletion) {
-		const activation = await db
-			.selectFrom("_emdash_media_usage_activation")
-			.select("state")
-			.where("task_key", "=", ACTIVATION_KEY)
-			.executeTakeFirst();
+		let activation: { state: string } | undefined;
+		try {
+			activation = await db
+				.selectFrom("_emdash_media_usage_activation")
+				.select("state")
+				.where("task_key", "=", ACTIVATION_KEY)
+				.executeTakeFirst();
+		} catch (error) {
+			if (!isMissingTableError(error)) throw error;
+		}
 		if (!activation || activation.state === "expanded") return "inactive";
 		if (activation.state !== "active") {
 			throw new Error("Media usage activation must be active before collection deletion");
@@ -664,7 +669,9 @@ async function fenceCollection(
 
 	if (!input.forceDelete) {
 		const content = await sql<{ present: number }>`
-			SELECT 1 AS present FROM ${sql.ref(tableName)} LIMIT 1
+			SELECT 1 AS present FROM ${sql.ref(tableName)}
+			WHERE deleted_at IS NULL
+			LIMIT 1
 		`.execute(trx);
 		if (content.rows.length > 0) return { outcome: "has_content" };
 	}

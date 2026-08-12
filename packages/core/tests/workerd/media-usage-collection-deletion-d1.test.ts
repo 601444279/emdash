@@ -101,8 +101,8 @@ it("rolls back a stale guarded batch before any collection DDL", async () => {
 	).toEqual([{ collection_id: "collection-d1" }]);
 });
 
-it("atomically preserves content or fences an empty collection", async () => {
-	await sql`CREATE TABLE ec_d1_fence (id TEXT PRIMARY KEY)`.execute(db);
+it("atomically preserves active content or fences a trashed collection", async () => {
+	await sql`CREATE TABLE ec_d1_fence (id TEXT PRIMARY KEY, deleted_at TEXT)`.execute(db);
 	await ctxInsertCollection();
 	await db
 		.insertInto("_emdash_media_usage_index_status")
@@ -158,7 +158,7 @@ it("atomically preserves content or fences an empty collection", async () => {
 	).resolves.toEqual({ outcome: "stale" });
 	await ctxInsertCollection();
 
-	await sql`DELETE FROM ec_d1_fence`.execute(db);
+	await sql`UPDATE ec_d1_fence SET deleted_at = '2026-08-12T00:00:00.000Z'`.execute(db);
 	await expect(
 		executeCollectionDeletionGuard(
 			{ binding: "DB" },

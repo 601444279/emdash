@@ -217,7 +217,7 @@ export class EmDashDB extends DurableObject {
 			if (input.action === "fence") {
 				if (!input.forceDelete) {
 					const content = this.ctx.storage.sql.exec(
-						`SELECT 1 AS present FROM "${contentTable}" LIMIT 1`,
+						`SELECT 1 AS present FROM "${contentTable}" WHERE deleted_at IS NULL LIMIT 1`,
 					);
 					if (content.toArray().length > 0) return { outcome: "has_content" };
 				}

@@ -101,8 +101,8 @@ describe("EmDashDB collection deletion guard", () => {
 		expect(statements.filter((statement) => statement.includes("DROP TABLE"))).toHaveLength(2);
 	});
 
-	it("preserves non-forced content and fences the collection once empty", async () => {
-		let contentPresent = true;
+	it("preserves active content and fences the collection once content is trashed", async () => {
+		let contentState: "active" | "trashed" = "active";
 		const sql = {
 			exec: vi.fn((statement: string) => {
 				statements.push(statement);
@@ -110,7 +110,8 @@ describe("EmDashDB collection deletion guard", () => {
 					return cursor([{ collection_id: "collection-1" }]);
 				}
 				if (statement.includes("SELECT 1 AS present")) {
-					return cursor(contentPresent ? [{ present: 1 }] : []);
+					const visible = contentState === "active" || !statement.includes("deleted_at IS NULL");
+					return cursor(visible ? [{ present: 1 }] : []);
 				}
 				if (statement.includes("UPDATE _emdash_media_usage_index_status")) {
 					return cursor([], 1);
@@ -133,7 +134,7 @@ describe("EmDashDB collection deletion guard", () => {
 		expect(statements.some((statement) => statement.includes("UPDATE _emdash"))).toBe(false);
 
 		statements = [];
-		contentPresent = false;
+		contentState = "trashed";
 		await expect(object.executeCollectionDeletionGuard(input)).resolves.toEqual({
 			outcome: "fenced",
 		});
