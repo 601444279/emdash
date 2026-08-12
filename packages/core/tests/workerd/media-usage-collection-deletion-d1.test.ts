@@ -25,6 +25,20 @@ afterAll(async () => {
 	await db.destroy();
 });
 
+it("rejects interpolated collection identifiers before issuing D1 SQL", async () => {
+	await expect(
+		executeCollectionDeletionGuard(
+			{ binding: "DB" },
+			{
+				action: "drop",
+				collectionId: "collection-invalid",
+				collectionSlug: 'posts";drop_table',
+				leaseToken: "owner",
+			},
+		),
+	).rejects.toThrow(/valid collection slug/i);
+});
+
 it("rolls back a stale guarded batch before any collection DDL", async () => {
 	await sql`CREATE TABLE ec_d1_guarded (id TEXT PRIMARY KEY)`.execute(db);
 	await db
@@ -129,6 +143,20 @@ it("atomically preserves content or fences an empty collection", async () => {
 		),
 	).resolves.toEqual({ outcome: "has_content" });
 	expect(await captureState()).toBe("active");
+	await db.deleteFrom("_emdash_collections").where("id", "=", "collection-d1-fence").execute();
+	await expect(
+		executeCollectionDeletionGuard(
+			{ binding: "DB" },
+			{
+				action: "fence",
+				collectionId: "collection-d1-fence",
+				collectionSlug: "d1_fence",
+				leaseToken: "fence-owner",
+				forceDelete: true,
+			},
+		),
+	).resolves.toEqual({ outcome: "stale" });
+	await ctxInsertCollection();
 
 	await sql`DELETE FROM ec_d1_fence`.execute(db);
 	await expect(

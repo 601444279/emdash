@@ -28,7 +28,8 @@ interface D1Config {
 
 const DEFAULT_BOOKMARK_COOKIE = "__em_d1_bookmark";
 const COLLECTION_SLUG_PATTERN = /^[a-z][a-z0-9_]*$/;
-const STALE_DELETION_GUARD_PATTERN = /collection_id.*not null|not null.*collection_id/i;
+const STALE_DELETION_GUARD_PATTERN =
+	/not null constraint failed:\s*_emdash_media_usage_collection_deletions\.collection_id/i;
 
 /**
  * One-shot guard so the "coalesce opted in but the binding can't do sessions
@@ -233,6 +234,10 @@ async function executeFenceBatch(
 			input.collectionSlug,
 			input.collectionId,
 		);
+	if (input.forceDelete) {
+		const updated = await update.all<{ collection_id: string }>();
+		return updated.results.length > 0 ? { outcome: "fenced" } : { outcome: "stale" };
+	}
 	const [updated, observed] = await binding.batch<{ collection_id: string } | { outcome: string }>([
 		update,
 		diagnostic,

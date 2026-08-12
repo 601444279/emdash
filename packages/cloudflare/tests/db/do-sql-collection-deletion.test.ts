@@ -35,6 +35,23 @@ describe("EmDashDB collection deletion guard", () => {
 		transactionSync = vi.fn((operation: () => unknown) => operation());
 	});
 
+	it("rejects interpolated identifiers before opening a transaction", async () => {
+		const object = new EmDashDB(
+			{ storage: { sql: { exec: vi.fn() }, transactionSync } } as never,
+			{},
+		);
+
+		await expect(
+			object.executeCollectionDeletionGuard({
+				action: "drop",
+				collectionId: "collection-1",
+				collectionSlug: 'posts";drop_table',
+				leaseToken: "owner",
+			}),
+		).rejects.toThrow(/valid collection slug/i);
+		expect(transactionSync).not.toHaveBeenCalled();
+	});
+
 	it("returns stale before dispatching DDL when the exact lease is absent", async () => {
 		const sql = {
 			exec: vi.fn((statement: string) => {
