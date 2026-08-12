@@ -200,6 +200,41 @@ export const mediaUsageActivationStatusSchema = z
 	})
 	.meta({ id: "MediaUsageActivationStatus" });
 
+export const mediaUsageActivationAdvanceBody = z
+	.object({
+		writersDrained: z.literal(true),
+		maintenanceReady: z.literal(true),
+	})
+	.strict()
+	.meta({ id: "MediaUsageActivationAdvanceBody" });
+
+export const mediaUsageActivationAdvanceResponseSchema = z
+	.object({
+		outcome: z.enum(["activating", "active"]),
+		processedCollections: z.number().int().min(0).max(1),
+		activation: mediaUsageActivationStatusSchema,
+	})
+	.meta({ id: "MediaUsageActivationAdvanceResponse" });
+
+export const mediaUsageActivationConflictSchema = z.object({
+	success: z.literal(false),
+	error: z.discriminatedUnion("code", [
+		z.object({
+			code: z.literal("MEDIA_USAGE_ACTIVATION_BUSY"),
+			message: z.string(),
+			details: z.object({ leaseExpiresAt: z.string() }),
+		}),
+		z.object({
+			code: z.literal("MEDIA_USAGE_ACTIVATION_CONFLICT"),
+			message: z.string(),
+		}),
+		z.object({
+			code: z.literal("MEDIA_USAGE_ACTIVATION_VERSION_MISMATCH"),
+			message: z.string(),
+		}),
+	]),
+});
+
 export const mediaUsageCollectionDeletionStateSchema = z
 	.enum(["pending", "retry", "leased", "failed"])
 	.meta({ id: "MediaUsageCollectionDeletionState" });
@@ -251,6 +286,10 @@ export type MediaUsageWorkListResponse = z.infer<typeof mediaUsageWorkListRespon
 export type MediaUsageWorkRetryRequest = z.infer<typeof mediaUsageWorkRetryBody>;
 export type MediaUsageWorkRetryResponse = z.infer<typeof mediaUsageWorkRetryResponseSchema>;
 export type MediaUsageActivationStatus = z.infer<typeof mediaUsageActivationStatusSchema>;
+export type MediaUsageActivationAdvanceRequest = z.infer<typeof mediaUsageActivationAdvanceBody>;
+export type MediaUsageActivationAdvanceResponse = z.infer<
+	typeof mediaUsageActivationAdvanceResponseSchema
+>;
 export type MediaUsageCollectionDeletionListQuery = z.infer<
 	typeof mediaUsageCollectionDeletionListQuery
 >;
