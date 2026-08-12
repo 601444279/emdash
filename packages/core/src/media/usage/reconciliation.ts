@@ -164,7 +164,7 @@ export class MediaUsageReconciliationRepository {
 			WHERE 1 = 1
 				${lowerBound}
 				${upperBound}
-				AND ${this.liveClaimExistsSql(reconciliation as MediaUsageReconciliationClaim)}
+				AND ${this.liveClaimExistsSql(reconciliation)}
 			ORDER BY content.id ASC
 			LIMIT ${limit}
 		`.execute(this.db);
@@ -376,13 +376,8 @@ export class MediaUsageReconciliationRepository {
 			.where("source.source_type", "=", "content")
 			.where("source.collection_id", "=", reconciliation.collectionId)
 			.where("source.identity_version", "=", 1)
-			.where(this.liveClaimExists(reconciliation as MediaUsageReconciliationClaim))
-			.where(
-				this.statusOwnsRun(
-					reconciliation as MediaUsageReconciliationClaim,
-					reconciliation.targetEpoch,
-				),
-			);
+			.where(this.liveClaimExists(reconciliation))
+			.where(this.statusOwnsRun(reconciliation, reconciliation.targetEpoch));
 		if (reconciliation.sourceCursor) {
 			query = query.where("source.source_key", ">", reconciliation.sourceCursor);
 		}
@@ -623,11 +618,21 @@ export class MediaUsageReconciliationRepository {
 		return result.rows.length === 1;
 	}
 
-	private liveClaimExists(claim: MediaUsageReconciliationClaim): RawBuilder<boolean> {
+	private liveClaimExists(
+		claim: Pick<
+			MediaUsageReconciliationRecord,
+			"collectionId" | "collectionSlug" | "runToken" | "leaseToken"
+		>,
+	): RawBuilder<boolean> {
 		return this.liveClaimExistsSql(claim);
 	}
 
-	private liveClaimExistsSql(claim: MediaUsageReconciliationClaim): RawBuilder<boolean> {
+	private liveClaimExistsSql(
+		claim: Pick<
+			MediaUsageReconciliationRecord,
+			"collectionId" | "collectionSlug" | "runToken" | "leaseToken"
+		>,
+	): RawBuilder<boolean> {
 		return sql<boolean>`EXISTS (
 			SELECT 1
 			FROM _emdash_media_usage_reconciliations AS reconciliation
@@ -653,7 +658,7 @@ export class MediaUsageReconciliationRepository {
 	}
 
 	private statusOwnsRun(
-		claim: MediaUsageReconciliationClaim,
+		claim: Pick<MediaUsageReconciliationRecord, "collectionId" | "collectionSlug" | "runToken">,
 		targetEpoch: number | string,
 	): RawBuilder<boolean> {
 		return sql<boolean>`EXISTS (

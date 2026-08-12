@@ -2,17 +2,17 @@
  * Cloudflare Worker entry for EmDash sites.
  *
  * Wraps the Astro Cloudflare server handler with a `scheduled()` handler so a
- * Cron Trigger drives scheduled publishing, plugin cron, and system cleanup
- * without any request side effects. Re-exports the `PluginBridge` Durable
- * Object so the sandbox binding resolves against the entry module.
+ * Cron Triggers drive general maintenance and the separately bounded Media
+ * Usage lane without request side effects. Re-exports the `PluginBridge`
+ * Durable Object so the sandbox binding resolves against the entry module.
  *
- * Templates use this as their entire `src/worker.ts`:
+ * Existing sites can keep the default general-maintenance handler:
  *
  *   export { default, PluginBridge } from "@emdash-cms/cloudflare/worker";
  *
- * and add a Cron Trigger to wrangler.jsonc:
+ * New sites configure distinct expressions through `createScheduledHandler`.
  *
- *   "triggers": { "crons": ["* * * * *"] }
+ *   Configure one general expression and one distinct Media Usage expression.
  *
  * The `@astrojs/cloudflare/entrypoints/server` import is resolved by the
  * consuming app's Astro build (it pulls the build-time `virtual:astro:app`
@@ -22,7 +22,7 @@
 // @ts-ignore - resolved against the consuming app's Astro build
 import astroHandler from "@astrojs/cloudflare/entrypoints/server";
 import { createApp } from "astro/app/entrypoint";
-import { runScheduledTasks } from "emdash/middleware";
+import { runScheduledMediaUsageTasks, runScheduledTasks } from "emdash/middleware";
 
 export { PluginBridge } from "./sandbox/index.js";
 
@@ -48,13 +48,39 @@ async function invalidatePublishedTags(
 }
 
 /**
- * Build a Worker `scheduled()` handler that runs EmDash's scheduled
- * maintenance batch and purges edge-cache tags for anything it published.
- * Exported for sites that assemble their own Worker object; most sites get it
- * via this module's default export.
+ * Build a Worker `scheduled()` handler. Without options every expression runs
+ * the backwards-compatible general lane. Configured handlers dispatch exact,
+ * distinct expressions to general or Media Usage maintenance.
  */
-export function createScheduledHandler(): ExportedHandlerScheduledHandler {
-	return (_controller, _env, ctx) => {
+export interface ScheduledHandlerOptions {
+	generalCron: string;
+	mediaUsageCron: string;
+}
+
+export function createScheduledHandler(
+	options?: ScheduledHandlerOptions,
+): ExportedHandlerScheduledHandler {
+	if (options) {
+		if (!options.generalCron.trim() || !options.mediaUsageCron.trim()) {
+			throw new Error("Configured scheduled-handler expressions must be non-empty");
+		}
+		if (options.generalCron === options.mediaUsageCron) {
+			throw new Error("General and Media Usage Cron expressions must differ");
+		}
+	}
+	return (controller, _env, ctx) => {
+		if (options && controller.cron === options.mediaUsageCron) {
+			ctx.waitUntil(
+				runScheduledMediaUsageTasks().catch((error: unknown) => {
+					console.error("[scheduled] Media Usage maintenance failed:", error);
+				}),
+			);
+			return;
+		}
+		if (options && controller.cron !== options.generalCron) {
+			console.warn(`[scheduled] Ignoring unexpected Cron expression: ${controller.cron}`);
+			return;
+		}
 		ctx.waitUntil(
 			// Invalidate incrementally as each collection batch publishes, so a
 			// scheduled() invocation killed mid-sweep (CPU/wall-clock limits on a

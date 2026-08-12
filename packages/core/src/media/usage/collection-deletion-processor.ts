@@ -18,6 +18,7 @@ export const MEDIA_USAGE_COLLECTION_DELETION_LIMITS = Object.freeze({
 	maxAttempts: 5,
 	retryBaseSeconds: 30,
 	retryMaxSeconds: 15 * 60,
+	maxQueriesPerTick: 30,
 });
 
 export interface MediaUsageCollectionDeletionTickResult {

@@ -13,5 +13,8 @@ export { PluginBridge };
 
 export default {
 	...handler,
-	scheduled: createScheduledHandler(),
+	scheduled: createScheduledHandler({
+		generalCron: "* * * * *",
+		mediaUsageCron: "*/2 * * * *",
+	}),
 } satisfies ExportedHandler<Env>;
