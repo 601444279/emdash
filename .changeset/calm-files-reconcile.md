@@ -3,4 +3,4 @@
 "@emdash-cms/cloudflare": patch
 ---
 
-Adds bounded automatic Media Usage reconciliation and a dedicated Cloudflare maintenance lane for controlled activation.
+Adds automatic, resumable background indexing so Media Usage can safely catch up on existing content without processing the whole site at once.
