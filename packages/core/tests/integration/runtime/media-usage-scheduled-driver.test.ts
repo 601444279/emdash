@@ -78,7 +78,6 @@ describe("media usage scheduled drivers", () => {
 		runtime = await EmDashRuntime.create(createDeps(null));
 		const fixture = await activateCollection(runtime, "cloudflare_delete");
 		await runtime.schemaRegistry.deleteCollection("cloudflare_delete", { force: true });
-
 		await runtime.runScheduledMediaUsageTasks();
 		await runtime.runScheduledMediaUsageTasks();
 
