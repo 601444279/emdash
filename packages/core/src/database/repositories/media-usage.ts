@@ -2328,6 +2328,7 @@ export class MediaUsageRepository {
 					AND ${this.generationWriteLeaseExpiryIsInFuture("expires_at")}
 			)
 			AND ${this.currentCollectionExists(row.collection_id, row.collection_slug)}
+			AND ${this.currentCanonicalContentExists(row)}
 			${conflict}
 		`.execute(db);
 		return Number(result.numAffectedRows ?? 0) > 0;
@@ -2423,6 +2424,7 @@ export class MediaUsageRepository {
 			.where("current_generation", "=", expectedCurrentGeneration)
 			.where(this.generationWriteLeaseExpression(row, leaseToken))
 			.where(this.currentCollectionExists(row.collection_id, row.collection_slug))
+			.where(this.currentCanonicalContentExists(row))
 			.executeTakeFirst();
 		return Number(result.numUpdatedRows ?? 0) > 0;
 	}
@@ -2440,6 +2442,7 @@ export class MediaUsageRepository {
 			.where(this.sourceMatchExpression(expectedSource))
 			.where(this.generationWriteLeaseExpression(row, leaseToken))
 			.where(this.currentCollectionExists(row.collection_id, row.collection_slug))
+			.where(this.currentCanonicalContentExists(row))
 			.executeTakeFirst();
 		return Number(result.numUpdatedRows ?? 0) > 0;
 	}
@@ -2456,6 +2459,7 @@ export class MediaUsageRepository {
 			.where("source_key", "=", row.source_key)
 			.where(this.sourceMatchExpression(expectedSource))
 			.where(this.currentCollectionExists(row.collection_id, row.collection_slug))
+			.where(this.currentCanonicalContentExists(row))
 			.executeTakeFirst();
 		return Number(result.numUpdatedRows ?? 0) > 0;
 	}
@@ -2541,6 +2545,46 @@ export class MediaUsageRepository {
 			FROM _emdash_collections
 			WHERE id = ${collectionId}
 				AND slug = ${collectionSlug}
+		)`;
+	}
+
+	private currentCanonicalContentExists(
+		row:
+			| ReturnType<MediaUsageRepository["buildSourceRow"]>
+			| ReturnType<MediaUsageRepository["buildAttemptedSourceRow"]>,
+	): RawBuilder<boolean> {
+		if (row.collection_id === null || row.identity_version !== 1 || row.source_type !== "content") {
+			return sql<boolean>`1 = 1`;
+		}
+		if (
+			!row.collection_slug ||
+			!row.content_id ||
+			row.source_version === null ||
+			row.source_updated_at === null
+		) {
+			return sql<boolean>`1 = 0`;
+		}
+		validateIdentifier(row.collection_slug, "collection slug");
+		const tableName = `ec_${row.collection_slug}`;
+		validateIdentifier(tableName, "content table");
+		const revisionColumn =
+			row.source_variant === "columns"
+				? "live_revision_id"
+				: row.source_variant === "draft_overlay"
+					? "draft_revision_id"
+					: null;
+		if (!revisionColumn) return sql<boolean>`1 = 0`;
+		const revision = sql.ref(`content.${revisionColumn}`);
+		return sql<boolean>`EXISTS (
+			SELECT 1
+			FROM ${sql.ref(tableName)} AS content
+			WHERE content.id = ${row.content_id}
+				AND content.version = ${row.source_version}
+				AND content.updated_at = ${row.source_updated_at}
+				AND (
+					${revision} = ${row.revision_id}
+					OR (${revision} IS NULL AND ${row.revision_id} IS NULL)
+				)
 		)`;
 	}
 

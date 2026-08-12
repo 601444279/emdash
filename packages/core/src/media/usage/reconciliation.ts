@@ -3,6 +3,7 @@ import { ulid } from "ulidx";
 
 import { isPostgres } from "../../database/dialect-helpers.js";
 import type { Database, MediaUsageReconciliationTable } from "../../database/types.js";
+import { validateIdentifier } from "../../database/validate.js";
 
 const ACTIVATION_KEY = "incremental_capture";
 const CONTENT_ADAPTER_ID = "content-media";
@@ -41,6 +42,199 @@ export interface MediaUsageReconciliationClaim extends MediaUsageReconciliationR
 
 export class MediaUsageReconciliationRepository {
 	constructor(private db: Kysely<Database>) {}
+
+	async findByIdentity(
+		collectionId: string,
+		runToken: string,
+	): Promise<MediaUsageReconciliationRecord | null> {
+		assertIdentity({ collectionId, runToken });
+		const row = await this.db
+			.selectFrom("_emdash_media_usage_reconciliations")
+			.selectAll()
+			.where("collection_id", "=", collectionId)
+			.where("run_token", "=", runToken)
+			.executeTakeFirst();
+		return row ? rowToRecord(row) : null;
+	}
+
+	async beginRun(claim: MediaUsageReconciliationClaim): Promise<number | string | null> {
+		const now = timestampOffset(this.db, 0);
+		const sameRun = sql<boolean>`status = 'running' AND cursor = ${claim.runToken}`;
+		const row = await this.db
+			.updateTable("_emdash_media_usage_index_status as status")
+			.set({
+				status: "running",
+				started_at: sql<string | null>`CASE WHEN ${sameRun} THEN started_at ELSE ${now} END`,
+				completed_at: null,
+				cursor: claim.runToken,
+				indexed_source_count: 0,
+				failed_source_count: 0,
+				last_error_code: null,
+				change_epoch: sql<number>`CASE WHEN ${sameRun} THEN change_epoch ELSE change_epoch + 1 END`,
+				reconciliation_required: 1,
+				updated_at: now,
+			})
+			.where("status.adapter_id", "=", CONTENT_ADAPTER_ID)
+			.where("status.scope_type", "=", COLLECTION_SCOPE)
+			.where("status.collection_id", "=", claim.collectionId)
+			.where("status.scope_key", "=", claim.collectionSlug)
+			.where("status.capture_state", "=", "active")
+			.where("status.reconciliation_required", "=", 1)
+			.where((eb) =>
+				eb.or([eb("status.status", "!=", "running"), eb("status.cursor", "=", claim.runToken)]),
+			)
+			.where(this.liveClaimExists(claim))
+			.returning("change_epoch")
+			.executeTakeFirst();
+		return row?.change_epoch ?? null;
+	}
+
+	async findScanUpperId(claim: MediaUsageReconciliationClaim): Promise<string | null> {
+		const tableName = contentTableName(claim.collectionSlug);
+		const result = await sql<{ id: string }>`
+			SELECT content.id
+			FROM ${sql.ref(tableName)} AS content
+			WHERE ${this.liveClaimExistsSql(claim)}
+			ORDER BY content.id DESC
+			LIMIT 1
+		`.execute(this.db);
+		return result.rows[0]?.id ?? null;
+	}
+
+	async initializeScan(input: {
+		claim: MediaUsageReconciliationClaim;
+		targetEpoch: number | string;
+		fieldFingerprint: string;
+		scanUpperId: string | null;
+	}): Promise<boolean> {
+		const result = await this.db
+			.updateTable("_emdash_media_usage_reconciliations as reconciliation")
+			.set({
+				target_epoch: input.targetEpoch,
+				field_fingerprint: input.fieldFingerprint,
+				phase: "scan",
+				scan_cursor: null,
+				scan_upper_id: input.scanUpperId,
+				source_cursor: null,
+				source_upper_key: null,
+				attempt_count: 0,
+				last_error_code: null,
+				updated_at: timestampOffset(this.db, 0),
+			})
+			.where("reconciliation.collection_id", "=", input.claim.collectionId)
+			.where("reconciliation.run_token", "=", input.claim.runToken)
+			.where("reconciliation.target_epoch", "is", null)
+			.where("reconciliation.state", "=", "leased")
+			.where("reconciliation.lease_token", "=", input.claim.leaseToken)
+			.where(liveLease(this.db))
+			.where(this.statusOwnsRun(input.claim, input.targetEpoch))
+			.executeTakeFirst();
+		return Number(result.numUpdatedRows ?? 0) === 1;
+	}
+
+	async findScanPage(
+		reconciliation: MediaUsageReconciliationRecord,
+		limit: number,
+	): Promise<string[]> {
+		if (!Number.isSafeInteger(limit) || limit < 1 || limit > 50) {
+			throw new Error("Reconciliation scan page limit must be from 1 to 50");
+		}
+		if (!reconciliation.leaseToken || reconciliation.targetEpoch === null) return [];
+		const tableName = contentTableName(reconciliation.collectionSlug);
+		const lowerBound = reconciliation.scanCursor
+			? sql`AND content.id > ${reconciliation.scanCursor}`
+			: sql``;
+		const upperBound = reconciliation.scanUpperId
+			? sql`AND content.id <= ${reconciliation.scanUpperId}`
+			: sql`AND 1 = 0`;
+		const result = await sql<{ id: string }>`
+			SELECT content.id
+			FROM ${sql.ref(tableName)} AS content
+			WHERE 1 = 1
+				${lowerBound}
+				${upperBound}
+				AND ${this.liveClaimExistsSql(reconciliation as MediaUsageReconciliationClaim)}
+			ORDER BY content.id ASC
+			LIMIT ${limit}
+		`.execute(this.db);
+		return result.rows.map((row) => row.id);
+	}
+
+	async checkpointScan(input: {
+		claim: MediaUsageReconciliationClaim;
+		targetEpoch: number | string;
+		previousCursor: string | null;
+		nextCursor: string;
+	}): Promise<boolean> {
+		let query = this.db
+			.updateTable("_emdash_media_usage_reconciliations as reconciliation")
+			.set({
+				scan_cursor: input.nextCursor,
+				attempt_count: 0,
+				last_error_code: null,
+				updated_at: timestampOffset(this.db, 0),
+			})
+			.where("reconciliation.collection_id", "=", input.claim.collectionId)
+			.where("reconciliation.run_token", "=", input.claim.runToken)
+			.where("reconciliation.target_epoch", "=", input.targetEpoch)
+			.where("reconciliation.state", "=", "leased")
+			.where("reconciliation.phase", "=", "scan")
+			.where("reconciliation.lease_token", "=", input.claim.leaseToken)
+			.where(liveLease(this.db))
+			.where(this.statusOwnsRun(input.claim, input.targetEpoch));
+		query = input.previousCursor
+			? query.where("reconciliation.scan_cursor", "=", input.previousCursor)
+			: query.where("reconciliation.scan_cursor", "is", null);
+		const result = await query.executeTakeFirst();
+		return Number(result.numUpdatedRows ?? 0) === 1;
+	}
+
+	private liveClaimExists(claim: MediaUsageReconciliationClaim): RawBuilder<boolean> {
+		return this.liveClaimExistsSql(claim);
+	}
+
+	private liveClaimExistsSql(claim: MediaUsageReconciliationClaim): RawBuilder<boolean> {
+		return sql<boolean>`EXISTS (
+			SELECT 1
+			FROM _emdash_media_usage_reconciliations AS reconciliation
+			INNER JOIN _emdash_collections AS collection
+				ON collection.id = reconciliation.collection_id
+				AND collection.slug = reconciliation.collection_slug
+			WHERE reconciliation.collection_id = ${claim.collectionId}
+				AND reconciliation.collection_slug = ${claim.collectionSlug}
+				AND reconciliation.run_token = ${claim.runToken}
+				AND reconciliation.state = 'leased'
+				AND reconciliation.lease_token = ${claim.leaseToken}
+				AND ${liveLease(this.db, "reconciliation.lease_expires_at")}
+				AND EXISTS (
+					SELECT 1 FROM _emdash_media_usage_activation AS activation
+					WHERE activation.task_key = ${ACTIVATION_KEY}
+						AND activation.state = 'active'
+				)
+				AND NOT EXISTS (
+					SELECT 1 FROM _emdash_media_usage_collection_deletions AS deletion
+					WHERE deletion.collection_id = reconciliation.collection_id
+				)
+		)`;
+	}
+
+	private statusOwnsRun(
+		claim: MediaUsageReconciliationClaim,
+		targetEpoch: number | string,
+	): RawBuilder<boolean> {
+		return sql<boolean>`EXISTS (
+			SELECT 1 FROM _emdash_media_usage_index_status AS status
+			WHERE status.adapter_id = ${CONTENT_ADAPTER_ID}
+				AND status.scope_type = ${COLLECTION_SCOPE}
+				AND status.collection_id = ${claim.collectionId}
+				AND status.scope_key = ${claim.collectionSlug}
+				AND status.capture_state = 'active'
+				AND status.reconciliation_required = 1
+				AND status.status = 'running'
+				AND status.cursor = ${claim.runToken}
+				AND status.change_epoch = ${targetEpoch}
+		)`;
+	}
 
 	async seedNextCandidate(): Promise<boolean> {
 		const runToken = ulid();
@@ -411,10 +605,11 @@ function assertDuration(value: number, label: string, allowZero = false): void {
 	}
 }
 
-function liveLease(db: Kysely<Database>): RawBuilder<boolean> {
+function liveLease(db: Kysely<Database>, column = "lease_expires_at"): RawBuilder<boolean> {
+	const expiry = sql.ref(column);
 	return isPostgres(db)
-		? sql<boolean>`lease_expires_at > to_char(statement_timestamp() AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`
-		: sql<boolean>`lease_expires_at > strftime('%Y-%m-%dT%H:%M:%fZ', 'now')`;
+		? sql<boolean>`${expiry} > to_char(statement_timestamp() AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`
+		: sql<boolean>`${expiry} > strftime('%Y-%m-%dT%H:%M:%fZ', 'now')`;
 }
 
 function timestampIsDue(db: Kysely<Database>, column: string): RawBuilder<boolean> {
@@ -436,4 +631,11 @@ function timestampOffset(db: Kysely<Database>, offsetSeconds: number): RawBuilde
 		'now',
 		${`${offsetSeconds >= 0 ? "+" : ""}${offsetSeconds} seconds`}
 	)`;
+}
+
+function contentTableName(collectionSlug: string): string {
+	validateIdentifier(collectionSlug, "collection slug");
+	const tableName = `ec_${collectionSlug}`;
+	validateIdentifier(tableName, "content table");
+	return tableName;
 }
