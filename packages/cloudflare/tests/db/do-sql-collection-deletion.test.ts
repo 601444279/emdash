@@ -141,3 +141,30 @@ describe("EmDashDB collection deletion guard", () => {
 		expect(statements.some((statement) => statement.includes("UPDATE _emdash"))).toBe(true);
 	});
 });
+
+describe("EmDashDB primary read routing", () => {
+	it("proxies primary-forced reads and batches instead of serving replica state", async () => {
+		const primary = {
+			query: vi.fn().mockResolvedValue({ rows: [{ source: "primary" }] }),
+			batchQuery: vi.fn().mockResolvedValue([{ rows: [{ source: "primary" }] }]),
+		};
+		const exec = vi.fn(() => cursor([{ source: "replica" }]));
+		const object = new EmDashDB(
+			{ storage: { primary, sql: { exec }, transactionSync: vi.fn() } } as never,
+			{},
+		);
+
+		await expect(object.query("SELECT 1", [], { primary: true })).resolves.toEqual({
+			rows: [{ source: "primary" }],
+		});
+		await expect(object.batchQuery([{ sql: "SELECT 1" }], { primary: true })).resolves.toEqual([
+			{ rows: [{ source: "primary" }] },
+		]);
+
+		expect(primary.query).toHaveBeenCalledWith("SELECT 1", [], { primary: true });
+		expect(primary.batchQuery).toHaveBeenCalledWith([{ sql: "SELECT 1" }], {
+			primary: true,
+		});
+		expect(exec).not.toHaveBeenCalled();
+	});
+});

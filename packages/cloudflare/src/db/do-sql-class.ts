@@ -30,7 +30,12 @@
 import { DurableObject } from "cloudflare:workers";
 import type { CollectionDeletionGuardInput, CollectionDeletionGuardResult } from "emdash";
 
-import type { DOQueryResult, DOQueryStatement, EmDashDBStub } from "./do-sql-types.js";
+import type {
+	DOQueryOptions,
+	DOQueryResult,
+	DOQueryStatement,
+	EmDashDBStub,
+} from "./do-sql-types.js";
 import { isPragmaStatement, isReadStatement } from "./do-sql-types.js";
 
 /**
@@ -133,13 +138,12 @@ export class EmDashDB extends DurableObject {
 	 * @param opts.bookmark On a replica read, wait until this instance has
 	 *   caught up to the given bookmark before serving (read-your-writes).
 	 */
-	async query(
-		sql: string,
-		params?: unknown[],
-		opts?: { bookmark?: string },
-	): Promise<DOQueryResult> {
+	async query(sql: string, params?: unknown[], opts?: DOQueryOptions): Promise<DOQueryResult> {
 		this.#ensureReplication();
 		const isRead = isReadStatement(sql);
+		if (opts?.primary && this.#isReplica) {
+			return this.#primaryStub!.query(sql, params, opts);
+		}
 
 		// Writes must hit the primary. On a replica, proxy to it.
 		if (!isRead && this.#isReplica) {
@@ -270,9 +274,12 @@ export class EmDashDB extends DurableObject {
 	 */
 	async batchQuery(
 		statements: DOQueryStatement[],
-		opts?: { bookmark?: string },
+		opts?: DOQueryOptions,
 	): Promise<DOQueryResult[]> {
 		this.#ensureReplication();
+		if (opts?.primary && this.#isReplica) {
+			return this.#primaryStub!.batchQuery(statements, opts);
+		}
 
 		if (opts?.bookmark && this.#isReplica) {
 			await this.#waitForBookmarkBounded(opts.bookmark);
