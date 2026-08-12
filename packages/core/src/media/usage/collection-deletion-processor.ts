@@ -267,31 +267,34 @@ async function exactCleanupRowsRemain(
 	claim: Pick<MediaUsageCollectionDeletionRecord, "collectionId" | "collectionSlug">,
 	includeStatus = true,
 ): Promise<boolean> {
-	const [work, source, status] = await Promise.all([
-		db
-			.selectFrom("_emdash_media_usage_work")
-			.select("content_id")
-			.where("collection_id", "=", claim.collectionId)
-			.limit(1)
-			.executeTakeFirst(),
-		db
-			.selectFrom("_emdash_media_usage_sources")
-			.select("source_key")
-			.where("source_type", "=", "content")
-			.where("collection_id", "=", claim.collectionId)
-			.limit(1)
-			.executeTakeFirst(),
-		db
-			.selectFrom("_emdash_media_usage_index_status")
-			.select("collection_id")
-			.where("adapter_id", "=", "content-media")
-			.where("scope_type", "=", "collection")
-			.where("scope_key", "=", claim.collectionSlug)
-			.where("collection_id", "=", claim.collectionId)
-			.limit(1)
-			.executeTakeFirst(),
-	]);
-	return work !== undefined || source !== undefined || (includeStatus && status !== undefined);
+	const result = await sql<{
+		work_present: boolean | number;
+		source_present: boolean | number;
+		status_present: boolean | number;
+	}>`
+		SELECT
+			EXISTS (
+				SELECT 1 FROM _emdash_media_usage_work
+				WHERE collection_id = ${claim.collectionId}
+			) AS work_present,
+			EXISTS (
+				SELECT 1 FROM _emdash_media_usage_sources
+				WHERE source_type = 'content' AND collection_id = ${claim.collectionId}
+			) AS source_present,
+			EXISTS (
+				SELECT 1 FROM _emdash_media_usage_index_status
+				WHERE adapter_id = 'content-media'
+					AND scope_type = 'collection'
+					AND scope_key = ${claim.collectionSlug}
+					AND collection_id = ${claim.collectionId}
+			) AS status_present
+	`.execute(db);
+	const row = result.rows[0];
+	return (
+		Boolean(row?.work_present) ||
+		Boolean(row?.source_present) ||
+		(includeStatus && Boolean(row?.status_present))
+	);
 }
 
 async function updateDeletion(

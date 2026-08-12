@@ -369,3 +369,45 @@ it("selects one globally bounded due-candidate window", async () => {
 		await fixture.db.destroy();
 	}
 });
+
+it("checks cleanup completion in one bounded query", async () => {
+	const fixture = await setupTestDatabaseWithCompoundSelectLimit(null);
+	try {
+		await fixture.db
+			.insertInto("_emdash_media_usage_collection_deletions")
+			.values({
+				collection_id: "status-id",
+				collection_slug: "status_slug",
+				force_delete: 1,
+				state: "pending",
+				phase: "status",
+				next_attempt_at: "2000-01-01T00:00:00.000Z",
+			})
+			.execute();
+		await fixture.db
+			.insertInto("_emdash_media_usage_index_status")
+			.values({
+				adapter_id: "content-media",
+				scope_type: "collection",
+				scope_key: "status_slug",
+				collection_id: "status-id",
+				status: "stale",
+				capture_state: "deleting",
+			})
+			.execute();
+		fixture.statements.length = 0;
+
+		await processDueMediaUsageCollectionDeletions(fixture.db);
+
+		const probes = fixture.statements.filter(
+			(statement) =>
+				/^select/i.test(statement.trim()) &&
+				(statement.includes("_emdash_media_usage_work") ||
+					statement.includes("_emdash_media_usage_sources") ||
+					statement.includes("_emdash_media_usage_index_status")),
+		);
+		expect(probes).toHaveLength(1);
+	} finally {
+		await fixture.db.destroy();
+	}
+});
