@@ -766,6 +766,10 @@ function timestampOffset(db: Kysely<Database>, offsetSeconds: number): RawBuilde
 	)`;
 }
 
+export function collectionDeletionCurrentTimestamp(db: Kysely<Database>): RawBuilder<string> {
+	return timestampOffset(db, 0);
+}
+
 function rowToRecord(
 	row: Selectable<MediaUsageCollectionDeletionTable>,
 ): MediaUsageCollectionDeletionRecord {

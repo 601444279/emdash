@@ -4,6 +4,7 @@ import { isPostgres, tableExists } from "../../database/dialect-helpers.js";
 import { withTransaction } from "../../database/transaction.js";
 import type { Database, MediaUsageCollectionDeletionTable } from "../../database/types.js";
 import {
+	collectionDeletionCurrentTimestamp,
 	deleteActivatedMediaUsageCollection,
 	MediaUsageCollectionDeletionRepository,
 	type MediaUsageCollectionDeletionRecord,
@@ -308,7 +309,7 @@ async function updateDeletion(
 			...values,
 			attempt_count: 0,
 			last_error_code: null,
-			updated_at: new Date().toISOString(),
+			updated_at: collectionDeletionCurrentTimestamp(db),
 		})
 		.where("collection_id", "=", claim.collectionId)
 		.where("state", "=", "leased")

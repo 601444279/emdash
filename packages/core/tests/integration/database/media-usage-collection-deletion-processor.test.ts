@@ -257,6 +257,32 @@ describeEachDialect("media usage collection deletion processor", (dialect) => {
 		}
 	});
 
+	it.runIf(dialect === "sqlite")(
+		"uses database time when a progress handoff is interrupted",
+		async () => {
+			await insertDeletion("clock-id", "clock", "work");
+			await sql
+				.raw(`
+				CREATE TRIGGER interrupt_collection_deletion_release
+				BEFORE UPDATE OF state ON _emdash_media_usage_collection_deletions
+				WHEN OLD.collection_id = 'clock-id' AND NEW.state = 'pending'
+				BEGIN
+					SELECT RAISE(IGNORE);
+				END
+			`)
+				.execute(ctx.db);
+			vi.useFakeTimers({ toFake: ["Date"] });
+			vi.setSystemTime(new Date("2099-01-01T00:00:00.000Z"));
+			try {
+				await runTick();
+			} finally {
+				vi.useRealTimers();
+			}
+
+			expect((await deletionState("clock-id"))?.updated_at.startsWith("2099-")).toBe(false);
+		},
+	);
+
 	function runTick() {
 		return processDueMediaUsageCollectionDeletions(ctx.db);
 	}
