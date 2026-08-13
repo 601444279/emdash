@@ -1,6 +1,13 @@
-import { Badge, Banner, Button, SkeletonLine } from "@cloudflare/kumo";
+import { Badge, Banner, Button, SkeletonLine, Tooltip } from "@cloudflare/kumo";
 import { useLingui } from "@lingui/react/macro";
-import { Warning } from "@phosphor-icons/react";
+import {
+	ArrowCounterClockwise,
+	CircleNotch,
+	Clock,
+	Question,
+	Warning,
+	XCircle,
+} from "@phosphor-icons/react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import * as React from "react";
@@ -57,13 +64,53 @@ export function MediaUsedIn({ mediaId, open, navigationBlocked, onEntryClick }: 
 	const coverageComplete = coverageStatus === "complete";
 	const refreshError = usageQuery.isError && pages.length > 0 && !usageQuery.isFetchNextPageError;
 	const canRenderEmpty = usageQuery.isSuccess && !usageQuery.isFetching;
+	let coverageIcon: React.ReactNode = null;
+	let coverageMessage = "";
+	let coverageTone = "";
+	switch (coverageStatus) {
+		case "running":
+			coverageMessage = t`Usage is updating. Some content may not appear here yet.`;
+			coverageTone = "text-kumo-info hover:text-kumo-info";
+			coverageIcon = (
+				<CircleNotch
+					className="h-4 w-4 animate-spin motion-reduce:animate-none"
+					weight="bold"
+					aria-hidden="true"
+				/>
+			);
+			break;
+		case "never":
+			coverageMessage = t`Usage indexing hasn’t started.`;
+			coverageTone = "text-kumo-warning hover:text-kumo-warning";
+			coverageIcon = <Clock className="h-4 w-4" weight="fill" aria-hidden="true" />;
+			break;
+		case "stale":
+			coverageMessage = t`Usage may be out of date.`;
+			coverageTone = "text-kumo-warning hover:text-kumo-warning";
+			coverageIcon = <ArrowCounterClockwise className="h-4 w-4" weight="bold" aria-hidden="true" />;
+			break;
+		case "partial":
+			coverageMessage = t`Some content may not appear here yet.`;
+			coverageTone = "text-kumo-warning hover:text-kumo-warning";
+			coverageIcon = <Warning className="h-4 w-4" weight="fill" aria-hidden="true" />;
+			break;
+		case "failed":
+			coverageMessage = t`Usage indexing couldn’t finish.`;
+			coverageTone = "text-kumo-danger hover:text-kumo-danger";
+			coverageIcon = <XCircle className="h-4 w-4" weight="fill" aria-hidden="true" />;
+			break;
+		case "unknown":
+			coverageMessage = t`Usage completeness couldn’t be verified.`;
+			coverageTone = "text-kumo-subtle hover:text-kumo-subtle";
+			coverageIcon = <Question className="h-4 w-4" weight="bold" aria-hidden="true" />;
+			break;
+	}
 
 	let statusMessage = "";
 	if (accessDenied) statusMessage = t`Usage details unavailable`;
 	else if (usageQuery.isFetching && pages.length === 0) statusMessage = t`Loading usage`;
 	else if (usageQuery.isFetching) statusMessage = t`Updating usage`;
-	else if (pages.length > 0 && !coverageComplete)
-		statusMessage = t`Usage loaded. Coverage may be incomplete.`;
+	else if (pages.length > 0 && coverageMessage) statusMessage = coverageMessage;
 	else if (pages.length > 0) statusMessage = t`Usage loaded`;
 
 	return (
@@ -77,6 +124,24 @@ export function MediaUsedIn({ mediaId, open, navigationBlocked, onEntryClick }: 
 				<h3 id={headingId} className="text-[14px] font-medium text-kumo-default">
 					{t`Used in`}
 				</h3>
+				{coverageIcon && coverageMessage && (
+					<Tooltip
+						content={coverageMessage}
+						delay={0}
+						closeDelay={0}
+						render={
+							<Button
+								type="button"
+								variant="ghost"
+								shape="square"
+								size="xs"
+								icon={coverageIcon}
+								className={coverageTone}
+								aria-label={coverageMessage}
+							/>
+						}
+					/>
+				)}
 			</div>
 			<span className="sr-only" role="status">
 				{statusMessage}
@@ -93,7 +158,6 @@ export function MediaUsedIn({ mediaId, open, navigationBlocked, onEntryClick }: 
 			) : pages.length > 0 ? (
 				<div className="space-y-2">
 					{refreshError && <UsageError onRetry={() => void usageQuery.refetch()} />}
-					{!coverageComplete && <IncompleteCoverage />}
 
 					{entries.length > 0 ? (
 						<ul className="space-y-2">
@@ -163,18 +227,6 @@ function UsageError({ onRetry }: { onRetry: () => void }) {
 					{t`Try again`}
 				</Button>
 			}
-		/>
-	);
-}
-
-function IncompleteCoverage() {
-	const { t } = useLingui();
-	return (
-		<Banner
-			variant="alert"
-			icon={<Warning className="h-4 w-4" weight="fill" aria-hidden="true" />}
-			title={t`Usage may be incomplete`}
-			description={t`Some content may not appear here yet.`}
 		/>
 	);
 }

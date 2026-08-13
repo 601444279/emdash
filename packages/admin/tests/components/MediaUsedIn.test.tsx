@@ -1,5 +1,6 @@
 import * as React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
 
 import { MediaUsedIn } from "../../src/components/MediaUsedIn.js";
 import {
@@ -144,28 +145,57 @@ describe("MediaUsedIn", () => {
 		expect(screen.getByText("Archived notes").element().closest("a")).toBeNull();
 	});
 
-	it.each<MediaUsageCoverageStatus>(["never", "running", "partial", "failed", "stale", "unknown"])(
-		"keeps known references visible when coverage is %s",
-		async (status) => {
-			vi.mocked(fetchMediaUsageDetails).mockResolvedValue(
-				usageResponse([usageEntry()], {
-					coverage: { scope: "all_content_collections", status },
-				}),
-			);
+	it.each<[MediaUsageCoverageStatus, string]>([
+		["never", "Usage indexing hasn’t started."],
+		["running", "Usage is updating. Some content may not appear here yet."],
+		["partial", "Some content may not appear here yet."],
+		["failed", "Usage indexing couldn’t finish."],
+		["stale", "Usage may be out of date."],
+		["unknown", "Usage completeness couldn’t be verified."],
+	])("keeps known references visible when coverage is %s", async (status, message) => {
+		vi.mocked(fetchMediaUsageDetails).mockResolvedValue(
+			usageResponse([usageEntry()], {
+				coverage: { scope: "all_content_collections", status },
+			}),
+		);
 
-			const screen = await renderUsedIn();
+		const screen = await renderUsedIn();
 
-			await expect.element(screen.getByText("Launch notes")).toBeVisible();
-			await expect.element(screen.getByText("Usage may be incomplete")).toBeVisible();
-			await expect.element(screen.getByText("Some content may not appear here yet.")).toBeVisible();
-		},
-	);
+		await expect.element(screen.getByText("Launch notes")).toBeVisible();
+		await expect.element(screen.getByRole("button", { name: message })).toBeVisible();
+	});
+
+	it("explains incomplete coverage from an accessible icon tooltip", async () => {
+		vi.mocked(fetchMediaUsageDetails).mockResolvedValue(
+			usageResponse([usageEntry()], {
+				coverage: { scope: "all_content_collections", status: "partial" },
+			}),
+		);
+		const screen = await renderUsedIn();
+		const warning = screen.getByRole("button", {
+			name: "Some content may not appear here yet.",
+		});
+
+		await expect.element(screen.getByText("Launch notes")).toBeVisible();
+		await expect
+			.element(screen.getByText("Usage may be incomplete"), { timeout: 100 })
+			.not.toBeInTheDocument();
+		await userEvent.hover(warning.element());
+		await expect
+			.element(screen.getByText("Some content may not appear here yet.").all().at(-1)!)
+			.toBeVisible();
+	});
 
 	it("distinguishes trustworthy and incomplete empty results", async () => {
 		const completeScreen = await renderUsedIn();
 		await expect
 			.element(completeScreen.getByText("No usage found in EmDash-managed content fields."))
 			.toBeVisible();
+		await expect
+			.element(completeScreen.getByRole("region", { name: "Used in" }).getByRole("button"), {
+				timeout: 100,
+			})
+			.not.toBeInTheDocument();
 
 		vi.mocked(fetchMediaUsageDetails).mockResolvedValue(
 			usageResponse([], {
@@ -177,7 +207,13 @@ describe("MediaUsedIn", () => {
 		await expect
 			.element(incompleteScreen.getByText("No indexed references are currently available."))
 			.toBeVisible();
-		await expect.element(incompleteScreen.getByText("Usage may be incomplete")).toBeVisible();
+		await expect
+			.element(
+				incompleteScreen.getByRole("button", {
+					name: "Some content may not appear here yet.",
+				}),
+			)
+			.toBeVisible();
 	});
 
 	it("renders access denial without retrying or exposing the error", async () => {
@@ -285,7 +321,9 @@ describe("MediaUsedIn", () => {
 		await screen.getByRole("button", { name: "Load more" }).click();
 
 		await expect.element(screen.getByText("Second entry")).toBeVisible();
-		await expect.element(screen.getByText("Usage may be incomplete")).toBeVisible();
+		await expect
+			.element(screen.getByRole("button", { name: "Usage may be out of date." }))
+			.toBeVisible();
 	});
 
 	it("sets explicit direction for authored labels and technical identifiers", async () => {
