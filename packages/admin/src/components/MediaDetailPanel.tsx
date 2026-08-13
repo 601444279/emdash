@@ -361,7 +361,7 @@ export function MediaDetailPanel({
 							<div className="space-y-4">
 								<div className="w-full space-y-2">
 									<div className="flex items-center gap-1.5">
-										<span className="text-sm font-medium text-kumo-default">{t`Filename`}</span>
+										<span className="text-[14px] font-medium text-kumo-default">{t`Filename`}</span>
 										<Tooltip
 											content={filenameHelp}
 											delay={0}
@@ -390,7 +390,7 @@ export function MediaDetailPanel({
 									<>
 										<div className="w-full space-y-2">
 											<div className="flex items-center gap-1.5">
-												<span className="text-sm font-medium text-kumo-default">{t`Alt Text`}</span>
+												<span className="text-[14px] font-medium text-kumo-default">{t`Alt Text`}</span>
 												<Tooltip
 													content={altTextHelp}
 													delay={0}

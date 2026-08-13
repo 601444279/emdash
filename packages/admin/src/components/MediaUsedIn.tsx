@@ -68,13 +68,13 @@ export function MediaUsedIn({ mediaId, open, navigationBlocked, onEntryClick }: 
 
 	return (
 		<section
-			className="space-y-3"
+			className="space-y-2"
 			aria-labelledby={headingId}
 			aria-busy={usageQuery.isFetching || undefined}
 			data-testid="media-used-in"
 		>
 			<div className="flex items-center gap-2">
-				<h3 id={headingId} className="text-base font-medium text-kumo-default">
+				<h3 id={headingId} className="text-[14px] font-medium text-kumo-default">
 					{t`Used in`}
 				</h3>
 			</div>
@@ -91,7 +91,7 @@ export function MediaUsedIn({ mediaId, open, navigationBlocked, onEntryClick }: 
 			) : usageQuery.isError && pages.length === 0 ? (
 				<UsageError onRetry={() => void usageQuery.refetch()} />
 			) : pages.length > 0 ? (
-				<div className="space-y-4">
+				<div className="space-y-2">
 					{refreshError && <UsageError onRetry={() => void usageQuery.refetch()} />}
 					{!coverageComplete && <IncompleteCoverage />}
 
