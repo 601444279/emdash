@@ -4,6 +4,7 @@
  *
  * Development-only endpoint to bypass the setup wizard.
  * Runs migrations, creates a dev admin user, and marks setup complete.
+ * Newly applied sample content has its Media Usage index prepared before redirecting.
  *
  * ONLY available when import.meta.env.DEV is true.
  *
@@ -30,6 +31,7 @@ import { getPublicOrigin } from "#api/public-url.js";
 import { isSafeRedirect } from "#api/redirect.js";
 import { runMigrations } from "#db/migrations/runner.js";
 import { OptionsRepository } from "#db/repositories/options.js";
+import { repairContentMediaUsageCollection } from "#media/usage/content-repair.js";
 import { applySeed } from "#seed/apply.js";
 import { loadSeed } from "#seed/load.js";
 import { validateSeed } from "#seed/validate.js";
@@ -74,6 +76,16 @@ async function handleDevBypass(context: Parameters<APIRoute>[0]): Promise<Respon
 			console.log(
 				`[setup-dev-bypass] Seed applied: ${seedResult.collections.created} collections, ${seedResult.fields.created} fields`,
 			);
+			if (includeContent && seedResult.content.created + seedResult.content.updated > 0) {
+				for (const collectionSlug of Object.keys(seed.content ?? {})) {
+					const repair = await repairContentMediaUsageCollection(emdash.db, {
+						collectionSlug,
+					});
+					if (repair.status !== "complete") {
+						throw new Error(`Seeded Media Usage indexing failed for ${collectionSlug}`);
+					}
+				}
+			}
 		}
 
 		const options = new OptionsRepository(emdash.db);

@@ -1366,9 +1366,9 @@ async function resolveMedia(
 		const ext = getExtensionFromContentType(contentType) || getExtensionFromUrl(url) || ".bin";
 
 		// Generate filename and storage key
-		const id = ulid();
+		const storageId = ulid();
 		const finalFilename = filename || generateFilename(url, ext);
-		const storageKey = `${id}${ext}`;
+		const storageKey = `${storageId}${ext}`;
 
 		// Get the body as buffer
 		const arrayBuffer = await response.arrayBuffer();
@@ -1392,7 +1392,7 @@ async function resolveMedia(
 
 		// Create media record
 		const mediaRepo = new MediaRepository(ctx.db);
-		await mediaRepo.create({
+		const media = await mediaRepo.create({
 			filename: finalFilename,
 			mimeType: contentType,
 			size: body.length,
@@ -1407,7 +1407,7 @@ async function resolveMedia(
 		// Create the MediaValue - only store id, URL is built at runtime by EmDashMedia
 		const mediaValue: MediaValue = {
 			provider: "local",
-			id,
+			id: media.id,
 			alt: alt ?? undefined,
 			width,
 			height,
