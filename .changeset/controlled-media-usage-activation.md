@@ -2,4 +2,4 @@
 "emdash": patch
 ---
 
-Adds a controlled way for administrators to safely turn on automatic Media Usage indexing in production.
+Adds a one-time, administrator-controlled process for enabling automatic media usage indexing in production.

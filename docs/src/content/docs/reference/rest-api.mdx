@@ -259,7 +259,7 @@ described below. Counts with any other status are indexed projections and may ov
 under-report. Even complete results are advisory during concurrent writes; usage reads are not a
 transactional lock and must not be used as a deletion guarantee.
 
-### Get Media Usage Details
+### Get media usage details
 
 ```http
 GET /_emdash/api/media/:id/usage?limit=50&cursor=...
@@ -364,16 +364,28 @@ Content-Type: application/json
 DELETE /_emdash/api/media/:id
 ```
 
-### Activate Automatic Media Usage Indexing
+### Enable automatic media usage indexing
+
+Automatic media usage indexing must be enabled once for each production site. Writes must be
+paused while EmDash prepares each collection so that no changes are missed.
+
+Both endpoints require `schema:manage`. Bearer tokens also require the `admin` scope.
+
+#### Check the current state
 
 ```http
 GET /_emdash/api/admin/media-usage/activation
 ```
 
-Returns the redacted state of controlled Media Usage capture activation. The endpoint requires
-`schema:manage`; bearer tokens also require the `admin` scope. It does not start activation or
-return lease tokens, runtime generations, raw errors, content, media references, or a backlog
-count.
+This request does not change anything. It returns one of these states:
+
+- `expanded`: automatic indexing is not enabled.
+- `activating`: EmDash is preparing the site's collections.
+- `active`: EmDash tracks changes to media references in content.
+
+Status responses do not include internal lock data or raw database errors.
+
+#### Prepare the next collection
 
 ```http
 POST /_emdash/api/admin/media-usage/activation
@@ -386,35 +398,38 @@ X-EmDash-Request: 1
 }
 ```
 
-Each confirmed request starts, resumes, or retries at most one collection. Both confirmations must
-be literal `true` values. EmDash cannot verify either assertion: `writersDrained` means every
-application and external database writer is blocked and in-flight writes have finished;
-`maintenanceReady` means the deployment has a working Media Usage maintenance lane.
+Each request prepares one collection. Send one request at a time until the state becomes `active`.
 
-Use this production runbook:
+Set both fields to `true`:
 
-1. Deploy one current EmDash version containing automatic reconciliation and controlled activation to every writer.
-2. Configure and verify the automatic maintenance lane: `mediaUsageCron` on Cloudflare, or a persistent Node process running the built-in scheduler.
-3. Block new application and external database writes, then wait for in-flight writes to finish.
-4. Call `GET` and record the current state.
-5. Call `POST` sequentially with both confirmations until the returned state is `active`.
-6. After a `409`, `500`, timeout, or lost response, call `GET` before deciding whether another confirmed `POST` is needed.
-7. If status still records failure, keep writers blocked, inspect operator logs, correct the deployment or database problem, and repeat the same confirmed `POST`. Never edit activation rows manually.
-8. Restore writers only after `GET` or `POST` reports `state: active`.
-9. Keep maintenance running while historical reconciliation catches up.
+- `writersDrained`: Application and direct database writes have stopped, and any writes already in
+  progress have finished.
+- `maintenanceReady`: Scheduled background tasks are running through `mediaUsageCron` on Cloudflare
+  or the built-in scheduler on Node.js.
 
-Activation is forward-only. Once it starts, there is no abort, skip-collection, deactivate, or
-reset endpoint. Validate the procedure in staging and follow your normal database backup policy
-before production activation. Some corruption or incompatible-schema failures require a corrective
-deployment or database restoration because ordinary schema writes remain blocked while activation
-is incomplete.
+#### Enable indexing in production
 
-`active` means that current collections have incremental capture installed. It does not mean that
-historical Used in coverage is complete. A live activation lease returns
-`409 MEDIA_USAGE_ACTIVATION_BUSY` with only its expiry; ownership loss returns
-`409 MEDIA_USAGE_ACTIVATION_CONFLICT`. Read status before retrying either conflict.
+1. Confirm that scheduled background tasks are running: `mediaUsageCron` on Cloudflare, or the
+   built-in scheduler on Node.js.
+2. Stop all application and direct database writes. Wait for writes already in progress to finish.
+3. Call `GET` to check the current state.
+4. Call `POST` one request at a time until the state becomes `active`.
+5. Resume writes.
+6. Keep scheduled background tasks running while EmDash indexes existing content.
 
-### List Media Usage Work
+If `POST` times out or returns `409` or `500`, call `GET` before sending another request. If
+`lastErrorCode` is set, keep writes stopped, check the application logs, fix the problem, and try
+again. Do not edit EmDash's internal database tables.
+
+<Aside type="caution">
+	After this process starts, it cannot be cancelled or reset. Test it in a staging environment and
+	follow your normal database backup policy before using it in production.
+</Aside>
+
+When the state is `active`, EmDash tracks changes to media references in content. Existing content
+may still be indexing in the background.
+
+### List media usage work
 
 ```http
 GET /_emdash/api/admin/media-usage/work?collection=posts&state=failed&limit=50&cursor=...
@@ -453,7 +468,7 @@ page's `nextCursor`. The endpoint does not calculate an exact backlog count.
 Responses omit work versions, lease tokens, raw database errors, indexed content, media
 references, and exact counts.
 
-### Retry Media Usage Work
+### Retry media usage work
 
 ```http
 POST /_emdash/api/admin/media-usage/work/retry
@@ -478,7 +493,7 @@ replaces newer work or exposes its lease token.
 
 The list returns only known durable work. Retry can create work for the supplied identity in an
 active collection even when no work row exists, but it does not scan for historical gaps. Use
-collection-scoped Media Usage repair after imports or direct database writes.
+collection-scoped media usage repair after imports or direct database writes.
 When scheduled maintenance is disabled, failed jobs remain visible and manually retryable, but no
 automatic freshness deadline is promised.
 
@@ -506,7 +521,7 @@ returns `409 WORK_LEASE_ACTIVE`; a concurrent state change returns `409 WORK_CHA
 require `schema:manage`, and bearer tokens also require the `admin` scope. They recover internal
 index cleanup only and never delete media assets.
 
-### Repair Media Usage
+### Repair media usage
 
 ```http
 POST /_emdash/api/admin/media-usage/repair
@@ -1145,7 +1160,7 @@ Content-Type: application/json
 
 Sets the order of one sibling group. `parentId` names the parent whose children
 are being ordered; omit it (or send `null`) for the top level, which for a flat
-taxonomy is every term. Reordering never changes a term's parent — use
+taxonomy is every term. Reordering never changes a term's parent. Use
 [Update Term](#update-term) for that.
 
 `ids` may be a subset of the group: the terms you list are permuted within the
@@ -1155,11 +1170,11 @@ can't bury the terms it left out. An id outside the group is rejected with
 `REORDER_MISMATCH`, and at most 100 ids may be sent at once.
 
 Because the terms you leave out hold their absolute positions, a one-step move
-in a partial list can carry a term past siblings that list didn't include. If
-`[A, B, C]` is the full group and you send `["C", "A"]` — because `B` isn't
-translated into the locale you're working in — the result is `[C, B, A]`: `A`
-and `C` swapped as asked, and a listing that does show `B` sees `A` move two
-places rather than one.
+in a partial list can carry a term past siblings that list didn't include. For
+example, `[A, B, C]` is the full group, but `B` is not translated into the
+locale you are working in. If you send `["C", "A"]`, the result is `[C, B, A]`.
+`A` and `C` swap as requested, and a listing that includes `B` shows `A` moving
+two places instead of one.
 
 There is no `locale` parameter. A term holds one position across every locale it
 is translated into, so an id may be either a term id or a translation group, and

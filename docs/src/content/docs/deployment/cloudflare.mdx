@@ -55,7 +55,7 @@ export default defineConfig({
 	output: "server",
 	adapter: cloudflare(),
 	integrations: [
-		react(), // Required — the admin UI is a React app
+		react(), // Required: the admin UI is a React app
 		emdash({
 			database: d1({ binding: "DB" }),
 			storage: r2({ binding: "MEDIA" }),
@@ -68,13 +68,13 @@ export default defineConfig({
 
 Database migrations run automatically on the first request after deployment, and on every subsequent boot if there's anything new to apply.
 
-If the database is empty (no collections) and the setup wizard hasn't been completed, EmDash also applies a seed file on first boot. The seed is read at build time from `.emdash/seed.json`, the path in `package.json#emdash.seed`, or `seed/seed.json` — whichever is found first — and inlined into the bundle. If none is present, a built-in default seed is used. Subsequent deploys against an existing database leave its content alone.
+If the database is empty (no collections) and the setup wizard hasn't been completed, EmDash also applies a seed file on first boot. The seed is read at build time from `.emdash/seed.json`, the path in `package.json#emdash.seed`, or `seed/seed.json`, whichever is found first, and inlined into the bundle. If none is present, a built-in default seed is used. Subsequent deploys against an existing database leave its content alone.
 
 To change the schema or content model of a site that is already deployed, see [Evolving a Deployed Site](/deployment/schema-evolution/).
 
-## Scheduled Publishing
+## Scheduled Tasks
 
-On Cloudflare Workers, scheduled publishing, plugin cron, and maintenance tasks run from Worker Cron Triggers. New Cloudflare templates include both required schedules automatically. When updating an existing project, configure distinct general and Media Usage lanes:
+On Cloudflare Workers, scheduled publishing, plugin tasks, and background media indexing run from Cron Triggers. New Cloudflare templates configure both triggers automatically. For an existing project, configure one trigger for general scheduled tasks and another for media indexing:
 
 ```ts title="src/worker.ts"
 import handler, {
@@ -104,23 +104,17 @@ Then add both Cron Triggers to `wrangler.jsonc` using the same expressions:
 ```
 
 <Aside type="caution">
-	Without the general trigger, scheduled publishing and plugin cron do not run. Without the dedicated Media Usage trigger, automatic historical reconciliation cannot progress. Local `astro dev` still uses the in-process scheduler.
+	Without the general trigger, scheduled publishing and plugin tasks do not run. Without
+	`mediaUsageCron`, existing content does not catch up in the background. Local `astro dev` uses
+	the built-in scheduler instead.
 </Aside>
 
-### Activate Media Usage capture
+### Enable automatic media usage indexing
 
-Before production activation, deploy the same current EmDash version to every Worker that can
-write to the database and verify that the dedicated `mediaUsageCron` trigger is firing. The
-database cannot detect an old Worker deployment, external SQL writer, missing Cron Trigger, or a
-Cron expression that never reaches this Worker.
-
-Follow the [controlled activation runbook](/reference/rest-api/#activate-automatic-media-usage-indexing).
-Block new writes at your application or traffic-control layer and let in-flight requests finish;
-do not remove the dedicated Media Usage Cron Trigger. Call the activation endpoint sequentially
-while writes remain blocked, and restore traffic only after its status is `active`.
-
-`active` confirms incremental capture, not complete historical coverage. Keep the dedicated Cron
-Trigger running after restoring traffic so bounded reconciliation can continue.
+Keep `mediaUsageCron` running while you enable automatic media usage indexing. Pause all application
+and direct database writes, follow [Enable automatic media usage
+indexing](/reference/rest-api/#enable-automatic-media-usage-indexing), then resume writes when the
+endpoint returns `active`. Existing content is indexed in the background.
 
 ## Deploy
 
@@ -153,13 +147,13 @@ You also need to enable read replication on the D1 database itself in the Cloudf
 	[`global_fetch_strictly_public`](https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public)
 	compatibility flag. With that flag in your `wrangler.jsonc`, the internal request the D1 Sessions
 	API makes to route queries to replicas is silently blocked, and every SSR request hangs until the
-	Worker is killed — with nothing in the logs (`outcome: "canceled"`, no exceptions). The hang may
+	Worker is killed, with nothing in the logs (`outcome: "canceled"`, no exceptions). The hang may
 	only begin once replicas finish provisioning, so it can pass an initial post-deploy check and
 	surface hours later. If your Worker needs that flag (for example, to fetch its own origin), keep
 	`session` disabled. See [#1273](https://github.com/emdash-cms/emdash/issues/1273).
 </Aside>
 
-See [Database Options — Read Replicas](/deployment/database/#read-replicas) for session modes and how bookmark-based consistency works.
+See [Database Options: Read Replicas](/deployment/database/#read-replicas) for session modes and how bookmark-based consistency works.
 
 ## Object Cache
 
@@ -210,7 +204,7 @@ export default defineConfig({
 });
 ```
 
-With `cacheCloudflare()`, the `@astrojs/cloudflare` adapter also injects `"cache": { "enabled": true }` into the generated Wrangler config when it is missing — listing it explicitly in your own `wrangler.jsonc` keeps the intent obvious.
+With `cacheCloudflare()`, the `@astrojs/cloudflare` adapter also injects `"cache": { "enabled": true }` into the generated Wrangler config when it is missing. Listing it explicitly in your own `wrangler.jsonc` keeps the intent obvious.
 
 3. Purge from the Worker with the platform API (no Cloudflare REST credentials):
 
@@ -225,8 +219,8 @@ EmDash admin and API responses already send `Cache-Control: private, no-store` a
 
 Two things to know before enabling it:
 
-1. **Responses without a `Cache-Control` header are still cached.** Workers Cache applies RFC 9111 heuristic freshness — a `200` without any header is cached for 2 hours. Give every custom route an explicit `Cache-Control` (use `private, no-store` for anything session-dependent).
-2. **Cached pages are shared with logged-in editors.** The cache runs before your Worker, so it cannot bypass based on request cookies. A logged-in editor may receive the cached anonymous variant of a public page — without the visual editing toolbar — until the entry expires. Editor-rendered responses themselves are never stored (they carry `private, no-store`), so nothing leaks in the other direction.
+1. **Responses without a `Cache-Control` header are still cached.** Workers Cache applies RFC 9111 heuristic freshness. A `200` without any header is cached for 2 hours. Give every custom route an explicit `Cache-Control` (use `private, no-store` for anything session-dependent).
+2. **Cached pages are shared with logged-in editors.** The cache runs before your Worker, so it cannot bypass based on request cookies. A logged-in editor may receive the cached anonymous variant of a public page without the visual editing toolbar until the entry expires. Editor-rendered responses themselves are never stored (they carry `private, no-store`), so nothing leaks in the other direction.
 
 ### Not the same as `cloudflareCache()` from `@emdash-cms/cloudflare`
 
@@ -239,7 +233,7 @@ Two things to know before enabling it:
 
 Use the preferred path for new sites. Keep `cloudflareCache()` only if you already depend on its Cache API behavior.
 
-Also do not confuse either of those with **object cache** (`objectCache: kvCache({ binding: "CACHE" })`), which caches database query results in KV — a separate layer under the Worker.
+Also do not confuse either of those with **object cache** (`objectCache: kvCache({ binding: "CACHE" })`), which caches database query results in KV as a separate layer under the Worker.
 
 ## Custom Domain
 
@@ -354,8 +348,8 @@ Content published or updated after setup is kept in sync automatically. The same
 ## Email
 
 On Workers, the only built-in `email:deliver` handler is a dev console stub, so
-email-dependent flows — magic-link login, team invites, and comment
-notifications — fail with **"Email is not configured"** in production. The
+email-dependent flows such as magic-link login, team invites, and comment
+notifications fail with **"Email is not configured"** in production. The
 `cloudflareEmail()` plugin delivers real email through
 [Cloudflare Email Sending](https://developers.cloudflare.com/email-routing/email-workers/send-email-workers/)
 using a native `send_email` Worker binding, with no external API keys.
@@ -405,8 +399,8 @@ the provider under **Settings → Email**.
 
 | Option    | Type                         | Default      | Description                                                            |
 | --------- | ---------------------------- | ------------ | --------------------------------------------------------------------- |
-| `from`    | `string \| { email, name? }` | — (required) | Sender address on a domain onboarded for Email Sending.               |
-| `replyTo` | `string`                     | —            | Optional Reply-To, useful when `from` is a no-reply subdomain address. |
+| `from`    | `string \| { email, name? }` | Required     | Sender address on a domain onboarded for Email Sending.               |
+| `replyTo` | `string`                     | None         | Optional Reply-To, useful when `from` is a no-reply subdomain address. |
 | `binding` | `string`                     | `"EMAIL"`    | Name of the `send_email` binding in `wrangler.jsonc`.                 |
 
 <Aside type="note">
@@ -450,7 +444,7 @@ store). The plain text value lives only in your environment.
 EmDash auto-generates the preview HMAC secret and commenter-IP hash
 salt and persists them in the database on first use. The env vars
 below are overrides for cases where you need to pin the value
-yourself — for example, when a preview Worker in a separate process
+yourself, for example, when a preview Worker in a separate process
 needs to share the secret with your main site.
 
 | Variable | Purpose |
@@ -461,7 +455,7 @@ needs to share the secret with your main site.
 
 Access environment variables in your configuration using `import.meta.env` or the Cloudflare `env` binding.
 
-For the complete inventory of every secret EmDash uses — including storage locations, rotation steps, and what breaks when a key is lost — see [Secrets & Key Management](/deployment/secrets/).
+For the complete inventory of every secret EmDash uses, including storage locations, rotation steps, and what breaks when a key is lost, see [Secrets & Key Management](/deployment/secrets/).
 
 ## Preview Deployments
 
@@ -510,4 +504,4 @@ Check that the R2 bucket is correctly bound:
 
 ### Migration errors
 
-If you see schema errors, tail the Worker logs (`wrangler tail`) and reproduce the error to capture the underlying message — then file an issue with that output.
+If you see schema errors, tail the Worker logs (`wrangler tail`) and reproduce the error to capture the underlying message. Then file an issue with that output.
