@@ -160,7 +160,7 @@ export function MediaUsedIn({ mediaId, open, navigationBlocked, onEntryClick }: 
 					{refreshError && <UsageError onRetry={() => void usageQuery.refetch()} />}
 
 					{entries.length > 0 ? (
-						<ul className="space-y-2">
+						<ul className="max-h-[10.6875rem] space-y-2 overflow-y-auto overscroll-contain pe-1">
 							{entries.map((entry) => (
 								<li key={`${entry.collection}:${entry.contentId}`}>
 									<UsageEntry
