@@ -5,7 +5,7 @@ description: Deploy EmDash to any Node.js hosting platform.
 
 import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 
-EmDash runs on any Node.js 22+ hosting platform. This guide uses SQLite with local or S3-compatible storage. libSQL and PostgreSQL work the same way on Node.js; see [Database Options](/deployment/database/).
+EmDash runs on any Node.js 22+ hosting platform. This guide uses SQLite with local or S3-compatible storage; libSQL and PostgreSQL work the same way on Node.js — see [Database Options](/deployment/database/).
 
 ## Prerequisites
 
@@ -130,10 +130,10 @@ EXPOSE 4321
 CMD ["node", "./dist/server/entry.mjs"]
 ```
 
-The seed file is read at build time and inlined into the bundle, so it does not need to be copied into the runtime image. Migrations run on the first request after a deploy; the seed applies only when the database has no collections and setup hasn't been completed. Existing data is never overwritten.
+The seed file is read at build time and inlined into the bundle, so it does not need to be copied into the runtime image. Migrations run on the first request after a deploy; the seed applies only when the database has no collections and setup hasn't been completed — existing data is never overwritten.
 
 <Aside>
-	This Dockerfile builds **your own EmDash site**, which is a project that has `emdash` as a dependency. It is
+	This Dockerfile builds **your own EmDash site** — a project that has `emdash` as a dependency. It is
 	not interchangeable with the `Dockerfile` in the root of the EmDash repository, which builds the whole
 	pnpm monorepo and packages the blog template from source.
 </Aside>
@@ -202,14 +202,14 @@ npx emdash secrets generate  # add the result to your environment
 
 The key is provided by you and never stored in the database; only
 encrypted ciphertext is. Back it up somewhere durable (a password
-manager, KMS, or your team's secret store). Losing it means losing
+manager, KMS, or your team's secret store) — losing it means losing
 every secret encrypted with it.
 
 ### Optional: stable-value overrides
 
 EmDash auto-generates the preview HMAC secret and commenter-IP hash
 salt and persists them in the database on first use. The env vars
-below pin them to a value you control, which is useful when a separate
+below pin them to a value you control — useful when a separate
 process needs to share a secret with your main site.
 
 | Variable | Description |

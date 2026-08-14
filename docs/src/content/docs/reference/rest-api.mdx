@@ -259,7 +259,7 @@ described below. Counts with any other status are indexed projections and may ov
 under-report. Even complete results are advisory during concurrent writes; usage reads are not a
 transactional lock and must not be used as a deletion guarantee.
 
-### Get media usage details
+### Get Media Usage Details
 
 ```http
 GET /_emdash/api/media/:id/usage?limit=50&cursor=...
@@ -429,7 +429,7 @@ again. Do not edit EmDash's internal database tables.
 When the state is `active`, EmDash tracks changes to media references in content. Existing content
 may still be indexing in the background.
 
-### List media usage work
+### List Media Usage Work
 
 ```http
 GET /_emdash/api/admin/media-usage/work?collection=posts&state=failed&limit=50&cursor=...
@@ -468,7 +468,7 @@ page's `nextCursor`. The endpoint does not calculate an exact backlog count.
 Responses omit work versions, lease tokens, raw database errors, indexed content, media
 references, and exact counts.
 
-### Retry media usage work
+### Retry Media Usage Work
 
 ```http
 POST /_emdash/api/admin/media-usage/work/retry
@@ -493,7 +493,7 @@ replaces newer work or exposes its lease token.
 
 The list returns only known durable work. Retry can create work for the supplied identity in an
 active collection even when no work row exists, but it does not scan for historical gaps. Use
-collection-scoped media usage repair after imports or direct database writes.
+collection-scoped Media Usage repair after imports or direct database writes.
 When scheduled maintenance is disabled, failed jobs remain visible and manually retryable, but no
 automatic freshness deadline is promised.
 
@@ -521,7 +521,7 @@ returns `409 WORK_LEASE_ACTIVE`; a concurrent state change returns `409 WORK_CHA
 require `schema:manage`, and bearer tokens also require the `admin` scope. They recover internal
 index cleanup only and never delete media assets.
 
-### Repair media usage
+### Repair Media Usage
 
 ```http
 POST /_emdash/api/admin/media-usage/repair
@@ -1160,7 +1160,7 @@ Content-Type: application/json
 
 Sets the order of one sibling group. `parentId` names the parent whose children
 are being ordered; omit it (or send `null`) for the top level, which for a flat
-taxonomy is every term. Reordering never changes a term's parent. Use
+taxonomy is every term. Reordering never changes a term's parent — use
 [Update Term](#update-term) for that.
 
 `ids` may be a subset of the group: the terms you list are permuted within the
@@ -1170,11 +1170,11 @@ can't bury the terms it left out. An id outside the group is rejected with
 `REORDER_MISMATCH`, and at most 100 ids may be sent at once.
 
 Because the terms you leave out hold their absolute positions, a one-step move
-in a partial list can carry a term past siblings that list didn't include. For
-example, `[A, B, C]` is the full group, but `B` is not translated into the
-locale you are working in. If you send `["C", "A"]`, the result is `[C, B, A]`.
-`A` and `C` swap as requested, and a listing that includes `B` shows `A` moving
-two places instead of one.
+in a partial list can carry a term past siblings that list didn't include. If
+`[A, B, C]` is the full group and you send `["C", "A"]` — because `B` isn't
+translated into the locale you're working in — the result is `[C, B, A]`: `A`
+and `C` swapped as asked, and a listing that does show `B` sees `A` move two
+places rather than one.
 
 There is no `locale` parameter. A term holds one position across every locale it
 is translated into, so an id may be either a term id or a translation group, and
