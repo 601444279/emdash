@@ -2,6 +2,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { MediaUsageAccessDeniedError, fetchMediaUsageDetails } from "../../src/lib/api/media.js";
 
+function requestUrl(input: RequestInfo | URL): string {
+	if (typeof input === "string") return input;
+	return input instanceof URL ? input.href : input.url;
+}
+
 describe("media usage API", () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
@@ -37,7 +42,7 @@ describe("media usage API", () => {
 		});
 
 		const [input, init] = fetch.mock.calls[0]!;
-		const url = new URL(String(input), window.location.origin);
+		const url = new URL(requestUrl(input), window.location.origin);
 		expect(url.pathname).toBe("/_emdash/api/media/media%2Fone/usage");
 		expect(Object.fromEntries(url.searchParams)).toEqual({
 			cursor: "after / group",
@@ -61,7 +66,7 @@ describe("media usage API", () => {
 
 		await fetchMediaUsageDetails("media-1", { cursor: undefined, limit: undefined });
 
-		expect(String(fetch.mock.calls[0]![0])).toBe("/_emdash/api/media/media-1/usage");
+		expect(requestUrl(fetch.mock.calls[0]![0])).toBe("/_emdash/api/media/media-1/usage");
 	});
 
 	it.each([401, 403])("maps %s to a private access-denied error", async (status) => {
