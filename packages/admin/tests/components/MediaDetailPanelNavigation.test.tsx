@@ -142,10 +142,20 @@ describe("MediaDetailPanel usage navigation", () => {
 		await screen.getByLabelText("Alt Text").fill("Changed");
 		const link = screen.getByRole("link", { name: /Launch notes/ });
 
-		const modifiedAllowed = link
-			.element()
-			.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, metaKey: true }));
-		expect(modifiedAllowed).toBe(true);
+		let preventedBeforeNavigationGuard: boolean | undefined;
+		const preventIframeNavigation = (event: MouseEvent) => {
+			preventedBeforeNavigationGuard = event.defaultPrevented;
+			event.preventDefault();
+		};
+		window.addEventListener("click", preventIframeNavigation, { once: true });
+		try {
+			link
+				.element()
+				.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, metaKey: true }));
+		} finally {
+			window.removeEventListener("click", preventIframeNavigation);
+		}
+		expect(preventedBeforeNavigationGuard).toBe(false);
 		await expect
 			.element(screen.getByText("Discard changes?"), { timeout: 100 })
 			.not.toBeInTheDocument();
