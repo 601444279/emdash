@@ -20,6 +20,9 @@ import {
 	CONTENT_TYPE_RE,
 	contentBylineInputSchema,
 	contentSeoInput,
+	createCollectionBody,
+	updateCollectionBody,
+	updateFieldBody,
 } from "#api/schemas.js";
 
 import type { MediaUsageRepairRequest } from "../api/schemas/media-usage.js";
@@ -110,6 +113,81 @@ const mediaUsageRepairToolSchema = z
 			});
 		}
 	});
+
+const schemaUpdateCollectionToolSchema = z.object({
+	slug: z
+		.string()
+		.min(1)
+		.max(63)
+		.regex(COLLECTION_SLUG_PATTERN, "Invalid collection slug")
+		.describe("Collection slug to update; the slug itself cannot be changed"),
+	label: updateCollectionBody.shape.label.describe("New plural display name"),
+	labelSingular: updateCollectionBody.shape.labelSingular.describe("New singular display name"),
+	description: updateCollectionBody.shape.description.describe("New collection description"),
+	icon: updateCollectionBody.shape.icon.describe("New admin UI icon name"),
+	supports: updateCollectionBody.shape.supports.describe(
+		"Complete feature list to enable; omit to preserve the current list",
+	),
+	urlPattern: updateCollectionBody.shape.urlPattern.describe(
+		"New public URL pattern; pass null to clear it",
+	),
+	hasSeo: updateCollectionBody.shape.hasSeo.describe(
+		"Whether the collection supports SEO metadata",
+	),
+	commentsEnabled: updateCollectionBody.shape.commentsEnabled.describe(
+		"Whether comments are enabled for this collection",
+	),
+	commentsModeration: updateCollectionBody.shape.commentsModeration.describe(
+		"Comment moderation policy",
+	),
+	commentsClosedAfterDays: updateCollectionBody.shape.commentsClosedAfterDays.describe(
+		"Close comments after this many days; 0 keeps them open",
+	),
+	commentsAutoApproveUsers: updateCollectionBody.shape.commentsAutoApproveUsers.describe(
+		"Whether comments from authenticated users are automatically approved",
+	),
+});
+
+const schemaUpdateFieldToolSchema = z.object({
+	collection: z
+		.string()
+		.min(1)
+		.max(63)
+		.regex(COLLECTION_SLUG_PATTERN, "Invalid collection slug")
+		.describe("Collection slug containing the field"),
+	fieldSlug: z
+		.string()
+		.min(1)
+		.max(63)
+		.regex(COLLECTION_SLUG_PATTERN, "Invalid field slug")
+		.describe("Field slug to update; the slug itself cannot be changed"),
+	label: updateFieldBody.shape.label.describe("New display name"),
+	type: updateFieldBody.shape.type.describe(
+		"New field type; only string, text, and slug aliases can be changed in place",
+	),
+	required: updateFieldBody.shape.required.describe(
+		"Whether the field is required; changing this requires a manual content migration",
+	),
+	unique: updateFieldBody.shape.unique.describe(
+		"Whether field values must be unique; changing this requires a manual content migration",
+	),
+	defaultValue: updateFieldBody.shape.defaultValue.describe("Default value for new content"),
+	validation: updateFieldBody.shape.validation.describe(
+		"Validation constraints; pass null to clear existing constraints",
+	),
+	widget: updateFieldBody.shape.widget.describe("Admin editor widget name"),
+	options: updateFieldBody.shape.options.describe("Widget configuration"),
+	sortOrder: updateFieldBody.shape.sortOrder.describe("Field order in the content editor"),
+	searchable: updateFieldBody.shape.searchable.describe(
+		"Whether full-text search indexes the field",
+	),
+	translatable: updateFieldBody.shape.translatable.describe(
+		"Whether values vary by locale; changing to false requires a manual content migration",
+	),
+	indexed: updateFieldBody.shape.indexed.describe(
+		"Create or remove a physical index for structured sorting",
+	),
+});
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -1720,7 +1798,8 @@ export function createMcpServer(
 				"table and schema definition. The slug must be lowercase alphanumeric " +
 				"with underscores, starting with a letter. Supports: 'drafts' (draft/" +
 				"publish workflow), 'revisions' (version history), 'preview' (live " +
-				"preview), 'scheduling' (timed publish), 'search' (full-text indexing).",
+				"preview), 'scheduling' (timed publish), 'search' (full-text indexing), " +
+				"and 'seo' (SEO metadata).",
 			inputSchema: z.object({
 				slug: z
 					.string()
@@ -1730,10 +1809,9 @@ export function createMcpServer(
 				labelSingular: z.string().optional().describe("Singular display name (e.g. 'Blog Post')"),
 				description: z.string().optional().describe("Description of this collection"),
 				icon: z.string().optional().describe("Icon name for the admin UI"),
-				supports: z
-					.array(z.enum(["drafts", "revisions", "preview", "scheduling", "search"]))
-					.optional()
-					.describe("Features to enable (default: ['drafts', 'revisions'])"),
+				supports: createCollectionBody.shape.supports.describe(
+					"Features to enable (default: ['drafts', 'revisions'])",
+				),
 			}),
 		},
 		async (args, extra) => {
@@ -1789,6 +1867,33 @@ export function createMcpServer(
 				return jsonResult({ deleted: args.slug });
 			} catch (error) {
 				return respondHandlerError(error, "SCHEMA_DELETE_ERROR");
+			}
+		},
+	);
+
+	server.registerTool(
+		"schema_update_collection",
+		{
+			title: "Update Collection",
+			description:
+				"Update an existing collection without deleting its table, fields, or content. " +
+				"Only provided settings change; omitted settings keep their current values. " +
+				"The collection slug cannot be changed.",
+			inputSchema: schemaUpdateCollectionToolSchema,
+			annotations: { destructiveHint: false },
+		},
+		async (args, extra) => {
+			requireScope(extra, "schema:write");
+			requireRole(extra, Role.ADMIN);
+			const ec = getEmDash(extra);
+			const { slug, ...input } = args;
+			try {
+				const { handleSchemaCollectionUpdate } = await import("../api/handlers/schema.js");
+				const result = await handleSchemaCollectionUpdate(ec.db, slug, input);
+				if (result.success) ec.invalidateUrlPatternCache();
+				return unwrap(result);
+			} catch (error) {
+				return respondHandlerError(error, "SCHEMA_UPDATE_ERROR");
 			}
 		},
 	);
@@ -1922,6 +2027,31 @@ export function createMcpServer(
 				return jsonResult({ deleted: args.fieldSlug, collection: args.collection });
 			} catch (error) {
 				return respondHandlerError(error, "FIELD_DELETE_ERROR");
+			}
+		},
+	);
+
+	server.registerTool(
+		"schema_update_field",
+		{
+			title: "Update Field",
+			description:
+				"Update an existing field without deleting its column or stored values. Only " +
+				"provided settings change; omitted settings keep their current values. Changes " +
+				"that require a content or column migration are rejected with migration guidance.",
+			inputSchema: schemaUpdateFieldToolSchema,
+			annotations: { destructiveHint: false },
+		},
+		async (args, extra) => {
+			requireScope(extra, "schema:write");
+			requireRole(extra, Role.ADMIN);
+			const ec = getEmDash(extra);
+			const { collection, fieldSlug, ...input } = args;
+			try {
+				const { handleSchemaFieldUpdate } = await import("../api/handlers/schema.js");
+				return unwrap(await handleSchemaFieldUpdate(ec.db, collection, fieldSlug, input));
+			} catch (error) {
+				return respondHandlerError(error, "SCHEMA_FIELD_UPDATE_ERROR");
 			}
 		},
 	);
