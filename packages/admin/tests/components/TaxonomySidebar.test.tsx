@@ -85,6 +85,11 @@ function dataResponse(data: unknown) {
 	);
 }
 
+function parseJsonBody<T>(init?: RequestInit): T {
+	if (typeof init?.body !== "string") throw new TypeError("Expected a JSON request body");
+	return JSON.parse(init.body) as T;
+}
+
 function mockApiFetch({
 	taxonomies = [tagsTaxonomy],
 	terms = [alphaTerm, betaTerm],
@@ -153,7 +158,7 @@ function mockApiFetch({
 					),
 				);
 			}
-			const body = JSON.parse(String(init?.body)) as { label: string; slug: string };
+			const body = parseJsonBody<{ label: string; slug: string }>(init);
 			const respond = () => {
 				const term = makeTerm(`term_${body.slug}`, body.label);
 				currentTerms.push(term);
@@ -166,7 +171,7 @@ function mockApiFetch({
 		}
 
 		if (method === "POST" && path === "/_emdash/api/content/products/entry_1/terms/tags") {
-			const body = JSON.parse(String(init?.body)) as { termIds: string[] };
+			const body = parseJsonBody<{ termIds: string[] }>(init);
 			saveRequests.push(body.termIds);
 			const respond = () => {
 				currentEntryTerms = currentTerms.filter((term) => body.termIds.includes(term.id));
