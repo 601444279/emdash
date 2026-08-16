@@ -96,7 +96,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr ""
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1531
+#: packages/admin/src/router.tsx:1535
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr ""
 
@@ -268,17 +268,17 @@ msgid "{0} items will be imported"
 msgstr "{0} elementów zostanie zaimportowanych"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:557
+#: packages/admin/src/router.tsx:559
 msgid "{0} of {total} could not be deleted"
 msgstr ""
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:513
+#: packages/admin/src/router.tsx:515
 msgid "{0} of {total} could not be published"
 msgstr ""
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:536
+#: packages/admin/src/router.tsx:538
 msgid "{0} of {total} could not be updated"
 msgstr ""
 
@@ -349,7 +349,7 @@ msgstr "{current} z {total}"
 
 #. placeholder {0}: hasMore ? "+" : ""
 #. placeholder {1}: hasMore ? "+" : ""
-#: packages/admin/src/components/ContentList.tsx:1021
+#: packages/admin/src/components/ContentList.tsx:1088
 msgid "{filteredCount, plural, one {#{0} item} other {#{1} items}}"
 msgstr ""
 
@@ -361,7 +361,7 @@ msgstr "{label} — brak tłumaczenia"
 msgid "{label} — view translation"
 msgstr "{label} — pokaż tłumaczenie"
 
-#: packages/admin/src/components/ContentList.tsx:1010
+#: packages/admin/src/components/ContentList.tsx:1077
 msgid "{matchCount, plural, one {# item matching \"{searchQuery}\"} other {# items matching \"{searchQuery}\"}}"
 msgstr ""
 
@@ -403,15 +403,15 @@ msgstr ""
 msgid "{resultCount, plural, one {# item} other {# items}}"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:450
+#: packages/admin/src/components/ContentList.tsx:474
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:492
+#: packages/admin/src/components/ContentList.tsx:516
 msgid "{selectedCount, plural, one {Move # item to trash? You can restore it later.} other {Move # items to trash? You can restore them later.}}"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1016
+#: packages/admin/src/components/ContentList.tsx:1083
 msgid "{total, plural, one {# item} other {# items}}"
 msgstr ""
 
@@ -593,7 +593,7 @@ msgstr ""
 msgid "Access denied"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1551
+#: packages/admin/src/router.tsx:1555
 msgid "Access Denied"
 msgstr ""
 
@@ -623,8 +623,8 @@ msgid "ACF Fields"
 msgstr ""
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:300
-#: packages/admin/src/components/ContentList.tsx:585
-#: packages/admin/src/components/ContentList.tsx:709
+#: packages/admin/src/components/ContentList.tsx:617
+#: packages/admin/src/components/ContentList.tsx:743
 #: packages/admin/src/components/ContentTypeList.tsx:190
 #: packages/admin/src/components/TaxonomyManager.tsx:1050
 #: packages/admin/src/routes/byline-schema.tsx:249
@@ -741,7 +741,7 @@ msgstr "Dodaj linki, aby zbudować menu nawigacji"
 msgid "Add MIME type or extension"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:384
+#: packages/admin/src/components/ContentList.tsx:408
 msgid "Add New"
 msgstr "Dodaj nowy"
 
@@ -851,12 +851,12 @@ msgstr ""
 msgid "Alignment"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:411
+#: packages/admin/src/components/ContentList.tsx:435
 msgid "All"
 msgstr "Wszystkie"
 
-#: packages/admin/src/components/ContentList.tsx:857
-#: packages/admin/src/components/ContentList.tsx:861
+#: packages/admin/src/components/ContentList.tsx:891
+#: packages/admin/src/components/ContentList.tsx:895
 msgid "All authors"
 msgstr ""
 
@@ -894,7 +894,7 @@ msgstr "Wszystkie role"
 msgid "All Sources"
 msgstr "Wszystkie źródła"
 
-#: packages/admin/src/components/ContentList.tsx:797
+#: packages/admin/src/components/ContentList.tsx:831
 #: packages/admin/src/components/Redirects.tsx:426
 msgid "All statuses"
 msgstr "Wszystkie statusy"
@@ -988,24 +988,24 @@ msgstr "Alternatywnie możesz wyeksportować dane z WordPressa (Narzędzia → E
 #: packages/admin/src/components/settings/SocialSettings.tsx:112
 #: packages/admin/src/components/TaxonomySidebar.tsx:370
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
-#: packages/admin/src/router.tsx:445
-#: packages/admin/src/router.tsx:460
-#: packages/admin/src/router.tsx:474
-#: packages/admin/src/router.tsx:488
-#: packages/admin/src/router.tsx:710
-#: packages/admin/src/router.tsx:992
-#: packages/admin/src/router.tsx:1052
-#: packages/admin/src/router.tsx:1070
-#: packages/admin/src/router.tsx:1088
-#: packages/admin/src/router.tsx:1109
-#: packages/admin/src/router.tsx:1130
-#: packages/admin/src/router.tsx:1151
-#: packages/admin/src/router.tsx:1182
-#: packages/admin/src/router.tsx:1202
-#: packages/admin/src/router.tsx:1496
-#: packages/admin/src/router.tsx:1512
-#: packages/admin/src/router.tsx:1537
-#: packages/admin/src/router.tsx:2037
+#: packages/admin/src/router.tsx:447
+#: packages/admin/src/router.tsx:462
+#: packages/admin/src/router.tsx:476
+#: packages/admin/src/router.tsx:490
+#: packages/admin/src/router.tsx:714
+#: packages/admin/src/router.tsx:996
+#: packages/admin/src/router.tsx:1056
+#: packages/admin/src/router.tsx:1074
+#: packages/admin/src/router.tsx:1092
+#: packages/admin/src/router.tsx:1113
+#: packages/admin/src/router.tsx:1134
+#: packages/admin/src/router.tsx:1155
+#: packages/admin/src/router.tsx:1186
+#: packages/admin/src/router.tsx:1206
+#: packages/admin/src/router.tsx:1500
+#: packages/admin/src/router.tsx:1516
+#: packages/admin/src/router.tsx:1541
+#: packages/admin/src/router.tsx:2041
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -1080,7 +1080,7 @@ msgstr "Zatwierdzony"
 msgid "Arbitrary JSON data"
 msgstr "Dowolne dane JSON"
 
-#: packages/admin/src/components/ContentList.tsx:801
+#: packages/admin/src/components/ContentList.tsx:835
 #: packages/admin/src/components/ContentStatusBadge.tsx:65
 msgid "Archived"
 msgstr ""
@@ -1211,7 +1211,7 @@ msgstr ""
 msgid "Automatic backups need a storage backend (R2, S3, or local storage). Configure storage in your EmDash config to enable them."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1051
+#: packages/admin/src/router.tsx:1055
 msgid "Autosave failed"
 msgstr ""
 
@@ -1416,9 +1416,9 @@ msgstr "Może przeglądać treści"
 #: packages/admin/src/components/BylineFieldEditor.tsx:315
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:192
 #: packages/admin/src/components/ConfirmDialog.tsx:57
-#: packages/admin/src/components/ContentList.tsx:501
-#: packages/admin/src/components/ContentList.tsx:1154
-#: packages/admin/src/components/ContentList.tsx:1322
+#: packages/admin/src/components/ContentList.tsx:525
+#: packages/admin/src/components/ContentList.tsx:1251
+#: packages/admin/src/components/ContentList.tsx:1419
 #: packages/admin/src/components/ContentPickerModal.tsx:240
 #: packages/admin/src/components/ContentSettingsPanel.tsx:98
 #: packages/admin/src/components/ContentSettingsPanel.tsx:555
@@ -1545,7 +1545,7 @@ msgstr "Zmień logo"
 msgid "Changelog"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1102
+#: packages/admin/src/router.tsx:1106
 msgid "Changes discarded"
 msgstr ""
 
@@ -1588,11 +1588,11 @@ msgstr "Wybierz sposób logowania"
 msgid "Choose your preferred admin language"
 msgstr "Wybierz preferowany język panelu"
 
-#: packages/admin/src/components/ContentList.tsx:527
+#: packages/admin/src/components/ContentList.tsx:551
 msgid "Clear"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:913
+#: packages/admin/src/components/ContentList.tsx:947
 #: packages/admin/src/components/MediaLibrary.tsx:497
 #: packages/admin/src/components/users/UserList.tsx:129
 msgid "Clear filters"
@@ -1830,7 +1830,7 @@ msgstr "Błędy treści ({0})"
 msgid "Content found:"
 msgstr "Znaleziona treść:"
 
-#: packages/admin/src/router.tsx:1124
+#: packages/admin/src/router.tsx:1128
 msgid "Content has been scheduled for publishing"
 msgstr ""
 
@@ -1842,7 +1842,7 @@ msgstr "Treść została zaktualizowana do wybranej rewizji."
 msgid "Content ID:"
 msgstr "ID treści:"
 
-#: packages/admin/src/router.tsx:1065
+#: packages/admin/src/router.tsx:1069
 msgid "Content is now live"
 msgstr ""
 
@@ -1854,11 +1854,11 @@ msgstr "elementy treści"
 msgid "Content Read"
 msgstr "Odczyt treści"
 
-#: packages/admin/src/router.tsx:1083
+#: packages/admin/src/router.tsx:1087
 msgid "Content removed from public view"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1145
+#: packages/admin/src/router.tsx:1149
 msgid "Content reverted to draft"
 msgstr ""
 
@@ -2105,7 +2105,7 @@ msgstr "Utwórz konto"
 msgid "Create your first navigation menu to get started"
 msgstr "Utwórz pierwsze menu nawigacji, aby rozpocząć"
 
-#: packages/admin/src/components/ContentList.tsx:613
+#: packages/admin/src/components/ContentList.tsx:645
 #: packages/admin/src/components/ContentTypeList.tsx:206
 msgid "Create your first one"
 msgstr "Utwórz pierwszy"
@@ -2136,7 +2136,7 @@ msgstr "Tworzenie, edycja i usuwanie terminów taksonomii"
 msgid "Create, update, delete content"
 msgstr "Tworzenie, aktualizacja, usuwanie treści"
 
-#: packages/admin/src/components/ContentList.tsx:807
+#: packages/admin/src/components/ContentList.tsx:841
 #: packages/admin/src/components/ContentSettingsPanel.tsx:606
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
@@ -2154,7 +2154,7 @@ msgid "Created {0}"
 msgstr "Utworzono {0}"
 
 #. placeholder {0}: result.locale?.toUpperCase() ?? t`new`
-#: packages/admin/src/router.tsx:1176
+#: packages/admin/src/router.tsx:1180
 msgid "Created {0} translation"
 msgstr ""
 
@@ -2233,7 +2233,7 @@ msgid "Dashboard"
 msgstr "Pulpit"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:297
-#: packages/admin/src/components/ContentList.tsx:582
+#: packages/admin/src/components/ContentList.tsx:606
 msgid "Date"
 msgstr "Data"
 
@@ -2246,7 +2246,7 @@ msgstr "Data i czas"
 msgid "Date and time picker"
 msgstr "Wybór daty i czasu"
 
-#: packages/admin/src/components/ContentList.tsx:878
+#: packages/admin/src/components/ContentList.tsx:912
 msgid "Date field to filter on"
 msgstr ""
 
@@ -2416,11 +2416,11 @@ msgid "Delete permanently"
 msgstr "Usuń trwale"
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:182
-#: packages/admin/src/components/ContentList.tsx:1333
+#: packages/admin/src/components/ContentList.tsx:1430
 msgid "Delete Permanently"
 msgstr "Usuń trwale"
 
-#: packages/admin/src/components/ContentList.tsx:1313
+#: packages/admin/src/components/ContentList.tsx:1410
 msgid "Delete Permanently?"
 msgstr "Usunąć trwale?"
 
@@ -2453,7 +2453,7 @@ msgstr "Usuń tabelę"
 msgid "Delete Widget Area?"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:706
+#: packages/admin/src/components/ContentList.tsx:740
 msgid "Deleted"
 msgstr "Usunięto"
 
@@ -2756,7 +2756,7 @@ msgstr ""
 msgid "Downloading"
 msgstr "Pobieranie"
 
-#: packages/admin/src/components/ContentList.tsx:799
+#: packages/admin/src/components/ContentList.tsx:833
 #: packages/admin/src/components/ContentStatusBadge.tsx:61
 msgid "Draft"
 msgstr "Szkic"
@@ -2822,7 +2822,7 @@ msgstr "Upuść plik eksportu WordPress tutaj"
 msgid "Duplicate"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1127
+#: packages/admin/src/components/ContentList.tsx:1224
 msgid "Duplicate {title}"
 msgstr "Duplikuj {title}"
 
@@ -2874,7 +2874,7 @@ msgstr ""
 msgid "Edit {itemLabel}"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1119
+#: packages/admin/src/components/ContentList.tsx:1216
 msgid "Edit {title}"
 msgstr "Edytuj {title}"
 
@@ -3102,7 +3102,7 @@ msgstr "Wprowadź URL swojej strony WordPress"
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/TaxonomyManager.tsx:941
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2251
+#: packages/admin/src/router.tsx:2255
 msgid "Error"
 msgstr "Błąd"
 
@@ -3237,14 +3237,14 @@ msgstr "Nie udało się utworzyć niektórych kolekcji"
 msgid "Failed to create term"
 msgstr "Nie udało się utworzyć terminu"
 
-#: packages/admin/src/router.tsx:1181
+#: packages/admin/src/router.tsx:1185
 msgid "Failed to create translation"
 msgstr ""
 
-#: packages/admin/src/router.tsx:444
-#: packages/admin/src/router.tsx:473
-#: packages/admin/src/router.tsx:556
-#: packages/admin/src/router.tsx:1201
+#: packages/admin/src/router.tsx:446
+#: packages/admin/src/router.tsx:475
+#: packages/admin/src/router.tsx:558
+#: packages/admin/src/router.tsx:1205
 msgid "Failed to delete"
 msgstr ""
 
@@ -3269,7 +3269,7 @@ msgid "Failed to delete collection"
 msgstr ""
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1511
+#: packages/admin/src/router.tsx:1515
 msgid "Failed to delete comment"
 msgstr ""
 
@@ -3335,7 +3335,7 @@ msgstr ""
 msgid "Failed to disable user"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1108
+#: packages/admin/src/router.tsx:1112
 msgid "Failed to discard changes"
 msgstr ""
 
@@ -3343,7 +3343,7 @@ msgstr ""
 msgid "Failed to dismiss welcome"
 msgstr ""
 
-#: packages/admin/src/router.tsx:487
+#: packages/admin/src/router.tsx:489
 msgid "Failed to duplicate"
 msgstr ""
 
@@ -3450,8 +3450,8 @@ msgstr ""
 #: packages/admin/src/lib/api/current-user.ts:22
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
-#: packages/admin/src/router.tsx:901
-#: packages/admin/src/router.tsx:1442
+#: packages/admin/src/router.tsx:905
+#: packages/admin/src/router.tsx:1446
 msgid "Failed to fetch user"
 msgstr ""
 
@@ -3493,7 +3493,7 @@ msgstr ""
 msgid "Failed to list byline fields"
 msgstr ""
 
-#: packages/admin/src/router.tsx:285
+#: packages/admin/src/router.tsx:286
 msgid "Failed to load admin"
 msgstr ""
 
@@ -3562,7 +3562,7 @@ msgstr ""
 msgid "Failed to load widget"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1536
+#: packages/admin/src/router.tsx:1540
 msgid "Failed to perform bulk action"
 msgstr ""
 
@@ -3574,8 +3574,8 @@ msgstr ""
 msgid "Failed to prepare import"
 msgstr ""
 
-#: packages/admin/src/router.tsx:512
-#: packages/admin/src/router.tsx:1069
+#: packages/admin/src/router.tsx:514
+#: packages/admin/src/router.tsx:1073
 msgid "Failed to publish"
 msgstr ""
 
@@ -3613,7 +3613,7 @@ msgstr ""
 msgid "Failed to reorder widgets"
 msgstr ""
 
-#: packages/admin/src/router.tsx:459
+#: packages/admin/src/router.tsx:461
 msgid "Failed to restore"
 msgstr ""
 
@@ -3634,9 +3634,9 @@ msgstr ""
 msgid "Failed to rewrite URLs"
 msgstr ""
 
-#: packages/admin/src/router.tsx:709
-#: packages/admin/src/router.tsx:991
-#: packages/admin/src/router.tsx:2036
+#: packages/admin/src/router.tsx:713
+#: packages/admin/src/router.tsx:995
+#: packages/admin/src/router.tsx:2040
 msgid "Failed to save"
 msgstr "Nie udało się zapisać"
 
@@ -3655,7 +3655,7 @@ msgstr ""
 msgid "Failed to save settings"
 msgstr "Nie udało się zapisać ustawień"
 
-#: packages/admin/src/router.tsx:1129
+#: packages/admin/src/router.tsx:1133
 msgid "Failed to schedule"
 msgstr ""
 
@@ -3686,15 +3686,15 @@ msgstr ""
 msgid "Failed to uninstall plugin"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1087
+#: packages/admin/src/router.tsx:1091
 msgid "Failed to unpublish"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1150
+#: packages/admin/src/router.tsx:1154
 msgid "Failed to unschedule"
 msgstr ""
 
-#: packages/admin/src/router.tsx:535
+#: packages/admin/src/router.tsx:537
 msgid "Failed to update"
 msgstr ""
 
@@ -3744,7 +3744,7 @@ msgstr ""
 msgid "Failed to update settings"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1495
+#: packages/admin/src/router.tsx:1499
 msgid "Failed to update status"
 msgstr ""
 
@@ -3857,7 +3857,7 @@ msgstr "Nazwa pliku nie może być zmieniona po przesłaniu"
 msgid "files imported"
 msgstr "zaimportowane pliki"
 
-#: packages/admin/src/components/ContentList.tsx:853
+#: packages/admin/src/components/ContentList.tsx:887
 msgid "Filter by author"
 msgstr ""
 
@@ -3881,7 +3881,7 @@ msgstr ""
 msgid "Filter by source"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:835
+#: packages/admin/src/components/ContentList.tsx:869
 #: packages/admin/src/components/Redirects.tsx:427
 msgid "Filter by status"
 msgstr ""
@@ -3911,7 +3911,7 @@ msgstr "Aby zaimportować wszystko, łącznie ze szkicami, wyeksportuj dane z Wo
 msgid "For the best import experience, install the"
 msgstr "Aby uzyskać najlepsze wyniki importu, zainstaluj"
 
-#: packages/admin/src/components/ContentList.tsx:894
+#: packages/admin/src/components/ContentList.tsx:928
 msgid "From date"
 msgstr ""
 
@@ -3967,7 +3967,7 @@ msgid "Go"
 msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2418
-#: packages/admin/src/router.tsx:2271
+#: packages/admin/src/router.tsx:2275
 msgid "Go to Dashboard"
 msgstr "Przejdź do pulpitu"
 
@@ -4673,15 +4673,15 @@ msgstr "Podgląd na żywo"
 msgid "Load more"
 msgstr "Załaduj więcej"
 
-#: packages/admin/src/components/ContentList.tsx:690
-#: packages/admin/src/components/ContentList.tsx:748
+#: packages/admin/src/components/ContentList.tsx:724
+#: packages/admin/src/components/ContentList.tsx:782
 #: packages/admin/src/components/MediaLibrary.tsx:635
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/users/UserList.tsx:169
 msgid "Load More"
 msgstr "Załaduj więcej"
 
-#: packages/admin/src/router.tsx:2226
+#: packages/admin/src/router.tsx:2230
 msgid "Loading"
 msgstr ""
 
@@ -4697,8 +4697,8 @@ msgstr "Ładowanie kolekcji..."
 msgid "Loading comments..."
 msgstr "Ładowanie komentarzy..."
 
-#: packages/admin/src/router.tsx:2228
-#: packages/admin/src/router.tsx:2240
+#: packages/admin/src/router.tsx:2232
+#: packages/admin/src/router.tsx:2244
 msgid "Loading configuration..."
 msgstr ""
 
@@ -4750,10 +4750,10 @@ msgstr "Ładowanie terminów..."
 msgid "Loading widgets..."
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:595
-#: packages/admin/src/components/ContentList.tsx:690
-#: packages/admin/src/components/ContentList.tsx:719
-#: packages/admin/src/components/ContentList.tsx:748
+#: packages/admin/src/components/ContentList.tsx:627
+#: packages/admin/src/components/ContentList.tsx:724
+#: packages/admin/src/components/ContentList.tsx:753
+#: packages/admin/src/components/ContentList.tsx:782
 #: packages/admin/src/components/ContentPickerModal.tsx:225
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/MediaLibrary.tsx:635
@@ -4779,7 +4779,7 @@ msgstr "Ładowanie..."
 msgid "Loading…"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:575
+#: packages/admin/src/components/ContentList.tsx:599
 #: packages/admin/src/components/LocaleSwitcher.tsx:60
 msgid "Locale"
 msgstr "Lokalizacja"
@@ -5125,7 +5125,7 @@ msgstr ""
 msgid "Move \"{0}\" up"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1148
+#: packages/admin/src/components/ContentList.tsx:1245
 msgid "Move \"{title}\" to trash? You can restore it later."
 msgstr "msgstr “Przenieść „{title}” do kosza? Można przywrócić później.”"
 
@@ -5149,7 +5149,7 @@ msgstr ""
 msgid "Move {0} up — unavailable, its parent has no translation in this locale"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1139
+#: packages/admin/src/components/ContentList.tsx:1236
 msgid "Move {title} to trash"
 msgstr "Przenieś {title} do kosza"
 
@@ -5157,19 +5157,19 @@ msgstr "Przenieś {title} do kosza"
 msgid "Move down"
 msgstr "Przesuń w dół"
 
-#: packages/admin/src/components/ContentList.tsx:485
+#: packages/admin/src/components/ContentList.tsx:509
 msgid "Move to trash"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:512
-#: packages/admin/src/components/ContentList.tsx:1161
+#: packages/admin/src/components/ContentList.tsx:536
+#: packages/admin/src/components/ContentList.tsx:1258
 #: packages/admin/src/components/ContentSettingsPanel.tsx:772
 #: packages/admin/src/components/ContentSettingsPanel.tsx:792
 msgid "Move to Trash"
 msgstr "Przenieś do kosza"
 
-#: packages/admin/src/components/ContentList.tsx:490
-#: packages/admin/src/components/ContentList.tsx:1146
+#: packages/admin/src/components/ContentList.tsx:514
+#: packages/admin/src/components/ContentList.tsx:1243
 #: packages/admin/src/components/ContentSettingsPanel.tsx:777
 msgid "Move to Trash?"
 msgstr "Przenieść do kosza?"
@@ -5178,11 +5178,11 @@ msgstr "Przenieść do kosza?"
 msgid "Move up"
 msgstr "Przesuń w górę"
 
-#: packages/admin/src/router.tsx:532
+#: packages/admin/src/router.tsx:534
 msgid "Moved {total} items to draft"
 msgstr ""
 
-#: packages/admin/src/router.tsx:553
+#: packages/admin/src/router.tsx:555
 msgid "Moved {total} items to trash"
 msgstr ""
 
@@ -5231,7 +5231,7 @@ msgstr "Nawigacja"
 msgid "Never"
 msgstr "Nigdy"
 
-#: packages/admin/src/router.tsx:1176
+#: packages/admin/src/router.tsx:1180
 msgid "new"
 msgstr ""
 
@@ -5311,7 +5311,7 @@ msgid "Next"
 msgstr "Dalej"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:372
-#: packages/admin/src/components/ContentList.tsx:678
+#: packages/admin/src/components/ContentList.tsx:712
 msgid "Next page"
 msgstr "Następna strona"
 
@@ -5319,7 +5319,7 @@ msgstr "Następna strona"
 msgid "Next screenshot"
 msgstr "Następny zrzut ekranu"
 
-#: packages/admin/src/components/ContentList.tsx:1184
+#: packages/admin/src/components/ContentList.tsx:1281
 #: packages/admin/src/components/users/UserDetail.tsx:236
 #: packages/admin/src/routes/byline-schema.tsx:422
 msgid "No"
@@ -5335,7 +5335,7 @@ msgid "No {0} available."
 msgstr "Brak dostępnych {0}."
 
 #. placeholder {0}: collectionLabel.toLowerCase()
-#: packages/admin/src/components/ContentList.tsx:606
+#: packages/admin/src/components/ContentList.tsx:638
 msgid "No {0} yet."
 msgstr "Brak {0}."
 
@@ -5577,8 +5577,8 @@ msgstr "Brak przekierowań"
 msgid "No results"
 msgstr "Brak wyników"
 
-#: packages/admin/src/components/ContentList.tsx:603
-#: packages/admin/src/components/ContentList.tsx:622
+#: packages/admin/src/components/ContentList.tsx:635
+#: packages/admin/src/components/ContentList.tsx:654
 msgid "No results for \"{activeSearch}\""
 msgstr ""
 
@@ -5642,7 +5642,7 @@ msgstr "Brak (najwyższy poziom)"
 msgid "Not compatible with this environment"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1183
+#: packages/admin/src/components/ContentList.tsx:1280
 #: packages/admin/src/components/PluginSettings.tsx:341
 msgid "Not set"
 msgstr ""
@@ -5800,7 +5800,7 @@ msgstr "Własność"
 msgid "Package"
 msgstr "Pakiet"
 
-#: packages/admin/src/router.tsx:2266
+#: packages/admin/src/router.tsx:2270
 msgid "Page Not Found"
 msgstr ""
 
@@ -5927,11 +5927,11 @@ msgstr "Oczekujące"
 msgid "Pending changes"
 msgstr "Oczekujące zmiany"
 
-#: packages/admin/src/components/ContentList.tsx:1316
+#: packages/admin/src/components/ContentList.tsx:1413
 msgid "Permanently delete \"{title}\"? This cannot be undone."
 msgstr "msgstr “Trwale usunąć „{title}”? Tej operacji nie można cofnąć.”"
 
-#: packages/admin/src/components/ContentList.tsx:1305
+#: packages/admin/src/components/ContentList.tsx:1402
 msgid "Permanently delete {title}"
 msgstr "Trwale usuń {title}"
 
@@ -5983,6 +5983,10 @@ msgstr "Plugin"
 
 #: packages/admin/src/lib/api/plugins.ts:68
 msgid "Plugin \"{pluginId}\" not found"
+msgstr ""
+
+#: packages/admin/src/lib/content-list-columns.tsx:236
+msgid "Plugin column unavailable"
 msgstr ""
 
 #: packages/admin/src/components/RegistryPluginDetail.tsx:762
@@ -6143,7 +6147,7 @@ msgid "Previous"
 msgstr "Wstecz"
 
 #: packages/admin/src/components/comments/CommentInbox.tsx:353
-#: packages/admin/src/components/ContentList.tsx:666
+#: packages/admin/src/components/ContentList.tsx:700
 msgid "Previous page"
 msgstr "Poprzednia strona"
 
@@ -6163,7 +6167,7 @@ msgstr ""
 msgid "Provider:"
 msgstr "Dostawca:"
 
-#: packages/admin/src/components/ContentList.tsx:461
+#: packages/admin/src/components/ContentList.tsx:485
 #: packages/admin/src/components/ContentSettingsPanel.tsx:197
 #: packages/admin/src/components/ContentSettingsPanel.tsx:204
 #: packages/admin/src/components/ContentSettingsPanel.tsx:476
@@ -6175,11 +6179,11 @@ msgstr "Opublikuj"
 msgid "Publish date"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:798
-#: packages/admin/src/components/ContentList.tsx:809
+#: packages/admin/src/components/ContentList.tsx:832
+#: packages/admin/src/components/ContentList.tsx:843
 #: packages/admin/src/components/ContentStatusBadge.tsx:59
 #: packages/admin/src/components/Dashboard.tsx:263
-#: packages/admin/src/router.tsx:1065
+#: packages/admin/src/router.tsx:1069
 msgid "Published"
 msgstr "Opublikowany"
 
@@ -6188,7 +6192,7 @@ msgstr "Opublikowany"
 msgid "Published {0}"
 msgstr "Opublikowano {0}"
 
-#: packages/admin/src/router.tsx:509
+#: packages/admin/src/router.tsx:511
 msgid "Published {total} items"
 msgstr ""
 
@@ -6537,7 +6541,7 @@ msgstr ""
 msgid "Restore"
 msgstr "Przywróć"
 
-#: packages/admin/src/components/ContentList.tsx:1293
+#: packages/admin/src/components/ContentList.tsx:1390
 msgid "Restore {title}"
 msgstr "Przywróć {title}"
 
@@ -6567,7 +6571,7 @@ msgstr "Przywracanie..."
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
 #: packages/admin/src/lib/content-editor-panels.tsx:201
-#: packages/admin/src/router.tsx:2254
+#: packages/admin/src/router.tsx:2258
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "Ponów"
@@ -6576,7 +6580,7 @@ msgstr "Ponów"
 msgid "Reusable content blocks you can insert into any content"
 msgstr "Bloki treści wielokrotnego użytku, które można wstawiać do dowolnej treści"
 
-#: packages/admin/src/router.tsx:1103
+#: packages/admin/src/router.tsx:1107
 msgid "Reverted to published version"
 msgstr ""
 
@@ -6772,9 +6776,9 @@ msgstr "Zaplanuj na"
 msgid "Schedule for later"
 msgstr "Zaplanuj na później"
 
-#: packages/admin/src/components/ContentList.tsx:800
+#: packages/admin/src/components/ContentList.tsx:834
 #: packages/admin/src/components/ContentStatusBadge.tsx:63
-#: packages/admin/src/router.tsx:1123
+#: packages/admin/src/router.tsx:1127
 msgid "Scheduled"
 msgstr "Zaplanowany"
 
@@ -6845,12 +6849,12 @@ msgid "Search"
 msgstr "Szukaj"
 
 #. placeholder {0}: collectionLabel.toLowerCase()
-#: packages/admin/src/components/ContentList.tsx:395
+#: packages/admin/src/components/ContentList.tsx:419
 msgid "Search {0}"
 msgstr "Szukaj {0}"
 
 #. placeholder {0}: collectionLabel.toLowerCase()
-#: packages/admin/src/components/ContentList.tsx:394
+#: packages/admin/src/components/ContentList.tsx:418
 msgid "Search {0}..."
 msgstr "Szukaj {0}..."
 
@@ -7063,7 +7067,7 @@ msgstr "Wybierz"
 msgid "Select {label}"
 msgstr "Wybierz {label}"
 
-#: packages/admin/src/components/ContentList.tsx:1070
+#: packages/admin/src/components/ContentList.tsx:1141
 msgid "Select {title}"
 msgstr ""
 
@@ -7079,7 +7083,7 @@ msgstr ""
 msgid "Select all"
 msgstr "Zaznacz wszystko"
 
-#: packages/admin/src/components/ContentList.tsx:543
+#: packages/admin/src/components/ContentList.tsx:567
 msgid "Select all on this page"
 msgstr ""
 
@@ -7247,7 +7251,7 @@ msgstr ""
 msgid "Set to 0 to never close comments automatically."
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:471
+#: packages/admin/src/components/ContentList.tsx:495
 msgid "Set to draft"
 msgstr ""
 
@@ -7563,7 +7567,7 @@ msgstr "Rozpocznij import"
 msgid "Start writing, or type '/' for commands"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:568
+#: packages/admin/src/components/ContentList.tsx:592
 #: packages/admin/src/components/ContentSettingsPanel.tsx:490
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
@@ -7765,7 +7769,7 @@ msgstr "Menu zostało usunięte."
 msgid "The name of your site, used in the header and metadata"
 msgstr "Nazwa Twojej strony, używana w nagłówku i metadanych"
 
-#: packages/admin/src/router.tsx:2268
+#: packages/admin/src/router.tsx:2272
 msgid "The page you're looking for doesn't exist."
 msgstr ""
 
@@ -7947,8 +7951,8 @@ msgstr "Strefa czasowa"
 msgid "Timezone for displaying dates (e.g., America/New_York)"
 msgstr "Strefa czasowa wyświetlania dat (np. America/New_York)"
 
-#: packages/admin/src/components/ContentList.tsx:553
-#: packages/admin/src/components/ContentList.tsx:703
+#: packages/admin/src/components/ContentList.tsx:577
+#: packages/admin/src/components/ContentList.tsx:737
 #: packages/admin/src/components/SectionEditor.tsx:251
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
@@ -7964,7 +7968,7 @@ msgstr "Tytuł (podpowiedź)"
 msgid "Title Separator"
 msgstr "Separator tytułu"
 
-#: packages/admin/src/components/ContentList.tsx:899
+#: packages/admin/src/components/ContentList.tsx:933
 msgid "to"
 msgstr ""
 
@@ -7972,7 +7976,7 @@ msgstr ""
 msgid "to close"
 msgstr "aby zamknąć"
 
-#: packages/admin/src/components/ContentList.tsx:903
+#: packages/admin/src/components/ContentList.tsx:937
 msgid "To date"
 msgstr ""
 
@@ -8042,7 +8046,7 @@ msgstr "Tłumaczenie..."
 
 #: packages/admin/src/components/MenuEditor.tsx:143
 #: packages/admin/src/components/TaxonomyManager.tsx:987
-#: packages/admin/src/router.tsx:1175
+#: packages/admin/src/router.tsx:1179
 msgid "Translation created"
 msgstr "Tłumaczenie utworzone"
 
@@ -8059,11 +8063,11 @@ msgstr "kosz"
 #: packages/admin/src/components/comments/CommentInbox.tsx:217
 #: packages/admin/src/components/comments/CommentInbox.tsx:258
 #: packages/admin/src/components/comments/CommentInbox.tsx:514
-#: packages/admin/src/components/ContentList.tsx:417
+#: packages/admin/src/components/ContentList.tsx:441
 msgid "Trash"
 msgstr "Kosz"
 
-#: packages/admin/src/components/ContentList.tsx:726
+#: packages/admin/src/components/ContentList.tsx:760
 msgid "Trash is empty"
 msgstr "Kosz jest pusty"
 
@@ -8221,7 +8225,7 @@ msgstr "Passkey bez nazwy"
 msgid "Unpublish {itemLabel}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1083
+#: packages/admin/src/router.tsx:1087
 msgid "Unpublished"
 msgstr ""
 
@@ -8233,7 +8237,7 @@ msgstr "Znaleziono niezarejestrowane tabele treści"
 msgid "Unschedule"
 msgstr "Cofnij planowanie"
 
-#: packages/admin/src/router.tsx:1144
+#: packages/admin/src/router.tsx:1148
 msgid "Unscheduled"
 msgstr ""
 
@@ -8302,7 +8306,7 @@ msgstr "Zaktualizuj tę regułę przekierowania."
 msgid "Update to v{0}"
 msgstr "Zaktualizuj do v{0}"
 
-#: packages/admin/src/components/ContentList.tsx:808
+#: packages/admin/src/components/ContentList.tsx:842
 #: packages/admin/src/components/ContentSettingsPanel.tsx:610
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
@@ -8583,7 +8587,7 @@ msgstr "Zobacz w Marketplace"
 msgid "View mode"
 msgstr "Tryb widoku"
 
-#: packages/admin/src/components/ContentList.tsx:1111
+#: packages/admin/src/components/ContentList.tsx:1208
 msgid "View published {title}"
 msgstr "Zobacz opublikowany {title}"
 
@@ -8789,7 +8793,7 @@ msgstr ""
 msgid "WordPress Username"
 msgstr "Nazwa użytkownika WordPress"
 
-#: packages/admin/src/components/ContentList.tsx:449
+#: packages/admin/src/components/ContentList.tsx:473
 msgid "Working on {selectedCount} items…"
 msgstr ""
 
@@ -8817,7 +8821,7 @@ msgstr ""
 msgid "Yearly"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1186
+#: packages/admin/src/components/ContentList.tsx:1283
 #: packages/admin/src/components/users/UserDetail.tsx:236
 #: packages/admin/src/routes/byline-schema.tsx:420
 #: packages/admin/src/routes/byline-schema.tsx:422
@@ -8860,7 +8864,7 @@ msgstr "Masz pełny dostęp do zarządzania tą stroną, w tym użytkownikami, u
 msgid "You need admin permissions to manage byline schema."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1552
+#: packages/admin/src/router.tsx:1556
 msgid "You need Editor permissions to moderate comments."
 msgstr ""
 
