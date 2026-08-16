@@ -6,11 +6,11 @@
  * - Tag input for flat taxonomies (tags)
  */
 
-import { Button, Checkbox, Input, Label, Text, Toast } from "@cloudflare/kumo";
+import { Button, Checkbox, Combobox, Input, Label, Text, Toast } from "@cloudflare/kumo";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus } from "@phosphor-icons/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
@@ -36,6 +36,8 @@ interface TaxonomyDef {
 	hierarchical: boolean;
 	collections: string[];
 }
+
+type TagPickerOption = { kind: "term"; term: TaxonomyTerm } | { kind: "create"; label: string };
 
 interface TaxonomySidebarProps {
 	collection: string;
@@ -179,16 +181,14 @@ function CategoryCheckboxTree({
 function TagInput({
 	terms,
 	selectedIds,
-	onAdd,
-	onRemove,
+	onChange,
 	onCreate,
 	isCreating,
 	label,
 }: {
 	terms: TaxonomyTerm[];
 	selectedIds: Set<string>;
-	onAdd: (termId: string) => void;
-	onRemove: (termId: string) => void;
+	onChange: (termIds: string[]) => void;
 	onCreate: (label: string) => void;
 	isCreating: boolean;
 	label: string;
@@ -196,16 +196,7 @@ function TagInput({
 	const { t } = useLingui();
 	const [input, setInput] = React.useState("");
 	const [isOpen, setIsOpen] = React.useState(false);
-
-	const selectedTerms = terms.filter((term) => selectedIds.has(term.id));
-
 	const trimmedInput = input.trim();
-
-	const suggestions = React.useMemo(() => {
-		const availableTerms = terms.filter((term) => !selectedIds.has(term.id));
-		if (!trimmedInput) return availableTerms.slice(0, 5);
-		return availableTerms.filter((term) => termMatches(term, trimmedInput)).slice(0, 5);
-	}, [trimmedInput, terms, selectedIds]);
 
 	const hasExactMatch = React.useMemo(() => {
 		if (!trimmedInput) return false;
@@ -213,105 +204,102 @@ function TagInput({
 	}, [trimmedInput, terms]);
 
 	const showCreateOption = trimmedInput.length > 0 && !hasExactMatch;
+	const termOptions = React.useMemo<TagPickerOption[]>(
+		() => terms.map((term) => ({ kind: "term", term })),
+		[terms],
+	);
+	const selectedOptions = React.useMemo(
+		() => termOptions.filter((option) => option.kind === "term" && selectedIds.has(option.term.id)),
+		[termOptions, selectedIds],
+	);
+	const visibleOptions = React.useMemo(() => {
+		const matches = trimmedInput
+			? termOptions.filter(
+					(option) => option.kind === "term" && termMatches(option.term, trimmedInput),
+				)
+			: termOptions;
+		const ordered = trimmedInput
+			? matches.toSorted((a, b) => {
+					if (a.kind !== "term" || b.kind !== "term") return 0;
+					return (
+						Number(termExactMatches(b.term, trimmedInput)) -
+						Number(termExactMatches(a.term, trimmedInput))
+					);
+				})
+			: matches;
 
-	const handleSelect = (term: TaxonomyTerm) => {
-		onAdd(term.id);
-		setInput("");
-		setIsOpen(false);
-	};
+		if (!showCreateOption) return ordered;
+		return [...ordered, { kind: "create", label: trimmedInput } satisfies TagPickerOption];
+	}, [showCreateOption, termOptions, trimmedInput]);
 
-	const handleCreate = () => {
-		if (!trimmedInput || isCreating) return;
-		onCreate(trimmedInput);
-		setInput("");
-		setIsOpen(false);
-	};
-
-	const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-		const nextFocused = e.relatedTarget;
-		if (nextFocused instanceof Node && e.currentTarget.contains(nextFocused)) return;
-		setIsOpen(false);
-	};
-
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === "Enter") {
-			e.preventDefault();
-			if (suggestions.length === 1 && !showCreateOption) {
-				handleSelect(suggestions[0]!);
-			} else if (showCreateOption && suggestions.length === 0) {
-				handleCreate();
-			}
+	const handleValueChange = (options: TagPickerOption[]) => {
+		const createOption = options.find((option) => option.kind === "create");
+		if (createOption?.kind === "create") {
+			if (isCreating) return;
+			onCreate(createOption.label);
+			setInput("");
+			return;
 		}
+
+		onChange(options.flatMap((option) => (option.kind === "term" ? [option.term.id] : [])));
+		setInput("");
 	};
 
 	return (
-		<div className="space-y-2">
-			{/* Selected tags */}
-			{selectedTerms.length > 0 && (
-				<div className="flex flex-wrap gap-2">
-					{selectedTerms.map((term) => (
-						<span
-							key={term.id}
-							className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-kumo-tint rounded-md"
+		<Combobox
+			multiple
+			label={label}
+			open={isOpen}
+			onOpenChange={(open, eventDetails) => {
+				if (!open && eventDetails.reason === "item-press") return;
+				setIsOpen(open);
+			}}
+			items={visibleOptions}
+			value={selectedOptions}
+			inputValue={input}
+			onInputValueChange={setInput}
+			onValueChange={handleValueChange}
+			isItemEqualToValue={(option, value) =>
+				option.kind === "term" && value.kind === "term" && option.term.id === value.term.id
+			}
+			itemToStringLabel={(option) => (option.kind === "term" ? option.term.label : option.label)}
+			itemToStringValue={(option) => (option.kind === "term" ? option.term.id : option.label)}
+			filter={null}
+			autoHighlight
+		>
+			<Combobox.TriggerMultipleWithInput
+				value={selectedOptions}
+				placeholder={t`Add tags...`}
+				renderItem={(option) =>
+					option.kind === "term" ? (
+						<Combobox.Chip removeLabel={t`Remove ${option.term.label}`}>
+							{option.term.label}
+						</Combobox.Chip>
+					) : null
+				}
+			/>
+			<Combobox.Content>
+				<Combobox.Empty>{t`No results`}</Combobox.Empty>
+				<Combobox.List>
+					{(option: TagPickerOption) => (
+						<Combobox.Item
+							key={option.kind === "term" ? option.term.id : `create:${option.label}`}
+							value={option}
+							disabled={option.kind === "create" && isCreating}
 						>
-							{term.label}
-							<button
-								type="button"
-								onClick={() => onRemove(term.id)}
-								className="hover:text-kumo-danger"
-								aria-label={t`Remove ${term.label}`}
-							>
-								<X className="w-3 h-3" />
-							</button>
-						</span>
-					))}
-				</div>
-			)}
-
-			{/* Input with autocomplete */}
-			<div className="relative" onBlur={handleBlur}>
-				<Input
-					value={input}
-					onChange={(e) => {
-						setInput(e.target.value);
-						setIsOpen(true);
-					}}
-					onFocus={() => setIsOpen(true)}
-					onKeyDown={handleKeyDown}
-					placeholder={t`Add tags...`}
-					aria-label={t`Add ${label}`}
-					className="w-full text-sm"
-				/>
-
-				{isOpen && (suggestions.length > 0 || showCreateOption) && (
-					<div className="absolute top-full start-0 end-0 mt-1 overflow-hidden bg-kumo-overlay border rounded-lg shadow-lg z-10">
-						{suggestions.map((term) => (
-							<button
-								key={term.id}
-								type="button"
-								onMouseDown={(e) => e.preventDefault()}
-								onClick={() => handleSelect(term)}
-								className="w-full text-start px-3 py-2 text-sm hover:bg-kumo-tint"
-							>
-								{term.label}
-							</button>
-						))}
-						{showCreateOption && (
-							<button
-								type="button"
-								onMouseDown={(e) => e.preventDefault()}
-								onClick={handleCreate}
-								disabled={isCreating}
-								className="w-full text-start px-3 py-2 text-sm hover:bg-kumo-tint text-kumo-accent flex items-center gap-1 border-t"
-							>
-								<Plus className="w-3 h-3" />
-								{isCreating ? t`Creating...` : t`Create "${trimmedInput}"`}
-							</button>
-						)}
-					</div>
-				)}
-			</div>
-		</div>
+							{option.kind === "term" ? (
+								option.term.label
+							) : (
+								<span className="flex items-center gap-1 text-kumo-accent">
+									<Plus className="h-3 w-3" aria-hidden="true" />
+									{isCreating ? t`Creating...` : t`Create "${option.label}"`}
+								</span>
+							)}
+						</Combobox.Item>
+					)}
+				</Combobox.List>
+			</Combobox.Content>
+		</Combobox>
 	);
 }
 
@@ -353,15 +341,18 @@ function TaxonomySection({
 		enabled: !!entryId,
 	});
 
+	const saveMutationKey = ["entry-terms-save", collection, entryId, taxonomy.name, entryLocale];
 	const saveMutation = useMutation({
+		mutationKey: saveMutationKey,
+		scope: {
+			id: `entry-terms:${collection}:${entryId ?? "new"}:${taxonomy.name}:${entryLocale ?? ""}`,
+		},
 		mutationFn: (termIds: string[]) => {
 			if (!entryId) throw new Error("No entry ID");
 			return setEntryTerms(collection, entryId, taxonomy.name, termIds, entryLocale);
 		},
 		onSuccess: () => {
-			void queryClient.invalidateQueries({
-				queryKey: ["entry-terms", collection, entryId, taxonomy.name, entryLocale],
-			});
+			if (queryClient.isMutating({ mutationKey: saveMutationKey }) > 1) return;
 			toastManager.add({ title: t`${taxonomy.label} updated` });
 		},
 		onError: (error) => {
@@ -369,6 +360,12 @@ function TaxonomySection({
 				title: t`Failed to update ${taxonomy.label.toLowerCase()}`,
 				description: error instanceof Error ? error.message : t`An error occurred`,
 				type: "error",
+			});
+		},
+		onSettled: () => {
+			if (queryClient.isMutating({ mutationKey: saveMutationKey }) > 1) return;
+			void queryClient.invalidateQueries({
+				queryKey: ["entry-terms", collection, entryId, taxonomy.name, entryLocale],
 			});
 		},
 	});
@@ -417,24 +414,16 @@ function TaxonomySection({
 		} else {
 			newSelected.add(termId);
 		}
-		setSelectedIds(newSelected);
+		handleSelectionChange([...newSelected]);
+	};
 
-		// Notify parent of change
-		const termIdsArray = [...newSelected];
+	const handleSelectionChange = (termIdsArray: string[]) => {
+		setSelectedIds(new Set(termIdsArray));
 		onChange?.(termIdsArray);
 
-		// Auto-save if entry exists
 		if (entryId) {
 			saveMutation.mutate(termIdsArray);
 		}
-	};
-
-	const handleAdd = (termId: string) => {
-		handleToggle(termId);
-	};
-
-	const handleRemove = (termId: string) => {
-		handleToggle(termId);
 	};
 
 	const handleCreateCategory = () => {
@@ -445,10 +434,9 @@ function TaxonomySection({
 
 	return (
 		<div className="space-y-2">
-			<Label className="text-sm font-medium">{taxonomy.label}</Label>
-
 			{taxonomy.hierarchical ? (
 				<>
+					<Label className="text-sm font-medium">{taxonomy.label}</Label>
 					{terms.length === 0 ? (
 						<p className="text-sm text-kumo-subtle">
 							{t`No ${taxonomy.label.toLowerCase()} available.`}
@@ -520,8 +508,7 @@ function TaxonomySection({
 				<TagInput
 					terms={terms}
 					selectedIds={selectedIds}
-					onAdd={handleAdd}
-					onRemove={handleRemove}
+					onChange={handleSelectionChange}
 					onCreate={(label) => createTermMutation.mutate(label)}
 					isCreating={createTermMutation.isPending}
 					label={taxonomy.label}
