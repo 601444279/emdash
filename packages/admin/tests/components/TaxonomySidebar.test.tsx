@@ -90,17 +90,27 @@ function mockApiFetch({
 	terms = [alphaTerm, betaTerm],
 	entryTerms = [],
 	deferSaves = false,
+	deferTermRefetch = false,
+	deferCreate = false,
+	createError,
 }: {
 	taxonomies?: TestTaxonomy[];
 	terms?: TestTerm[];
 	entryTerms?: TestTerm[];
 	deferSaves?: boolean;
+	deferTermRefetch?: boolean;
+	deferCreate?: boolean;
+	createError?: string;
 } = {}) {
 	const currentTerms = [...terms];
 	let currentEntryTerms = [...entryTerms];
 	const saveRequests: string[][] = [];
 	const pendingSaveResponses: Array<() => void> = [];
+	const pendingTermRefetches: Array<() => void> = [];
+	const pendingCreateResponses: Array<() => void> = [];
 	let entryTermFetches = 0;
+	let termFetches = 0;
+	let createRequests = 0;
 
 	vi.mocked(apiFetch).mockImplementation((url: string | URL | Request, init?: RequestInit) => {
 		const urlString = typeof url === "string" ? url : url instanceof URL ? url.toString() : url.url;
@@ -112,6 +122,12 @@ function mockApiFetch({
 		}
 
 		if (method === "GET" && path === "/_emdash/api/taxonomies/tags/terms") {
+			termFetches += 1;
+			if (deferTermRefetch && termFetches > 1) {
+				return new Promise<Response>((resolve) => {
+					pendingTermRefetches.push(() => void dataResponse({ terms: currentTerms }).then(resolve));
+				});
+			}
 			return dataResponse({ terms: currentTerms });
 		}
 
@@ -125,10 +141,28 @@ function mockApiFetch({
 		}
 
 		if (method === "POST" && path === "/_emdash/api/taxonomies/tags/terms") {
+			createRequests += 1;
+			if (createError) {
+				return Promise.resolve(
+					new Response(
+						JSON.stringify({ error: { code: "TERM_CREATE_ERROR", message: createError } }),
+						{
+							status: 409,
+							headers: { "Content-Type": "application/json" },
+						},
+					),
+				);
+			}
 			const body = JSON.parse(String(init?.body)) as { label: string; slug: string };
-			const term = makeTerm(`term_${body.slug}`, body.label);
-			currentTerms.push(term);
-			return dataResponse({ term });
+			const respond = () => {
+				const term = makeTerm(`term_${body.slug}`, body.label);
+				currentTerms.push(term);
+				return dataResponse({ term });
+			};
+			if (!deferCreate) return respond();
+			return new Promise<Response>((resolve) => {
+				pendingCreateResponses.push(() => void respond().then(resolve));
+			});
 		}
 
 		if (method === "POST" && path === "/_emdash/api/content/products/entry_1/terms/tags") {
@@ -150,8 +184,16 @@ function mockApiFetch({
 	return {
 		saveRequests,
 		releaseNextSave: () => pendingSaveResponses.shift()?.(),
+		releaseTermRefetch: () => pendingTermRefetches.shift()?.(),
+		releaseCreate: () => pendingCreateResponses.shift()?.(),
 		get entryTermFetches() {
 			return entryTermFetches;
+		},
+		get termFetches() {
+			return termFetches;
+		},
+		get createRequests() {
+			return createRequests;
 		},
 	};
 }
@@ -293,6 +335,52 @@ describe("TaxonomySidebar", () => {
 		await userEvent.keyboard("{Enter}");
 
 		await expect.element(screen.getByLabelText("Remove Gamma")).toBeInTheDocument();
+	});
+
+	it("keeps failed creation input and exposes the retryable API error", async () => {
+		mockApiFetch({ terms: [], createError: "Term already exists" });
+		const screen = await render(<TaxonomySidebar collection="products" />, { wrapper: Wrapper });
+		const input = screen.getByRole("combobox", { name: "Tags" });
+
+		await input.fill("Gamma");
+		await userEvent.keyboard("{Enter}");
+
+		await expect.element(screen.getByText("Term already exists")).toBeInTheDocument();
+		await expect.element(input).toHaveValue("Gamma");
+		await expect.element(screen.getByText('Create "Gamma"')).toBeInTheDocument();
+
+		await input.fill("Delta");
+
+		expect(screen.getByText("Term already exists").query()).toBeNull();
+		await expect.element(screen.getByText('Create "Delta"')).toBeInTheDocument();
+	});
+
+	it("shows a created tag before the authoritative term refetch finishes", async () => {
+		const terms = mockApiFetch({ terms: [], deferTermRefetch: true });
+		const screen = await render(<TaxonomySidebar collection="products" />, { wrapper: Wrapper });
+		const input = screen.getByRole("combobox", { name: "Tags" });
+
+		await input.fill("Gamma");
+		await userEvent.keyboard("{Enter}");
+		await vi.waitFor(() => expect(terms.termFetches).toBe(2));
+
+		await expect.element(screen.getByLabelText("Remove Gamma")).toBeInTheDocument();
+		terms.releaseTermRefetch();
+	});
+
+	it("keeps selections made while term creation is pending", async () => {
+		const creation = mockApiFetch({ terms: [alphaTerm], deferCreate: true });
+		const screen = await render(<TaxonomySidebar collection="products" />, { wrapper: Wrapper });
+		const input = screen.getByRole("combobox", { name: "Tags" });
+
+		await input.fill("Gamma");
+		await userEvent.keyboard("{Enter}");
+		await vi.waitFor(() => expect(creation.createRequests).toBe(1));
+		await screen.getByRole("option", { name: "Alpha" }).click();
+
+		creation.releaseCreate();
+		await expect.element(screen.getByLabelText("Remove Gamma")).toBeInTheDocument();
+		await expect.element(screen.getByLabelText("Remove Alpha")).toBeInTheDocument();
 	});
 
 	it("continues to render hierarchical taxonomies as a checkbox tree", async () => {

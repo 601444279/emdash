@@ -183,14 +183,18 @@ function TagInput({
 	selectedIds,
 	onChange,
 	onCreate,
+	onCreateErrorClear,
 	isCreating,
+	createError,
 	label,
 }: {
 	terms: TaxonomyTerm[];
 	selectedIds: Set<string>;
 	onChange: (termIds: string[]) => void;
-	onCreate: (label: string) => void;
+	onCreate: (label: string) => Promise<void>;
+	onCreateErrorClear: () => void;
 	isCreating: boolean;
+	createError: unknown;
 	label: string;
 }) {
 	const { t } = useLingui();
@@ -236,11 +240,16 @@ function TagInput({
 		const createOption = options.find((option) => option.kind === "create");
 		if (createOption?.kind === "create") {
 			if (isCreating) return;
-			onCreate(createOption.label);
-			setInput("");
+			void onCreate(createOption.label)
+				.then(() => setInput(""))
+				.catch(() => {
+					setInput(createOption.label);
+					setIsOpen(true);
+				});
 			return;
 		}
 
+		if (createError) onCreateErrorClear();
 		onChange(options.flatMap((option) => (option.kind === "term" ? [option.term.id] : [])));
 		setInput("");
 	};
@@ -249,6 +258,13 @@ function TagInput({
 		<Combobox
 			multiple
 			label={label}
+			error={
+				createError
+					? createError instanceof Error
+						? createError.message
+						: t`Failed to create term`
+					: undefined
+			}
 			open={isOpen}
 			onOpenChange={(open, eventDetails) => {
 				if (!open && eventDetails.reason === "item-press") return;
@@ -257,7 +273,10 @@ function TagInput({
 			items={visibleOptions}
 			value={selectedOptions}
 			inputValue={input}
-			onInputValueChange={setInput}
+			onInputValueChange={(value) => {
+				if (createError) onCreateErrorClear();
+				setInput(value);
+			}}
 			onValueChange={handleValueChange}
 			isItemEqualToValue={(option, value) =>
 				option.kind === "term" && value.kind === "term" && option.term.id === value.term.id
@@ -324,11 +343,19 @@ function TaxonomySection({
 	const toastManager = Toast.useToastManager();
 	const [newCategoryLabel, setNewCategoryLabel] = React.useState("");
 	const [showCategoryInput, setShowCategoryInput] = React.useState(false);
+	const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
+	const selectedIdsRef = React.useRef(selectedIds);
 
 	// The count mode belongs in the key: the Taxonomies settings page reads the
 	// same endpoint with counts and must not be served this count-free list.
+	const termsQueryKey = [
+		"taxonomy-terms",
+		taxonomy.name,
+		entryLocale,
+		{ includeCounts: false },
+	] as const;
 	const { data: terms = EMPTY_TERMS } = useQuery({
-		queryKey: ["taxonomy-terms", taxonomy.name, entryLocale, { includeCounts: false }],
+		queryKey: termsQueryKey,
 		queryFn: () => fetchTerms(taxonomy.name, entryLocale),
 	});
 
@@ -379,12 +406,16 @@ function TaxonomySection({
 				...(entryLocale ? { locale: entryLocale } : {}),
 			}),
 		onSuccess: (newTerm) => {
+			queryClient.setQueryData<TaxonomyTerm[]>(termsQueryKey, (current = []) =>
+				current.some((term) => term.id === newTerm.id) ? current : [...current, newTerm],
+			);
 			void queryClient.invalidateQueries({
 				queryKey: ["taxonomy-terms", taxonomy.name, entryLocale],
 			});
 			// Auto-select the newly created term
-			const newSelected = new Set(selectedIds);
+			const newSelected = new Set(selectedIdsRef.current);
 			newSelected.add(newTerm.id);
+			selectedIdsRef.current = newSelected;
 			setSelectedIds(newSelected);
 
 			const termIdsArray = [...newSelected];
@@ -400,11 +431,11 @@ function TaxonomySection({
 		},
 	});
 
-	const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
-
 	// Sync selected IDs from entry terms
 	React.useEffect(() => {
-		setSelectedIds(new Set(entryTerms.map((term) => term.id)));
+		const nextSelected = new Set(entryTerms.map((term) => term.id));
+		selectedIdsRef.current = nextSelected;
+		setSelectedIds(nextSelected);
 	}, [entryTerms]);
 
 	const handleToggle = (termId: string) => {
@@ -418,7 +449,9 @@ function TaxonomySection({
 	};
 
 	const handleSelectionChange = (termIdsArray: string[]) => {
-		setSelectedIds(new Set(termIdsArray));
+		const nextSelected = new Set(termIdsArray);
+		selectedIdsRef.current = nextSelected;
+		setSelectedIds(nextSelected);
 		onChange?.(termIdsArray);
 
 		if (entryId) {
@@ -509,8 +542,12 @@ function TaxonomySection({
 					terms={terms}
 					selectedIds={selectedIds}
 					onChange={handleSelectionChange}
-					onCreate={(label) => createTermMutation.mutate(label)}
+					onCreate={async (label) => {
+						await createTermMutation.mutateAsync(label);
+					}}
+					onCreateErrorClear={createTermMutation.reset}
 					isCreating={createTermMutation.isPending}
+					createError={createTermMutation.error}
 					label={taxonomy.label}
 				/>
 			)}
