@@ -64,6 +64,14 @@ const securityTerms = [
 	makeTerm("term_security", "Security"),
 	makeTerm("term_web_security", "Web Security"),
 ];
+const overflowingSecurityTerms = [
+	...securityTerms,
+	makeTerm("term_api_security", "API Security"),
+	makeTerm("term_browser_security", "Browser Security"),
+	makeTerm("term_dns_security", "DNS Security"),
+	makeTerm("term_origin_security", "Origin Security"),
+	makeTerm("term_zero_trust_security", "Zero Trust Security"),
+];
 
 function makeTerm(id: string, label: string): TestTerm {
 	return {
@@ -265,6 +273,16 @@ describe("TaxonomySidebar", () => {
 		await userEvent.keyboard("{Enter}");
 
 		await expect.element(screen.getByLabelText("Remove Security")).toBeInTheDocument();
+	});
+
+	it("caps long match lists and makes the remaining options scrollable", async () => {
+		mockApiFetch({ terms: overflowingSecurityTerms });
+		const screen = await render(<TaxonomySidebar collection="products" />, { wrapper: Wrapper });
+
+		await screen.getByRole("combobox", { name: "Tags" }).fill("security");
+
+		const listbox = screen.getByRole("listbox").element();
+		expect(listbox.scrollHeight).toBeGreaterThan(listbox.clientHeight);
 	});
 
 	it("selects a later matching term with the pointer", async () => {

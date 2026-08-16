@@ -299,7 +299,7 @@ function TagInput({
 			/>
 			<Combobox.Content>
 				<Combobox.Empty>{t`No results`}</Combobox.Empty>
-				<Combobox.List>
+				<Combobox.List style={{ maxHeight: "11rem" }}>
 					{(option: TagPickerOption) => (
 						<Combobox.Item
 							key={option.kind === "term" ? option.term.id : `create:${option.label}`}
