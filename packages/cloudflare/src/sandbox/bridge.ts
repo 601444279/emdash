@@ -9,12 +9,13 @@
 
 import type { D1Database } from "@cloudflare/workers-types";
 import { WorkerEntrypoint } from "cloudflare:workers";
-import type { SandboxEmailSendCallback } from "emdash";
+import type { ContentCreateOptions, I18nConfig, SandboxEmailSendCallback } from "emdash";
 import {
 	createSandboxRouteError,
 	getSandboxRouteErrorDetails,
 	ulid,
 	PluginStorageRepository,
+	resolveContentCreateLocale,
 } from "emdash";
 import { Kysely } from "kysely";
 import { D1Dialect } from "kysely-d1";
@@ -42,6 +43,8 @@ const SYSTEM_COLUMNS = new Set([
 	"version",
 	"live_revision_id",
 	"draft_revision_id",
+	"locale",
+	"translation_group",
 ]);
 
 /**
@@ -76,13 +79,9 @@ function serializeValue(value: unknown): unknown {
 }
 
 /**
- * Deserialize a row from D1 into a content response shape.
- * Extracts system columns and bundles remaining columns into data.
- */
-/**
  * Deserialize a row from D1 into a ContentItem matching core's plugin API.
  * Extracts system columns, deserializes JSON fields, and returns the
- * canonical shape: { id, type, data, createdAt, updatedAt }.
+ * canonical shape: { id, type, data, createdAt, updatedAt, locale }.
  */
 function rowToContentItem(
 	collection: string,
@@ -93,6 +92,7 @@ function rowToContentItem(
 	data: Record<string, unknown>;
 	createdAt: string;
 	updatedAt: string;
+	locale: string;
 } {
 	const data: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(row)) {
@@ -116,6 +116,7 @@ function rowToContentItem(
 		data,
 		createdAt: typeof row.created_at === "string" ? row.created_at : new Date().toISOString(),
 		updatedAt: typeof row.updated_at === "string" ? row.updated_at : new Date().toISOString(),
+		locale: typeof row.locale === "string" ? row.locale : "en",
 	};
 }
 
@@ -201,6 +202,7 @@ export interface PluginBridgeProps {
 	capabilities: string[];
 	allowedHosts: string[];
 	storageCollections: string[];
+	i18nConfig?: I18nConfig | null;
 	/** Per-collection storage config (matches manifest.storage entries) */
 	storageConfig?: Record<
 		string,
@@ -476,6 +478,7 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		data: Record<string, unknown>;
 		createdAt: string;
 		updatedAt: string;
+		locale: string;
 	} | null> {
 		const { capabilities } = this.ctx.props;
 		if (!capabilities.includes("content:read")) {
@@ -510,6 +513,7 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			data: Record<string, unknown>;
 			createdAt: string;
 			updatedAt: string;
+			locale: string;
 		}>;
 		cursor?: string;
 		hasMore: boolean;
@@ -560,12 +564,14 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 	async contentCreate(
 		collection: string,
 		data: Record<string, unknown>,
+		options?: ContentCreateOptions,
 	): Promise<{
 		id: string;
 		type: string;
 		data: Record<string, unknown>;
 		createdAt: string;
 		updatedAt: string;
+		locale: string;
 	}> {
 		const { capabilities } = this.ctx.props;
 		if (!capabilities.includes("content:write")) {
@@ -574,6 +580,7 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!COLLECTION_NAME_REGEX.test(collection)) {
 			throw new Error(`Invalid collection name: ${collection}`);
 		}
+		const locale = resolveContentCreateLocale(options?.locale, this.ctx.props.i18nConfig ?? null);
 		await this.assertMediaUsageActivationWriteAllowed();
 
 		const id = ulid();
@@ -588,6 +595,8 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			'"created_at"',
 			'"updated_at"',
 			'"version"',
+			'"locale"',
+			'"translation_group"',
 		];
 		const values: unknown[] = [
 			id,
@@ -597,6 +606,8 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			now,
 			now,
 			1,
+			locale,
+			id,
 		];
 
 		// Append user data fields (skip system columns, quote identifiers)
@@ -624,7 +635,7 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			.first();
 
 		if (!created) {
-			return { id, type: collection, data: {}, createdAt: now, updatedAt: now };
+			return { id, type: collection, data: {}, createdAt: now, updatedAt: now, locale };
 		}
 		return rowToContentItem(collection, created);
 	}
@@ -639,6 +650,7 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		data: Record<string, unknown>;
 		createdAt: string;
 		updatedAt: string;
+		locale: string;
 	}> {
 		const { capabilities } = this.ctx.props;
 		if (!capabilities.includes("content:write")) {
