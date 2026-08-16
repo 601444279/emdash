@@ -4,9 +4,11 @@ import {
 	MediaUsageActivationRequestError,
 	advanceMediaUsageActivation,
 	fetchMediaUsageActivationStatus,
+	fetchMediaUsageProgress,
 } from "../../src/lib/api/media-usage-activation.js";
 
 const activationUrl = "/_emdash/api/admin/media-usage/activation";
+const progressUrl = "/_emdash/api/admin/media-usage/progress";
 
 function activationStatus(state: "expanded" | "activating" | "active" = "expanded") {
 	return {
@@ -56,6 +58,31 @@ describe("media usage activation admin API", () => {
 		expect(fetch.mock.calls[0]?.[0]).toBe(activationUrl);
 		const headers = new Headers(fetch.mock.calls[0]?.[1]?.headers);
 		expect(headers.get("X-EmDash-Request")).toBe("1");
+	});
+
+	it("reads validated aggregate indexing progress", async () => {
+		const data = { status: "indexing", readyCollections: 1, totalCollections: 2 } as const;
+		const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(success(data));
+
+		await expect(fetchMediaUsageProgress()).resolves.toEqual(data);
+		expect(fetch.mock.calls[0]?.[0]).toBe(progressUrl);
+	});
+
+	it("rejects contradictory aggregate progress", async () => {
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(
+			success({ status: "ready", readyCollections: 2, totalCollections: 1 }),
+		);
+
+		await expect(caught(() => fetchMediaUsageProgress())).resolves.toMatchObject({
+			kind: "unknown",
+		});
+	});
+
+	it("accepts attention when every remaining content type is ready", async () => {
+		const data = { status: "needs_attention", readyCollections: 1, totalCollections: 1 } as const;
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(success(data));
+
+		await expect(fetchMediaUsageProgress()).resolves.toEqual(data);
 	});
 
 	it("advances once with only the two backend confirmations", async () => {

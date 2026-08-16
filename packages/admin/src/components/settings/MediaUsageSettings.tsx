@@ -1,4 +1,5 @@
 import { Badge, Banner, Button, Checkbox, Loader } from "@cloudflare/kumo";
+import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
@@ -9,7 +10,9 @@ import {
 	MediaUsageActivationRequestError,
 	advanceMediaUsageActivation,
 	fetchMediaUsageActivationStatus,
+	fetchMediaUsageProgress,
 	type MediaUsageActivationStatus,
+	type MediaUsageProgress,
 } from "../../lib/api/media-usage-activation.js";
 import { ConfirmDialog } from "../ConfirmDialog.js";
 import { SettingRow, SettingsFrame, SettingsSection } from "./SettingsLayout.js";
@@ -18,15 +21,7 @@ const ROLE_ADMIN = 50;
 const EMPTY_CONFIRMATIONS = { maintenance: false, writers: false, irreversible: false };
 
 type Confirmation = keyof typeof EMPTY_CONFIRMATIONS;
-type Notice =
-	| "busy"
-	| "ownership"
-	| "ambiguous"
-	| "unconfirmed"
-	| "version"
-	| "validation"
-	| "denied"
-	| null;
+type Notice = "busy" | "refreshed" | "unconfirmed" | "version" | "validation" | "denied" | null;
 
 export function MediaUsageSettings() {
 	const { t } = useLingui();
@@ -36,7 +31,6 @@ export function MediaUsageSettings() {
 	const [confirmations, setConfirmations] = React.useState(EMPTY_CONFIRMATIONS);
 	const [dialogOpen, setDialogOpen] = React.useState(false);
 	const [notice, setNotice] = React.useState<Notice>(null);
-	const [liveMessage, setLiveMessage] = React.useState("");
 	const awayGenerationRef = React.useRef(0);
 	const returnGenerationRef = React.useRef(0);
 	const refreshSequenceRef = React.useRef(0);
@@ -53,6 +47,15 @@ export function MediaUsageSettings() {
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 	});
+	const progressQuery = useQuery({
+		queryKey: ["media-usage-progress"],
+		queryFn: fetchMediaUsageProgress,
+		enabled: isAdmin && activationQuery.data?.state === "active",
+		retry: false,
+		refetchInterval: 60_000,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+	});
 
 	const resetConfirmations = React.useCallback(() => {
 		setConfirmations(EMPTY_CONFIRMATIONS);
@@ -66,6 +69,7 @@ export function MediaUsageSettings() {
 
 	const refreshStatus = React.useCallback(
 		async (reason: "manual" | "ownership" | "ambiguous") => {
+			if (submittingRef.current) return;
 			const awayGeneration = awayGenerationRef.current;
 			const refreshSequence = ++refreshSequenceRef.current;
 			if (reason === "ownership" || reason === "ambiguous") setNotice("unconfirmed");
@@ -84,18 +88,13 @@ export function MediaUsageSettings() {
 			setNotice((current) =>
 				current === "validation" || current === "version"
 					? current
-					: reason === "ownership"
-						? "ownership"
-						: reason === "ambiguous"
-							? "ambiguous"
-							: null,
+					: reason === "manual"
+						? null
+						: "refreshed",
 			);
 			if (result.data.state !== "active") focusActiveRef.current = false;
-			setLiveMessage(
-				result.data.state === "active" ? t`Media Usage is active.` : t`Setup status updated.`,
-			);
 		},
-		[activationQuery, resetConfirmations, t],
+		[activationQuery, resetConfirmations],
 	);
 
 	React.useEffect(() => {
@@ -125,25 +124,22 @@ export function MediaUsageSettings() {
 	}, [isAdmin, refreshStatus, resetConfirmations]);
 
 	const advanceMutation = useMutation({
-		mutationFn: () => advanceMediaUsageActivation({ writersDrained: true, maintenanceReady: true }),
+		mutationFn: async () => {
+			await queryClient.cancelQueries({ queryKey: MEDIA_USAGE_ACTIVATION_QUERY_KEY });
+			return advanceMediaUsageActivation({ writersDrained: true, maintenanceReady: true });
+		},
 		retry: false,
 		onSuccess: (result) => {
 			queryClient.setQueryData(MEDIA_USAGE_ACTIVATION_QUERY_KEY, result.activation);
 			setNotice(null);
 			setDialogOpen(false);
-			setLiveMessage(
-				result.activation.state === "active"
-					? t`Media Usage is active.`
-					: result.processedCollections === 1
-						? t`One content type is ready. Continue setup.`
-						: t`Setup status updated. Continue setup.`,
-			);
 			if (result.activation.state !== "active") focusActiveRef.current = false;
 			if (result.activation.state === "active" || result.activation.lastErrorCode) {
 				resetConfirmations();
 			}
 		},
 		onError: (caught) => {
+			submittingRef.current = false;
 			void handleAdvanceError(caught);
 		},
 		onSettled: () => {
@@ -248,6 +244,20 @@ export function MediaUsageSettings() {
 		: activation.state === "expanded"
 			? t`Enable Media Usage`
 			: t`Continue setup`;
+	const liveMessage = active
+		? progressQuery.isError
+			? t`Indexing progress is unavailable.`
+			: progressQuery.isPending
+				? t`Checking indexing progress.`
+				: progressQuery.data?.status === "ready"
+					? t`Media Usage is ready.`
+					: progressQuery.data?.status === "needs_attention"
+						? t`Media Usage needs attention.`
+						: t`Existing content is indexing.`
+		: activation.state === "activating"
+			? t`Setup is in progress.`
+			: t`Media Usage is off.`;
+	const progressAlert = progressQuery.isError || progressQuery.data?.status === "needs_attention";
 	const submit = () => {
 		if (submittingRef.current) return;
 		submittingRef.current = true;
@@ -264,9 +274,23 @@ export function MediaUsageSettings() {
 
 	return (
 		<SettingsFrame title={title} description={description}>
-			<SettingsSection title={t`Automatic indexing`}>
-				<StatusRow activation={activation} activeHeadingRef={activeHeadingRef} />
-				{storedFailure || notice ? (
+			<SettingsSection
+				title={t`Automatic indexing`}
+				actions={
+					active && progressQuery.isError ? (
+						<Button size="sm" variant="secondary" onClick={() => void progressQuery.refetch()}>
+							{t`Try again`}
+						</Button>
+					) : undefined
+				}
+			>
+				<StatusRow
+					activation={activation}
+					progress={progressQuery.isError ? undefined : progressQuery.data}
+					progressError={progressQuery.isError}
+					activeHeadingRef={activeHeadingRef}
+				/>
+				{!active && (storedFailure || notice) ? (
 					<SettingRow>
 						<SetupNotice notice={notice} storedFailure={storedFailure} onRefresh={refreshStatus} />
 					</SettingRow>
@@ -290,11 +314,14 @@ export function MediaUsageSettings() {
 				activation={activation}
 				confirmations={confirmations}
 				pending={advanceMutation.isPending}
-				onOpenChange={setDialogOpen}
+				onOpenChange={(open) => {
+					setDialogOpen(open);
+					if (!open) setConfirmations(EMPTY_CONFIRMATIONS);
+				}}
 				onChange={(key, checked) => setConfirmations((current) => ({ ...current, [key]: checked }))}
 				onConfirm={submit}
 			/>
-			<span className="sr-only" role="status">
+			<span className="sr-only" role={progressAlert ? "alert" : "status"} aria-atomic="true">
 				{liveMessage}
 			</span>
 		</SettingsFrame>
@@ -303,14 +330,69 @@ export function MediaUsageSettings() {
 
 function StatusRow({
 	activation,
+	progress,
+	progressError,
 	activeHeadingRef,
 }: {
 	activation: MediaUsageActivationStatus;
+	progress: MediaUsageProgress | undefined;
+	progressError: boolean;
 	activeHeadingRef: React.RefObject<HTMLHeadingElement | null>;
 }) {
 	const { t } = useLingui();
 	const active = activation.state === "active";
 	const settingUp = activation.state === "activating";
+	let heading = t`Automatic indexing is off`;
+	let detail = t`Enable Media Usage to index existing content and keep references up to date.`;
+	let badge = t`Off`;
+	let variant: "neutral" | "warning" | "success" | "error" = "neutral";
+	if (settingUp) {
+		heading = t`Setup is in progress`;
+		detail = t`Keep editing paused until setup is complete.`;
+		badge = t`Setting up`;
+		variant = "warning";
+	}
+	if (active) {
+		if (progressError) {
+			heading = t`Indexing progress unavailable`;
+			detail = t`New changes are still tracked automatically.`;
+			badge = t`Unavailable`;
+			variant = "error";
+		}
+		heading = progressError
+			? heading
+			: !progress
+				? t`Checking indexing progress`
+				: progress.status === "ready"
+					? t`Media Usage is ready`
+					: progress?.status === "needs_attention"
+						? t`Media Usage needs attention`
+						: t`Indexing existing content`;
+		detail = progressError
+			? detail
+			: progress
+				? plural(progress.totalCollections, {
+						one: `${progress.readyCollections} of # content type ready`,
+						other: `${progress.readyCollections} of # content types ready`,
+					})
+				: t`Checking indexing progress…`;
+		badge = progressError
+			? badge
+			: !progress
+				? t`Checking`
+				: progress.status === "ready"
+					? t`Ready`
+					: progress.status === "needs_attention"
+						? t`Needs attention`
+						: t`Indexing`;
+		variant = progressError
+			? variant
+			: progress?.status === "ready"
+				? "success"
+				: progress?.status === "needs_attention"
+					? "error"
+					: "warning";
+	}
 	return (
 		<SettingRow>
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -320,25 +402,12 @@ function StatusRow({
 						tabIndex={active ? -1 : undefined}
 						className="text-sm font-medium leading-5"
 					>
-						{active
-							? t`Media Usage is active`
-							: settingUp
-								? t`Setup is in progress`
-								: t`Automatic indexing is off`}
+						{heading}
 					</h3>
-					<p className="mt-0.5 max-w-2xl text-sm leading-5 text-kumo-subtle">
-						{active
-							? t`New changes are tracked automatically. Existing content may still be indexing.`
-							: settingUp
-								? t`Keep editing paused until setup is complete.`
-								: t`Enable Media Usage to index existing content and keep references up to date.`}
-					</p>
+					<p className="mt-0.5 max-w-2xl text-sm leading-5 text-kumo-subtle">{detail}</p>
 				</div>
-				<Badge
-					variant={active ? "success" : settingUp ? "warning" : "neutral"}
-					className="shrink-0"
-				>
-					{active ? t`Active` : settingUp ? t`Setting up` : t`Off`}
+				<Badge variant={variant} className="shrink-0">
+					{badge}
 				</Badge>
 			</div>
 		</SettingRow>
@@ -456,11 +525,7 @@ function SetupNotice({
 	return (
 		<Banner
 			variant="alert"
-			title={
-				notice === "ownership"
-					? t`Setup changed while this step was running.`
-					: t`We couldn’t confirm the last setup step.`
-			}
+			title={t`Setup status was refreshed.`}
 			description={t`The status was refreshed. Check the requirements before continuing.`}
 		/>
 	);

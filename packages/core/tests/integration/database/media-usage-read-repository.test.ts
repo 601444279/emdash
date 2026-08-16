@@ -455,6 +455,16 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			readyCollections: 1,
 			totalCollections: 1,
 		});
+		await ctx.db
+			.updateTable("_emdash_media_usage_collection_deletions")
+			.set({ state: "failed" })
+			.where("collection_id", "=", "collection-posts")
+			.execute();
+		await expect(progress()).resolves.toEqual({
+			status: "needs_attention",
+			readyCollections: 1,
+			totalCollections: 1,
+		});
 
 		await ctx.db
 			.updateTable("_emdash_media_usage_index_status")

@@ -851,7 +851,10 @@ export class MediaUsageRepository {
 				) AS activation_active,
 				COUNT(*) AS total_collections,
 				COALESCE(SUM(is_ready), 0) AS ready_collections,
-				COALESCE(MAX(needs_attention), 0) AS needs_attention
+				CASE WHEN COALESCE(MAX(needs_attention), 0) = 1 OR EXISTS (
+					SELECT 1 FROM _emdash_media_usage_collection_deletions AS deletion
+					WHERE deletion.state = 'failed'
+				) THEN 1 ELSE 0 END AS needs_attention
 			FROM collection_progress
 		`.execute(this.db);
 		const row = result.rows[0];

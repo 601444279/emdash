@@ -4,10 +4,8 @@ const ACTIVATION_URL = `${API_BASE}/admin/media-usage/activation`;
 
 export const MEDIA_USAGE_ACTIVATION_QUERY_KEY = ["media-usage-activation"] as const;
 
-export type MediaUsageActivationState = "expanded" | "activating" | "active";
-
 export interface MediaUsageActivationStatus {
-	state: MediaUsageActivationState;
+	state: "expanded" | "activating" | "active";
 	collectionCursor: string | null;
 	attemptCount: number;
 	drainConfirmedAt: string | null;
@@ -22,6 +20,12 @@ export interface MediaUsageActivationAdvanceResponse {
 	outcome: "activating" | "active";
 	processedCollections: number;
 	activation: MediaUsageActivationStatus;
+}
+
+export interface MediaUsageProgress {
+	status: "indexing" | "ready" | "needs_attention";
+	readyCollections: number;
+	totalCollections: number;
 }
 
 export type MediaUsageActivationErrorKind =
@@ -49,6 +53,14 @@ export async function fetchMediaUsageActivationStatus(): Promise<MediaUsageActiv
 	if (!response.ok) throw await parseActivationError(response);
 	const data = await readSuccessData(response);
 	if (!isActivationStatus(data)) throw unknownResponse(response.status);
+	return data;
+}
+
+export async function fetchMediaUsageProgress(): Promise<MediaUsageProgress> {
+	const response = await activationFetch(`${API_BASE}/admin/media-usage/progress`);
+	if (!response.ok) throw await parseActivationError(response);
+	const data = await readSuccessData(response);
+	if (!isMediaUsageProgress(data)) throw unknownResponse(response.status);
 	return data;
 }
 
@@ -158,4 +170,24 @@ function isAdvanceResponse(value: unknown): value is MediaUsageActivationAdvance
 		value.processedCollections >= 0 &&
 		value.processedCollections <= 1
 	);
+}
+
+function isMediaUsageProgress(value: unknown): value is MediaUsageProgress {
+	if (
+		!isRecord(value) ||
+		(value.status !== "indexing" && value.status !== "ready" && value.status !== "needs_attention")
+	)
+		return false;
+	const ready = value.readyCollections;
+	const total = value.totalCollections;
+	if (
+		typeof ready !== "number" ||
+		!Number.isSafeInteger(ready) ||
+		ready < 0 ||
+		typeof total !== "number" ||
+		!Number.isSafeInteger(total) ||
+		total < ready
+	)
+		return false;
+	return value.status === "needs_attention" || (value.status === "ready") === (ready === total);
 }
