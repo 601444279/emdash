@@ -481,7 +481,7 @@ msgstr "• URL ve vašem obsahu se aktualizují automaticky"
 msgid "← Back"
 msgstr "← Zpět"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:36
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:37
 msgid "1 year"
 msgstr "1 rok"
 
@@ -509,7 +509,7 @@ msgstr "3. Přejděte dolů k části „Hesla aplikací“"
 msgid "3. Select \"All content\""
 msgstr "3. Vyberte „Veškerý obsah“"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:34
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:35
 msgid "30 days"
 msgstr "30 dní"
 
@@ -557,11 +557,11 @@ msgstr "5. Zkopírujte vygenerované heslo"
 msgid "5. Upload the file here"
 msgstr "5. Nahrajte soubor sem"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:33
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:34
 msgid "7 days"
 msgstr "7 dní"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:35
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:36
 msgid "90 days"
 msgstr "90 dní"
 
@@ -803,7 +803,7 @@ msgstr "Další data k importu."
 msgid "admin"
 msgstr "admin"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:101
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
 #: packages/admin/src/components/Sidebar.tsx:398
 #: packages/admin/src/components/users/roleDefinitions.ts:42
 msgid "Admin"
@@ -967,9 +967,9 @@ msgstr "Případně můžete provést export z WordPressu (Nástroje → Export)
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:76
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:99
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:116
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:216
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:217
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:475
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:218
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:476
 #: packages/admin/src/components/settings/BackupSettings.tsx:103
 #: packages/admin/src/components/settings/BackupSettings.tsx:123
 #: packages/admin/src/components/settings/BackupSettings.tsx:166
@@ -1035,8 +1035,8 @@ msgstr "Povoleny jsou všechny typy médií (v rámci globálních limitů)."
 
 #: packages/admin/src/components/Settings.tsx:82
 #: packages/admin/src/components/Settings.tsx:86
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:194
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:332
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:195
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:333
 msgid "API Tokens"
 msgstr "API tokeny"
 
@@ -1443,7 +1443,7 @@ msgstr "Může zobrazit obsah"
 #: packages/admin/src/components/SectionPickerModal.tsx:131
 #: packages/admin/src/components/Sections.tsx:209
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:207
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:233
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:234
 #: packages/admin/src/components/settings/SecuritySettings.tsx:166
 #: packages/admin/src/components/TaxonomyManager.tsx:369
 #: packages/admin/src/components/TaxonomyManager.tsx:656
@@ -1775,7 +1775,7 @@ msgstr "Komponenta"
 msgid "Configure Field"
 msgstr "Nastavit pole"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:415
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:416
 msgid "Confirm"
 msgstr "Potvrdit"
 
@@ -1850,7 +1850,7 @@ msgstr "Obsah je nyní veřejný"
 msgid "content items"
 msgstr "– počet položek obsahu"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:46
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
 msgid "Content Read"
 msgstr "Čtení obsahu"
 
@@ -1880,7 +1880,7 @@ msgstr "Typy obsahu"
 msgid "Content was skipped because it already exists"
 msgstr "Obsah byl přeskočen, protože už existuje"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:51
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:52
 msgid "Content Write"
 msgstr "Zápis obsahu"
 
@@ -1906,7 +1906,7 @@ msgstr ""
 msgid "Contributor"
 msgstr "Přispěvatel"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:304
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:305
 #: packages/admin/src/components/users/InviteUserModal.tsx:133
 msgid "Copied to clipboard"
 msgstr "Zkopírováno do schránky"
@@ -1924,12 +1924,12 @@ msgstr "Kopírovat odkaz pozvánky"
 msgid "Copy slug"
 msgstr "Kopírovat slug"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:257
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:258
 msgid "Copy this token now — it won't be shown again."
 msgstr "Zkopírujte token nyní — znovu se nezobrazí."
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:288
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:295
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:289
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:296
 msgid "Copy token"
 msgstr "Kopírovat token"
 
@@ -2038,7 +2038,7 @@ msgstr "Vytvořit nabídku"
 msgid "Create New Menu"
 msgstr "Vytvořit novou nabídku"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:228
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:229
 msgid "Create New Token"
 msgstr "Vytvořit nový token"
 
@@ -2051,9 +2051,9 @@ msgid "Create Passkey"
 msgstr "Vytvořit přístupový klíč"
 
 #: packages/admin/src/components/Settings.tsx:87
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:195
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:229
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:325
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:196
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:230
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:326
 msgid "Create personal access tokens for programmatic API access"
 msgstr "Vytvořte osobní přístupové tokeny pro programový přístup k API"
 
@@ -2088,8 +2088,8 @@ msgstr "Sekce vytvořte v knihovně sekcí, poté je zde můžete použít"
 msgid "Create Taxonomy"
 msgstr "Vytvořit taxonomii"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:237
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:539
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:238
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 msgid "Create Token"
 msgstr "Vytvořit token"
 
@@ -2124,21 +2124,21 @@ msgstr "Vytvořte si přístupový klíč"
 msgid "Create, update, and delete content"
 msgstr "Vytvářet, upravovat a mazat obsah"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:82
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:83
 msgid "Create, update, and delete navigation menus"
 msgstr "Vytvářet, upravovat a mazat navigační nabídky"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:77
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:78
 msgid "Create, update, and delete taxonomy terms"
 msgstr "Vytvářet, upravovat a mazat položky taxonomie"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:52
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:53
 msgid "Create, update, delete content"
 msgstr "Vytvářet, upravovat, mazat obsah"
 
 #: packages/admin/src/components/ContentList.tsx:807
 #: packages/admin/src/components/ContentSettingsPanel.tsx:606
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:357
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
 msgstr "Vytvořeno"
@@ -2170,7 +2170,7 @@ msgstr "Vytváření kolekcí a polí..."
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:539
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 #: packages/admin/src/components/TaxonomyManager.tsx:873
 #: packages/admin/src/components/TaxonomySidebar.tsx:308
 msgid "Creating..."
@@ -2640,7 +2640,7 @@ msgstr "Zahodit změny konceptu?"
 msgid "Discarding..."
 msgstr "Zahazování..."
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:266
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:267
 msgid "Dismiss"
 msgstr "Zavřít"
 
@@ -2834,7 +2834,7 @@ msgstr "např. application/zip nebo .pdf"
 msgid "e.g. import, blog"
 msgstr "např. import, blog"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:483
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:484
 msgid "e.g., CI/CD Pipeline"
 msgstr "např. CI/CD Pipeline"
 
@@ -3158,8 +3158,8 @@ msgstr "Rozbalit"
 msgid "Expand details"
 msgstr "Rozbalit podrobnosti"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:364
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:525
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:365
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:526
 msgid "Expiry"
 msgstr "Platnost"
 
@@ -3927,7 +3927,7 @@ msgstr "Plná velikost"
 msgid "Full access"
 msgstr "Plný přístup"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:103
 msgid "Full admin access"
 msgstr "Plný přístup správce"
 
@@ -4062,8 +4062,8 @@ msgstr "úvodní sekce, banner, výzva k akci"
 msgid "Hide from search engines"
 msgstr "Skrýt před vyhledávači"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:275
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:282
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:276
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:283
 msgid "Hide token"
 msgstr "Skrýt token"
 
@@ -4447,11 +4447,11 @@ msgstr "Pozvat uživatele"
 msgid "Invite your first team member"
 msgstr "Pozvěte prvního člena týmu"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:97
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:98
 msgid "Invoke MCP tools from all enabled plugins"
 msgstr "Volat MCP nástroje ze všech povolených pluginů"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:516
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:517
 msgid "Invoke only this plugin's enabled MCP tools"
 msgstr "Volat pouze povolené MCP nástroje tohoto pluginu"
 
@@ -4578,7 +4578,7 @@ msgstr "Poslední výskyt"
 msgid "Last updated"
 msgstr "Poslední aktualizace"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:372
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:373
 #: packages/admin/src/components/settings/PasskeyItem.tsx:154
 msgid "Last used"
 msgstr "Naposledy použito"
@@ -4765,7 +4765,7 @@ msgstr "Načítání widgetů..."
 #: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:205
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:69
 #: packages/admin/src/components/settings/SecuritySettings.tsx:99
@@ -4981,11 +4981,11 @@ msgstr "Import médií byl přeskočen"
 msgid "Media Library"
 msgstr "Knihovna médií"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:56
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:57
 msgid "Media Read"
 msgstr "Čtení médií"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:61
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:62
 msgid "Media Write"
 msgstr "Zápis médií"
 
@@ -5049,7 +5049,7 @@ msgstr "Nabídky"
 msgid "Menus ({0})"
 msgstr "Nabídky ({0})"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:81
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:82
 msgid "Menus Manage"
 msgstr "Správa nabídek"
 
@@ -5098,7 +5098,7 @@ msgstr "Moderování"
 msgid "Moderation Signals"
 msgstr "Signály moderování"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:72
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:73
 msgid "Modify collection schemas"
 msgstr "Upravovat schémata kolekcí"
 
@@ -5356,7 +5356,7 @@ msgstr "Zatím nebyly zaznamenány žádné chyby 404."
 msgid "No alt text"
 msgstr "Bez alternativního textu"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:401
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:402
 msgid "No API tokens yet. Create one to get started."
 msgstr "Zatím žádné API tokeny. Začněte vytvořením prvního."
 
@@ -5441,7 +5441,7 @@ msgstr "Není nastaven žádný poskytovatel e-mailu. Sdílejte tento odkaz ruč
 msgid "No EmDash users found"
 msgstr "Nenalezeni žádní uživatelé EmDash"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:32
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:33
 msgid "No expiry"
 msgstr "Bez omezení platnosti"
 
@@ -6016,7 +6016,7 @@ msgstr "Chyba pluginu ({0})"
 msgid "Plugin MCP access updated"
 msgstr "Přístup pluginu k MCP aktualizován"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:96
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:97
 msgid "Plugin MCP Tools"
 msgstr "MCP nástroje pluginů"
 
@@ -6058,8 +6058,8 @@ msgid "Plugin responded with {0}: {text}"
 msgstr "Plugin vrátil stav {0}: {text}"
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:511
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:514
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:512
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:515
 msgid "Plugin tools: {0}"
 msgstr "Nástroje pluginu: {0}"
 
@@ -6229,19 +6229,19 @@ msgstr "Citát"
 msgid "Raw meta"
 msgstr "Nezpracovaná metadata"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:67
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:68
 msgid "Read collection schemas"
 msgstr "Číst schémata kolekcí"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:48
 msgid "Read content entries"
 msgstr "Číst položky obsahu"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:57
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:58
 msgid "Read media files"
 msgstr "Číst soubory médií"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:87
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:88
 msgid "Read site settings"
 msgstr "Číst nastavení webu"
 
@@ -6604,22 +6604,22 @@ msgstr "Revize obnovena"
 msgid "Revisions"
 msgstr "Revize"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:189
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:192
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:393
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:190
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:193
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:394
 msgid "Revoke token"
 msgstr "Odvolat token"
 
 #. placeholder {0}: token.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:391
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:392
 msgid "Revoke token {0}"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:413
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:414
 msgid "Revoke?"
 msgstr "Odvolat?"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:416
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:417
 msgid "Revoking..."
 msgstr "Odvolávání..."
 
@@ -6797,16 +6797,16 @@ msgstr "Změny schématu"
 msgid "Schema preparation failed"
 msgstr "Příprava schématu selhala"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:66
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:67
 msgid "Schema Read"
 msgstr "Čtení schématu"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:71
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:72
 msgid "Schema Write"
 msgstr "Zápis schématu"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:350
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:489
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:351
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:490
 msgid "Scopes"
 msgstr "Rozsahy"
 
@@ -7277,11 +7277,11 @@ msgstr "Nastavování..."
 msgid "Settings"
 msgstr "Nastavení"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:91
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:92
 msgid "Settings Manage"
 msgstr "Nastavení – správa"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:86
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:87
 msgid "Settings Read"
 msgstr "Nastavení – čtení"
 
@@ -7331,8 +7331,8 @@ msgstr "Zobrazit počet příspěvků"
 msgid "Show thumbnails"
 msgstr "Zobrazit náhledy"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:275
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:282
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:276
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:283
 msgid "Show token"
 msgstr "Zobrazit token"
 
@@ -7694,7 +7694,7 @@ msgstr "Cílový jazyk"
 msgid "Taxonomies"
 msgstr "Taxonomie"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:76
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:77
 msgid "Taxonomies Manage"
 msgstr "Taxonomie – správa"
 
@@ -8000,11 +8000,11 @@ msgid "Toggle theme (current: {label})"
 msgstr "Přepnout motiv (aktuální: {label})"
 
 #. placeholder {0}: newToken.info.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:254
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:255
 msgid "Token created: {0}"
 msgstr "Token vytvořen: {0}"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:480
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:481
 msgid "Token Name"
 msgstr "Název tokenu"
 
@@ -8290,7 +8290,7 @@ msgstr ""
 msgid "Update settings for {0}"
 msgstr "Aktualizovat nastavení pro {0}"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:92
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:93
 msgid "Update site settings"
 msgstr "Aktualizovat nastavení webu"
 
@@ -8343,7 +8343,7 @@ msgstr "Nahrát soubor exportu"
 msgid "Upload an image to get started"
 msgstr "Začněte nahráním obrázku"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:62
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:63
 msgid "Upload and delete media"
 msgstr "Nahrávat a mazat média"
 

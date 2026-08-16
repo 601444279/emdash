@@ -481,7 +481,7 @@ msgstr "• コンテンツ内のURLが自動的に更新されます"
 msgid "← Back"
 msgstr "← 戻る"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:36
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:37
 msgid "1 year"
 msgstr "1年"
 
@@ -509,7 +509,7 @@ msgstr "3. 「アプリケーションパスワード」までスクロール"
 msgid "3. Select \"All content\""
 msgstr "3. 「すべてのコンテンツ」を選択"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:34
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:35
 msgid "30 days"
 msgstr "30日"
 
@@ -557,11 +557,11 @@ msgstr "5. 生成されたパスワードをコピー"
 msgid "5. Upload the file here"
 msgstr "5. ここにファイルをアップロード"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:33
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:34
 msgid "7 days"
 msgstr "7日"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:35
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:36
 msgid "90 days"
 msgstr "90日"
 
@@ -803,7 +803,7 @@ msgstr "インポートする追加データ。"
 msgid "admin"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:101
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
 #: packages/admin/src/components/Sidebar.tsx:398
 #: packages/admin/src/components/users/roleDefinitions.ts:42
 msgid "Admin"
@@ -967,9 +967,9 @@ msgstr "または、WordPressからエクスポート（ツール → エクス�
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:76
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:99
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:116
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:216
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:217
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:475
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:218
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:476
 #: packages/admin/src/components/settings/BackupSettings.tsx:103
 #: packages/admin/src/components/settings/BackupSettings.tsx:123
 #: packages/admin/src/components/settings/BackupSettings.tsx:166
@@ -1035,8 +1035,8 @@ msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:82
 #: packages/admin/src/components/Settings.tsx:86
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:194
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:332
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:195
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:333
 msgid "API Tokens"
 msgstr "APIトークン"
 
@@ -1443,7 +1443,7 @@ msgstr "コンテンツを閲覧可能"
 #: packages/admin/src/components/SectionPickerModal.tsx:131
 #: packages/admin/src/components/Sections.tsx:209
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:207
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:233
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:234
 #: packages/admin/src/components/settings/SecuritySettings.tsx:166
 #: packages/admin/src/components/TaxonomyManager.tsx:369
 #: packages/admin/src/components/TaxonomyManager.tsx:656
@@ -1775,7 +1775,7 @@ msgstr ""
 msgid "Configure Field"
 msgstr "フィールドを設定"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:415
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:416
 msgid "Confirm"
 msgstr "確認"
 
@@ -1850,7 +1850,7 @@ msgstr ""
 msgid "content items"
 msgstr "コンテンツ"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:46
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
 msgid "Content Read"
 msgstr "コンテンツ読み取り"
 
@@ -1880,7 +1880,7 @@ msgstr "コンテンツタイプ"
 msgid "Content was skipped because it already exists"
 msgstr "既に存在するためスキップされました"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:51
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:52
 msgid "Content Write"
 msgstr "コンテンツ書き込み"
 
@@ -1906,7 +1906,7 @@ msgstr ""
 msgid "Contributor"
 msgstr "寄稿者"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:304
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:305
 #: packages/admin/src/components/users/InviteUserModal.tsx:133
 msgid "Copied to clipboard"
 msgstr "クリップボードにコピーしました"
@@ -1924,12 +1924,12 @@ msgstr "招待リンクをコピー"
 msgid "Copy slug"
 msgstr "スラッグをコピー"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:257
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:258
 msgid "Copy this token now — it won't be shown again."
 msgstr "今すぐこのトークンをコピーしてください。再表示はされません。"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:288
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:295
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:289
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:296
 msgid "Copy token"
 msgstr "トークンをコピー"
 
@@ -2038,7 +2038,7 @@ msgstr "メニューを作成"
 msgid "Create New Menu"
 msgstr "新しいメニューを作成"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:228
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:229
 msgid "Create New Token"
 msgstr "新しいトークンを作成"
 
@@ -2051,9 +2051,9 @@ msgid "Create Passkey"
 msgstr "パスキーを作成"
 
 #: packages/admin/src/components/Settings.tsx:87
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:195
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:229
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:325
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:196
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:230
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:326
 msgid "Create personal access tokens for programmatic API access"
 msgstr "プログラムからのAPIアクセス用にパーソナルアクセストークンを作成"
 
@@ -2088,8 +2088,8 @@ msgstr "セクションライブラリでセクションを作成して使用で
 msgid "Create Taxonomy"
 msgstr "タクソノミーを作成"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:237
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:539
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:238
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 msgid "Create Token"
 msgstr "トークンを作成"
 
@@ -2124,21 +2124,21 @@ msgstr "パスキーを作成"
 msgid "Create, update, and delete content"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:82
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:83
 msgid "Create, update, and delete navigation menus"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:77
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:78
 msgid "Create, update, and delete taxonomy terms"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:52
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:53
 msgid "Create, update, delete content"
 msgstr "コンテンツの作成・更新・削除"
 
 #: packages/admin/src/components/ContentList.tsx:807
 #: packages/admin/src/components/ContentSettingsPanel.tsx:606
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:357
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
 msgstr "作成済み"
@@ -2170,7 +2170,7 @@ msgstr "コレクションとフィールドを作成中..."
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:539
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 #: packages/admin/src/components/TaxonomyManager.tsx:873
 #: packages/admin/src/components/TaxonomySidebar.tsx:308
 msgid "Creating..."
@@ -2640,7 +2640,7 @@ msgstr "下書きの変更を破棄しますか？"
 msgid "Discarding..."
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:266
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:267
 msgid "Dismiss"
 msgstr "閉じる"
 
@@ -2834,7 +2834,7 @@ msgstr ""
 msgid "e.g. import, blog"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:483
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:484
 msgid "e.g., CI/CD Pipeline"
 msgstr "例: CI/CDパイプライン"
 
@@ -3155,8 +3155,8 @@ msgstr "展開"
 msgid "Expand details"
 msgstr "詳細を展開"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:364
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:525
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:365
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:526
 msgid "Expiry"
 msgstr "有効期限"
 
@@ -3924,7 +3924,7 @@ msgstr ""
 msgid "Full access"
 msgstr "フルアクセス"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:103
 msgid "Full admin access"
 msgstr "管理者フルアクセス"
 
@@ -4059,8 +4059,8 @@ msgstr ""
 msgid "Hide from search engines"
 msgstr "検索エンジンから非表示"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:275
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:282
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:276
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:283
 msgid "Hide token"
 msgstr "トークンを非表示"
 
@@ -4444,11 +4444,11 @@ msgstr "ユーザーを招待"
 msgid "Invite your first team member"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:97
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:98
 msgid "Invoke MCP tools from all enabled plugins"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:516
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:517
 msgid "Invoke only this plugin's enabled MCP tools"
 msgstr ""
 
@@ -4575,7 +4575,7 @@ msgstr "最終確認"
 msgid "Last updated"
 msgstr "最終更新"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:372
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:373
 #: packages/admin/src/components/settings/PasskeyItem.tsx:154
 msgid "Last used"
 msgstr "最終使用"
@@ -4762,7 +4762,7 @@ msgstr ""
 #: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:205
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:69
 #: packages/admin/src/components/settings/SecuritySettings.tsx:99
@@ -4978,11 +4978,11 @@ msgstr "メディアのインポートはスキップされました"
 msgid "Media Library"
 msgstr "メディアライブラリ"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:56
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:57
 msgid "Media Read"
 msgstr "メディア読み取り"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:61
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:62
 msgid "Media Write"
 msgstr "メディア書き込み"
 
@@ -5046,7 +5046,7 @@ msgstr "メニュー"
 msgid "Menus ({0})"
 msgstr "メニュー ({0})"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:81
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:82
 msgid "Menus Manage"
 msgstr ""
 
@@ -5095,7 +5095,7 @@ msgstr ""
 msgid "Moderation Signals"
 msgstr "モデレーションシグナル"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:72
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:73
 msgid "Modify collection schemas"
 msgstr "コレクションスキーマを変更"
 
@@ -5353,7 +5353,7 @@ msgstr "404エラーはまだ記録されていません。"
 msgid "No alt text"
 msgstr "代替テキストなし"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:401
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:402
 msgid "No API tokens yet. Create one to get started."
 msgstr "APIトークンはまだありません。作成して使い始めましょう。"
 
@@ -5438,7 +5438,7 @@ msgstr "メールプロバイダーが設定されていません。このリン
 msgid "No EmDash users found"
 msgstr "EmDashユーザーが見つかりません"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:32
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:33
 msgid "No expiry"
 msgstr "無期限"
 
@@ -6010,7 +6010,7 @@ msgstr ""
 msgid "Plugin MCP access updated"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:96
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:97
 msgid "Plugin MCP Tools"
 msgstr ""
 
@@ -6052,8 +6052,8 @@ msgid "Plugin responded with {0}: {text}"
 msgstr ""
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:511
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:514
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:512
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:515
 msgid "Plugin tools: {0}"
 msgstr ""
 
@@ -6223,19 +6223,19 @@ msgstr "引用"
 msgid "Raw meta"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:67
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:68
 msgid "Read collection schemas"
 msgstr "コレクションスキーマを読み取り"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:48
 msgid "Read content entries"
 msgstr "コンテンツエントリを読み取り"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:57
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:58
 msgid "Read media files"
 msgstr "メディアファイルを読み取り"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:87
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:88
 msgid "Read site settings"
 msgstr ""
 
@@ -6598,22 +6598,22 @@ msgstr "リビジョンを復元しました"
 msgid "Revisions"
 msgstr "リビジョン"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:189
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:192
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:393
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:190
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:193
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:394
 msgid "Revoke token"
 msgstr "トークンを取り消す"
 
 #. placeholder {0}: token.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:391
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:392
 msgid "Revoke token {0}"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:413
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:414
 msgid "Revoke?"
 msgstr "取り消しますか？"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:416
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:417
 msgid "Revoking..."
 msgstr "取り消し中..."
 
@@ -6791,16 +6791,16 @@ msgstr "スキーマの変更"
 msgid "Schema preparation failed"
 msgstr "スキーマの準備に失敗しました"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:66
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:67
 msgid "Schema Read"
 msgstr "スキーマ読み取り"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:71
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:72
 msgid "Schema Write"
 msgstr "スキーマ書き込み"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:350
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:489
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:351
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:490
 msgid "Scopes"
 msgstr "スコープ"
 
@@ -7271,11 +7271,11 @@ msgstr "セットアップ中..."
 msgid "Settings"
 msgstr "設定"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:91
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:92
 msgid "Settings Manage"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:86
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:87
 msgid "Settings Read"
 msgstr ""
 
@@ -7325,8 +7325,8 @@ msgstr ""
 msgid "Show thumbnails"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:275
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:282
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:276
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:283
 msgid "Show token"
 msgstr "トークンを表示"
 
@@ -7688,7 +7688,7 @@ msgstr ""
 msgid "Taxonomies"
 msgstr "タクソノミー"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:76
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:77
 msgid "Taxonomies Manage"
 msgstr ""
 
@@ -7994,11 +7994,11 @@ msgid "Toggle theme (current: {label})"
 msgstr "テーマを切り替え（現在: {label}）"
 
 #. placeholder {0}: newToken.info.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:254
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:255
 msgid "Token created: {0}"
 msgstr "トークンを作成しました: {0}"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:480
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:481
 msgid "Token Name"
 msgstr "トークン名"
 
@@ -8284,7 +8284,7 @@ msgstr ""
 msgid "Update settings for {0}"
 msgstr "{0}の設定を更新"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:92
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:93
 msgid "Update site settings"
 msgstr ""
 
@@ -8337,7 +8337,7 @@ msgstr "エクスポートファイルをアップロード"
 msgid "Upload an image to get started"
 msgstr "画像をアップロードして始めましょう"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:62
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:63
 msgid "Upload and delete media"
 msgstr "メディアのアップロードと削除"
 

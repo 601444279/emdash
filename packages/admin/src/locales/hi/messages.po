@@ -481,7 +481,7 @@ msgstr "• आपकी सामग्री के URL स्वचालि�
 msgid "← Back"
 msgstr "← वापस"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:36
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:37
 msgid "1 year"
 msgstr "1 वर्ष"
 
@@ -509,7 +509,7 @@ msgstr "3. \"एप्लिकेशन पासवर्ड\" तक स्�
 msgid "3. Select \"All content\""
 msgstr "3. \"सभी सामग्री\" चुनें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:34
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:35
 msgid "30 days"
 msgstr "30 दिन"
 
@@ -557,11 +557,11 @@ msgstr "5. जनरेट किए गए पासवर्ड को कॉ�
 msgid "5. Upload the file here"
 msgstr "5. फ़ाइल यहां अपलोड करें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:33
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:34
 msgid "7 days"
 msgstr "7 दिन"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:35
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:36
 msgid "90 days"
 msgstr "90 दिन"
 
@@ -803,7 +803,7 @@ msgstr "आयात करने के लिए अतिरिक्त ड�
 msgid "admin"
 msgstr "व्यवस्थापक"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:101
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
 #: packages/admin/src/components/Sidebar.tsx:398
 #: packages/admin/src/components/users/roleDefinitions.ts:42
 msgid "Admin"
@@ -967,9 +967,9 @@ msgstr "वैकल्पिक रूप से, आप वर्डप्र�
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:76
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:99
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:116
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:216
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:217
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:475
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:218
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:476
 #: packages/admin/src/components/settings/BackupSettings.tsx:103
 #: packages/admin/src/components/settings/BackupSettings.tsx:123
 #: packages/admin/src/components/settings/BackupSettings.tsx:166
@@ -1035,8 +1035,8 @@ msgstr "किसी भी मीडिया प्रकार की अन�
 
 #: packages/admin/src/components/Settings.tsx:82
 #: packages/admin/src/components/Settings.tsx:86
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:194
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:332
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:195
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:333
 msgid "API Tokens"
 msgstr "एपीआई टोकन"
 
@@ -1443,7 +1443,7 @@ msgstr "सामग्री देख सकते हैं"
 #: packages/admin/src/components/SectionPickerModal.tsx:131
 #: packages/admin/src/components/Sections.tsx:209
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:207
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:233
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:234
 #: packages/admin/src/components/settings/SecuritySettings.tsx:166
 #: packages/admin/src/components/TaxonomyManager.tsx:369
 #: packages/admin/src/components/TaxonomyManager.tsx:656
@@ -1775,7 +1775,7 @@ msgstr "अवयव"
 msgid "Configure Field"
 msgstr "फ़ील्ड कॉन्फ़िगर करें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:415
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:416
 msgid "Confirm"
 msgstr "पुष्टि करना"
 
@@ -1850,7 +1850,7 @@ msgstr "सामग्री अब लाइव है"
 msgid "content items"
 msgstr "सामग्री आइटम"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:46
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
 msgid "Content Read"
 msgstr "सामग्री पढ़ें"
 
@@ -1880,7 +1880,7 @@ msgstr "सामग्री प्रकार"
 msgid "Content was skipped because it already exists"
 msgstr "सामग्री छोड़ दी गई क्योंकि वह पहले से मौजूद है"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:51
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:52
 msgid "Content Write"
 msgstr "सामग्री लिखें"
 
@@ -1906,7 +1906,7 @@ msgstr ""
 msgid "Contributor"
 msgstr "योगदानकर्ता"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:304
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:305
 #: packages/admin/src/components/users/InviteUserModal.tsx:133
 msgid "Copied to clipboard"
 msgstr "क्लिपबोर्ड पर कॉपी किया गया"
@@ -1924,12 +1924,12 @@ msgstr "आमंत्रण लिंक कॉपी करें"
 msgid "Copy slug"
 msgstr "स्लग की नकल करें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:257
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:258
 msgid "Copy this token now — it won't be shown again."
 msgstr "इस टोकन को अभी कॉपी करें - यह दोबारा नहीं दिखाया जाएगा।"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:288
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:295
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:289
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:296
 msgid "Copy token"
 msgstr "टोकन कॉपी करें"
 
@@ -2038,7 +2038,7 @@ msgstr "मेनू बनाएं"
 msgid "Create New Menu"
 msgstr "नया मेनू बनाएं"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:228
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:229
 msgid "Create New Token"
 msgstr "नया टोकन बनाएं"
 
@@ -2051,9 +2051,9 @@ msgid "Create Passkey"
 msgstr "पासकी बनाएं"
 
 #: packages/admin/src/components/Settings.tsx:87
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:195
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:229
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:325
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:196
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:230
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:326
 msgid "Create personal access tokens for programmatic API access"
 msgstr "प्रोग्रामेटिक एपीआई एक्सेस के लिए व्यक्तिगत एक्सेस टोकन बनाएं"
 
@@ -2088,8 +2088,8 @@ msgstr "यहां उनका उपयोग करने के लिए 
 msgid "Create Taxonomy"
 msgstr "वर्गीकरण बनाएं"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:237
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:539
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:238
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 msgid "Create Token"
 msgstr "टोकन बनाएं"
 
@@ -2124,21 +2124,21 @@ msgstr "अपनी पासकी बनाएं"
 msgid "Create, update, and delete content"
 msgstr "सामग्री बनाएं, अपडेट करें और हटाएं"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:82
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:83
 msgid "Create, update, and delete navigation menus"
 msgstr "नेविगेशन मेनू बनाएं, अपडेट करें और हटाएं"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:77
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:78
 msgid "Create, update, and delete taxonomy terms"
 msgstr "वर्गीकरण संबंधी शर्तें बनाएं, अद्यतन करें और हटाएं"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:52
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:53
 msgid "Create, update, delete content"
 msgstr "सामग्री बनाएँ, अद्यतन करें, हटाएँ"
 
 #: packages/admin/src/components/ContentList.tsx:807
 #: packages/admin/src/components/ContentSettingsPanel.tsx:606
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:357
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
 msgstr "बनाया था"
@@ -2170,7 +2170,7 @@ msgstr "संग्रह और फ़ील्ड बनाए जा रह�
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:539
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 #: packages/admin/src/components/TaxonomyManager.tsx:873
 #: packages/admin/src/components/TaxonomySidebar.tsx:308
 msgid "Creating..."
@@ -2640,7 +2640,7 @@ msgstr "ड्राफ्ट परिवर्तन खारिज करे
 msgid "Discarding..."
 msgstr "त्याग रहा हूँ..."
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:266
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:267
 msgid "Dismiss"
 msgstr "नकार देना"
 
@@ -2834,7 +2834,7 @@ msgstr "जैसे एप्लिकेशन/ज़िप या .pdf"
 msgid "e.g. import, blog"
 msgstr "जैसे आयात, ब्लॉग"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:483
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:484
 msgid "e.g., CI/CD Pipeline"
 msgstr "उदाहरण के लिए, सीआई/सीडी पाइपलाइन"
 
@@ -3158,8 +3158,8 @@ msgstr "बढ़ाना"
 msgid "Expand details"
 msgstr "विवरण विस्तृत करें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:364
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:525
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:365
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:526
 msgid "Expiry"
 msgstr "समाप्ति"
 
@@ -3927,7 +3927,7 @@ msgstr "भरा हुआ"
 msgid "Full access"
 msgstr "पूर्ण पहुँच"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:103
 msgid "Full admin access"
 msgstr "पूर्ण व्यवस्थापक पहुँच"
 
@@ -4062,8 +4062,8 @@ msgstr "हीरो, बैनर, सीटीए"
 msgid "Hide from search engines"
 msgstr "खोज इंजनों से छिपाएँ"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:275
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:282
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:276
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:283
 msgid "Hide token"
 msgstr "टोकन छिपाएँ"
 
@@ -4447,11 +4447,11 @@ msgstr "उपयोगकर्ता को आमंत्रित करे
 msgid "Invite your first team member"
 msgstr "अपने पहले टीम सदस्य को आमंत्रित करें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:97
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:98
 msgid "Invoke MCP tools from all enabled plugins"
 msgstr "सभी सक्षम प्लगइन्स से MCP टूल को इनवॉक करें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:516
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:517
 msgid "Invoke only this plugin's enabled MCP tools"
 msgstr "केवल इस प्लगइन के सक्षम MCP टूल को लागू करें"
 
@@ -4578,7 +4578,7 @@ msgstr "अंतिम बार देखा गया"
 msgid "Last updated"
 msgstr "आखरी अपडेट"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:372
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:373
 #: packages/admin/src/components/settings/PasskeyItem.tsx:154
 msgid "Last used"
 msgstr "अंतिम समय प्रयोग हुआ"
@@ -4765,7 +4765,7 @@ msgstr "विजेट लोड हो रहे हैं..."
 #: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:205
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:69
 #: packages/admin/src/components/settings/SecuritySettings.tsx:99
@@ -4981,11 +4981,11 @@ msgstr "मीडिया आयात छोड़ दिया गया थ�
 msgid "Media Library"
 msgstr "मीडिया लाइब्रेरी"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:56
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:57
 msgid "Media Read"
 msgstr "मीडिया पढ़ें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:61
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:62
 msgid "Media Write"
 msgstr "मीडिया लिखें"
 
@@ -5049,7 +5049,7 @@ msgstr "मेनू"
 msgid "Menus ({0})"
 msgstr "मेनू ({0})"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:81
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:82
 msgid "Menus Manage"
 msgstr "मेनू प्रबंधित करें"
 
@@ -5098,7 +5098,7 @@ msgstr "संयम"
 msgid "Moderation Signals"
 msgstr "मॉडरेशन सिग्नल"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:72
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:73
 msgid "Modify collection schemas"
 msgstr "संग्रह स्कीमों को संशोधित करें"
 
@@ -5356,7 +5356,7 @@ msgstr "अभी तक कोई 404 त्रुटियाँ दर्ज 
 msgid "No alt text"
 msgstr "कोई वैकल्पिक पाठ नहीं"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:401
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:402
 msgid "No API tokens yet. Create one to get started."
 msgstr "अभी तक कोई एपीआई टोकन नहीं है. आरंभ करने के लिए एक बनाएं."
 
@@ -5441,7 +5441,7 @@ msgstr "कोई ईमेल प्रदाता कॉन्फ़िगर
 msgid "No EmDash users found"
 msgstr "कोई EmDash उपयोगकर्ता नहीं मिला"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:32
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:33
 msgid "No expiry"
 msgstr "कोई समाप्ति नहीं"
 
@@ -6016,7 +6016,7 @@ msgstr "प्लगइन त्रुटि ({0})"
 msgid "Plugin MCP access updated"
 msgstr "प्लगइन एमसीपी एक्सेस अपडेट किया गया"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:96
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:97
 msgid "Plugin MCP Tools"
 msgstr "प्लगइन एमसीपी उपकरण"
 
@@ -6058,8 +6058,8 @@ msgid "Plugin responded with {0}: {text}"
 msgstr "प्लगइन ने {0} के साथ प्रतिक्रिया दी: {text}"
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:511
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:514
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:512
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:515
 msgid "Plugin tools: {0}"
 msgstr "प्लगइन उपकरण: {0}"
 
@@ -6229,19 +6229,19 @@ msgstr "उद्धरण"
 msgid "Raw meta"
 msgstr "कच्चा मेटा"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:67
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:68
 msgid "Read collection schemas"
 msgstr "संग्रह स्कीमा पढ़ें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:48
 msgid "Read content entries"
 msgstr "सामग्री प्रविष्टियाँ पढ़ें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:57
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:58
 msgid "Read media files"
 msgstr "मीडिया फ़ाइलें पढ़ें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:87
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:88
 msgid "Read site settings"
 msgstr "साइट सेटिंग पढ़ें"
 
@@ -6604,22 +6604,22 @@ msgstr "पुनरीक्षण बहाल"
 msgid "Revisions"
 msgstr "संशोधन"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:189
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:192
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:393
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:190
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:193
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:394
 msgid "Revoke token"
 msgstr "टोकन निरस्त करें"
 
 #. placeholder {0}: token.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:391
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:392
 msgid "Revoke token {0}"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:413
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:414
 msgid "Revoke?"
 msgstr "रद्द करना?"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:416
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:417
 msgid "Revoking..."
 msgstr "निरस्त किया जा रहा है..."
 
@@ -6797,16 +6797,16 @@ msgstr "स्कीमा परिवर्तन"
 msgid "Schema preparation failed"
 msgstr "स्कीमा तैयारी विफल रही"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:66
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:67
 msgid "Schema Read"
 msgstr "स्कीमा पढ़ें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:71
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:72
 msgid "Schema Write"
 msgstr "स्कीमा लिखें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:350
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:489
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:351
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:490
 msgid "Scopes"
 msgstr "कार्यक्षेत्र"
 
@@ -7277,11 +7277,11 @@ msgstr "की स्थापना..."
 msgid "Settings"
 msgstr "सेटिंग्स"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:91
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:92
 msgid "Settings Manage"
 msgstr "सेटिंग्स प्रबंधित करें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:86
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:87
 msgid "Settings Read"
 msgstr "सेटिंग्स पढ़ें"
 
@@ -7331,8 +7331,8 @@ msgstr "पोस्ट संख्या दिखाएँ"
 msgid "Show thumbnails"
 msgstr "थंबनेल दिखाओ"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:275
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:282
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:276
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:283
 msgid "Show token"
 msgstr "टोकन दिखाएँ"
 
@@ -7694,7 +7694,7 @@ msgstr "लक्ष्य स्थान"
 msgid "Taxonomies"
 msgstr "taxonomies"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:76
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:77
 msgid "Taxonomies Manage"
 msgstr "वर्गीकरण प्रबंधित करें"
 
@@ -8000,11 +8000,11 @@ msgid "Toggle theme (current: {label})"
 msgstr "थीम टॉगल करें (वर्तमान: {label})"
 
 #. placeholder {0}: newToken.info.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:254
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:255
 msgid "Token created: {0}"
 msgstr "टोकन बनाया गया: {0}"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:480
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:481
 msgid "Token Name"
 msgstr "टोकन नाम"
 
@@ -8290,7 +8290,7 @@ msgstr ""
 msgid "Update settings for {0}"
 msgstr "{0} के लिए सेटिंग अपडेट करें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:92
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:93
 msgid "Update site settings"
 msgstr "साइट सेटिंग अपडेट करें"
 
@@ -8343,7 +8343,7 @@ msgstr "एक निर्यात फ़ाइल अपलोड करे�
 msgid "Upload an image to get started"
 msgstr "आरंभ करने के लिए एक छवि अपलोड करें"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:62
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:63
 msgid "Upload and delete media"
 msgstr "मीडिया अपलोड करें और हटाएं"
 

@@ -481,7 +481,7 @@ msgstr "• URL ในเนื้อหาของคุณจะถูกอ�
 msgid "← Back"
 msgstr "← กลับ"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:36
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:37
 msgid "1 year"
 msgstr "1 ปี"
 
@@ -509,7 +509,7 @@ msgstr "3. เลื่อนไปที่ \"Application Passwords\""
 msgid "3. Select \"All content\""
 msgstr "3. เลือก \"All content\""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:34
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:35
 msgid "30 days"
 msgstr "30 วัน"
 
@@ -557,11 +557,11 @@ msgstr "5. คัดลอกรหัสผ่านที่สร้างข
 msgid "5. Upload the file here"
 msgstr "5. อัปโหลดไฟล์ที่นี่"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:33
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:34
 msgid "7 days"
 msgstr "7 วัน"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:35
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:36
 msgid "90 days"
 msgstr "90 วัน"
 
@@ -803,7 +803,7 @@ msgstr "ข้อมูลเพิ่มเติมที่จะนำเข
 msgid "admin"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:101
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
 #: packages/admin/src/components/Sidebar.tsx:398
 #: packages/admin/src/components/users/roleDefinitions.ts:42
 msgid "Admin"
@@ -967,9 +967,9 @@ msgstr "หรืออีกทางหนึ่ง คุณสามาร�
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:76
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:99
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:116
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:216
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:217
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:475
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:218
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:476
 #: packages/admin/src/components/settings/BackupSettings.tsx:103
 #: packages/admin/src/components/settings/BackupSettings.tsx:123
 #: packages/admin/src/components/settings/BackupSettings.tsx:166
@@ -1035,8 +1035,8 @@ msgstr "อนุญาตมีเดียทุกประเภท (ขึ�
 
 #: packages/admin/src/components/Settings.tsx:82
 #: packages/admin/src/components/Settings.tsx:86
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:194
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:332
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:195
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:333
 msgid "API Tokens"
 msgstr "API Tokens"
 
@@ -1443,7 +1443,7 @@ msgstr "สามารถดูเนื้อหาได้"
 #: packages/admin/src/components/SectionPickerModal.tsx:131
 #: packages/admin/src/components/Sections.tsx:209
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:207
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:233
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:234
 #: packages/admin/src/components/settings/SecuritySettings.tsx:166
 #: packages/admin/src/components/TaxonomyManager.tsx:369
 #: packages/admin/src/components/TaxonomyManager.tsx:656
@@ -1775,7 +1775,7 @@ msgstr "คอมโพเนนต์"
 msgid "Configure Field"
 msgstr "กำหนดค่าฟิลด์"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:415
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:416
 msgid "Confirm"
 msgstr "ยืนยัน"
 
@@ -1850,7 +1850,7 @@ msgstr "เนื้อหาเผยแพร่แล้ว"
 msgid "content items"
 msgstr "รายการเนื้อหา"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:46
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
 msgid "Content Read"
 msgstr "อ่านเนื้อหา"
 
@@ -1880,7 +1880,7 @@ msgstr "ประเภทเนื้อหา"
 msgid "Content was skipped because it already exists"
 msgstr "ข้ามเนื้อหาเนื่องจากมีอยู่แล้ว"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:51
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:52
 msgid "Content Write"
 msgstr "เขียนเนื้อหา"
 
@@ -1906,7 +1906,7 @@ msgstr ""
 msgid "Contributor"
 msgstr "ผู้ร่วมเขียน"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:304
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:305
 #: packages/admin/src/components/users/InviteUserModal.tsx:133
 msgid "Copied to clipboard"
 msgstr "คัดลอกไปยังคลิปบอร์ดแล้ว"
@@ -1924,12 +1924,12 @@ msgstr "คัดลอกลิงก์คำเชิญ"
 msgid "Copy slug"
 msgstr "คัดลอก Slug"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:257
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:258
 msgid "Copy this token now — it won't be shown again."
 msgstr "คัดลอกโทเค็นนี้ตอนนี้ — จะไม่แสดงอีก"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:288
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:295
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:289
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:296
 msgid "Copy token"
 msgstr "คัดลอกโทเค็น"
 
@@ -2038,7 +2038,7 @@ msgstr "สร้างเมนู"
 msgid "Create New Menu"
 msgstr "สร้างเมนูใหม่"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:228
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:229
 msgid "Create New Token"
 msgstr "สร้างโทเค็นใหม่"
 
@@ -2051,9 +2051,9 @@ msgid "Create Passkey"
 msgstr "สร้าง Passkey"
 
 #: packages/admin/src/components/Settings.tsx:87
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:195
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:229
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:325
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:196
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:230
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:326
 msgid "Create personal access tokens for programmatic API access"
 msgstr "สร้างโทเค็นการเข้าถึงส่วนบุคคลสำหรับการเข้าถึง API แบบเป็นโปรแกรม"
 
@@ -2088,8 +2088,8 @@ msgstr "สร้างส่วนในไลบรารีส่วนเพ
 msgid "Create Taxonomy"
 msgstr "สร้างอนุกรมวิธาน"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:237
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:539
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:238
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 msgid "Create Token"
 msgstr "สร้างโทเค็น"
 
@@ -2124,21 +2124,21 @@ msgstr "สร้าง Passkey ของคุณ"
 msgid "Create, update, and delete content"
 msgstr "สร้าง อัปเดต และลบเนื้อหา"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:82
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:83
 msgid "Create, update, and delete navigation menus"
 msgstr "สร้าง อัปเดต และลบเมนูนำทาง"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:77
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:78
 msgid "Create, update, and delete taxonomy terms"
 msgstr "สร้าง อัปเดต และลบเทอมอนุกรมวิธาน"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:52
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:53
 msgid "Create, update, delete content"
 msgstr "สร้าง อัปเดต ลบเนื้อหา"
 
 #: packages/admin/src/components/ContentList.tsx:807
 #: packages/admin/src/components/ContentSettingsPanel.tsx:606
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:357
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
 msgstr "สร้างแล้ว"
@@ -2170,7 +2170,7 @@ msgstr "กำลังสร้างคอลเลกชันและฟิ
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:539
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 #: packages/admin/src/components/TaxonomyManager.tsx:873
 #: packages/admin/src/components/TaxonomySidebar.tsx:308
 msgid "Creating..."
@@ -2640,7 +2640,7 @@ msgstr "ละทิ้งการเปลี่ยนแปลงในฉบ
 msgid "Discarding..."
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:266
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:267
 msgid "Dismiss"
 msgstr "ปิด"
 
@@ -2834,7 +2834,7 @@ msgstr "เช่น application/zip หรือ .pdf"
 msgid "e.g. import, blog"
 msgstr "เช่น import, blog"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:483
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:484
 msgid "e.g., CI/CD Pipeline"
 msgstr "เช่น CI/CD Pipeline"
 
@@ -3155,8 +3155,8 @@ msgstr "ขยาย"
 msgid "Expand details"
 msgstr "ขยายรายละเอียด"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:364
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:525
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:365
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:526
 msgid "Expiry"
 msgstr "วันหมดอายุ"
 
@@ -3924,7 +3924,7 @@ msgstr ""
 msgid "Full access"
 msgstr "เข้าถึงได้เต็มรูปแบบ"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:102
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:103
 msgid "Full admin access"
 msgstr "สิทธิ์เข้าถึงระดับผู้ดูแลระบบเต็มรูปแบบ"
 
@@ -4059,8 +4059,8 @@ msgstr "hero, banner, cta"
 msgid "Hide from search engines"
 msgstr "ซ่อนจากเครื่องมือค้นหา"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:275
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:282
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:276
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:283
 msgid "Hide token"
 msgstr "ซ่อนโทเค็น"
 
@@ -4444,11 +4444,11 @@ msgstr "เชิญผู้ใช้"
 msgid "Invite your first team member"
 msgstr "เชิญสมาชิกทีมคนแรกของคุณ"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:97
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:98
 msgid "Invoke MCP tools from all enabled plugins"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:516
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:517
 msgid "Invoke only this plugin's enabled MCP tools"
 msgstr ""
 
@@ -4575,7 +4575,7 @@ msgstr "พบครั้งล่าสุด"
 msgid "Last updated"
 msgstr "อัปเดตล่าสุด"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:372
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:373
 #: packages/admin/src/components/settings/PasskeyItem.tsx:154
 msgid "Last used"
 msgstr "ใช้งานล่าสุด"
@@ -4762,7 +4762,7 @@ msgstr "กำลังโหลดวิดเจ็ต..."
 #: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:146
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:205
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:69
 #: packages/admin/src/components/settings/SecuritySettings.tsx:99
@@ -4978,11 +4978,11 @@ msgstr "ข้ามการนำเข้ามีเดียแล้ว"
 msgid "Media Library"
 msgstr "คลังมีเดีย"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:56
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:57
 msgid "Media Read"
 msgstr "อ่านมีเดีย"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:61
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:62
 msgid "Media Write"
 msgstr "เขียนมีเดีย"
 
@@ -5046,7 +5046,7 @@ msgstr "เมนู"
 msgid "Menus ({0})"
 msgstr "เมนู ({0})"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:81
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:82
 msgid "Menus Manage"
 msgstr "จัดการเมนู"
 
@@ -5095,7 +5095,7 @@ msgstr "การกลั่นกรอง"
 msgid "Moderation Signals"
 msgstr "สัญญาณการกลั่นกรอง"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:72
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:73
 msgid "Modify collection schemas"
 msgstr "แก้ไขสคีมาของคอลเลกชัน"
 
@@ -5353,7 +5353,7 @@ msgstr "ยังไม่มีการบันทึกข้อผิดพ
 msgid "No alt text"
 msgstr "ไม่มี alt text"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:401
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:402
 msgid "No API tokens yet. Create one to get started."
 msgstr "ยังไม่มี API token สร้างขึ้นมาเพื่อเริ่มต้นใช้งาน"
 
@@ -5438,7 +5438,7 @@ msgstr "ยังไม่ได้กำหนดค่าผู้ให้บ
 msgid "No EmDash users found"
 msgstr "ไม่พบผู้ใช้ EmDash"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:32
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:33
 msgid "No expiry"
 msgstr "ไม่มีวันหมดอายุ"
 
@@ -6013,7 +6013,7 @@ msgstr "ข้อผิดพลาดของปลั๊กอิน ({0})"
 msgid "Plugin MCP access updated"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:96
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:97
 msgid "Plugin MCP Tools"
 msgstr ""
 
@@ -6055,8 +6055,8 @@ msgid "Plugin responded with {0}: {text}"
 msgstr "ปลั๊กอินตอบกลับด้วย {0}: {text}"
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:511
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:514
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:512
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:515
 msgid "Plugin tools: {0}"
 msgstr ""
 
@@ -6226,19 +6226,19 @@ msgstr "คำพูดอ้างอิง"
 msgid "Raw meta"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:67
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:68
 msgid "Read collection schemas"
 msgstr "อ่านสคีมาของคอลเลกชัน"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:48
 msgid "Read content entries"
 msgstr "อ่านรายการเนื้อหา"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:57
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:58
 msgid "Read media files"
 msgstr "อ่านไฟล์มีเดีย"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:87
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:88
 msgid "Read site settings"
 msgstr "อ่านการตั้งค่าเว็บไซต์"
 
@@ -6601,22 +6601,22 @@ msgstr "กู้คืนรุ่นแก้ไขแล้ว"
 msgid "Revisions"
 msgstr "รุ่นแก้ไข"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:189
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:192
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:393
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:190
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:193
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:394
 msgid "Revoke token"
 msgstr "เพิกถอนโทเค็น"
 
 #. placeholder {0}: token.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:391
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:392
 msgid "Revoke token {0}"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:413
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:414
 msgid "Revoke?"
 msgstr "เพิกถอนหรือไม่?"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:416
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:417
 msgid "Revoking..."
 msgstr "กำลังเพิกถอน..."
 
@@ -6794,16 +6794,16 @@ msgstr "การเปลี่ยนแปลงสคีมา"
 msgid "Schema preparation failed"
 msgstr "การเตรียมสคีมาล้มเหลว"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:66
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:67
 msgid "Schema Read"
 msgstr "อ่านสคีมา"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:71
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:72
 msgid "Schema Write"
 msgstr "เขียนสคีมา"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:350
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:489
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:351
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:490
 msgid "Scopes"
 msgstr "ขอบเขต"
 
@@ -7274,11 +7274,11 @@ msgstr "กำลังตั้งค่า..."
 msgid "Settings"
 msgstr "ตั้งค่า"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:91
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:92
 msgid "Settings Manage"
 msgstr "จัดการการตั้งค่า"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:86
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:87
 msgid "Settings Read"
 msgstr "อ่านการตั้งค่า"
 
@@ -7328,8 +7328,8 @@ msgstr ""
 msgid "Show thumbnails"
 msgstr ""
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:275
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:282
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:276
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:283
 msgid "Show token"
 msgstr "แสดงโทเค็น"
 
@@ -7691,7 +7691,7 @@ msgstr "ภาษาเป้าหมาย"
 msgid "Taxonomies"
 msgstr "อนุกรมวิธาน"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:76
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:77
 msgid "Taxonomies Manage"
 msgstr "จัดการอนุกรมวิธาน"
 
@@ -7997,11 +7997,11 @@ msgid "Toggle theme (current: {label})"
 msgstr "สลับธีม (ปัจจุบัน: {label})"
 
 #. placeholder {0}: newToken.info.name
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:254
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:255
 msgid "Token created: {0}"
 msgstr "สร้างโทเค็นแล้ว: {0}"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:480
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:481
 msgid "Token Name"
 msgstr "ชื่อโทเค็น"
 
@@ -8287,7 +8287,7 @@ msgstr ""
 msgid "Update settings for {0}"
 msgstr "อัปเดตการตั้งค่าสำหรับ {0}"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:92
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:93
 msgid "Update site settings"
 msgstr "อัปเดตการตั้งค่าเว็บไซต์"
 
@@ -8340,7 +8340,7 @@ msgstr "อัปโหลดไฟล์ส่งออก"
 msgid "Upload an image to get started"
 msgstr "อัปโหลดรูปภาพเพื่อเริ่มต้น"
 
-#: packages/admin/src/components/settings/ApiTokenSettings.tsx:62
+#: packages/admin/src/components/settings/ApiTokenSettings.tsx:63
 msgid "Upload and delete media"
 msgstr "อัปโหลดและลบมีเดีย"
 
