@@ -412,7 +412,6 @@ function TaxonomySection({
 			void queryClient.invalidateQueries({
 				queryKey: ["taxonomy-terms", taxonomy.name, entryLocale],
 			});
-			// Auto-select the newly created term
 			const newSelected = new Set(selectedIdsRef.current);
 			newSelected.add(newTerm.id);
 			selectedIdsRef.current = newSelected;
@@ -431,7 +430,6 @@ function TaxonomySection({
 		},
 	});
 
-	// Sync selected IDs from entry terms
 	React.useEffect(() => {
 		const nextSelected = new Set(entryTerms.map((term) => term.id));
 		selectedIdsRef.current = nextSelected;
