@@ -194,12 +194,12 @@ msgid "{0, plural, one {field} other {fields}}"
 msgstr "{0, plural, one {欄位} other {欄位}}"
 
 #. placeholder {0}: stats.mediaCount
-#: packages/admin/src/components/Dashboard.tsx:179
+#: packages/admin/src/components/Dashboard.tsx:213
 msgid "{0, plural, one {Media file} other {Media files}}"
 msgstr "{0, plural, one {媒體檔案} other {媒體檔案}}"
 
 #. placeholder {0}: stats.userCount
-#: packages/admin/src/components/Dashboard.tsx:183
+#: packages/admin/src/components/Dashboard.tsx:217
 msgid "{0, plural, one {User} other {Users}}"
 msgstr "{0, plural, one {使用者} other {使用者}}"
 
@@ -381,6 +381,14 @@ msgstr "{needsNewCollections, plural, one {將建立 # 個新內容集合} other
 msgid "{needsNewFields, plural, one {Fields will be added to # existing collection} other {Fields will be added to # existing collections}}"
 msgstr "{needsNewFields, plural, one {欄位將新增至 # 個現有內容集合} other {欄位將新增至 # 個現有內容集合}}"
 
+#: packages/admin/src/components/Dashboard.tsx:102
+msgid "{overdueCount, plural, one {One scheduled item is overdue and the scheduler heartbeat is stale. Run `npx emdash doctor` and verify the deployed Cron Trigger.} other {# scheduled items are overdue and the scheduler heartbeat is stale. Run `npx emdash doctor` and verify the deployed Cron Trigger.}}"
+msgstr ""
+
+#: packages/admin/src/components/Dashboard.tsx:97
+msgid "{overdueCount, plural, one {One scheduled item is overdue, but no scheduler run has completed. Run `npx emdash doctor` and verify the deployed Cron Trigger.} other {# scheduled items are overdue, but no scheduler run has completed. Run `npx emdash doctor` and verify the deployed Cron Trigger.}}"
+msgstr ""
+
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:83
 msgid "{pluginName} is requesting additional permissions:"
 msgstr "{pluginName} 要求下列額外權限:"
@@ -429,11 +437,11 @@ msgstr "{total, plural, one {檔案已上傳} other {已上傳 # 個檔案}}"
 msgid "{total, plural, one {Upload failed} other {All # uploads failed}}"
 msgstr "{total, plural, one {上傳失敗} other {全部 # 個上傳項目均失敗}}"
 
-#: packages/admin/src/components/Dashboard.tsx:167
+#: packages/admin/src/components/Dashboard.tsx:201
 msgid "{totalDrafts, plural, one {Draft} other {Drafts}}"
 msgstr "{totalDrafts, plural, one {草稿} other {草稿}}"
 
-#: packages/admin/src/components/Dashboard.tsx:173
+#: packages/admin/src/components/Dashboard.tsx:207
 msgid "{totalScheduled, plural, one {Scheduled} other {Scheduled}}"
 msgstr "{totalScheduled, plural, one {已排程} other {已排程}}"
 
@@ -1809,7 +1817,7 @@ msgstr "內容"
 #: packages/admin/src/components/AdminCommandPalette.tsx:378
 #: packages/admin/src/components/comments/CommentDetail.tsx:103
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
-#: packages/admin/src/components/Dashboard.tsx:235
+#: packages/admin/src/components/Dashboard.tsx:269
 #: packages/admin/src/components/PortableTextEditor.tsx:2728
 #: packages/admin/src/components/SectionEditor.tsx:195
 #: packages/admin/src/components/Sidebar.tsx:380
@@ -1947,7 +1955,7 @@ msgstr "無法自動複製。請選取上方網址並手動複製。"
 msgid "Could not insert section"
 msgstr ""
 
-#: packages/admin/src/components/Dashboard.tsx:90
+#: packages/admin/src/components/Dashboard.tsx:124
 msgid "Could not load dashboard data"
 msgstr "無法載入控制台資料"
 
@@ -2774,7 +2782,7 @@ msgid "draft, published, or archived"
 msgstr "草稿、已發佈或已封存"
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:71
-#: packages/admin/src/components/Dashboard.tsx:269
+#: packages/admin/src/components/Dashboard.tsx:303
 msgid "Drafts"
 msgstr "草稿"
 
@@ -3388,7 +3396,7 @@ msgstr "擷取備份設定失敗"
 msgid "Failed to fetch collection"
 msgstr "擷取內容集合失敗"
 
-#: packages/admin/src/lib/api/dashboard.ts:42
+#: packages/admin/src/lib/api/dashboard.ts:47
 msgid "Failed to fetch dashboard stats"
 msgstr "無法擷取控制台統計資料"
 
@@ -5405,7 +5413,7 @@ msgstr "找不到署名資料"
 msgid "No bylines selected."
 msgstr "未選取任何署名。"
 
-#: packages/admin/src/components/Dashboard.tsx:241
+#: packages/admin/src/components/Dashboard.tsx:275
 msgid "No collections configured"
 msgstr "尚未設定任何內容集合"
 
@@ -5583,7 +5591,7 @@ msgstr "沒有預覽"
 msgid "No public URL available"
 msgstr "沒有可用的公開網址"
 
-#: packages/admin/src/components/Dashboard.tsx:320
+#: packages/admin/src/components/Dashboard.tsx:354
 msgid "No recent activity"
 msgstr "沒有近期活動"
 
@@ -6204,7 +6212,7 @@ msgstr ""
 #: packages/admin/src/components/ContentList.tsx:832
 #: packages/admin/src/components/ContentList.tsx:843
 #: packages/admin/src/components/ContentStatusBadge.tsx:59
-#: packages/admin/src/components/Dashboard.tsx:263
+#: packages/admin/src/components/Dashboard.tsx:297
 #: packages/admin/src/router.tsx:1069
 msgid "Published"
 msgstr "已發佈"
@@ -6287,7 +6295,7 @@ msgstr "閱讀"
 msgid "Ready"
 msgstr "就緒"
 
-#: packages/admin/src/components/Dashboard.tsx:314
+#: packages/admin/src/components/Dashboard.tsx:348
 msgid "Recent Activity"
 msgstr "近期活動"
 
@@ -6335,7 +6343,7 @@ msgstr "參照"
 msgid "Referenced favicon unavailable."
 msgstr "參照的網站圖示無法使用。"
 
-#: packages/admin/src/components/Dashboard.tsx:91
+#: packages/admin/src/components/Dashboard.tsx:125
 msgid "Refresh the page or try again."
 msgstr "重新整理頁面或再試一次。"
 
@@ -6816,6 +6824,10 @@ msgstr "已排程"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:518
 msgid "Scheduled for: {0}"
 msgstr "排定發佈時間: {0}"
+
+#: packages/admin/src/components/Dashboard.tsx:111
+msgid "Scheduled publishing needs attention"
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2322
 msgid "Schema Changes"
@@ -7609,7 +7621,7 @@ msgstr "狀態"
 msgid "Status code"
 msgstr "狀態碼"
 
-#: packages/admin/src/components/Dashboard.tsx:367
+#: packages/admin/src/components/Dashboard.tsx:401
 msgid "Status: {status}"
 msgstr "狀態: {status}"
 
@@ -8287,7 +8299,7 @@ msgstr "未排程"
 msgid "Unsupported widget element type: {0}"
 msgstr "不支援的小工具元素類型: {0}"
 
-#: packages/admin/src/components/Dashboard.tsx:334
+#: packages/admin/src/components/Dashboard.tsx:368
 msgid "Untitled"
 msgstr "未命名"
 
@@ -8425,7 +8437,7 @@ msgstr "上傳圖片"
 msgid "Upload images, videos, and documents to keep reusable assets in one place."
 msgstr "上傳圖片、影片及文件，將可重複使用的素材集中存放於一處。"
 
-#: packages/admin/src/components/Dashboard.tsx:129
+#: packages/admin/src/components/Dashboard.tsx:163
 msgid "Upload Media"
 msgstr "上傳媒體"
 
