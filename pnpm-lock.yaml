@@ -1791,6 +1791,9 @@ importers:
       jpeg-js:
         specifier: ^0.4.4
         version: 0.4.4
+      jsonc-parser:
+        specifier: 'catalog:'
+        version: 3.3.1
       kysely:
         specifier: 'catalog:'
         version: 0.29.2
@@ -1815,6 +1818,9 @@ importers:
       sax:
         specifier: ^1.4.1
         version: 1.4.4
+      smol-toml:
+        specifier: ^1.6.0
+        version: 1.6.0
       ulidx:
         specifier: ^2.4.1
         version: 2.4.1
