@@ -6,7 +6,7 @@
  * - Tag input for flat taxonomies (tags)
  */
 
-import { Autocomplete, Button, Checkbox, Input, Label, Text, Toast } from "@cloudflare/kumo";
+import { Autocomplete, Badge, Button, Checkbox, Input, Label, Text, Toast } from "@cloudflare/kumo";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
@@ -15,7 +15,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
 import { apiFetch, parseApiResponse, throwResponseError } from "../lib/api/client.js";
-import { createTerm, withLocale } from "../lib/api/taxonomies.js";
+import { createTerm, createTermTranslation, withLocale } from "../lib/api/taxonomies.js";
 import { rankTermMatches, termExactMatches } from "../lib/taxonomy-match.js";
 import { cn } from "../lib/utils.js";
 
@@ -24,8 +24,24 @@ interface TaxonomyTerm {
 	name: string;
 	slug: string;
 	label: string;
-	parentId?: string;
+	parentId?: string | null;
 	children: TaxonomyTerm[];
+	locale: string;
+	translationGroup: string | null;
+}
+
+interface UnresolvedAssignment {
+	translationGroup: string;
+	availableLocales: string[];
+	translations: Array<{ id: string; slug: string; locale: string }>;
+}
+
+interface EntryTermsResponse {
+	terms: TaxonomyTerm[];
+	unresolved: UnresolvedAssignment[];
+	entryLocale: string;
+	defaultLocale: string;
+	implicitDefaultLocale: boolean;
 }
 
 interface TaxonomyDef {
@@ -40,6 +56,7 @@ interface TaxonomyDef {
 interface TaxonomySidebarProps {
 	collection: string;
 	entryId?: string;
+	canManageTaxonomies: boolean;
 	/** Locale of the entry being edited. Scopes term reads/writes so only the
 	 * matching translation variants are shown — see issue #1218. */
 	entryLocale?: string;
@@ -50,6 +67,7 @@ interface TaxonomySidebarProps {
 }
 
 const EMPTY_TERMS: TaxonomyTerm[] = [];
+const EMPTY_UNRESOLVED_ASSIGNMENTS: UnresolvedAssignment[] = [];
 
 type TagInputOption = { type: "term"; term: TaxonomyTerm } | { type: "create"; label: string };
 
@@ -84,9 +102,8 @@ export function useHasApplicableTaxonomies(collection: string): boolean {
  * opts out of the per-collection count aggregate the endpoint runs by default.
  */
 async function fetchTerms(taxonomyName: string, locale?: string): Promise<TaxonomyTerm[]> {
-	const res = await apiFetch(
-		withLocale(`/_emdash/api/taxonomies/${taxonomyName}/terms?includeCounts=false`, locale),
-	);
+	const path = `/_emdash/api/taxonomies/${taxonomyName}/terms?includeCounts=false${locale ? "&resolveFallback=true" : ""}`;
+	const res = await apiFetch(withLocale(path, locale));
 	const data = await parseApiResponse<{ terms: TaxonomyTerm[] }>(
 		res,
 		i18n._(msg`Failed to fetch terms`),
@@ -101,16 +118,13 @@ async function fetchEntryTerms(
 	collection: string,
 	entryId: string,
 	taxonomy: string,
-	locale?: string,
-): Promise<TaxonomyTerm[]> {
-	const res = await apiFetch(
-		withLocale(`/_emdash/api/content/${collection}/${entryId}/terms/${taxonomy}`, locale),
-	);
-	const data = await parseApiResponse<{ terms: TaxonomyTerm[] }>(
+): Promise<EntryTermsResponse> {
+	const res = await apiFetch(`/_emdash/api/content/${collection}/${entryId}/terms/${taxonomy}`);
+	const data = await parseApiResponse<EntryTermsResponse>(
 		res,
 		i18n._(msg`Failed to fetch entry terms`),
 	);
-	return data.terms;
+	return data;
 }
 
 /**
@@ -121,16 +135,12 @@ async function setEntryTerms(
 	entryId: string,
 	taxonomy: string,
 	termIds: string[],
-	locale?: string,
 ): Promise<void> {
-	const res = await apiFetch(
-		withLocale(`/_emdash/api/content/${collection}/${entryId}/terms/${taxonomy}`, locale),
-		{
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ termIds }),
-		},
-	);
+	const res = await apiFetch(`/_emdash/api/content/${collection}/${entryId}/terms/${taxonomy}`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ termIds }),
+	});
 	if (!res.ok) await throwResponseError(res, i18n._(msg`Failed to set entry terms`));
 }
 
@@ -142,11 +152,13 @@ function CategoryCheckboxTree({
 	level = 0,
 	selectedIds,
 	onToggle,
+	entryLocale,
 }: {
 	term: TaxonomyTerm;
 	level?: number;
 	selectedIds: Set<string>;
 	onToggle: (termId: string) => void;
+	entryLocale?: string;
 }) {
 	const isChecked = selectedIds.has(term.id);
 
@@ -159,7 +171,12 @@ function CategoryCheckboxTree({
 				<Checkbox
 					checked={isChecked}
 					onCheckedChange={() => onToggle(term.id)}
-					label={<span className="text-sm">{term.label}</span>}
+					label={
+						<span className="inline-flex items-center gap-2 text-sm">
+							{term.label}
+							<TermLocaleBadge term={term} entryLocale={entryLocale} />
+						</span>
+					}
 				/>
 			</div>
 			{term.children.map((child) => (
@@ -169,6 +186,7 @@ function CategoryCheckboxTree({
 					level={level + 1}
 					selectedIds={selectedIds}
 					onToggle={onToggle}
+					entryLocale={entryLocale}
 				/>
 			))}
 		</div>
@@ -185,7 +203,10 @@ function TagInput({
 	onRemove,
 	onCreate,
 	isCreating,
+	createError,
 	label,
+	entryLocale,
+	canCreate,
 }: {
 	terms: TaxonomyTerm[];
 	selectedIds: Set<string>;
@@ -193,7 +214,10 @@ function TagInput({
 	onRemove: (termId: string) => void;
 	onCreate: (label: string) => void;
 	isCreating: boolean;
+	createError?: Error | null;
 	label: string;
+	entryLocale?: string;
+	canCreate: boolean;
 }) {
 	const { t } = useLingui();
 	const [input, setInput] = React.useState("");
@@ -214,7 +238,7 @@ function TagInput({
 		return terms.some((term) => termExactMatches(term, trimmedInput));
 	}, [trimmedInput, terms]);
 
-	const showCreateOption = trimmedInput.length > 0 && !hasExactMatch;
+	const showCreateOption = canCreate && trimmedInput.length > 0 && !hasExactMatch;
 	const options = React.useMemo<TagInputOption[]>(
 		() => [
 			...suggestions.map((term) => ({ type: "term" as const, term })),
@@ -247,6 +271,7 @@ function TagInput({
 							className="inline-flex items-center gap-1 px-2 py-1 text-sm bg-kumo-tint rounded-md"
 						>
 							{term.label}
+							<TermLocaleBadge term={term} entryLocale={entryLocale} />
 							<button
 								type="button"
 								onClick={() => onRemove(term.id)}
@@ -289,7 +314,10 @@ function TagInput({
 									}}
 								>
 									{option.type === "term" ? (
-										option.term.label
+										<span className="flex items-center gap-2">
+											{option.term.label}
+											<TermLocaleBadge term={option.term} entryLocale={entryLocale} />
+										</span>
 									) : (
 										<span className="flex items-center gap-1 text-kumo-accent">
 											<Plus className="h-3 w-3" aria-hidden="true" />
@@ -302,8 +330,15 @@ function TagInput({
 					</Autocomplete.Content>
 				</Autocomplete>
 			</div>
+			{createError ? <p className="text-sm text-kumo-danger">{createError.message}</p> : null}
 		</div>
 	);
+}
+
+function TermLocaleBadge({ term, entryLocale }: { term: TaxonomyTerm; entryLocale?: string }) {
+	const { t } = useLingui();
+	if (!entryLocale || term.locale === entryLocale) return null;
+	return <Badge variant="secondary">{t`${term.locale.toUpperCase()} fallback`}</Badge>;
 }
 
 /**
@@ -314,12 +349,14 @@ function TaxonomySection({
 	collection,
 	entryId,
 	entryLocale,
+	canManageTaxonomies,
 	onChange,
 }: {
 	taxonomy: TaxonomyDef;
 	collection: string;
 	entryId?: string;
 	entryLocale?: string;
+	canManageTaxonomies: boolean;
 	onChange?: (termIds: string[]) => void;
 }) {
 	const { t } = useLingui();
@@ -335,19 +372,22 @@ function TaxonomySection({
 		queryFn: () => fetchTerms(taxonomy.name, entryLocale),
 	});
 
-	const { data: entryTerms = EMPTY_TERMS } = useQuery({
+	const { data: entryTermsData } = useQuery({
 		queryKey: ["entry-terms", collection, entryId, taxonomy.name, entryLocale],
 		queryFn: () => {
-			if (!entryId) return [];
-			return fetchEntryTerms(collection, entryId, taxonomy.name, entryLocale);
+			if (!entryId) return null;
+			return fetchEntryTerms(collection, entryId, taxonomy.name);
 		},
 		enabled: !!entryId,
 	});
+	const entryTerms = entryTermsData?.terms ?? EMPTY_TERMS;
+	const unresolved = entryTermsData?.unresolved ?? EMPTY_UNRESOLVED_ASSIGNMENTS;
+	const resolvedEntryLocale = entryTermsData?.entryLocale ?? entryLocale;
 
 	const saveMutation = useMutation({
 		mutationFn: (termIds: string[]) => {
 			if (!entryId) throw new Error("No entry ID");
-			return setEntryTerms(collection, entryId, taxonomy.name, termIds, entryLocale);
+			return setEntryTerms(collection, entryId, taxonomy.name, termIds);
 		},
 		onSuccess: () => {
 			void queryClient.invalidateQueries({
@@ -393,12 +433,53 @@ function TaxonomySection({
 		},
 	});
 
+	const createTranslationMutation = useMutation({
+		mutationFn: async (assignment: UnresolvedAssignment) => {
+			const source = assignment.translations[0];
+			if (!source || !resolvedEntryLocale) {
+				throw new Error(t`A source and target locale are required`);
+			}
+			return createTermTranslation(
+				taxonomy.name,
+				source.slug,
+				{ locale: resolvedEntryLocale },
+				{ locale: source.locale },
+			);
+		},
+		onSuccess: () => {
+			void queryClient.invalidateQueries({
+				queryKey: ["taxonomy-terms", taxonomy.name, entryLocale],
+			});
+			void queryClient.invalidateQueries({
+				queryKey: ["entry-terms", collection, entryId, taxonomy.name, entryLocale],
+			});
+			toastManager.add({ title: t`Translation created` });
+		},
+		onError: (error) => {
+			toastManager.add({
+				title: t`Failed to create translation`,
+				description: error instanceof Error ? error.message : t`An error occurred`,
+				type: "error",
+			});
+		},
+	});
+
 	const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
 
 	// Sync selected IDs from entry terms
 	React.useEffect(() => {
-		setSelectedIds(new Set(entryTerms.map((term) => term.id)));
-	}, [entryTerms]);
+		const next = new Set(entryTerms.map((term) => term.id));
+		for (const assignment of unresolved) {
+			const source = assignment.translations[0];
+			if (source) next.add(source.id);
+		}
+		setSelectedIds(next);
+	}, [entryTerms, unresolved]);
+
+	const activeUnresolved = unresolved.filter((assignment) => {
+		const source = assignment.translations[0];
+		return source ? selectedIds.has(source.id) : false;
+	});
 
 	const handleToggle = (termId: string) => {
 		const newSelected = new Set(selectedIds);
@@ -436,6 +517,42 @@ function TaxonomySection({
 	return (
 		<div className="space-y-2">
 			<Label className="text-sm font-medium">{taxonomy.label}</Label>
+			{activeUnresolved.map((assignment) => {
+				const source = assignment.translations[0];
+				if (!source) return null;
+				return (
+					<div
+						key={assignment.translationGroup}
+						className="space-y-2 rounded-lg border border-kumo-warning/50 bg-kumo-warning-tint p-3"
+					>
+						<p className="text-sm font-medium text-kumo-warning">{t`Unresolved assignment`}</p>
+						<p className="text-xs text-kumo-subtle">
+							{t`Available in ${assignment.availableLocales.map((locale) => locale.toUpperCase()).join(", ")}`}
+						</p>
+						<div className="flex flex-wrap gap-2">
+							{canManageTaxonomies && resolvedEntryLocale ? (
+								<Button
+									type="button"
+									size="sm"
+									variant="outline"
+									onClick={() => createTranslationMutation.mutate(assignment)}
+									loading={createTranslationMutation.isPending}
+								>
+									{t`Create ${resolvedEntryLocale.toUpperCase()} translation`}
+								</Button>
+							) : null}
+							<Button
+								type="button"
+								size="sm"
+								variant="ghost"
+								onClick={() => handleToggle(source.id)}
+							>
+								{t`Remove assignment`}
+							</Button>
+						</div>
+					</div>
+				);
+			})}
 
 			{taxonomy.hierarchical ? (
 				<>
@@ -451,54 +568,55 @@ function TaxonomySection({
 									term={term}
 									selectedIds={selectedIds}
 									onToggle={handleToggle}
+									entryLocale={resolvedEntryLocale}
 								/>
 							))}
 						</div>
 					)}
 
-					{/* Add new category inline */}
-					{showCategoryInput ? (
-						<div className="flex gap-1">
-							<Input
-								value={newCategoryLabel}
-								onChange={(e) => setNewCategoryLabel(e.target.value)}
-								onKeyDown={(e) => {
-									if (e.key === "Enter") {
-										e.preventDefault();
-										handleCreateCategory();
-									} else if (e.key === "Escape") {
-										setShowCategoryInput(false);
-										setNewCategoryLabel("");
-									}
-								}}
-								placeholder={t`New ${(taxonomy.labelSingular || taxonomy.label).toLowerCase()}`}
-								className="text-sm flex-1"
-								autoFocus
-								disabled={createTermMutation.isPending}
-							/>
+					{canManageTaxonomies &&
+						(showCategoryInput ? (
+							<div className="flex gap-1">
+								<Input
+									value={newCategoryLabel}
+									onChange={(e) => setNewCategoryLabel(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											e.preventDefault();
+											handleCreateCategory();
+										} else if (e.key === "Escape") {
+											setShowCategoryInput(false);
+											setNewCategoryLabel("");
+										}
+									}}
+									placeholder={t`New ${(taxonomy.labelSingular || taxonomy.label).toLowerCase()}`}
+									className="text-sm flex-1"
+									autoFocus
+									disabled={createTermMutation.isPending}
+								/>
+								<Button
+									type="button"
+									onClick={handleCreateCategory}
+									disabled={!newCategoryLabel.trim()}
+									loading={createTermMutation.isPending}
+									variant="primary"
+								>
+									{t`Add`}
+								</Button>
+							</div>
+						) : (
 							<Button
 								type="button"
-								onClick={handleCreateCategory}
-								disabled={!newCategoryLabel.trim()}
-								loading={createTermMutation.isPending}
-								variant="primary"
+								variant="ghost"
+								size="sm"
+								className="-ms-2"
+								onClick={() => setShowCategoryInput(true)}
+								icon={<Plus />}
 							>
-								{t`Add`}
+								{t`Add new ${(taxonomy.labelSingular || taxonomy.label).toLowerCase()}`}
 							</Button>
-						</div>
-					) : (
-						<Button
-							type="button"
-							variant="ghost"
-							size="sm"
-							className="-ms-2"
-							onClick={() => setShowCategoryInput(true)}
-							icon={<Plus />}
-						>
-							{t`Add new ${(taxonomy.labelSingular || taxonomy.label).toLowerCase()}`}
-						</Button>
-					)}
-					{createTermMutation.error && (
+						))}
+					{canManageTaxonomies && createTermMutation.error && (
 						<p className="text-sm text-kumo-danger">
 							{createTermMutation.error instanceof Error
 								? createTermMutation.error.message
@@ -514,7 +632,10 @@ function TaxonomySection({
 					onRemove={handleRemove}
 					onCreate={(label) => createTermMutation.mutate(label)}
 					isCreating={createTermMutation.isPending}
+					createError={canManageTaxonomies ? createTermMutation.error : null}
 					label={taxonomy.label}
+					entryLocale={resolvedEntryLocale}
+					canCreate={canManageTaxonomies}
 				/>
 			)}
 		</div>
@@ -528,6 +649,7 @@ export function TaxonomySidebar({
 	collection,
 	entryId,
 	entryLocale,
+	canManageTaxonomies,
 	onChange,
 	className,
 }: TaxonomySidebarProps) {
@@ -552,6 +674,7 @@ export function TaxonomySidebar({
 							collection={collection}
 							entryId={entryId}
 							entryLocale={entryLocale}
+							canManageTaxonomies={canManageTaxonomies}
 							onChange={(termIds) => onChange?.(taxonomy.name, termIds)}
 						/>
 					))}
