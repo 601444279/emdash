@@ -651,7 +651,7 @@ msgstr "نشط"
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
 #: packages/admin/src/components/ContentSettingsPanel.tsx:974
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:487
+#: packages/admin/src/components/TaxonomySidebar.tsx:486
 msgid "Add"
 msgstr "إضافة"
 
@@ -758,7 +758,7 @@ msgid "Add New"
 msgstr "إضافة جديد"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:499
+#: packages/admin/src/components/TaxonomySidebar.tsx:498
 msgid "Add new {0}"
 msgstr "إضافة {0} جديد"
 
@@ -3253,7 +3253,7 @@ msgstr ""
 msgid "Failed to create some collections"
 msgstr "فشل في إنشاء بعض المجموعات"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:506
+#: packages/admin/src/components/TaxonomySidebar.tsx:505
 msgid "Failed to create term"
 msgstr "فشل إنشاء المصطلح"
 
@@ -5272,7 +5272,7 @@ msgid "NEW"
 msgstr "جديد"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:475
+#: packages/admin/src/components/TaxonomySidebar.tsx:474
 msgid "New {0}"
 msgstr "{0} جديد"
 
@@ -5358,7 +5358,7 @@ msgid "No (shared across translations)"
 msgstr ""
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:445
+#: packages/admin/src/components/TaxonomySidebar.tsx:444
 msgid "No {0} available."
 msgstr "لا يوجد {0} متاح."
 
@@ -7729,7 +7729,7 @@ msgid "Target locale"
 msgstr "اللغة المستهدفة"
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:679
-#: packages/admin/src/components/TaxonomySidebar.tsx:546
+#: packages/admin/src/components/TaxonomySidebar.tsx:545
 msgid "Taxonomies"
 msgstr "التصنيفات"
 

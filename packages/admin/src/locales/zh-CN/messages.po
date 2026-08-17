@@ -647,7 +647,7 @@ msgstr "活跃"
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
 #: packages/admin/src/components/ContentSettingsPanel.tsx:974
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:487
+#: packages/admin/src/components/TaxonomySidebar.tsx:486
 msgid "Add"
 msgstr "添加"
 
@@ -754,7 +754,7 @@ msgid "Add New"
 msgstr "添加新内容"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:499
+#: packages/admin/src/components/TaxonomySidebar.tsx:498
 msgid "Add new {0}"
 msgstr "添加新{0}"
 
@@ -3252,7 +3252,7 @@ msgstr "创建分区失败"
 msgid "Failed to create some collections"
 msgstr "创建部分合集失败"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:506
+#: packages/admin/src/components/TaxonomySidebar.tsx:505
 msgid "Failed to create term"
 msgstr "创建词条失败"
 
@@ -5271,7 +5271,7 @@ msgid "NEW"
 msgstr "新"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:475
+#: packages/admin/src/components/TaxonomySidebar.tsx:474
 msgid "New {0}"
 msgstr "新{0}"
 
@@ -5357,7 +5357,7 @@ msgid "No (shared across translations)"
 msgstr "否（跨翻译共享）"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:445
+#: packages/admin/src/components/TaxonomySidebar.tsx:444
 msgid "No {0} available."
 msgstr "暂无{0}。"
 
@@ -7728,7 +7728,7 @@ msgid "Target locale"
 msgstr "目标语言区域"
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:679
-#: packages/admin/src/components/TaxonomySidebar.tsx:546
+#: packages/admin/src/components/TaxonomySidebar.tsx:545
 msgid "Taxonomies"
 msgstr "分类"
 

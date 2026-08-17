@@ -647,7 +647,7 @@ msgstr "Активний"
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
 #: packages/admin/src/components/ContentSettingsPanel.tsx:974
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:487
+#: packages/admin/src/components/TaxonomySidebar.tsx:486
 msgid "Add"
 msgstr "Додати"
 
@@ -754,7 +754,7 @@ msgid "Add New"
 msgstr "Додати"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:499
+#: packages/admin/src/components/TaxonomySidebar.tsx:498
 msgid "Add new {0}"
 msgstr "Додати {0}"
 
@@ -3252,7 +3252,7 @@ msgstr "Не вдалося створити секцію"
 msgid "Failed to create some collections"
 msgstr "Не вдалося створити деякі колекції"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:506
+#: packages/admin/src/components/TaxonomySidebar.tsx:505
 msgid "Failed to create term"
 msgstr "Не вдалося створити термін"
 
@@ -5271,7 +5271,7 @@ msgid "NEW"
 msgstr "НОВИЙ"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:475
+#: packages/admin/src/components/TaxonomySidebar.tsx:474
 msgid "New {0}"
 msgstr "Новий {0}"
 
@@ -5357,7 +5357,7 @@ msgid "No (shared across translations)"
 msgstr "Ні (спільне для всіх перекладів)"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:445
+#: packages/admin/src/components/TaxonomySidebar.tsx:444
 msgid "No {0} available."
 msgstr "Немає доступних {0}."
 
@@ -7728,7 +7728,7 @@ msgid "Target locale"
 msgstr "Цільова локаль"
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:679
-#: packages/admin/src/components/TaxonomySidebar.tsx:546
+#: packages/admin/src/components/TaxonomySidebar.tsx:545
 msgid "Taxonomies"
 msgstr "Таксономії"
 

@@ -647,7 +647,7 @@ msgstr "Aktywny"
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
 #: packages/admin/src/components/ContentSettingsPanel.tsx:974
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:487
+#: packages/admin/src/components/TaxonomySidebar.tsx:486
 msgid "Add"
 msgstr "Dodaj"
 
@@ -754,7 +754,7 @@ msgid "Add New"
 msgstr "Dodaj nowy"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:499
+#: packages/admin/src/components/TaxonomySidebar.tsx:498
 msgid "Add new {0}"
 msgstr "Dodaj nowy {0}"
 
@@ -3249,7 +3249,7 @@ msgstr ""
 msgid "Failed to create some collections"
 msgstr "Nie udało się utworzyć niektórych kolekcji"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:506
+#: packages/admin/src/components/TaxonomySidebar.tsx:505
 msgid "Failed to create term"
 msgstr "Nie udało się utworzyć terminu"
 
@@ -5268,7 +5268,7 @@ msgid "NEW"
 msgstr "NOWE"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:475
+#: packages/admin/src/components/TaxonomySidebar.tsx:474
 msgid "New {0}"
 msgstr "Nowe {0}"
 
@@ -5354,7 +5354,7 @@ msgid "No (shared across translations)"
 msgstr ""
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:445
+#: packages/admin/src/components/TaxonomySidebar.tsx:444
 msgid "No {0} available."
 msgstr "Brak dostępnych {0}."
 
@@ -7722,7 +7722,7 @@ msgid "Target locale"
 msgstr "Docelowy język"
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:679
-#: packages/admin/src/components/TaxonomySidebar.tsx:546
+#: packages/admin/src/components/TaxonomySidebar.tsx:545
 msgid "Taxonomies"
 msgstr "Taksonomie"
 
