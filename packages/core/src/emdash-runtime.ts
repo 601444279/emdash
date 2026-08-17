@@ -85,6 +85,7 @@ import type {
 	SettingField,
 	UserInfo,
 } from "./plugins/types.js";
+import { recordSchedulerHeartbeatSafely } from "./scheduler-health.js";
 import { MAX_COLLECTION_LIST_COLUMNS, type FieldType } from "./schema/types.js";
 import { hashString } from "./utils/hash.js";
 import { createInitLock, type InitLock, initWithLock } from "./utils/init-lock.js";
@@ -801,6 +802,7 @@ export class EmDashRuntime {
 
 		// Never throws; no-op unless scheduled backups are enabled and due.
 		await maybeRunScheduledBackup(this.db, this.storage ?? undefined);
+		await recordSchedulerHeartbeatSafely(this.db);
 
 		return { published };
 	}
@@ -1768,6 +1770,7 @@ export class EmDashRuntime {
 						}
 						// Never throws; no-op unless scheduled backups are enabled and due.
 						await maybeRunScheduledBackup(db, storage ?? undefined);
+						await recordSchedulerHeartbeatSafely(db);
 						if (!scheduler.setMediaUsageMaintenance) {
 							try {
 								await runMediaUsageMaintenance();
