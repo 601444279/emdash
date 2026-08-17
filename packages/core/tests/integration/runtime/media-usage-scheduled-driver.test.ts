@@ -43,6 +43,132 @@ describe("media usage scheduled drivers", () => {
 		).not.toBeNull();
 	});
 
+	it("skips idle maintenance classes and processes due entry work", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "work_conserving_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		await runtime.db
+			.updateTable("_emdash_media_usage_activation")
+			.set({ media_usage_maintenance_turn: 0 })
+			.where("task_key", "=", "incremental_capture")
+			.execute();
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toEqual({
+			state: "progress",
+			continuation: { kind: "immediate" },
+			taskClass: "entry_work",
+			turn: 0,
+		});
+		expect(await countWork(runtime)).toBe(0);
+	});
+
+	it("processes at most one useful maintenance unit per step", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "one_unit_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		await insertEntry(runtime, fixture.tableName, "entry-2");
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toMatchObject({
+			state: "progress",
+			continuation: { kind: "immediate" },
+			taskClass: "entry_work",
+		});
+		expect(await countWork(runtime)).toBe(1);
+	});
+
+	it("delays one continuation when every visible claim is blocked", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "blocked_claim_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		await sql`
+			CREATE TRIGGER block_media_usage_work_claim
+			BEFORE UPDATE OF state ON _emdash_media_usage_work
+			WHEN NEW.state = 'leased'
+			BEGIN
+				SELECT RAISE(IGNORE);
+			END
+		`.execute(runtime.db);
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toEqual({
+			state: "blocked",
+			continuation: { kind: "delayed", delaySeconds: 30 },
+			taskClass: "entry_work",
+			turn: 0,
+		});
+		expect(await countWork(runtime)).toBe(1);
+	});
+
+	it("does not fall through after seeding reconciliation when its claim is lost", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const work = await activateCollection(runtime, "seed_claim_work");
+		await insertEntry(runtime, work.tableName, "entry-1");
+		const reconciliation = await activateCollection(runtime, "seed_claim_reconciliation");
+		await runtime.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set({ status: "stale", reconciliation_required: 1 })
+			.where("collection_id", "=", reconciliation.collectionId)
+			.execute();
+		await runtime.db
+			.updateTable("_emdash_media_usage_activation")
+			.set({ media_usage_maintenance_turn: 1 })
+			.where("task_key", "=", "incremental_capture")
+			.execute();
+		await sql`
+			CREATE TRIGGER block_media_usage_reconciliation_claim
+			BEFORE UPDATE OF state ON _emdash_media_usage_reconciliations
+			WHEN NEW.state = 'leased'
+			BEGIN
+				SELECT RAISE(IGNORE);
+			END
+		`.execute(runtime.db);
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toEqual({
+			state: "progress",
+			continuation: { kind: "immediate" },
+			taskClass: "reconciliation",
+			turn: 2,
+		});
+		expect(await countWork(runtime)).toBe(1);
+	});
+
+	it("stops continuation only after a full idle maintenance pass", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		await activateCollection(runtime, "idle_posts");
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toEqual({
+			state: "idle",
+			continuation: { kind: "none" },
+			taskClass: "entry_work",
+			turn: 0,
+		});
+	});
+
+	it("rotates first consideration across continuously due maintenance classes", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const work = await activateCollection(runtime, "fair_engine_work");
+		await insertEntry(runtime, work.tableName, "entry-1");
+		await activateCollection(runtime, "fair_engine_delete");
+		await runtime.schemaRegistry.deleteCollection("fair_engine_delete", { force: true });
+		const reconciliation = await activateCollection(runtime, "fair_engine_reconciliation");
+		await runtime.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set({ status: "stale", reconciliation_required: 1 })
+			.where("collection_id", "=", reconciliation.collectionId)
+			.execute();
+
+		const classes = [];
+		for (let index = 0; index < 3; index++) {
+			const result = await runtime.runMediaUsageMaintenanceStep();
+			classes.push(result.taskClass);
+			expect(result).toMatchObject({
+				state: "progress",
+				continuation: { kind: "immediate" },
+			});
+		}
+
+		expect(classes).toEqual(["entry_work", "collection_deletion", "reconciliation"]);
+	});
+
 	it("drains bounded work from the Node timer maintenance callback", async () => {
 		const scheduler = new CapturingScheduler();
 		runtime = await EmDashRuntime.create(createDeps(() => scheduler));

@@ -53,6 +53,11 @@ import {
 	refreshContentMediaUsageAfterWrite,
 } from "./media/usage/content-refresh.js";
 import {
+	runMediaUsageMaintenanceStep,
+	type MediaUsageMaintenanceStepResult,
+	type MediaUsageMaintenanceTaskClass,
+} from "./media/usage/maintenance-engine.js";
+import {
 	MEDIA_USAGE_RECONCILIATION_LIMITS,
 	processDueMediaUsageReconciliation,
 } from "./media/usage/reconciliation-processor.js";
@@ -552,10 +557,11 @@ export const MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS = Object.freeze({
 	eventCeiling: 40,
 });
 
-export type MediaUsageMaintenanceTaskClass =
-	| "entry_work"
-	| "collection_deletion"
-	| "reconciliation";
+export type {
+	MediaUsageMaintenanceContinuation,
+	MediaUsageMaintenanceStepResult,
+	MediaUsageMaintenanceTaskClass,
+} from "./media/usage/maintenance-engine.js";
 
 export type MediaUsageMaintenanceResult =
 	| { outcome: "inactive" | "admission_closed"; taskClass: null; turn: null }
@@ -802,6 +808,10 @@ export class EmDashRuntime {
 
 	async runScheduledMediaUsageTasks(): Promise<MediaUsageMaintenanceResult> {
 		return runScheduledMediaUsageLane(this.db);
+	}
+
+	async runMediaUsageMaintenanceStep(): Promise<MediaUsageMaintenanceStepResult> {
+		return runMediaUsageMaintenanceStep(this.db);
 	}
 
 	/**
