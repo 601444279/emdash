@@ -231,6 +231,11 @@ msgstr ""
 msgid "{0} detected"
 msgstr "{0}を検出"
 
+#. placeholder {0}: term.locale.toUpperCase()
+#: packages/admin/src/components/TaxonomySidebar.tsx:341
+msgid "{0} fallback"
+msgstr ""
+
 #. placeholder {0}: plugin.name
 #: packages/admin/src/components/PluginManager.tsx:115
 msgid "{0} has been deactivated"
@@ -300,7 +305,7 @@ msgid "{0} system + {1} custom {2}"
 msgstr ""
 
 #. placeholder {0}: taxonomy.label
-#: packages/admin/src/components/TaxonomySidebar.tsx:356
+#: packages/admin/src/components/TaxonomySidebar.tsx:396
 msgid "{0} updated"
 msgstr "{0}を更新しました"
 
@@ -585,6 +590,10 @@ msgstr ""
 msgid "A short description of your site"
 msgstr "サイトの短い説明"
 
+#: packages/admin/src/components/TaxonomySidebar.tsx:440
+msgid "A source and target locale are required"
+msgstr ""
+
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:201
 msgid "Accept & Install"
 msgstr "承認してインストール"
@@ -645,9 +654,9 @@ msgid "Active"
 msgstr "有効"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:974
+#: packages/admin/src/components/ContentSettingsPanel.tsx:997
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:486
+#: packages/admin/src/components/TaxonomySidebar.tsx:604
 msgid "Add"
 msgstr "追加"
 
@@ -659,7 +668,7 @@ msgstr "追加"
 msgid "Add {0}"
 msgstr ""
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:276
+#: packages/admin/src/components/TaxonomySidebar.tsx:301
 msgid "Add {label}"
 msgstr "{label}を追加"
 
@@ -754,7 +763,7 @@ msgid "Add New"
 msgstr "新規追加"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:498
+#: packages/admin/src/components/TaxonomySidebar.tsx:616
 msgid "Add new {0}"
 msgstr "新しい{0}を追加"
 
@@ -786,7 +795,7 @@ msgstr ""
 msgid "Add Sub-Field"
 msgstr "サブフィールドを追加"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:278
+#: packages/admin/src/components/TaxonomySidebar.tsx:303
 msgid "Add tags..."
 msgstr "タグを追加..."
 
@@ -994,7 +1003,8 @@ msgstr "または、WordPressからエクスポート（ツール → エクス�
 #: packages/admin/src/components/settings/SocialSettings.tsx:67
 #: packages/admin/src/components/settings/SocialSettings.tsx:111
 #: packages/admin/src/components/settings/SocialSettings.tsx:112
-#: packages/admin/src/components/TaxonomySidebar.tsx:361
+#: packages/admin/src/components/TaxonomySidebar.tsx:401
+#: packages/admin/src/components/TaxonomySidebar.tsx:461
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
 #: packages/admin/src/router.tsx:447
 #: packages/admin/src/router.tsx:462
@@ -1159,7 +1169,7 @@ msgstr "認証がキャンセルされたかタイムアウトしました。も
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1184
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1207
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1221,6 +1231,11 @@ msgstr ""
 
 #: packages/admin/src/router.tsx:1055
 msgid "Autosave failed"
+msgstr ""
+
+#. placeholder {0}: assignment.availableLocales.map((locale) => locale.toUpperCase()).join(", ")
+#: packages/admin/src/components/TaxonomySidebar.tsx:530
+msgid "Available in {0}"
 msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:710
@@ -1386,8 +1401,8 @@ msgid "Byline Schema"
 msgstr ""
 
 #: packages/admin/src/components/BylineFilter.tsx:135
-#: packages/admin/src/components/ContentSettingsPanel.tsx:634
-#: packages/admin/src/components/ContentSettingsPanel.tsx:637
+#: packages/admin/src/components/ContentSettingsPanel.tsx:656
+#: packages/admin/src/components/ContentSettingsPanel.tsx:659
 #: packages/admin/src/components/Sidebar.tsx:257
 #: packages/admin/src/routes/bylines.tsx:375
 msgid "Bylines"
@@ -1428,11 +1443,11 @@ msgstr "コンテンツを閲覧可能"
 #: packages/admin/src/components/ContentList.tsx:1251
 #: packages/admin/src/components/ContentList.tsx:1419
 #: packages/admin/src/components/ContentPickerModal.tsx:240
-#: packages/admin/src/components/ContentSettingsPanel.tsx:98
-#: packages/admin/src/components/ContentSettingsPanel.tsx:555
-#: packages/admin/src/components/ContentSettingsPanel.tsx:785
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1088
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:99
+#: packages/admin/src/components/ContentSettingsPanel.tsx:577
+#: packages/admin/src/components/ContentSettingsPanel.tsx:808
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1111
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1164
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1810,7 +1825,7 @@ msgstr "WordPressに接続"
 msgid "Connected {0}"
 msgstr "{0}に接続済み"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:192
 msgid "content"
 msgstr ""
 
@@ -1857,6 +1872,14 @@ msgstr ""
 #: packages/admin/src/components/WordPressImport.tsx:2371
 msgid "content items"
 msgstr "コンテンツ"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:494
+msgid "Content locale"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:505
+msgid "Content locale defaults to English"
+msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
 msgid "Content Read"
@@ -1979,7 +2002,7 @@ msgstr ""
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:980
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
 msgid "Couldn't search bylines. Please try again."
 msgstr ""
 
@@ -1992,7 +2015,7 @@ msgstr ""
 msgid "Count"
 msgstr "件数"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1112
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -2002,8 +2025,13 @@ msgstr "件数"
 msgid "Create"
 msgstr "作成"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:296
+#: packages/admin/src/components/TaxonomySidebar.tsx:324
 msgid "Create \"{trimmedInput}\""
+msgstr ""
+
+#. placeholder {0}: resolvedEntryLocale.toUpperCase()
+#: packages/admin/src/components/TaxonomySidebar.tsx:541
+msgid "Create {0} translation"
 msgstr ""
 
 #: packages/admin/src/components/PortableTextEditor.tsx:1441
@@ -2028,7 +2056,7 @@ msgstr "アカウントを作成"
 msgid "Create an account"
 msgstr "アカウントを作成"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1060
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1083
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "署名を作成"
@@ -2149,7 +2177,7 @@ msgid "Create, update, delete content"
 msgstr "コンテンツの作成・更新・削除"
 
 #: packages/admin/src/components/ContentList.tsx:841
-#: packages/admin/src/components/ContentSettingsPanel.tsx:606
+#: packages/admin/src/components/ContentSettingsPanel.tsx:628
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
@@ -2178,13 +2206,13 @@ msgstr "作成日時"
 msgid "Creating collections and fields..."
 msgstr "コレクションとフィールドを作成中..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1112
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 #: packages/admin/src/components/TaxonomyManager.tsx:873
-#: packages/admin/src/components/TaxonomySidebar.tsx:296
+#: packages/admin/src/components/TaxonomySidebar.tsx:324
 msgid "Creating..."
 msgstr "作成中..."
 
@@ -2635,8 +2663,8 @@ msgstr ""
 msgid "Discard"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:85
-#: packages/admin/src/components/ContentSettingsPanel.tsx:105
+#: packages/admin/src/components/ContentSettingsPanel.tsx:86
+#: packages/admin/src/components/ContentSettingsPanel.tsx:106
 msgid "Discard changes"
 msgstr "変更を破棄"
 
@@ -2644,7 +2672,7 @@ msgstr "変更を破棄"
 msgid "Discard changes?"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:90
+#: packages/admin/src/components/ContentSettingsPanel.tsx:91
 msgid "Discard draft changes?"
 msgstr "下書きの変更を破棄しますか？"
 
@@ -2672,8 +2700,8 @@ msgstr "ナビゲーションメニューを表示"
 msgid "Display category list"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1063
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1125
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1086
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1148
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "表示名"
@@ -2738,7 +2766,7 @@ msgstr "アカウントをお持ちでないですか？ <0>新規登録</0>"
 msgid "Done"
 msgstr "完了"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1006
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1029
 msgid "Down"
 msgstr "下へ"
 
@@ -2858,7 +2886,7 @@ msgstr "例: CI/CDパイプライン"
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "例: MacBook Pro、iPhone"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1015
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1038
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2894,7 +2922,7 @@ msgstr ""
 msgid "Edit {title}"
 msgstr "{title}を編集"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1122
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1145
 msgid "Edit byline"
 msgstr "署名を編集"
 
@@ -3229,7 +3257,7 @@ msgstr ""
 msgid "Failed to create backup"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1106
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1129
 msgid "Failed to create byline"
 msgstr "署名の作成に失敗しました"
 
@@ -3249,10 +3277,11 @@ msgstr ""
 msgid "Failed to create some collections"
 msgstr "一部のコレクションの作成に失敗しました"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:505
+#: packages/admin/src/components/TaxonomySidebar.tsx:623
 msgid "Failed to create term"
 msgstr "タームの作成に失敗しました"
 
+#: packages/admin/src/components/TaxonomySidebar.tsx:460
 #: packages/admin/src/router.tsx:1185
 msgid "Failed to create translation"
 msgstr ""
@@ -3380,7 +3409,7 @@ msgstr ""
 msgid "Failed to execute import"
 msgstr ""
 
-#: packages/admin/src/lib/api/client.ts:260
+#: packages/admin/src/lib/api/client.ts:265
 msgid "Failed to fetch auth mode"
 msgstr ""
 
@@ -3401,11 +3430,11 @@ msgstr ""
 msgid "Failed to fetch email settings"
 msgstr ""
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:111
+#: packages/admin/src/components/TaxonomySidebar.tsx:125
 msgid "Failed to fetch entry terms"
 msgstr ""
 
-#: packages/admin/src/lib/api/client.ts:243
+#: packages/admin/src/lib/api/client.ts:248
 msgid "Failed to fetch manifest"
 msgstr ""
 
@@ -3459,7 +3488,7 @@ msgstr ""
 msgid "Failed to fetch setup status"
 msgstr ""
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:92
+#: packages/admin/src/components/TaxonomySidebar.tsx:109
 msgid "Failed to fetch terms"
 msgstr ""
 
@@ -3693,7 +3722,7 @@ msgstr "テストメールの送信に失敗しました"
 msgid "Failed to send verification email"
 msgstr ""
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:134
+#: packages/admin/src/components/TaxonomySidebar.tsx:144
 msgid "Failed to set entry terms"
 msgstr ""
 
@@ -3715,7 +3744,7 @@ msgid "Failed to update"
 msgstr ""
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:360
+#: packages/admin/src/components/TaxonomySidebar.tsx:400
 msgid "Failed to update {0}"
 msgstr "{0}の更新に失敗しました"
 
@@ -3723,7 +3752,7 @@ msgstr "{0}の更新に失敗しました"
 msgid "Failed to update backup settings"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1156
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1179
 msgid "Failed to update byline"
 msgstr "署名の更新に失敗しました"
 
@@ -4533,7 +4562,7 @@ msgstr ""
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:985
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1008
 msgid "Keep typing to narrow down more bylines."
 msgstr ""
 
@@ -4684,7 +4713,7 @@ msgstr "リスト表示"
 
 #: packages/admin/src/components/ContentEditor.tsx:706
 #: packages/admin/src/components/ContentEditor.tsx:749
-#: packages/admin/src/components/ContentSettingsPanel.tsx:264
+#: packages/admin/src/components/ContentSettingsPanel.tsx:265
 msgid "Live View"
 msgstr "ライブビュー"
 
@@ -4873,7 +4902,7 @@ msgstr "管理"
 msgid "Manage {0} for {1}"
 msgstr "{1}の{0}を管理"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:947
+#: packages/admin/src/components/ContentSettingsPanel.tsx:970
 msgid "Manage bylines in {entryLocale}"
 msgstr ""
 
@@ -5187,14 +5216,14 @@ msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:536
 #: packages/admin/src/components/ContentList.tsx:1258
-#: packages/admin/src/components/ContentSettingsPanel.tsx:772
-#: packages/admin/src/components/ContentSettingsPanel.tsx:792
+#: packages/admin/src/components/ContentSettingsPanel.tsx:795
+#: packages/admin/src/components/ContentSettingsPanel.tsx:815
 msgid "Move to Trash"
 msgstr "ゴミ箱に移動"
 
 #: packages/admin/src/components/ContentList.tsx:514
 #: packages/admin/src/components/ContentList.tsx:1243
-#: packages/admin/src/components/ContentSettingsPanel.tsx:777
+#: packages/admin/src/components/ContentSettingsPanel.tsx:800
 msgid "Move to Trash?"
 msgstr "ゴミ箱に移動しますか？"
 
@@ -5268,7 +5297,7 @@ msgid "NEW"
 msgstr "新規"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:474
+#: packages/admin/src/components/TaxonomySidebar.tsx:592
 msgid "New {0}"
 msgstr "新しい{0}"
 
@@ -5354,7 +5383,7 @@ msgid "No (shared across translations)"
 msgstr ""
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:444
+#: packages/admin/src/components/TaxonomySidebar.tsx:561
 msgid "No {0} available."
 msgstr "利用可能な{0}がありません。"
 
@@ -5397,7 +5426,7 @@ msgstr ""
 msgid "No byline fields yet."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:939
+#: packages/admin/src/components/ContentSettingsPanel.tsx:962
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr ""
 
@@ -5406,7 +5435,7 @@ msgstr ""
 msgid "No bylines found"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1047
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1070
 msgid "No bylines selected."
 msgstr "署名が選択されていません。"
 
@@ -5433,6 +5462,10 @@ msgstr "コンテンツが見つかりません"
 #: packages/admin/src/components/ContentPickerModal.tsx:177
 msgid "No content in this collection"
 msgstr "このコレクションにはコンテンツがありません"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:506
+msgid "No content locale is configured, so EmDash stores new content as English (en). Changing the admin language does not change this value."
+msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:204
 msgid "No content types yet."
@@ -5504,7 +5537,7 @@ msgstr ""
 msgid "No matches"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:982
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1005
 msgid "No matching bylines."
 msgstr ""
 
@@ -5806,7 +5839,7 @@ msgstr "順序を保存しました"
 msgid "Original:"
 msgstr "元の値:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:739
+#: packages/admin/src/components/ContentSettingsPanel.tsx:762
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "アウトライン"
@@ -5815,8 +5848,8 @@ msgstr "アウトライン"
 msgid "Overrides the page title in search engine results"
 msgstr "検索エンジンの結果でページタイトルを上書き"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:619
-#: packages/admin/src/components/ContentSettingsPanel.tsx:622
+#: packages/admin/src/components/ContentSettingsPanel.tsx:641
+#: packages/admin/src/components/ContentSettingsPanel.tsx:644
 msgid "Ownership"
 msgstr "所有者"
 
@@ -6152,7 +6185,7 @@ msgstr "WordPressからのファイルダウンロードを準備中..."
 msgid "Preparing..."
 msgstr "準備中..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:166
+#: packages/admin/src/components/ContentSettingsPanel.tsx:167
 #: packages/admin/src/components/ContentTypeEditor.tsx:81
 #: packages/admin/src/components/MediaLibrary.tsx:585
 msgid "Preview"
@@ -6162,7 +6195,7 @@ msgstr "プレビュー"
 msgid "Preview content before publishing"
 msgstr "公開前にコンテンツをプレビュー"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:166
+#: packages/admin/src/components/ContentSettingsPanel.tsx:167
 msgid "Preview draft"
 msgstr "下書きをプレビュー"
 
@@ -6192,14 +6225,14 @@ msgid "Provider:"
 msgstr "プロバイダー:"
 
 #: packages/admin/src/components/ContentList.tsx:485
-#: packages/admin/src/components/ContentSettingsPanel.tsx:197
-#: packages/admin/src/components/ContentSettingsPanel.tsx:204
-#: packages/admin/src/components/ContentSettingsPanel.tsx:476
+#: packages/admin/src/components/ContentSettingsPanel.tsx:198
+#: packages/admin/src/components/ContentSettingsPanel.tsx:205
 #: packages/admin/src/components/ContentSettingsPanel.tsx:479
+#: packages/admin/src/components/ContentSettingsPanel.tsx:482
 msgid "Publish"
 msgstr "公開"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:576
+#: packages/admin/src/components/ContentSettingsPanel.tsx:598
 msgid "Publish date"
 msgstr ""
 
@@ -6232,7 +6265,7 @@ msgstr ""
 msgid "Python"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1055
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1078
 msgid "Quick create byline"
 msgstr "署名をクイック作成"
 
@@ -6372,7 +6405,7 @@ msgstr ""
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1024
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1047
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4221
@@ -6387,7 +6420,7 @@ msgstr "削除"
 #. placeholder {0}: passkey.name
 #. placeholder {0}: term.label
 #: packages/admin/src/components/settings/PasskeyItem.tsx:181
-#: packages/admin/src/components/TaxonomySidebar.tsx:254
+#: packages/admin/src/components/TaxonomySidebar.tsx:279
 msgid "Remove {0}"
 msgstr "{0}を削除"
 
@@ -6397,6 +6430,10 @@ msgstr ""
 
 #: packages/admin/src/components/ContentEditor.tsx:1720
 msgid "Remove {label}"
+msgstr ""
+
+#: packages/admin/src/components/TaxonomySidebar.tsx:550
+msgid "Remove assignment"
 msgstr ""
 
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:379
@@ -6518,7 +6555,7 @@ msgstr "リポジトリ"
 msgid "Request a new link"
 msgstr "新しいリンクをリクエスト"
 
-#: packages/admin/src/lib/api/client.ts:231
+#: packages/admin/src/lib/api/client.ts:236
 msgid "Request failed"
 msgstr ""
 
@@ -6624,7 +6661,7 @@ msgstr "新しい権限を確認"
 msgid "Revision restored"
 msgstr "リビジョンを復元しました"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:747
+#: packages/admin/src/components/ContentSettingsPanel.tsx:770
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6686,7 +6723,7 @@ msgstr "ロール"
 msgid "Role {role}"
 msgstr "ロール: {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1029
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1052
 msgid "Role label"
 msgstr "ロールラベル"
 
@@ -6716,7 +6753,7 @@ msgstr ""
 msgid "Same window"
 msgstr "同じウィンドウ"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:264
@@ -6768,7 +6805,7 @@ msgstr "保存済み"
 msgid "Saved \"{0}\"."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
 #: packages/admin/src/components/FieldEditor.tsx:689
 #: packages/admin/src/components/MediaDetailPanel.tsx:425
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6796,15 +6833,15 @@ msgstr ""
 msgid "SBOM · {0}"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:544
+#: packages/admin/src/components/ContentSettingsPanel.tsx:566
 msgid "Schedule"
 msgstr "予約公開"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:530
+#: packages/admin/src/components/ContentSettingsPanel.tsx:552
 msgid "Schedule for"
 msgstr "公開予約日時"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:567
+#: packages/admin/src/components/ContentSettingsPanel.tsx:589
 msgid "Schedule for later"
 msgstr "後で公開予約"
 
@@ -6815,7 +6852,7 @@ msgid "Scheduled"
 msgstr "予約済み"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:518
+#: packages/admin/src/components/ContentSettingsPanel.tsx:540
 msgid "Scheduled for: {0}"
 msgstr "公開予約: {0}"
 
@@ -6904,12 +6941,12 @@ msgid "Search by name or email..."
 msgstr ""
 
 #: packages/admin/src/components/BylineFilter.tsx:121
-#: packages/admin/src/components/ContentSettingsPanel.tsx:956
+#: packages/admin/src/components/ContentSettingsPanel.tsx:979
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:955
+#: packages/admin/src/components/ContentSettingsPanel.tsx:978
 msgid "Search bylines to add..."
 msgstr ""
 
@@ -6996,7 +7033,7 @@ msgstr "検索..."
 msgid "Searchable"
 msgstr "検索可能"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:960
+#: packages/admin/src/components/ContentSettingsPanel.tsx:983
 msgid "Searching..."
 msgstr ""
 
@@ -7245,8 +7282,8 @@ msgstr "テストメールを送信"
 msgid "Sending..."
 msgstr "送信中..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:690
-#: packages/admin/src/components/ContentSettingsPanel.tsx:693
+#: packages/admin/src/components/ContentSettingsPanel.tsx:713
+#: packages/admin/src/components/ContentSettingsPanel.tsx:716
 #: packages/admin/src/components/ContentTypeEditor.tsx:487
 #: packages/admin/src/components/Settings.tsx:60
 msgid "SEO"
@@ -7486,9 +7523,9 @@ msgid "Skipped"
 msgstr "スキップ済み"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
-#: packages/admin/src/components/ContentSettingsPanel.tsx:483
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1071
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1133
+#: packages/admin/src/components/ContentSettingsPanel.tsx:486
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1094
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1156
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:403
 #: packages/admin/src/components/ContentTypeList.tsx:181
@@ -7604,7 +7641,7 @@ msgid "Start writing, or type '/' for commands"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:592
-#: packages/admin/src/components/ContentSettingsPanel.tsx:490
+#: packages/admin/src/components/ContentSettingsPanel.tsx:512
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
@@ -7721,8 +7758,8 @@ msgstr "ターゲット"
 msgid "Target locale"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:679
-#: packages/admin/src/components/TaxonomySidebar.tsx:545
+#: packages/admin/src/components/ContentSettingsPanel.tsx:701
+#: packages/admin/src/components/TaxonomySidebar.tsx:667
 msgid "Taxonomies"
 msgstr "タクソノミー"
 
@@ -7894,6 +7931,10 @@ msgstr "これはカスタムセクションです。"
 msgid "This is a WordPress site."
 msgstr "これはWordPressサイトです。"
 
+#: packages/admin/src/components/ContentSettingsPanel.tsx:498
+msgid "This is stored with the entry and is separate from your admin language."
+msgstr ""
+
 #: packages/admin/src/components/users/InviteUserModal.tsx:112
 msgid "This link expires in 7 days and can only be used once."
 msgstr "このリンクは7日間有効で、1回のみ使用できます。"
@@ -7960,7 +8001,7 @@ msgstr ""
 msgid "This will grant CLI access with your permissions."
 msgstr "これにより、あなたの権限でCLIアクセスが許可されます。"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:779
+#: packages/admin/src/components/ContentSettingsPanel.tsx:802
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "アイテムをゴミ箱に移動します。後でゴミ箱から復元できます。"
 
@@ -7982,7 +8023,7 @@ msgstr "このコメントを完全に削除します。この操作は取り消
 msgid "This will remove the plugin and its bundle from your site."
 msgstr "プラグインとそのバンドルがサイトから削除されます。"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:92
+#: packages/admin/src/components/ContentSettingsPanel.tsx:93
 msgid "This will revert to the published version. Your draft changes will be lost."
 msgstr "公開済みバージョンに戻ります。下書きの変更は失われます。"
 
@@ -8093,11 +8134,12 @@ msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:143
 #: packages/admin/src/components/TaxonomyManager.tsx:987
+#: packages/admin/src/components/TaxonomySidebar.tsx:456
 #: packages/admin/src/router.tsx:1179
 msgid "Translation created"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:657
+#: packages/admin/src/components/ContentSettingsPanel.tsx:679
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "翻訳"
@@ -8206,8 +8248,8 @@ msgstr ""
 msgid "Unable to reach marketplace"
 msgstr "マーケットプレイスに接続できません"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1176
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1193
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1199
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1216
 msgid "Unassigned"
 msgstr "未割り当て"
 
@@ -8268,7 +8310,7 @@ msgstr "アスペクト比を解除"
 msgid "Unnamed passkey"
 msgstr "無名のパスキー"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:210
+#: packages/admin/src/components/ContentSettingsPanel.tsx:211
 msgid "Unpublish {itemLabel}"
 msgstr ""
 
@@ -8280,7 +8322,11 @@ msgstr ""
 msgid "Unregistered Content Tables Found"
 msgstr "未登録のコンテンツテーブルが見つかりました"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:520
+#: packages/admin/src/components/TaxonomySidebar.tsx:528
+msgid "Unresolved assignment"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:542
 msgid "Unschedule"
 msgstr "予約を解除"
 
@@ -8310,7 +8356,7 @@ msgstr ""
 msgid "Unverified publisher"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1026
 msgid "Up"
 msgstr "上へ"
 
@@ -8326,7 +8372,7 @@ msgstr "更新"
 msgid "Update Field"
 msgstr "フィールドを更新"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:594
+#: packages/admin/src/components/ContentSettingsPanel.tsx:616
 msgid "Update publish date"
 msgstr ""
 
@@ -8354,7 +8400,7 @@ msgid "Update to v{0}"
 msgstr "v{0}に更新"
 
 #: packages/admin/src/components/ContentList.tsx:842
-#: packages/admin/src/components/ContentSettingsPanel.tsx:610
+#: packages/admin/src/components/ContentSettingsPanel.tsx:632
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
 msgstr ""

@@ -231,6 +231,11 @@ msgstr ""
 msgid "{0} detected"
 msgstr "S'ha detectat {0}"
 
+#. placeholder {0}: term.locale.toUpperCase()
+#: packages/admin/src/components/TaxonomySidebar.tsx:341
+msgid "{0} fallback"
+msgstr ""
+
 #. placeholder {0}: plugin.name
 #: packages/admin/src/components/PluginManager.tsx:115
 msgid "{0} has been deactivated"
@@ -300,7 +305,7 @@ msgid "{0} system + {1} custom {2}"
 msgstr "{0} del sistema + {1} personalitzats {2}"
 
 #. placeholder {0}: taxonomy.label
-#: packages/admin/src/components/TaxonomySidebar.tsx:356
+#: packages/admin/src/components/TaxonomySidebar.tsx:396
 msgid "{0} updated"
 msgstr "S'ha actualitzat {0}"
 
@@ -585,6 +590,10 @@ msgstr "Un bàner destacat d'amplada completa amb encapçalament, text i botó d
 msgid "A short description of your site"
 msgstr "Una breu descripció del teu lloc"
 
+#: packages/admin/src/components/TaxonomySidebar.tsx:440
+msgid "A source and target locale are required"
+msgstr ""
+
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:201
 msgid "Accept & Install"
 msgstr "Accepta i instal·la"
@@ -645,9 +654,9 @@ msgid "Active"
 msgstr "Actiu"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:974
+#: packages/admin/src/components/ContentSettingsPanel.tsx:997
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:486
+#: packages/admin/src/components/TaxonomySidebar.tsx:604
 msgid "Add"
 msgstr "Afegeix"
 
@@ -659,7 +668,7 @@ msgstr "Afegeix"
 msgid "Add {0}"
 msgstr "Afegeix {0}"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:276
+#: packages/admin/src/components/TaxonomySidebar.tsx:301
 msgid "Add {label}"
 msgstr "Afegeix {label}"
 
@@ -754,7 +763,7 @@ msgid "Add New"
 msgstr "Afegeix-ne un de nou"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:498
+#: packages/admin/src/components/TaxonomySidebar.tsx:616
 msgid "Add new {0}"
 msgstr "Afegeix {0}"
 
@@ -786,7 +795,7 @@ msgstr "Afegeix camps de metadades SEO (títol, descripció, imatge) i inclou-lo
 msgid "Add Sub-Field"
 msgstr "Afegeix un subcamp"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:278
+#: packages/admin/src/components/TaxonomySidebar.tsx:303
 msgid "Add tags..."
 msgstr "Afegeix etiquetes..."
 
@@ -994,7 +1003,8 @@ msgstr "Com a alternativa, pots exportar des de WordPress (Eines → Exporta) i 
 #: packages/admin/src/components/settings/SocialSettings.tsx:67
 #: packages/admin/src/components/settings/SocialSettings.tsx:111
 #: packages/admin/src/components/settings/SocialSettings.tsx:112
-#: packages/admin/src/components/TaxonomySidebar.tsx:361
+#: packages/admin/src/components/TaxonomySidebar.tsx:401
+#: packages/admin/src/components/TaxonomySidebar.tsx:461
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
 #: packages/admin/src/router.tsx:447
 #: packages/admin/src/router.tsx:462
@@ -1159,7 +1169,7 @@ msgstr "L'autenticació s'ha cancel·lat o ha excedit el temps d'espera. Torna-h
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1184
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1207
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1222,6 +1232,11 @@ msgstr ""
 #: packages/admin/src/router.tsx:1055
 msgid "Autosave failed"
 msgstr "Ha fallat el desament automàtic"
+
+#. placeholder {0}: assignment.availableLocales.map((locale) => locale.toUpperCase()).join(", ")
+#: packages/admin/src/components/TaxonomySidebar.tsx:530
+msgid "Available in {0}"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:710
 msgid "Available media"
@@ -1386,8 +1401,8 @@ msgid "Byline Schema"
 msgstr "Esquema de signatures"
 
 #: packages/admin/src/components/BylineFilter.tsx:135
-#: packages/admin/src/components/ContentSettingsPanel.tsx:634
-#: packages/admin/src/components/ContentSettingsPanel.tsx:637
+#: packages/admin/src/components/ContentSettingsPanel.tsx:656
+#: packages/admin/src/components/ContentSettingsPanel.tsx:659
 #: packages/admin/src/components/Sidebar.tsx:257
 #: packages/admin/src/routes/bylines.tsx:375
 msgid "Bylines"
@@ -1428,11 +1443,11 @@ msgstr "Pot veure el contingut"
 #: packages/admin/src/components/ContentList.tsx:1251
 #: packages/admin/src/components/ContentList.tsx:1419
 #: packages/admin/src/components/ContentPickerModal.tsx:240
-#: packages/admin/src/components/ContentSettingsPanel.tsx:98
-#: packages/admin/src/components/ContentSettingsPanel.tsx:555
-#: packages/admin/src/components/ContentSettingsPanel.tsx:785
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1088
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:99
+#: packages/admin/src/components/ContentSettingsPanel.tsx:577
+#: packages/admin/src/components/ContentSettingsPanel.tsx:808
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1111
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1164
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1810,7 +1825,7 @@ msgstr "Connecta amb WordPress"
 msgid "Connected {0}"
 msgstr "{0} connectat"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:192
 msgid "content"
 msgstr ""
 
@@ -1857,6 +1872,14 @@ msgstr "El contingut ja és en línia"
 #: packages/admin/src/components/WordPressImport.tsx:2371
 msgid "content items"
 msgstr "elements de contingut"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:494
+msgid "Content locale"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:505
+msgid "Content locale defaults to English"
+msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
 msgid "Content Read"
@@ -1979,7 +2002,7 @@ msgstr "No s'han pogut carregar els camps personalitzats."
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "No s'ha pogut associar «{draft}» a cap tipus MIME. Escriu el MIME directament."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:980
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
 msgid "Couldn't search bylines. Please try again."
 msgstr "No s'han pogut cercar les signatures. Torna-ho a provar."
 
@@ -1992,7 +2015,7 @@ msgstr "No s'ha pogut verificar quants valors fan referència a «{0}». En elim
 msgid "Count"
 msgstr "Recompte"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1112
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -2002,9 +2025,14 @@ msgstr "Recompte"
 msgid "Create"
 msgstr "Crea"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:296
+#: packages/admin/src/components/TaxonomySidebar.tsx:324
 msgid "Create \"{trimmedInput}\""
 msgstr "Crea «{trimmedInput}»"
+
+#. placeholder {0}: resolvedEntryLocale.toUpperCase()
+#: packages/admin/src/components/TaxonomySidebar.tsx:541
+msgid "Create {0} translation"
+msgstr ""
 
 #: packages/admin/src/components/PortableTextEditor.tsx:1441
 msgid "Create a bullet list"
@@ -2028,7 +2056,7 @@ msgstr "Crea un compte"
 msgid "Create an account"
 msgstr "Crea un compte"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1060
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1083
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "Crea una signatura"
@@ -2149,7 +2177,7 @@ msgid "Create, update, delete content"
 msgstr "Crea, actualitza i elimina contingut"
 
 #: packages/admin/src/components/ContentList.tsx:841
-#: packages/admin/src/components/ContentSettingsPanel.tsx:606
+#: packages/admin/src/components/ContentSettingsPanel.tsx:628
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
@@ -2178,13 +2206,13 @@ msgstr "Data de creació"
 msgid "Creating collections and fields..."
 msgstr "S'estan creant les col·leccions i els camps..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1112
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 #: packages/admin/src/components/TaxonomyManager.tsx:873
-#: packages/admin/src/components/TaxonomySidebar.tsx:296
+#: packages/admin/src/components/TaxonomySidebar.tsx:324
 msgid "Creating..."
 msgstr "S'està creant..."
 
@@ -2635,8 +2663,8 @@ msgstr "S'està desactivant..."
 msgid "Discard"
 msgstr "Descarta"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:85
-#: packages/admin/src/components/ContentSettingsPanel.tsx:105
+#: packages/admin/src/components/ContentSettingsPanel.tsx:86
+#: packages/admin/src/components/ContentSettingsPanel.tsx:106
 msgid "Discard changes"
 msgstr "Descarta els canvis"
 
@@ -2644,7 +2672,7 @@ msgstr "Descarta els canvis"
 msgid "Discard changes?"
 msgstr "Vols descartar els canvis?"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:90
+#: packages/admin/src/components/ContentSettingsPanel.tsx:91
 msgid "Discard draft changes?"
 msgstr "Vols descartar els canvis de l'esborrany?"
 
@@ -2672,8 +2700,8 @@ msgstr "Mostra un menú de navegació"
 msgid "Display category list"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1063
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1125
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1086
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1148
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "Nom visible"
@@ -2738,7 +2766,7 @@ msgstr "No tens cap compte? <0>Registra't</0>"
 msgid "Done"
 msgstr "Fet"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1006
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1029
 msgid "Down"
 msgstr "Avall"
 
@@ -2858,7 +2886,7 @@ msgstr "p. ex. canalització CI/CD"
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "p. ex. MacBook Pro, iPhone"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1015
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1038
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2894,7 +2922,7 @@ msgstr ""
 msgid "Edit {title}"
 msgstr "Edita {title}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1122
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1145
 msgid "Edit byline"
 msgstr "Edita la signatura"
 
@@ -3232,7 +3260,7 @@ msgstr "No s'ha pogut crear l'administrador"
 msgid "Failed to create backup"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1106
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1129
 msgid "Failed to create byline"
 msgstr "No s'ha pogut crear la signatura"
 
@@ -3252,10 +3280,11 @@ msgstr "No s'ha pogut crear la secció"
 msgid "Failed to create some collections"
 msgstr "No s'han pogut crear algunes col·leccions"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:505
+#: packages/admin/src/components/TaxonomySidebar.tsx:623
 msgid "Failed to create term"
 msgstr "No s'ha pogut crear el terme"
 
+#: packages/admin/src/components/TaxonomySidebar.tsx:460
 #: packages/admin/src/router.tsx:1185
 msgid "Failed to create translation"
 msgstr "No s'ha pogut crear la traducció"
@@ -3383,7 +3412,7 @@ msgstr "No s'ha pogut activar l'usuari"
 msgid "Failed to execute import"
 msgstr "No s'ha pogut executar la importació"
 
-#: packages/admin/src/lib/api/client.ts:260
+#: packages/admin/src/lib/api/client.ts:265
 msgid "Failed to fetch auth mode"
 msgstr "No s'ha pogut obtenir el mode d'autenticació"
 
@@ -3404,11 +3433,11 @@ msgstr "No s'han pogut obtenir les estadístiques del tauler"
 msgid "Failed to fetch email settings"
 msgstr "No s'ha pogut obtenir la configuració de correu"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:111
+#: packages/admin/src/components/TaxonomySidebar.tsx:125
 msgid "Failed to fetch entry terms"
 msgstr "No s'han pogut obtenir els termes de l'entrada"
 
-#: packages/admin/src/lib/api/client.ts:243
+#: packages/admin/src/lib/api/client.ts:248
 msgid "Failed to fetch manifest"
 msgstr "No s'ha pogut obtenir el manifest"
 
@@ -3462,7 +3491,7 @@ msgstr "No s'ha pogut obtenir la configuració"
 msgid "Failed to fetch setup status"
 msgstr "No s'ha pogut obtenir l'estat de configuració"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:92
+#: packages/admin/src/components/TaxonomySidebar.tsx:109
 msgid "Failed to fetch terms"
 msgstr "No s'han pogut obtenir els termes"
 
@@ -3696,7 +3725,7 @@ msgstr "No s'ha pogut enviar el correu de prova"
 msgid "Failed to send verification email"
 msgstr "No s'ha pogut enviar el correu de verificació"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:134
+#: packages/admin/src/components/TaxonomySidebar.tsx:144
 msgid "Failed to set entry terms"
 msgstr "No s'han pogut definir els termes de l'entrada"
 
@@ -3718,7 +3747,7 @@ msgid "Failed to update"
 msgstr ""
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:360
+#: packages/admin/src/components/TaxonomySidebar.tsx:400
 msgid "Failed to update {0}"
 msgstr "No s'ha pogut actualitzar {0}"
 
@@ -3726,7 +3755,7 @@ msgstr "No s'ha pogut actualitzar {0}"
 msgid "Failed to update backup settings"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1156
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1179
 msgid "Failed to update byline"
 msgstr "No s'ha pogut actualitzar la signatura"
 
@@ -4536,7 +4565,7 @@ msgstr ""
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:985
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1008
 msgid "Keep typing to narrow down more bylines."
 msgstr "Continua escrivint per acotar més les signatures."
 
@@ -4687,7 +4716,7 @@ msgstr "Vista de llista"
 
 #: packages/admin/src/components/ContentEditor.tsx:706
 #: packages/admin/src/components/ContentEditor.tsx:749
-#: packages/admin/src/components/ContentSettingsPanel.tsx:264
+#: packages/admin/src/components/ContentSettingsPanel.tsx:265
 msgid "Live View"
 msgstr "Vista en directe"
 
@@ -4876,7 +4905,7 @@ msgstr "Gestiona"
 msgid "Manage {0} for {1}"
 msgstr "Gestiona {0} per a {1}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:947
+#: packages/admin/src/components/ContentSettingsPanel.tsx:970
 msgid "Manage bylines in {entryLocale}"
 msgstr "Gestiona les signatures en {entryLocale}"
 
@@ -5190,14 +5219,14 @@ msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:536
 #: packages/admin/src/components/ContentList.tsx:1258
-#: packages/admin/src/components/ContentSettingsPanel.tsx:772
-#: packages/admin/src/components/ContentSettingsPanel.tsx:792
+#: packages/admin/src/components/ContentSettingsPanel.tsx:795
+#: packages/admin/src/components/ContentSettingsPanel.tsx:815
 msgid "Move to Trash"
 msgstr "Mou a la paperera"
 
 #: packages/admin/src/components/ContentList.tsx:514
 #: packages/admin/src/components/ContentList.tsx:1243
-#: packages/admin/src/components/ContentSettingsPanel.tsx:777
+#: packages/admin/src/components/ContentSettingsPanel.tsx:800
 msgid "Move to Trash?"
 msgstr "Vols moure-ho a la paperera?"
 
@@ -5271,7 +5300,7 @@ msgid "NEW"
 msgstr "NOU"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:474
+#: packages/admin/src/components/TaxonomySidebar.tsx:592
 msgid "New {0}"
 msgstr "{0} nou"
 
@@ -5357,7 +5386,7 @@ msgid "No (shared across translations)"
 msgstr "No (compartit entre traduccions)"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:444
+#: packages/admin/src/components/TaxonomySidebar.tsx:561
 msgid "No {0} available."
 msgstr "No hi ha cap {0} disponible."
 
@@ -5400,7 +5429,7 @@ msgstr ""
 msgid "No byline fields yet."
 msgstr "Encara no hi ha cap camp de signatura."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:939
+#: packages/admin/src/components/ContentSettingsPanel.tsx:962
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "No hi ha cap signatura disponible en {entryLocale}. Crea una variant des de la pàgina de signatures abans d'atribuir-ne una en aquesta entrada."
 
@@ -5409,7 +5438,7 @@ msgstr "No hi ha cap signatura disponible en {entryLocale}. Crea una variant des
 msgid "No bylines found"
 msgstr "No s'ha trobat cap signatura"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1047
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1070
 msgid "No bylines selected."
 msgstr "No s'ha seleccionat cap signatura."
 
@@ -5436,6 +5465,10 @@ msgstr "No s'ha trobat cap contingut"
 #: packages/admin/src/components/ContentPickerModal.tsx:177
 msgid "No content in this collection"
 msgstr "No hi ha contingut en aquesta col·lecció"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:506
+msgid "No content locale is configured, so EmDash stores new content as English (en). Changing the admin language does not change this value."
+msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:204
 msgid "No content types yet."
@@ -5507,7 +5540,7 @@ msgstr "Cap usuari enllaçat"
 msgid "No matches"
 msgstr "Cap coincidència"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:982
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1005
 msgid "No matching bylines."
 msgstr "Cap signatura coincident."
 
@@ -5812,7 +5845,7 @@ msgstr "S'ha desat l'ordre"
 msgid "Original:"
 msgstr "Original:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:739
+#: packages/admin/src/components/ContentSettingsPanel.tsx:762
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "Esquema"
@@ -5821,8 +5854,8 @@ msgstr "Esquema"
 msgid "Overrides the page title in search engine results"
 msgstr "Substitueix el títol de la pàgina als resultats dels motors de cerca"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:619
-#: packages/admin/src/components/ContentSettingsPanel.tsx:622
+#: packages/admin/src/components/ContentSettingsPanel.tsx:641
+#: packages/admin/src/components/ContentSettingsPanel.tsx:644
 msgid "Ownership"
 msgstr "Propietat"
 
@@ -6158,7 +6191,7 @@ msgstr "S'està preparant la baixada de fitxers des de WordPress..."
 msgid "Preparing..."
 msgstr "S'està preparant..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:166
+#: packages/admin/src/components/ContentSettingsPanel.tsx:167
 #: packages/admin/src/components/ContentTypeEditor.tsx:81
 #: packages/admin/src/components/MediaLibrary.tsx:585
 msgid "Preview"
@@ -6168,7 +6201,7 @@ msgstr "Previsualitza"
 msgid "Preview content before publishing"
 msgstr "Previsualitza el contingut abans de publicar-lo"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:166
+#: packages/admin/src/components/ContentSettingsPanel.tsx:167
 msgid "Preview draft"
 msgstr "Previsualitza l'esborrany"
 
@@ -6198,14 +6231,14 @@ msgid "Provider:"
 msgstr "Proveïdor:"
 
 #: packages/admin/src/components/ContentList.tsx:485
-#: packages/admin/src/components/ContentSettingsPanel.tsx:197
-#: packages/admin/src/components/ContentSettingsPanel.tsx:204
-#: packages/admin/src/components/ContentSettingsPanel.tsx:476
+#: packages/admin/src/components/ContentSettingsPanel.tsx:198
+#: packages/admin/src/components/ContentSettingsPanel.tsx:205
 #: packages/admin/src/components/ContentSettingsPanel.tsx:479
+#: packages/admin/src/components/ContentSettingsPanel.tsx:482
 msgid "Publish"
 msgstr "Publica"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:576
+#: packages/admin/src/components/ContentSettingsPanel.tsx:598
 msgid "Publish date"
 msgstr ""
 
@@ -6238,7 +6271,7 @@ msgstr "Publicat per"
 msgid "Python"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1055
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1078
 msgid "Quick create byline"
 msgstr "Crea ràpidament una signatura"
 
@@ -6378,7 +6411,7 @@ msgstr "La versió és massa nova per instal·lar-la"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1024
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1047
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4221
@@ -6393,7 +6426,7 @@ msgstr "Treu"
 #. placeholder {0}: passkey.name
 #. placeholder {0}: term.label
 #: packages/admin/src/components/settings/PasskeyItem.tsx:181
-#: packages/admin/src/components/TaxonomySidebar.tsx:254
+#: packages/admin/src/components/TaxonomySidebar.tsx:279
 msgid "Remove {0}"
 msgstr "Treu {0}"
 
@@ -6404,6 +6437,10 @@ msgstr "Treu {entry}"
 #: packages/admin/src/components/ContentEditor.tsx:1720
 msgid "Remove {label}"
 msgstr "Treu {label}"
+
+#: packages/admin/src/components/TaxonomySidebar.tsx:550
+msgid "Remove assignment"
+msgstr ""
 
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:379
 msgid "Remove Domain"
@@ -6524,7 +6561,7 @@ msgstr "Dipòsit"
 msgid "Request a new link"
 msgstr "Sol·licita un enllaç nou"
 
-#: packages/admin/src/lib/api/client.ts:231
+#: packages/admin/src/lib/api/client.ts:236
 msgid "Request failed"
 msgstr "Ha fallat la sol·licitud"
 
@@ -6630,7 +6667,7 @@ msgstr "Revisa els permisos nous"
 msgid "Revision restored"
 msgstr "S'ha restaurat la revisió"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:747
+#: packages/admin/src/components/ContentSettingsPanel.tsx:770
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6692,7 +6729,7 @@ msgstr "Rol"
 msgid "Role {role}"
 msgstr "Rol {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1029
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1052
 msgid "Role label"
 msgstr "Etiqueta del rol"
 
@@ -6722,7 +6759,7 @@ msgstr ""
 msgid "Same window"
 msgstr "Mateixa finestra"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:264
@@ -6774,7 +6811,7 @@ msgstr "Desat"
 msgid "Saved \"{0}\"."
 msgstr "S'ha desat «{0}»."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
 #: packages/admin/src/components/FieldEditor.tsx:689
 #: packages/admin/src/components/MediaDetailPanel.tsx:425
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6802,15 +6839,15 @@ msgstr ""
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:544
+#: packages/admin/src/components/ContentSettingsPanel.tsx:566
 msgid "Schedule"
 msgstr "Programa"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:530
+#: packages/admin/src/components/ContentSettingsPanel.tsx:552
 msgid "Schedule for"
 msgstr "Programa per a"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:567
+#: packages/admin/src/components/ContentSettingsPanel.tsx:589
 msgid "Schedule for later"
 msgstr "Programa per a més tard"
 
@@ -6821,7 +6858,7 @@ msgid "Scheduled"
 msgstr "Programat"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:518
+#: packages/admin/src/components/ContentSettingsPanel.tsx:540
 msgid "Scheduled for: {0}"
 msgstr "Programat per a: {0}"
 
@@ -6910,12 +6947,12 @@ msgid "Search by name or email..."
 msgstr "Cerca per nom o correu electrònic..."
 
 #: packages/admin/src/components/BylineFilter.tsx:121
-#: packages/admin/src/components/ContentSettingsPanel.tsx:956
+#: packages/admin/src/components/ContentSettingsPanel.tsx:979
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr "Cerca signatures"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:955
+#: packages/admin/src/components/ContentSettingsPanel.tsx:978
 msgid "Search bylines to add..."
 msgstr "Cerca signatures per afegir..."
 
@@ -7002,7 +7039,7 @@ msgstr "Cerca..."
 msgid "Searchable"
 msgstr "Cercable"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:960
+#: packages/admin/src/components/ContentSettingsPanel.tsx:983
 msgid "Searching..."
 msgstr "S'està cercant..."
 
@@ -7251,8 +7288,8 @@ msgstr "Envia un correu de prova"
 msgid "Sending..."
 msgstr "S'està enviant..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:690
-#: packages/admin/src/components/ContentSettingsPanel.tsx:693
+#: packages/admin/src/components/ContentSettingsPanel.tsx:713
+#: packages/admin/src/components/ContentSettingsPanel.tsx:716
 #: packages/admin/src/components/ContentTypeEditor.tsx:487
 #: packages/admin/src/components/Settings.tsx:60
 msgid "SEO"
@@ -7492,9 +7529,9 @@ msgid "Skipped"
 msgstr "Omès"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
-#: packages/admin/src/components/ContentSettingsPanel.tsx:483
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1071
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1133
+#: packages/admin/src/components/ContentSettingsPanel.tsx:486
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1094
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1156
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:403
 #: packages/admin/src/components/ContentTypeList.tsx:181
@@ -7610,7 +7647,7 @@ msgid "Start writing, or type '/' for commands"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:592
-#: packages/admin/src/components/ContentSettingsPanel.tsx:490
+#: packages/admin/src/components/ContentSettingsPanel.tsx:512
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
@@ -7727,8 +7764,8 @@ msgstr "Destinació"
 msgid "Target locale"
 msgstr "Idioma de destinació"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:679
-#: packages/admin/src/components/TaxonomySidebar.tsx:545
+#: packages/admin/src/components/ContentSettingsPanel.tsx:701
+#: packages/admin/src/components/TaxonomySidebar.tsx:667
 msgid "Taxonomies"
 msgstr "Taxonomies"
 
@@ -7900,6 +7937,10 @@ msgstr "Aquesta és una secció personalitzada."
 msgid "This is a WordPress site."
 msgstr "Aquest és un lloc de WordPress."
 
+#: packages/admin/src/components/ContentSettingsPanel.tsx:498
+msgid "This is stored with the entry and is separate from your admin language."
+msgstr ""
+
 #: packages/admin/src/components/users/InviteUserModal.tsx:112
 msgid "This link expires in 7 days and can only be used once."
 msgstr "Aquest enllaç caduca al cap de 7 dies i només es pot utilitzar una vegada."
@@ -7966,7 +8007,7 @@ msgstr "Això eliminarà l'àrea de ginys i tots els seus ginys. Aquesta acció 
 msgid "This will grant CLI access with your permissions."
 msgstr "Això concedirà accés per CLI amb els teus permisos."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:779
+#: packages/admin/src/components/ContentSettingsPanel.tsx:802
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "Això mourà l'element a la paperera. El podràs restaurar més tard des de la paperera."
 
@@ -7988,7 +8029,7 @@ msgstr "Això eliminarà permanentment aquest comentari. Aquesta acció no es po
 msgid "This will remove the plugin and its bundle from your site."
 msgstr "Això traurà el connector i el seu paquet del teu lloc."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:92
+#: packages/admin/src/components/ContentSettingsPanel.tsx:93
 msgid "This will revert to the published version. Your draft changes will be lost."
 msgstr "Això revertirà a la versió publicada. Es perdran els canvis del teu esborrany."
 
@@ -8099,11 +8140,12 @@ msgstr "S'està traduint..."
 
 #: packages/admin/src/components/MenuEditor.tsx:143
 #: packages/admin/src/components/TaxonomyManager.tsx:987
+#: packages/admin/src/components/TaxonomySidebar.tsx:456
 #: packages/admin/src/router.tsx:1179
 msgid "Translation created"
 msgstr "S'ha creat la traducció"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:657
+#: packages/admin/src/components/ContentSettingsPanel.tsx:679
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "Traduccions"
@@ -8212,8 +8254,8 @@ msgstr ""
 msgid "Unable to reach marketplace"
 msgstr "No s'ha pogut arribar al mercat"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1176
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1193
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1199
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1216
 msgid "Unassigned"
 msgstr "Sense assignar"
 
@@ -8274,7 +8316,7 @@ msgstr "Desbloqueja la relació d'aspecte"
 msgid "Unnamed passkey"
 msgstr "Clau d'accés sense nom"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:210
+#: packages/admin/src/components/ContentSettingsPanel.tsx:211
 msgid "Unpublish {itemLabel}"
 msgstr ""
 
@@ -8286,7 +8328,11 @@ msgstr "Publicació anul·lada"
 msgid "Unregistered Content Tables Found"
 msgstr "S'han trobat taules de contingut no registrades"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:520
+#: packages/admin/src/components/TaxonomySidebar.tsx:528
+msgid "Unresolved assignment"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:542
 msgid "Unschedule"
 msgstr "Anul·la la programació"
 
@@ -8316,7 +8362,7 @@ msgstr "Giny sense títol"
 msgid "Unverified publisher"
 msgstr "Editor no verificat"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1026
 msgid "Up"
 msgstr "Amunt"
 
@@ -8332,7 +8378,7 @@ msgstr "Actualitza"
 msgid "Update Field"
 msgstr "Actualitza el camp"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:594
+#: packages/admin/src/components/ContentSettingsPanel.tsx:616
 msgid "Update publish date"
 msgstr ""
 
@@ -8360,7 +8406,7 @@ msgid "Update to v{0}"
 msgstr "Actualitza a la v{0}"
 
 #: packages/admin/src/components/ContentList.tsx:842
-#: packages/admin/src/components/ContentSettingsPanel.tsx:610
+#: packages/admin/src/components/ContentSettingsPanel.tsx:632
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
 msgstr "Actualitzat"

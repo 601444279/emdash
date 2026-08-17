@@ -231,6 +231,11 @@ msgstr ""
 msgid "{0} detected"
 msgstr "{0} का पता चला"
 
+#. placeholder {0}: term.locale.toUpperCase()
+#: packages/admin/src/components/TaxonomySidebar.tsx:341
+msgid "{0} fallback"
+msgstr ""
+
 #. placeholder {0}: plugin.name
 #: packages/admin/src/components/PluginManager.tsx:115
 msgid "{0} has been deactivated"
@@ -300,7 +305,7 @@ msgid "{0} system + {1} custom {2}"
 msgstr "{0} सिस्टम + {1} कस्टम {2}"
 
 #. placeholder {0}: taxonomy.label
-#: packages/admin/src/components/TaxonomySidebar.tsx:356
+#: packages/admin/src/components/TaxonomySidebar.tsx:396
 msgid "{0} updated"
 msgstr "{0} अद्यतन किया गया"
 
@@ -585,6 +590,10 @@ msgstr "शीर्षक, पाठ और सीटीए बटन के �
 msgid "A short description of your site"
 msgstr "आपकी साइट का संक्षिप्त विवरण"
 
+#: packages/admin/src/components/TaxonomySidebar.tsx:440
+msgid "A source and target locale are required"
+msgstr ""
+
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:201
 msgid "Accept & Install"
 msgstr "स्वीकार करें और इंस्टॉल करें"
@@ -645,9 +654,9 @@ msgid "Active"
 msgstr "सक्रिय"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:974
+#: packages/admin/src/components/ContentSettingsPanel.tsx:997
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:486
+#: packages/admin/src/components/TaxonomySidebar.tsx:604
 msgid "Add"
 msgstr "जोड़ना"
 
@@ -659,7 +668,7 @@ msgstr "जोड़ना"
 msgid "Add {0}"
 msgstr "{0} जोड़ें"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:276
+#: packages/admin/src/components/TaxonomySidebar.tsx:301
 msgid "Add {label}"
 msgstr "{label} जोड़ें"
 
@@ -754,7 +763,7 @@ msgid "Add New"
 msgstr "नया जोड़ो"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:498
+#: packages/admin/src/components/TaxonomySidebar.tsx:616
 msgid "Add new {0}"
 msgstr "नया जोड़ें {0}"
 
@@ -786,7 +795,7 @@ msgstr "SEO मेटाडेटा फ़ील्ड (शीर्षक, व
 msgid "Add Sub-Field"
 msgstr "उप-फ़ील्ड जोड़ें"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:278
+#: packages/admin/src/components/TaxonomySidebar.tsx:303
 msgid "Add tags..."
 msgstr "टैगों को जोड़ें..."
 
@@ -994,7 +1003,8 @@ msgstr "वैकल्पिक रूप से, आप वर्डप्र�
 #: packages/admin/src/components/settings/SocialSettings.tsx:67
 #: packages/admin/src/components/settings/SocialSettings.tsx:111
 #: packages/admin/src/components/settings/SocialSettings.tsx:112
-#: packages/admin/src/components/TaxonomySidebar.tsx:361
+#: packages/admin/src/components/TaxonomySidebar.tsx:401
+#: packages/admin/src/components/TaxonomySidebar.tsx:461
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
 #: packages/admin/src/router.tsx:447
 #: packages/admin/src/router.tsx:462
@@ -1159,7 +1169,7 @@ msgstr "प्रमाणीकरण रद्द कर दिया गय�
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1184
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1207
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1222,6 +1232,11 @@ msgstr "स्वचालित बैकअप के लिए स्टो�
 #: packages/admin/src/router.tsx:1055
 msgid "Autosave failed"
 msgstr "स्वतः सहेजना विफल"
+
+#. placeholder {0}: assignment.availableLocales.map((locale) => locale.toUpperCase()).join(", ")
+#: packages/admin/src/components/TaxonomySidebar.tsx:530
+msgid "Available in {0}"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:710
 msgid "Available media"
@@ -1386,8 +1401,8 @@ msgid "Byline Schema"
 msgstr "बाइलाइन स्कीमा"
 
 #: packages/admin/src/components/BylineFilter.tsx:135
-#: packages/admin/src/components/ContentSettingsPanel.tsx:634
-#: packages/admin/src/components/ContentSettingsPanel.tsx:637
+#: packages/admin/src/components/ContentSettingsPanel.tsx:656
+#: packages/admin/src/components/ContentSettingsPanel.tsx:659
 #: packages/admin/src/components/Sidebar.tsx:257
 #: packages/admin/src/routes/bylines.tsx:375
 msgid "Bylines"
@@ -1428,11 +1443,11 @@ msgstr "सामग्री देख सकते हैं"
 #: packages/admin/src/components/ContentList.tsx:1251
 #: packages/admin/src/components/ContentList.tsx:1419
 #: packages/admin/src/components/ContentPickerModal.tsx:240
-#: packages/admin/src/components/ContentSettingsPanel.tsx:98
-#: packages/admin/src/components/ContentSettingsPanel.tsx:555
-#: packages/admin/src/components/ContentSettingsPanel.tsx:785
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1088
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:99
+#: packages/admin/src/components/ContentSettingsPanel.tsx:577
+#: packages/admin/src/components/ContentSettingsPanel.tsx:808
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1111
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1164
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1810,7 +1825,7 @@ msgstr "वर्डप्रेस से जुड़ें"
 msgid "Connected {0}"
 msgstr "कनेक्टेड {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:192
 msgid "content"
 msgstr "सामग्री"
 
@@ -1857,6 +1872,14 @@ msgstr "सामग्री अब लाइव है"
 #: packages/admin/src/components/WordPressImport.tsx:2371
 msgid "content items"
 msgstr "सामग्री आइटम"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:494
+msgid "Content locale"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:505
+msgid "Content locale defaults to English"
+msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
 msgid "Content Read"
@@ -1979,7 +2002,7 @@ msgstr "कस्टम फ़ील्ड लोड नहीं किया �
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "\"{draft}\" को MIME प्रकार में मैप नहीं किया जा सका। सीधे MIME टाइप करें."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:980
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
 msgid "Couldn't search bylines. Please try again."
 msgstr "बायलाइन नहीं खोजी जा सकी. कृपया पुन: प्रयास करें।"
 
@@ -1992,7 +2015,7 @@ msgstr "सत्यापित नहीं किया जा सका क�
 msgid "Count"
 msgstr "गिनती करना"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1112
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -2002,9 +2025,14 @@ msgstr "गिनती करना"
 msgid "Create"
 msgstr "बनाएं"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:296
+#: packages/admin/src/components/TaxonomySidebar.tsx:324
 msgid "Create \"{trimmedInput}\""
 msgstr "\"{trimmedInput}\" बनाएं"
+
+#. placeholder {0}: resolvedEntryLocale.toUpperCase()
+#: packages/admin/src/components/TaxonomySidebar.tsx:541
+msgid "Create {0} translation"
+msgstr ""
 
 #: packages/admin/src/components/PortableTextEditor.tsx:1441
 msgid "Create a bullet list"
@@ -2028,7 +2056,7 @@ msgstr "खाता बनाएं"
 msgid "Create an account"
 msgstr "खाता बनाएं"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1060
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1083
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "बायलाइन बनाएं"
@@ -2149,7 +2177,7 @@ msgid "Create, update, delete content"
 msgstr "सामग्री बनाएँ, अद्यतन करें, हटाएँ"
 
 #: packages/admin/src/components/ContentList.tsx:841
-#: packages/admin/src/components/ContentSettingsPanel.tsx:606
+#: packages/admin/src/components/ContentSettingsPanel.tsx:628
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
@@ -2178,13 +2206,13 @@ msgstr "पर बनाया गया"
 msgid "Creating collections and fields..."
 msgstr "संग्रह और फ़ील्ड बनाए जा रहे हैं..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1112
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 #: packages/admin/src/components/TaxonomyManager.tsx:873
-#: packages/admin/src/components/TaxonomySidebar.tsx:296
+#: packages/admin/src/components/TaxonomySidebar.tsx:324
 msgid "Creating..."
 msgstr "बनाया जा रहा है..."
 
@@ -2635,8 +2663,8 @@ msgstr "अक्षम किया जा रहा है..."
 msgid "Discard"
 msgstr "खारिज करना"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:85
-#: packages/admin/src/components/ContentSettingsPanel.tsx:105
+#: packages/admin/src/components/ContentSettingsPanel.tsx:86
+#: packages/admin/src/components/ContentSettingsPanel.tsx:106
 msgid "Discard changes"
 msgstr "परिवर्तनों को निरस्त करें"
 
@@ -2644,7 +2672,7 @@ msgstr "परिवर्तनों को निरस्त करें"
 msgid "Discard changes?"
 msgstr "परिवर्तनों को निरस्त करें?"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:90
+#: packages/admin/src/components/ContentSettingsPanel.tsx:91
 msgid "Discard draft changes?"
 msgstr "ड्राफ्ट परिवर्तन खारिज करें?"
 
@@ -2672,8 +2700,8 @@ msgstr "एक नेविगेशन मेनू प्रदर्शित
 msgid "Display category list"
 msgstr "श्रेणी सूची प्रदर्शित करें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1063
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1125
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1086
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1148
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "प्रदर्शित होने वाला नाम"
@@ -2738,7 +2766,7 @@ msgstr "कोई खाता नहीं है? <0>साइन अप क�
 msgid "Done"
 msgstr "हो गया"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1006
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1029
 msgid "Down"
 msgstr "नीचे"
 
@@ -2858,7 +2886,7 @@ msgstr "उदाहरण के लिए, सीआई/सीडी पाइ
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "उदाहरण के लिए, मैकबुक प्रो, आईफोन"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1015
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1038
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2894,7 +2922,7 @@ msgstr "संपादित करें {itemLabel}"
 msgid "Edit {title}"
 msgstr "संपादित करें {title}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1122
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1145
 msgid "Edit byline"
 msgstr "बायलाइन संपादित करें"
 
@@ -3232,7 +3260,7 @@ msgstr "व्यवस्थापक बनाने में विफल"
 msgid "Failed to create backup"
 msgstr "बैकअप बनाने में विफल"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1106
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1129
 msgid "Failed to create byline"
 msgstr "बायलाइन बनाने में विफल"
 
@@ -3252,10 +3280,11 @@ msgstr "अनुभाग बनाने में विफल"
 msgid "Failed to create some collections"
 msgstr "कुछ संग्रह बनाने में विफल"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:505
+#: packages/admin/src/components/TaxonomySidebar.tsx:623
 msgid "Failed to create term"
 msgstr "शब्द बनाने में विफल"
 
+#: packages/admin/src/components/TaxonomySidebar.tsx:460
 #: packages/admin/src/router.tsx:1185
 msgid "Failed to create translation"
 msgstr "अनुवाद बनाने में विफल"
@@ -3383,7 +3412,7 @@ msgstr "उपयोगकर्ता को सक्षम करने म�
 msgid "Failed to execute import"
 msgstr "आयात निष्पादित करने में विफल"
 
-#: packages/admin/src/lib/api/client.ts:260
+#: packages/admin/src/lib/api/client.ts:265
 msgid "Failed to fetch auth mode"
 msgstr "प्रमाणीकरण मोड लाने में विफल"
 
@@ -3404,11 +3433,11 @@ msgstr "डैशबोर्ड आँकड़े लाने में व�
 msgid "Failed to fetch email settings"
 msgstr "ईमेल सेटिंग लाने में विफल"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:111
+#: packages/admin/src/components/TaxonomySidebar.tsx:125
 msgid "Failed to fetch entry terms"
 msgstr "प्रवेश शर्तें लाने में विफल"
 
-#: packages/admin/src/lib/api/client.ts:243
+#: packages/admin/src/lib/api/client.ts:248
 msgid "Failed to fetch manifest"
 msgstr "मेनिफ़ेस्ट लाने में विफल"
 
@@ -3462,7 +3491,7 @@ msgstr "सेटिंग लाने में विफल"
 msgid "Failed to fetch setup status"
 msgstr "सेटअप स्थिति लाने में विफल"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:92
+#: packages/admin/src/components/TaxonomySidebar.tsx:109
 msgid "Failed to fetch terms"
 msgstr "शर्तें लाने में विफल"
 
@@ -3696,7 +3725,7 @@ msgstr "परीक्षण ईमेल भेजने में विफ�
 msgid "Failed to send verification email"
 msgstr "सत्यापन ईमेल भेजने में विफल"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:134
+#: packages/admin/src/components/TaxonomySidebar.tsx:144
 msgid "Failed to set entry terms"
 msgstr "प्रवेश शर्तें निर्धारित करने में विफल"
 
@@ -3718,7 +3747,7 @@ msgid "Failed to update"
 msgstr "अद्यतन करने में विफल"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:360
+#: packages/admin/src/components/TaxonomySidebar.tsx:400
 msgid "Failed to update {0}"
 msgstr "{0} को अपडेट करने में विफल"
 
@@ -3726,7 +3755,7 @@ msgstr "{0} को अपडेट करने में विफल"
 msgid "Failed to update backup settings"
 msgstr "बैकअप सेटिंग अपडेट करने में विफल"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1156
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1179
 msgid "Failed to update byline"
 msgstr "बायलाइन अपडेट करने में विफल"
 
@@ -4536,7 +4565,7 @@ msgstr "जेएसएक्स"
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr "इस टैब को खुला रखें. आयात छोटे चरणों में चलता है और बाधित होने पर इसे सुरक्षित रूप से पुनः चलाया जा सकता है।"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:985
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1008
 msgid "Keep typing to narrow down more bylines."
 msgstr "अधिक बाइलाइन कम करने के लिए टाइप करते रहें।"
 
@@ -4687,7 +4716,7 @@ msgstr "लिस्ट व्यू"
 
 #: packages/admin/src/components/ContentEditor.tsx:706
 #: packages/admin/src/components/ContentEditor.tsx:749
-#: packages/admin/src/components/ContentSettingsPanel.tsx:264
+#: packages/admin/src/components/ContentSettingsPanel.tsx:265
 msgid "Live View"
 msgstr "लाइव देखें"
 
@@ -4876,7 +4905,7 @@ msgstr "प्रबंधित करना"
 msgid "Manage {0} for {1}"
 msgstr "{1} के लिए {0} प्रबंधित करें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:947
+#: packages/admin/src/components/ContentSettingsPanel.tsx:970
 msgid "Manage bylines in {entryLocale}"
 msgstr "{entryLocale} में बायलाइन प्रबंधित करें"
 
@@ -5190,14 +5219,14 @@ msgstr "कूड़ेदान में ले जाएं"
 
 #: packages/admin/src/components/ContentList.tsx:536
 #: packages/admin/src/components/ContentList.tsx:1258
-#: packages/admin/src/components/ContentSettingsPanel.tsx:772
-#: packages/admin/src/components/ContentSettingsPanel.tsx:792
+#: packages/admin/src/components/ContentSettingsPanel.tsx:795
+#: packages/admin/src/components/ContentSettingsPanel.tsx:815
 msgid "Move to Trash"
 msgstr "कूड़ेदान में ले जाएं"
 
 #: packages/admin/src/components/ContentList.tsx:514
 #: packages/admin/src/components/ContentList.tsx:1243
-#: packages/admin/src/components/ContentSettingsPanel.tsx:777
+#: packages/admin/src/components/ContentSettingsPanel.tsx:800
 msgid "Move to Trash?"
 msgstr "कूड़ेदान में ले जाएं?"
 
@@ -5271,7 +5300,7 @@ msgid "NEW"
 msgstr "नया"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:474
+#: packages/admin/src/components/TaxonomySidebar.tsx:592
 msgid "New {0}"
 msgstr "नया {0}"
 
@@ -5357,7 +5386,7 @@ msgid "No (shared across translations)"
 msgstr "नहीं (अनुवादों में साझा)"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:444
+#: packages/admin/src/components/TaxonomySidebar.tsx:561
 msgid "No {0} available."
 msgstr "कोई {0} उपलब्ध नहीं है।"
 
@@ -5400,7 +5429,7 @@ msgstr ""
 msgid "No byline fields yet."
 msgstr "अभी तक कोई बायलाइन फ़ील्ड नहीं."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:939
+#: packages/admin/src/components/ContentSettingsPanel.tsx:962
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "{entryLocale} में कोई बायलाइन उपलब्ध नहीं है। इस प्रविष्टि पर किसी एक को श्रेय देने से पहले बायलाइन्स पृष्ठ से एक संस्करण बनाएं।"
 
@@ -5409,7 +5438,7 @@ msgstr "{entryLocale} में कोई बायलाइन उपलब्�
 msgid "No bylines found"
 msgstr "कोई बायलाइन नहीं मिली"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1047
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1070
 msgid "No bylines selected."
 msgstr "कोई बायलाइन चयनित नहीं."
 
@@ -5436,6 +5465,10 @@ msgstr "कोई सामग्री नहीं मिली"
 #: packages/admin/src/components/ContentPickerModal.tsx:177
 msgid "No content in this collection"
 msgstr "इस संग्रह में कोई सामग्री नहीं है"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:506
+msgid "No content locale is configured, so EmDash stores new content as English (en). Changing the admin language does not change this value."
+msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:204
 msgid "No content types yet."
@@ -5507,7 +5540,7 @@ msgstr "कोई लिंक किया हुआ उपयोगकर्�
 msgid "No matches"
 msgstr "कोई मेल नहीं"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:982
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1005
 msgid "No matching bylines."
 msgstr "कोई मेल खाती बायलाइन नहीं."
 
@@ -5812,7 +5845,7 @@ msgstr "ऑर्डर सहेजा गया"
 msgid "Original:"
 msgstr "मूल:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:739
+#: packages/admin/src/components/ContentSettingsPanel.tsx:762
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "रूपरेखा"
@@ -5821,8 +5854,8 @@ msgstr "रूपरेखा"
 msgid "Overrides the page title in search engine results"
 msgstr "खोज इंजन परिणामों में पृष्ठ शीर्षक को ओवरराइड करता है"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:619
-#: packages/admin/src/components/ContentSettingsPanel.tsx:622
+#: packages/admin/src/components/ContentSettingsPanel.tsx:641
+#: packages/admin/src/components/ContentSettingsPanel.tsx:644
 msgid "Ownership"
 msgstr "स्वामित्व"
 
@@ -6158,7 +6191,7 @@ msgstr "वर्डप्रेस से फ़ाइलें डाउनल
 msgid "Preparing..."
 msgstr "तैयारी..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:166
+#: packages/admin/src/components/ContentSettingsPanel.tsx:167
 #: packages/admin/src/components/ContentTypeEditor.tsx:81
 #: packages/admin/src/components/MediaLibrary.tsx:585
 msgid "Preview"
@@ -6168,7 +6201,7 @@ msgstr "पूर्व दर्शन"
 msgid "Preview content before publishing"
 msgstr "प्रकाशन से पहले सामग्री का पूर्वावलोकन करें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:166
+#: packages/admin/src/components/ContentSettingsPanel.tsx:167
 msgid "Preview draft"
 msgstr "ड्राफ्ट का पूर्वावलोकन करें"
 
@@ -6198,14 +6231,14 @@ msgid "Provider:"
 msgstr "प्रदाता:"
 
 #: packages/admin/src/components/ContentList.tsx:485
-#: packages/admin/src/components/ContentSettingsPanel.tsx:197
-#: packages/admin/src/components/ContentSettingsPanel.tsx:204
-#: packages/admin/src/components/ContentSettingsPanel.tsx:476
+#: packages/admin/src/components/ContentSettingsPanel.tsx:198
+#: packages/admin/src/components/ContentSettingsPanel.tsx:205
 #: packages/admin/src/components/ContentSettingsPanel.tsx:479
+#: packages/admin/src/components/ContentSettingsPanel.tsx:482
 msgid "Publish"
 msgstr "प्रकाशित करना"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:576
+#: packages/admin/src/components/ContentSettingsPanel.tsx:598
 msgid "Publish date"
 msgstr ""
 
@@ -6238,7 +6271,7 @@ msgstr "द्वारा प्रकाशित"
 msgid "Python"
 msgstr "अजगर"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1055
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1078
 msgid "Quick create byline"
 msgstr "त्वरित बायलाइन बनाएं"
 
@@ -6378,7 +6411,7 @@ msgstr "इंस्टॉल करने के लिए रिलीज़ �
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1024
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1047
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4221
@@ -6393,7 +6426,7 @@ msgstr "निकालना"
 #. placeholder {0}: passkey.name
 #. placeholder {0}: term.label
 #: packages/admin/src/components/settings/PasskeyItem.tsx:181
-#: packages/admin/src/components/TaxonomySidebar.tsx:254
+#: packages/admin/src/components/TaxonomySidebar.tsx:279
 msgid "Remove {0}"
 msgstr "{0} हटाएं"
 
@@ -6404,6 +6437,10 @@ msgstr "{entry} हटाएं"
 #: packages/admin/src/components/ContentEditor.tsx:1720
 msgid "Remove {label}"
 msgstr "{label} हटाएं"
+
+#: packages/admin/src/components/TaxonomySidebar.tsx:550
+msgid "Remove assignment"
+msgstr ""
 
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:379
 msgid "Remove Domain"
@@ -6524,7 +6561,7 @@ msgstr "कोष"
 msgid "Request a new link"
 msgstr "एक नये लिंक का अनुरोध करें"
 
-#: packages/admin/src/lib/api/client.ts:231
+#: packages/admin/src/lib/api/client.ts:236
 msgid "Request failed"
 msgstr "अनुरोध विफल रहा"
 
@@ -6630,7 +6667,7 @@ msgstr "नई अनुमतियों की समीक्षा कर�
 msgid "Revision restored"
 msgstr "पुनरीक्षण बहाल"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:747
+#: packages/admin/src/components/ContentSettingsPanel.tsx:770
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6692,7 +6729,7 @@ msgstr "भूमिका"
 msgid "Role {role}"
 msgstr "भूमिका {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1029
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1052
 msgid "Role label"
 msgstr "भूमिका लेबल"
 
@@ -6722,7 +6759,7 @@ msgstr "जंग"
 msgid "Same window"
 msgstr "वही खिड़की"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:264
@@ -6774,7 +6811,7 @@ msgstr "सहेजा गया"
 msgid "Saved \"{0}\"."
 msgstr "\"{0}\" सहेजा गया।"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
 #: packages/admin/src/components/FieldEditor.tsx:689
 #: packages/admin/src/components/MediaDetailPanel.tsx:425
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6802,15 +6839,15 @@ msgstr "एस.बी.ओ.एम"
 msgid "SBOM · {0}"
 msgstr "एसबीओएम · {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:544
+#: packages/admin/src/components/ContentSettingsPanel.tsx:566
 msgid "Schedule"
 msgstr "अनुसूची"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:530
+#: packages/admin/src/components/ContentSettingsPanel.tsx:552
 msgid "Schedule for"
 msgstr "के लिए शेड्यूल करें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:567
+#: packages/admin/src/components/ContentSettingsPanel.tsx:589
 msgid "Schedule for later"
 msgstr "बाद के लिए शेड्यूल करें"
 
@@ -6821,7 +6858,7 @@ msgid "Scheduled"
 msgstr "अनुसूचित"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:518
+#: packages/admin/src/components/ContentSettingsPanel.tsx:540
 msgid "Scheduled for: {0}"
 msgstr "इसके लिए शेड्यूल किया गया: {0}"
 
@@ -6910,12 +6947,12 @@ msgid "Search by name or email..."
 msgstr "नाम या ईमेल से खोजें..."
 
 #: packages/admin/src/components/BylineFilter.tsx:121
-#: packages/admin/src/components/ContentSettingsPanel.tsx:956
+#: packages/admin/src/components/ContentSettingsPanel.tsx:979
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr "बायलाइन खोजें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:955
+#: packages/admin/src/components/ContentSettingsPanel.tsx:978
 msgid "Search bylines to add..."
 msgstr "जोड़ने के लिए बायलाइन खोजें..."
 
@@ -7002,7 +7039,7 @@ msgstr "खोज..."
 msgid "Searchable"
 msgstr "खोज सकने"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:960
+#: packages/admin/src/components/ContentSettingsPanel.tsx:983
 msgid "Searching..."
 msgstr "खोज रहे हैं..."
 
@@ -7251,8 +7288,8 @@ msgstr "परीक्षण ईमेल भेजें"
 msgid "Sending..."
 msgstr "भेजा जा रहा है..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:690
-#: packages/admin/src/components/ContentSettingsPanel.tsx:693
+#: packages/admin/src/components/ContentSettingsPanel.tsx:713
+#: packages/admin/src/components/ContentSettingsPanel.tsx:716
 #: packages/admin/src/components/ContentTypeEditor.tsx:487
 #: packages/admin/src/components/Settings.tsx:60
 msgid "SEO"
@@ -7492,9 +7529,9 @@ msgid "Skipped"
 msgstr "छोड़ा गया"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
-#: packages/admin/src/components/ContentSettingsPanel.tsx:483
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1071
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1133
+#: packages/admin/src/components/ContentSettingsPanel.tsx:486
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1094
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1156
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:403
 #: packages/admin/src/components/ContentTypeList.tsx:181
@@ -7610,7 +7647,7 @@ msgid "Start writing, or type '/' for commands"
 msgstr "लिखना प्रारंभ करें, या आदेशों के लिए '/' टाइप करें"
 
 #: packages/admin/src/components/ContentList.tsx:592
-#: packages/admin/src/components/ContentSettingsPanel.tsx:490
+#: packages/admin/src/components/ContentSettingsPanel.tsx:512
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
@@ -7727,8 +7764,8 @@ msgstr "लक्ष्य"
 msgid "Target locale"
 msgstr "लक्ष्य स्थान"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:679
-#: packages/admin/src/components/TaxonomySidebar.tsx:545
+#: packages/admin/src/components/ContentSettingsPanel.tsx:701
+#: packages/admin/src/components/TaxonomySidebar.tsx:667
 msgid "Taxonomies"
 msgstr "taxonomies"
 
@@ -7900,6 +7937,10 @@ msgstr "यह एक कस्टम अनुभाग है."
 msgid "This is a WordPress site."
 msgstr "यह एक वर्डप्रेस साइट है."
 
+#: packages/admin/src/components/ContentSettingsPanel.tsx:498
+msgid "This is stored with the entry and is separate from your admin language."
+msgstr ""
+
 #: packages/admin/src/components/users/InviteUserModal.tsx:112
 msgid "This link expires in 7 days and can only be used once."
 msgstr "यह लिंक 7 दिनों में समाप्त हो जाता है और इसका उपयोग केवल एक बार किया जा सकता है।"
@@ -7966,7 +8007,7 @@ msgstr "इससे विजेट क्षेत्र और उसके �
 msgid "This will grant CLI access with your permissions."
 msgstr "यह आपकी अनुमतियों के साथ सीएलआई पहुंच प्रदान करेगा।"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:779
+#: packages/admin/src/components/ContentSettingsPanel.tsx:802
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "यह आइटम को कूड़ेदान में ले जाएगा। आप इसे बाद में कूड़ेदान से पुनर्स्थापित कर सकते हैं।"
 
@@ -7988,7 +8029,7 @@ msgstr "इससे यह टिप्पणी स्थायी रूप �
 msgid "This will remove the plugin and its bundle from your site."
 msgstr "यह आपकी साइट से प्लगइन और उसके बंडल को हटा देगा।"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:92
+#: packages/admin/src/components/ContentSettingsPanel.tsx:93
 msgid "This will revert to the published version. Your draft changes will be lost."
 msgstr "यह प्रकाशित संस्करण पर वापस आ जाएगा. आपके ड्राफ्ट परिवर्तन खो जाएंगे."
 
@@ -8099,11 +8140,12 @@ msgstr "अनुवाद हो रहा है..."
 
 #: packages/admin/src/components/MenuEditor.tsx:143
 #: packages/admin/src/components/TaxonomyManager.tsx:987
+#: packages/admin/src/components/TaxonomySidebar.tsx:456
 #: packages/admin/src/router.tsx:1179
 msgid "Translation created"
 msgstr "अनुवाद बनाया गया"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:657
+#: packages/admin/src/components/ContentSettingsPanel.tsx:679
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "अनुवाद"
@@ -8212,8 +8254,8 @@ msgstr "टाइपप्रति"
 msgid "Unable to reach marketplace"
 msgstr "बाज़ार तक पहुंचने में असमर्थ"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1176
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1193
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1199
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1216
 msgid "Unassigned"
 msgstr "सौंपे नहीं गए"
 
@@ -8274,7 +8316,7 @@ msgstr "पहलू अनुपात अनलॉक करें"
 msgid "Unnamed passkey"
 msgstr "अनाम पासकी"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:210
+#: packages/admin/src/components/ContentSettingsPanel.tsx:211
 msgid "Unpublish {itemLabel}"
 msgstr "अप्रकाशित करें {itemLabel}"
 
@@ -8286,7 +8328,11 @@ msgstr "अप्रकाशित"
 msgid "Unregistered Content Tables Found"
 msgstr "अपंजीकृत सामग्री तालिकाएँ मिलीं"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:520
+#: packages/admin/src/components/TaxonomySidebar.tsx:528
+msgid "Unresolved assignment"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:542
 msgid "Unschedule"
 msgstr "गैर अनुसूचित"
 
@@ -8316,7 +8362,7 @@ msgstr "शीर्षक रहित विजेट"
 msgid "Unverified publisher"
 msgstr "असत्यापित प्रकाशक"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1026
 msgid "Up"
 msgstr "ऊपर"
 
@@ -8332,7 +8378,7 @@ msgstr "अद्यतन"
 msgid "Update Field"
 msgstr "फ़ील्ड अद्यतन करें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:594
+#: packages/admin/src/components/ContentSettingsPanel.tsx:616
 msgid "Update publish date"
 msgstr ""
 
@@ -8360,7 +8406,7 @@ msgid "Update to v{0}"
 msgstr "v{0} पर अद्यतन करें"
 
 #: packages/admin/src/components/ContentList.tsx:842
-#: packages/admin/src/components/ContentSettingsPanel.tsx:610
+#: packages/admin/src/components/ContentSettingsPanel.tsx:632
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
 msgstr "अद्यतन"

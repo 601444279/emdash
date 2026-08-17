@@ -231,6 +231,11 @@ msgstr ""
 msgid "{0} detected"
 msgstr "Zjištěno: {0}"
 
+#. placeholder {0}: term.locale.toUpperCase()
+#: packages/admin/src/components/TaxonomySidebar.tsx:341
+msgid "{0} fallback"
+msgstr ""
+
 #. placeholder {0}: plugin.name
 #: packages/admin/src/components/PluginManager.tsx:115
 msgid "{0} has been deactivated"
@@ -300,7 +305,7 @@ msgid "{0} system + {1} custom {2}"
 msgstr "Systémová pole: {0} · vlastní: {1} {2}"
 
 #. placeholder {0}: taxonomy.label
-#: packages/admin/src/components/TaxonomySidebar.tsx:356
+#: packages/admin/src/components/TaxonomySidebar.tsx:396
 msgid "{0} updated"
 msgstr "Aktualizováno: {0}"
 
@@ -585,6 +590,10 @@ msgstr "Úvodní panel přes celou šířku s nadpisem, textem a tlačítkem vý
 msgid "A short description of your site"
 msgstr "Stručný popis webu"
 
+#: packages/admin/src/components/TaxonomySidebar.tsx:440
+msgid "A source and target locale are required"
+msgstr ""
+
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:201
 msgid "Accept & Install"
 msgstr "Přijmout a nainstalovat"
@@ -645,9 +654,9 @@ msgid "Active"
 msgstr "Aktivní"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:974
+#: packages/admin/src/components/ContentSettingsPanel.tsx:997
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/TaxonomySidebar.tsx:486
+#: packages/admin/src/components/TaxonomySidebar.tsx:604
 msgid "Add"
 msgstr "Přidat"
 
@@ -659,7 +668,7 @@ msgstr "Přidat"
 msgid "Add {0}"
 msgstr "Přidat položku: {0}"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:276
+#: packages/admin/src/components/TaxonomySidebar.tsx:301
 msgid "Add {label}"
 msgstr "Přidat: {label}"
 
@@ -754,7 +763,7 @@ msgid "Add New"
 msgstr "Přidat položku"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:498
+#: packages/admin/src/components/TaxonomySidebar.tsx:616
 msgid "Add new {0}"
 msgstr "Přidat novou položku: {0}"
 
@@ -786,7 +795,7 @@ msgstr "Přidat SEO metadata (titulek, popis, obrázek) a zahrnout do mapy webu"
 msgid "Add Sub-Field"
 msgstr "Přidat podřízené pole"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:278
+#: packages/admin/src/components/TaxonomySidebar.tsx:303
 msgid "Add tags..."
 msgstr "Přidat štítky..."
 
@@ -994,7 +1003,8 @@ msgstr "Případně můžete provést export z WordPressu (Nástroje → Export)
 #: packages/admin/src/components/settings/SocialSettings.tsx:67
 #: packages/admin/src/components/settings/SocialSettings.tsx:111
 #: packages/admin/src/components/settings/SocialSettings.tsx:112
-#: packages/admin/src/components/TaxonomySidebar.tsx:361
+#: packages/admin/src/components/TaxonomySidebar.tsx:401
+#: packages/admin/src/components/TaxonomySidebar.tsx:461
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
 #: packages/admin/src/router.tsx:447
 #: packages/admin/src/router.tsx:462
@@ -1159,7 +1169,7 @@ msgstr "Ověření bylo zrušeno nebo vypršel jeho časový limit. Zkuste to pr
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1184
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1207
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1222,6 +1232,11 @@ msgstr "Automatické zálohy vyžadují úložiště (R2, S3 nebo lokální). Po
 #: packages/admin/src/router.tsx:1055
 msgid "Autosave failed"
 msgstr "Automatické uložení selhalo"
+
+#. placeholder {0}: assignment.availableLocales.map((locale) => locale.toUpperCase()).join(", ")
+#: packages/admin/src/components/TaxonomySidebar.tsx:530
+msgid "Available in {0}"
+msgstr ""
 
 #: packages/admin/src/components/MediaPickerModal.tsx:710
 msgid "Available media"
@@ -1386,8 +1401,8 @@ msgid "Byline Schema"
 msgstr "Schéma autorského podpisu"
 
 #: packages/admin/src/components/BylineFilter.tsx:135
-#: packages/admin/src/components/ContentSettingsPanel.tsx:634
-#: packages/admin/src/components/ContentSettingsPanel.tsx:637
+#: packages/admin/src/components/ContentSettingsPanel.tsx:656
+#: packages/admin/src/components/ContentSettingsPanel.tsx:659
 #: packages/admin/src/components/Sidebar.tsx:257
 #: packages/admin/src/routes/bylines.tsx:375
 msgid "Bylines"
@@ -1428,11 +1443,11 @@ msgstr "Může zobrazit obsah"
 #: packages/admin/src/components/ContentList.tsx:1251
 #: packages/admin/src/components/ContentList.tsx:1419
 #: packages/admin/src/components/ContentPickerModal.tsx:240
-#: packages/admin/src/components/ContentSettingsPanel.tsx:98
-#: packages/admin/src/components/ContentSettingsPanel.tsx:555
-#: packages/admin/src/components/ContentSettingsPanel.tsx:785
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1088
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:99
+#: packages/admin/src/components/ContentSettingsPanel.tsx:577
+#: packages/admin/src/components/ContentSettingsPanel.tsx:808
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1111
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1164
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1810,7 +1825,7 @@ msgstr "Připojit k WordPressu"
 msgid "Connected {0}"
 msgstr "Připojeno dne {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:192
 msgid "content"
 msgstr "obsah"
 
@@ -1857,6 +1872,14 @@ msgstr "Obsah je nyní veřejný"
 #: packages/admin/src/components/WordPressImport.tsx:2371
 msgid "content items"
 msgstr "– počet položek obsahu"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:494
+msgid "Content locale"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:505
+msgid "Content locale defaults to English"
+msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
 msgid "Content Read"
@@ -1979,7 +2002,7 @@ msgstr "Nepodařilo se načíst vlastní pole."
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "Nepodařilo se přiřadit „{draft}“ k typu MIME. Zadejte MIME přímo."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:980
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
 msgid "Couldn't search bylines. Please try again."
 msgstr "Nepodařilo se vyhledat autorské podpisy. Zkuste to prosím znovu."
 
@@ -1992,7 +2015,7 @@ msgstr "Nepodařilo se ověřit, kolik hodnot odkazuje na „{0}“. Smazáním 
 msgid "Count"
 msgstr "Počet"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1112
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -2002,9 +2025,14 @@ msgstr "Počet"
 msgid "Create"
 msgstr "Vytvořit"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:296
+#: packages/admin/src/components/TaxonomySidebar.tsx:324
 msgid "Create \"{trimmedInput}\""
 msgstr "Vytvořit „{trimmedInput}“"
+
+#. placeholder {0}: resolvedEntryLocale.toUpperCase()
+#: packages/admin/src/components/TaxonomySidebar.tsx:541
+msgid "Create {0} translation"
+msgstr ""
 
 #: packages/admin/src/components/PortableTextEditor.tsx:1441
 msgid "Create a bullet list"
@@ -2028,7 +2056,7 @@ msgstr "Vytvořit účet"
 msgid "Create an account"
 msgstr "Vytvořit účet"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1060
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1083
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "Vytvořit autorský podpis"
@@ -2149,7 +2177,7 @@ msgid "Create, update, delete content"
 msgstr "Vytvářet, upravovat, mazat obsah"
 
 #: packages/admin/src/components/ContentList.tsx:841
-#: packages/admin/src/components/ContentSettingsPanel.tsx:606
+#: packages/admin/src/components/ContentSettingsPanel.tsx:628
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
@@ -2178,13 +2206,13 @@ msgstr "Datum vytvoření"
 msgid "Creating collections and fields..."
 msgstr "Vytváření kolekcí a polí..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1112
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
 #: packages/admin/src/components/TaxonomyManager.tsx:873
-#: packages/admin/src/components/TaxonomySidebar.tsx:296
+#: packages/admin/src/components/TaxonomySidebar.tsx:324
 msgid "Creating..."
 msgstr "Vytváření..."
 
@@ -2635,8 +2663,8 @@ msgstr "Zakazování..."
 msgid "Discard"
 msgstr "Zahodit"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:85
-#: packages/admin/src/components/ContentSettingsPanel.tsx:105
+#: packages/admin/src/components/ContentSettingsPanel.tsx:86
+#: packages/admin/src/components/ContentSettingsPanel.tsx:106
 msgid "Discard changes"
 msgstr "Zahodit změny"
 
@@ -2644,7 +2672,7 @@ msgstr "Zahodit změny"
 msgid "Discard changes?"
 msgstr "Zahodit změny?"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:90
+#: packages/admin/src/components/ContentSettingsPanel.tsx:91
 msgid "Discard draft changes?"
 msgstr "Zahodit změny konceptu?"
 
@@ -2672,8 +2700,8 @@ msgstr "Zobrazí navigační nabídku"
 msgid "Display category list"
 msgstr "Zobrazí seznam kategorií"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1063
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1125
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1086
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1148
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "Zobrazované jméno"
@@ -2738,7 +2766,7 @@ msgstr "Nemáte účet? <0>Zaregistrujte se</0>"
 msgid "Done"
 msgstr "Hotovo"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1006
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1029
 msgid "Down"
 msgstr "Dolů"
 
@@ -2858,7 +2886,7 @@ msgstr "např. CI/CD Pipeline"
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "např. MacBook Pro, iPhone"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1015
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1038
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2894,7 +2922,7 @@ msgstr "Upravit položku ({itemLabel})"
 msgid "Edit {title}"
 msgstr "Upravit {title}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1122
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1145
 msgid "Edit byline"
 msgstr "Upravit autorský podpis"
 
@@ -3232,7 +3260,7 @@ msgstr "Nepodařilo se vytvořit správce"
 msgid "Failed to create backup"
 msgstr "Nepodařilo se vytvořit zálohu"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1106
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1129
 msgid "Failed to create byline"
 msgstr "Nepodařilo se vytvořit autorský podpis"
 
@@ -3252,10 +3280,11 @@ msgstr "Nepodařilo se vytvořit sekci"
 msgid "Failed to create some collections"
 msgstr "Nepodařilo se vytvořit některé kolekce"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:505
+#: packages/admin/src/components/TaxonomySidebar.tsx:623
 msgid "Failed to create term"
 msgstr "Nepodařilo se vytvořit položku taxonomie"
 
+#: packages/admin/src/components/TaxonomySidebar.tsx:460
 #: packages/admin/src/router.tsx:1185
 msgid "Failed to create translation"
 msgstr "Nepodařilo se vytvořit překlad"
@@ -3383,7 +3412,7 @@ msgstr "Nepodařilo se aktivovat uživatele"
 msgid "Failed to execute import"
 msgstr "Nepodařilo se spustit import"
 
-#: packages/admin/src/lib/api/client.ts:260
+#: packages/admin/src/lib/api/client.ts:265
 msgid "Failed to fetch auth mode"
 msgstr "Nepodařilo se načíst režim přihlášení"
 
@@ -3404,11 +3433,11 @@ msgstr "Nepodařilo se načíst statistiky přehledu"
 msgid "Failed to fetch email settings"
 msgstr "Nepodařilo se načíst nastavení e-mailu"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:111
+#: packages/admin/src/components/TaxonomySidebar.tsx:125
 msgid "Failed to fetch entry terms"
 msgstr "Nepodařilo se načíst položky taxonomie přiřazené k obsahu"
 
-#: packages/admin/src/lib/api/client.ts:243
+#: packages/admin/src/lib/api/client.ts:248
 msgid "Failed to fetch manifest"
 msgstr "Nepodařilo se načíst manifest"
 
@@ -3462,7 +3491,7 @@ msgstr "Nepodařilo se načíst nastavení"
 msgid "Failed to fetch setup status"
 msgstr "Nepodařilo se načíst stav nastavení"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:92
+#: packages/admin/src/components/TaxonomySidebar.tsx:109
 msgid "Failed to fetch terms"
 msgstr "Nepodařilo se načíst položky taxonomie"
 
@@ -3696,7 +3725,7 @@ msgstr "Nepodařilo se odeslat zkušební e-mail"
 msgid "Failed to send verification email"
 msgstr "Nepodařilo se odeslat ověřovací e-mail"
 
-#: packages/admin/src/components/TaxonomySidebar.tsx:134
+#: packages/admin/src/components/TaxonomySidebar.tsx:144
 msgid "Failed to set entry terms"
 msgstr "Nepodařilo se nastavit položky taxonomie přiřazené k obsahu"
 
@@ -3718,7 +3747,7 @@ msgid "Failed to update"
 msgstr "Nepodařilo se aktualizovat"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:360
+#: packages/admin/src/components/TaxonomySidebar.tsx:400
 msgid "Failed to update {0}"
 msgstr "Nepodařilo se aktualizovat {0}"
 
@@ -3726,7 +3755,7 @@ msgstr "Nepodařilo se aktualizovat {0}"
 msgid "Failed to update backup settings"
 msgstr "Nepodařilo se aktualizovat nastavení záloh"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1156
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1179
 msgid "Failed to update byline"
 msgstr "Nepodařilo se aktualizovat autorský podpis"
 
@@ -4536,7 +4565,7 @@ msgstr "JSX"
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr "Ponechte tuto kartu otevřenou. Import probíhá po malých krocích a lze jej při přerušení bezpečně spustit znovu."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:985
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1008
 msgid "Keep typing to narrow down more bylines."
 msgstr "Pokračujte v psaní a výběr autorských podpisů dále zúžíte."
 
@@ -4687,7 +4716,7 @@ msgstr "Zobrazení seznamu"
 
 #: packages/admin/src/components/ContentEditor.tsx:706
 #: packages/admin/src/components/ContentEditor.tsx:749
-#: packages/admin/src/components/ContentSettingsPanel.tsx:264
+#: packages/admin/src/components/ContentSettingsPanel.tsx:265
 msgid "Live View"
 msgstr "Živý náhled"
 
@@ -4876,7 +4905,7 @@ msgstr "Spravovat"
 msgid "Manage {0} for {1}"
 msgstr "Správa: {0}; pro: {1}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:947
+#: packages/admin/src/components/ContentSettingsPanel.tsx:970
 msgid "Manage bylines in {entryLocale}"
 msgstr "Spravovat autorské podpisy v jazyce {entryLocale}"
 
@@ -5190,14 +5219,14 @@ msgstr "Přesunout do koše"
 
 #: packages/admin/src/components/ContentList.tsx:536
 #: packages/admin/src/components/ContentList.tsx:1258
-#: packages/admin/src/components/ContentSettingsPanel.tsx:772
-#: packages/admin/src/components/ContentSettingsPanel.tsx:792
+#: packages/admin/src/components/ContentSettingsPanel.tsx:795
+#: packages/admin/src/components/ContentSettingsPanel.tsx:815
 msgid "Move to Trash"
 msgstr "Přesunout do koše"
 
 #: packages/admin/src/components/ContentList.tsx:514
 #: packages/admin/src/components/ContentList.tsx:1243
-#: packages/admin/src/components/ContentSettingsPanel.tsx:777
+#: packages/admin/src/components/ContentSettingsPanel.tsx:800
 msgid "Move to Trash?"
 msgstr "Přesunout do koše?"
 
@@ -5271,7 +5300,7 @@ msgid "NEW"
 msgstr "NOVÉ"
 
 #. placeholder {0}: (taxonomy.labelSingular || taxonomy.label).toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:474
+#: packages/admin/src/components/TaxonomySidebar.tsx:592
 msgid "New {0}"
 msgstr "Nová položka: {0}"
 
@@ -5357,7 +5386,7 @@ msgid "No (shared across translations)"
 msgstr "Ne (sdíleno napříč překlady)"
 
 #. placeholder {0}: taxonomy.label.toLowerCase()
-#: packages/admin/src/components/TaxonomySidebar.tsx:444
+#: packages/admin/src/components/TaxonomySidebar.tsx:561
 msgid "No {0} available."
 msgstr "K dispozici nejsou žádné položky ({0})."
 
@@ -5400,7 +5429,7 @@ msgstr ""
 msgid "No byline fields yet."
 msgstr "Zatím žádná pole autorského podpisu."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:939
+#: packages/admin/src/components/ContentSettingsPanel.tsx:962
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "V jazyce {entryLocale} nejsou k dispozici žádné autorské podpisy. Než některý u této položky uvedete, vytvořte variantu na stránce Autorské podpisy."
 
@@ -5409,7 +5438,7 @@ msgstr "V jazyce {entryLocale} nejsou k dispozici žádné autorské podpisy. Ne
 msgid "No bylines found"
 msgstr "Nenalezeny žádné autorské podpisy"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1047
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1070
 msgid "No bylines selected."
 msgstr "Není vybrán žádný autorský podpis."
 
@@ -5436,6 +5465,10 @@ msgstr "Nenalezen žádný obsah"
 #: packages/admin/src/components/ContentPickerModal.tsx:177
 msgid "No content in this collection"
 msgstr "V této kolekci není žádný obsah"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:506
+msgid "No content locale is configured, so EmDash stores new content as English (en). Changing the admin language does not change this value."
+msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:204
 msgid "No content types yet."
@@ -5507,7 +5540,7 @@ msgstr "Žádný propojený uživatel"
 msgid "No matches"
 msgstr "Žádné shody"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:982
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1005
 msgid "No matching bylines."
 msgstr "Žádné odpovídající autorské podpisy."
 
@@ -5812,7 +5845,7 @@ msgstr "Pořadí uloženo"
 msgid "Original:"
 msgstr "Originál:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:739
+#: packages/admin/src/components/ContentSettingsPanel.tsx:762
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "Osnova"
@@ -5821,8 +5854,8 @@ msgstr "Osnova"
 msgid "Overrides the page title in search engine results"
 msgstr "Přepíše název stránky ve výsledcích vyhledávání"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:619
-#: packages/admin/src/components/ContentSettingsPanel.tsx:622
+#: packages/admin/src/components/ContentSettingsPanel.tsx:641
+#: packages/admin/src/components/ContentSettingsPanel.tsx:644
 msgid "Ownership"
 msgstr "Vlastnictví"
 
@@ -6158,7 +6191,7 @@ msgstr "Příprava stahování souborů z WordPressu…"
 msgid "Preparing..."
 msgstr "Příprava…"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:166
+#: packages/admin/src/components/ContentSettingsPanel.tsx:167
 #: packages/admin/src/components/ContentTypeEditor.tsx:81
 #: packages/admin/src/components/MediaLibrary.tsx:585
 msgid "Preview"
@@ -6168,7 +6201,7 @@ msgstr "Náhled"
 msgid "Preview content before publishing"
 msgstr "Zobrazit náhled obsahu před publikováním"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:166
+#: packages/admin/src/components/ContentSettingsPanel.tsx:167
 msgid "Preview draft"
 msgstr "Náhled konceptu"
 
@@ -6198,14 +6231,14 @@ msgid "Provider:"
 msgstr "Poskytovatel:"
 
 #: packages/admin/src/components/ContentList.tsx:485
-#: packages/admin/src/components/ContentSettingsPanel.tsx:197
-#: packages/admin/src/components/ContentSettingsPanel.tsx:204
-#: packages/admin/src/components/ContentSettingsPanel.tsx:476
+#: packages/admin/src/components/ContentSettingsPanel.tsx:198
+#: packages/admin/src/components/ContentSettingsPanel.tsx:205
 #: packages/admin/src/components/ContentSettingsPanel.tsx:479
+#: packages/admin/src/components/ContentSettingsPanel.tsx:482
 msgid "Publish"
 msgstr "Publikovat"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:576
+#: packages/admin/src/components/ContentSettingsPanel.tsx:598
 msgid "Publish date"
 msgstr ""
 
@@ -6238,7 +6271,7 @@ msgstr "Vydavatel:"
 msgid "Python"
 msgstr "Python"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1055
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1078
 msgid "Quick create byline"
 msgstr "Rychle vytvořit autorský podpis"
 
@@ -6378,7 +6411,7 @@ msgstr "Toto vydání zatím nelze nainstalovat, protože je příliš nové"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1024
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1047
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4221
@@ -6393,7 +6426,7 @@ msgstr "Odebrat"
 #. placeholder {0}: passkey.name
 #. placeholder {0}: term.label
 #: packages/admin/src/components/settings/PasskeyItem.tsx:181
-#: packages/admin/src/components/TaxonomySidebar.tsx:254
+#: packages/admin/src/components/TaxonomySidebar.tsx:279
 msgid "Remove {0}"
 msgstr "Odebrat {0}"
 
@@ -6404,6 +6437,10 @@ msgstr "Odebrat {entry}"
 #: packages/admin/src/components/ContentEditor.tsx:1720
 msgid "Remove {label}"
 msgstr "Odebrat {label}"
+
+#: packages/admin/src/components/TaxonomySidebar.tsx:550
+msgid "Remove assignment"
+msgstr ""
 
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:379
 msgid "Remove Domain"
@@ -6524,7 +6561,7 @@ msgstr "Repozitář"
 msgid "Request a new link"
 msgstr "Požádat o nový odkaz"
 
-#: packages/admin/src/lib/api/client.ts:231
+#: packages/admin/src/lib/api/client.ts:236
 msgid "Request failed"
 msgstr "Požadavek selhal"
 
@@ -6630,7 +6667,7 @@ msgstr "Zkontrolovat nová oprávnění"
 msgid "Revision restored"
 msgstr "Revize obnovena"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:747
+#: packages/admin/src/components/ContentSettingsPanel.tsx:770
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6692,7 +6729,7 @@ msgstr "Role"
 msgid "Role {role}"
 msgstr "Role {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1029
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1052
 msgid "Role label"
 msgstr "Označení role"
 
@@ -6722,7 +6759,7 @@ msgstr "Rust"
 msgid "Same window"
 msgstr "Stejné okno"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:264
@@ -6774,7 +6811,7 @@ msgstr "Uloženo"
 msgid "Saved \"{0}\"."
 msgstr "Uloženo „{0}“."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
 #: packages/admin/src/components/FieldEditor.tsx:689
 #: packages/admin/src/components/MediaDetailPanel.tsx:425
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6802,15 +6839,15 @@ msgstr "SBOM"
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:544
+#: packages/admin/src/components/ContentSettingsPanel.tsx:566
 msgid "Schedule"
 msgstr "Naplánovat"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:530
+#: packages/admin/src/components/ContentSettingsPanel.tsx:552
 msgid "Schedule for"
 msgstr "Naplánovat na"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:567
+#: packages/admin/src/components/ContentSettingsPanel.tsx:589
 msgid "Schedule for later"
 msgstr "Naplánovat na později"
 
@@ -6821,7 +6858,7 @@ msgid "Scheduled"
 msgstr "Naplánováno"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:518
+#: packages/admin/src/components/ContentSettingsPanel.tsx:540
 msgid "Scheduled for: {0}"
 msgstr "Naplánováno na: {0}"
 
@@ -6910,12 +6947,12 @@ msgid "Search by name or email..."
 msgstr "Hledat podle jména nebo e-mailu..."
 
 #: packages/admin/src/components/BylineFilter.tsx:121
-#: packages/admin/src/components/ContentSettingsPanel.tsx:956
+#: packages/admin/src/components/ContentSettingsPanel.tsx:979
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr "Hledat autorské podpisy"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:955
+#: packages/admin/src/components/ContentSettingsPanel.tsx:978
 msgid "Search bylines to add..."
 msgstr "Hledat autorské podpisy k přidání..."
 
@@ -7002,7 +7039,7 @@ msgstr "Hledat..."
 msgid "Searchable"
 msgstr "Prohledávatelné"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:960
+#: packages/admin/src/components/ContentSettingsPanel.tsx:983
 msgid "Searching..."
 msgstr "Hledání..."
 
@@ -7251,8 +7288,8 @@ msgstr "Odeslat testovací e-mail"
 msgid "Sending..."
 msgstr "Odesílání..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:690
-#: packages/admin/src/components/ContentSettingsPanel.tsx:693
+#: packages/admin/src/components/ContentSettingsPanel.tsx:713
+#: packages/admin/src/components/ContentSettingsPanel.tsx:716
 #: packages/admin/src/components/ContentTypeEditor.tsx:487
 #: packages/admin/src/components/Settings.tsx:60
 msgid "SEO"
@@ -7492,9 +7529,9 @@ msgid "Skipped"
 msgstr "Přeskočeno"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
-#: packages/admin/src/components/ContentSettingsPanel.tsx:483
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1071
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1133
+#: packages/admin/src/components/ContentSettingsPanel.tsx:486
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1094
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1156
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:403
 #: packages/admin/src/components/ContentTypeList.tsx:181
@@ -7610,7 +7647,7 @@ msgid "Start writing, or type '/' for commands"
 msgstr "Začněte psát, nebo napište „/“ pro příkazy"
 
 #: packages/admin/src/components/ContentList.tsx:592
-#: packages/admin/src/components/ContentSettingsPanel.tsx:490
+#: packages/admin/src/components/ContentSettingsPanel.tsx:512
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
@@ -7727,8 +7764,8 @@ msgstr "Cíl"
 msgid "Target locale"
 msgstr "Cílový jazyk"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:679
-#: packages/admin/src/components/TaxonomySidebar.tsx:545
+#: packages/admin/src/components/ContentSettingsPanel.tsx:701
+#: packages/admin/src/components/TaxonomySidebar.tsx:667
 msgid "Taxonomies"
 msgstr "Taxonomie"
 
@@ -7900,6 +7937,10 @@ msgstr "Toto je vlastní sekce."
 msgid "This is a WordPress site."
 msgstr "Toto je web na WordPressu."
 
+#: packages/admin/src/components/ContentSettingsPanel.tsx:498
+msgid "This is stored with the entry and is separate from your admin language."
+msgstr ""
+
 #: packages/admin/src/components/users/InviteUserModal.tsx:112
 msgid "This link expires in 7 days and can only be used once."
 msgstr "Platnost tohoto odkazu vyprší za 7 dní a lze jej použít pouze jednou."
@@ -7966,7 +8007,7 @@ msgstr "Smaže oblast widgetů i všechny její widgety. Tuto akci nelze vrátit
 msgid "This will grant CLI access with your permissions."
 msgstr "Udělí přístup z CLI s vašimi oprávněními."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:779
+#: packages/admin/src/components/ContentSettingsPanel.tsx:802
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "Položka bude přesunuta do koše. Později ji lze z koše obnovit."
 
@@ -7988,7 +8029,7 @@ msgstr "Trvale smaže tento komentář. Tuto akci nelze vrátit zpět."
 msgid "This will remove the plugin and its bundle from your site."
 msgstr "Odebere plugin i jeho balíček z webu."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:92
+#: packages/admin/src/components/ContentSettingsPanel.tsx:93
 msgid "This will revert to the published version. Your draft changes will be lost."
 msgstr "Vrátí se k publikované verzi. Změny v konceptu budou ztraceny."
 
@@ -8099,11 +8140,12 @@ msgstr "Překládání..."
 
 #: packages/admin/src/components/MenuEditor.tsx:143
 #: packages/admin/src/components/TaxonomyManager.tsx:987
+#: packages/admin/src/components/TaxonomySidebar.tsx:456
 #: packages/admin/src/router.tsx:1179
 msgid "Translation created"
 msgstr "Překlad vytvořen"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:657
+#: packages/admin/src/components/ContentSettingsPanel.tsx:679
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "Překlady"
@@ -8212,8 +8254,8 @@ msgstr "TypeScript"
 msgid "Unable to reach marketplace"
 msgstr "Tržiště není dostupné"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1176
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1193
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1199
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1216
 msgid "Unassigned"
 msgstr "Nepřiřazeno"
 
@@ -8274,7 +8316,7 @@ msgstr "Odemknout poměr stran"
 msgid "Unnamed passkey"
 msgstr "Nepojmenovaný přístupový klíč"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:210
+#: packages/admin/src/components/ContentSettingsPanel.tsx:211
 msgid "Unpublish {itemLabel}"
 msgstr "Zrušit publikování položky ({itemLabel})"
 
@@ -8286,7 +8328,11 @@ msgstr "Nepublikováno"
 msgid "Unregistered Content Tables Found"
 msgstr "Nalezeny neregistrované tabulky obsahu"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:520
+#: packages/admin/src/components/TaxonomySidebar.tsx:528
+msgid "Unresolved assignment"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:542
 msgid "Unschedule"
 msgstr "Zrušit naplánování"
 
@@ -8316,7 +8362,7 @@ msgstr "Widget bez názvu"
 msgid "Unverified publisher"
 msgstr "Neověřený vydavatel"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1026
 msgid "Up"
 msgstr "Nahoru"
 
@@ -8332,7 +8378,7 @@ msgstr "Aktualizovat"
 msgid "Update Field"
 msgstr "Aktualizovat pole"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:594
+#: packages/admin/src/components/ContentSettingsPanel.tsx:616
 msgid "Update publish date"
 msgstr ""
 
@@ -8360,7 +8406,7 @@ msgid "Update to v{0}"
 msgstr "Aktualizovat na verzi {0}"
 
 #: packages/admin/src/components/ContentList.tsx:842
-#: packages/admin/src/components/ContentSettingsPanel.tsx:610
+#: packages/admin/src/components/ContentSettingsPanel.tsx:632
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
 msgstr "Aktualizováno"
