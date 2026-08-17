@@ -1742,6 +1742,14 @@ export class EmDashRuntime {
 								await runScheduledMediaUsageLane(db);
 							}
 						});
+					const runContinuousMediaUsageMaintenance = () =>
+						runWithContext({ editMode: false }, async () => {
+							const runtime = runtimeRef.current;
+							const result = runtime
+								? await runtime.runMediaUsageMaintenanceStep()
+								: await runMediaUsageMaintenanceStep(db);
+							return result.continuation;
+						});
 
 					// Run scheduled publishing and system cleanup alongside each tick.
 					// Pass storage so cleanupPendingUploads can delete orphaned files.
@@ -1774,7 +1782,10 @@ export class EmDashRuntime {
 						}
 						// Never throws; no-op unless scheduled backups are enabled and due.
 						await maybeRunScheduledBackup(db, storage ?? undefined);
-						if (!scheduler.setMediaUsageMaintenance) {
+						if (
+							!scheduler.setContinuousMediaUsageMaintenance &&
+							!scheduler.setMediaUsageMaintenance
+						) {
 							try {
 								await runMediaUsageMaintenance();
 							} catch (error) {
@@ -1782,7 +1793,11 @@ export class EmDashRuntime {
 							}
 						}
 					});
-					scheduler.setMediaUsageMaintenance?.(runMediaUsageMaintenance);
+					if (scheduler.setContinuousMediaUsageMaintenance) {
+						scheduler.setContinuousMediaUsageMaintenance(runContinuousMediaUsageMaintenance);
+					} else {
+						scheduler.setMediaUsageMaintenance?.(runMediaUsageMaintenance);
+					}
 
 					// start() is void on the timer scheduler but the interface
 					// allows a promise (alarm-backed schedulers); we don't block on it.

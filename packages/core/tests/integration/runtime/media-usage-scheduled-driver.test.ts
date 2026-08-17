@@ -12,7 +12,11 @@ import {
 } from "../../../src/emdash-runtime.js";
 import { activateMediaUsageCapture } from "../../../src/media/usage/activation.js";
 import { installMediaUsageCaptureTriggers } from "../../../src/media/usage/capture-triggers.js";
-import type { CronScheduler, SystemCleanupFn } from "../../../src/plugins/scheduler/types.js";
+import type {
+	CronScheduler,
+	MediaUsageContinuationFn,
+	SystemCleanupFn,
+} from "../../../src/plugins/scheduler/types.js";
 import { createRequestMetrics, runWithContext } from "../../../src/request-context.js";
 
 describe("media usage scheduled drivers", () => {
@@ -183,6 +187,20 @@ describe("media usage scheduled drivers", () => {
 				canonicalSourceKey(fixture.collectionId, "entry-1"),
 			),
 		).not.toBeNull();
+	});
+
+	it("registers the continuation-capable Node scheduler without changing legacy hooks", async () => {
+		const scheduler = new ContinuousCapturingScheduler();
+		runtime = await EmDashRuntime.create(createDeps(() => scheduler));
+		const fixture = await activateCollection(runtime, "continuous_node_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		await insertEntry(runtime, fixture.tableName, "entry-2");
+
+		await expect(scheduler.runMaintenance()).resolves.toEqual({ kind: "immediate" });
+		expect(await countWork(runtime)).toBe(1);
+		await expect(scheduler.runContinuation()).resolves.toEqual({ kind: "immediate" });
+		expect(await countWork(runtime)).toBe(0);
+		await expect(scheduler.runContinuation()).resolves.toEqual({ kind: "none" });
 	});
 
 	it("starts reconciliation when Node maintenance inherits an expensive request context", async () => {
@@ -391,6 +409,35 @@ class CapturingScheduler implements CronScheduler {
 		await this.maintenance();
 		if (!this.mediaUsageMaintenance) throw new Error("Expected Media Usage maintenance callback");
 		await this.mediaUsageMaintenance();
+	}
+}
+
+class ContinuousCapturingScheduler implements CronScheduler {
+	private maintenance: SystemCleanupFn | null = null;
+	private mediaUsageMaintenance: MediaUsageContinuationFn | null = null;
+
+	setSystemCleanup(fn: SystemCleanupFn): void {
+		this.maintenance = fn;
+	}
+	setContinuousMediaUsageMaintenance(fn: MediaUsageContinuationFn): void {
+		this.mediaUsageMaintenance = fn;
+	}
+
+	start(): void {}
+	stop(): void {}
+	reschedule(): void {}
+
+	async runMaintenance() {
+		if (!this.maintenance) throw new Error("Expected Node maintenance callback");
+		await this.maintenance();
+		return this.runContinuation();
+	}
+
+	async runContinuation() {
+		if (!this.mediaUsageMaintenance) {
+			throw new Error("Expected continuous Media Usage maintenance callback");
+		}
+		return this.mediaUsageMaintenance();
 	}
 }
 
