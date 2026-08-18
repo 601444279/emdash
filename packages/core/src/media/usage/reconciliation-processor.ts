@@ -21,7 +21,6 @@ export const MEDIA_USAGE_RECONCILIATION_LIMITS = Object.freeze({
 	retryBaseSeconds: 30,
 	retryMaxSeconds: 15 * 60,
 	retryJitterRatio: 0.25,
-	maxQueriesPerTick: 20,
 });
 
 export type MediaUsageReconciliationOutcome =

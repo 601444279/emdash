@@ -42,10 +42,7 @@ import { getI18nConfig } from "./i18n/config.js";
 import { repairLocaleCasing } from "./i18n/repair-locale-casing.js";
 import { normalizeMediaValue } from "./media/normalize.js";
 import type { MediaProvider, MediaProviderCapabilities } from "./media/types.js";
-import {
-	MEDIA_USAGE_COLLECTION_DELETION_LIMITS,
-	processDueMediaUsageCollectionDeletions,
-} from "./media/usage/collection-deletion-processor.js";
+import { processDueMediaUsageCollectionDeletions } from "./media/usage/collection-deletion-processor.js";
 import {
 	deleteContentMediaUsage,
 	findNonTranslatableSiblingContentIds,
@@ -53,16 +50,15 @@ import {
 	refreshContentMediaUsageAfterWrite,
 } from "./media/usage/content-refresh.js";
 import {
+	MEDIA_USAGE_MAINTENANCE_LIMITS,
+	runMediaUsageMaintenanceSlice,
 	runMediaUsageMaintenanceStep,
+	type MediaUsageMaintenanceContinuation,
 	type MediaUsageMaintenanceStepResult,
 	type MediaUsageMaintenanceTaskClass,
 } from "./media/usage/maintenance-engine.js";
+import { processDueMediaUsageReconciliation } from "./media/usage/reconciliation-processor.js";
 import {
-	MEDIA_USAGE_RECONCILIATION_LIMITS,
-	processDueMediaUsageReconciliation,
-} from "./media/usage/reconciliation-processor.js";
-import {
-	MEDIA_USAGE_WORK_PROCESSING_LIMITS,
 	processDueMediaUsageWork,
 	processMediaUsageWorkAfterWrite,
 } from "./media/usage/work-processor.js";
@@ -545,18 +541,6 @@ const marketplaceManifestCache = new Map<
 const sandboxedRouteMetaCache = new Map<string, Map<string, RouteMeta>>();
 let sandboxRunner: SandboxRunner | null = null;
 
-export const MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS = Object.freeze({
-	entryWork: MEDIA_USAGE_WORK_PROCESSING_LIMITS.ordinaryStatementsPerJob,
-	collectionDeletion: MEDIA_USAGE_COLLECTION_DELETION_LIMITS.maxQueriesPerTick,
-	reconciliation: MEDIA_USAGE_RECONCILIATION_LIMITS.maxQueriesPerTick,
-	maxClassQueries: Math.max(
-		MEDIA_USAGE_WORK_PROCESSING_LIMITS.ordinaryStatementsPerJob,
-		MEDIA_USAGE_COLLECTION_DELETION_LIMITS.maxQueriesPerTick,
-		MEDIA_USAGE_RECONCILIATION_LIMITS.maxQueriesPerTick,
-	),
-	eventCeiling: 40,
-});
-
 export type {
 	MediaUsageMaintenanceContinuation,
 	MediaUsageMaintenanceStepResult,
@@ -572,8 +556,8 @@ async function runScheduledMediaUsageLane(
 ): Promise<MediaUsageMaintenanceResult> {
 	const queriesAlreadySpent = getRequestContext()?.metrics?.dbCount ?? 0;
 	if (
-		queriesAlreadySpent + 1 + MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS.maxClassQueries >
-		MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS.eventCeiling
+		queriesAlreadySpent + MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries >
+		MEDIA_USAGE_MAINTENANCE_LIMITS.eventQueryCeiling
 	) {
 		return { outcome: "admission_closed", taskClass: null, turn: null };
 	}
@@ -812,6 +796,10 @@ export class EmDashRuntime {
 
 	async runMediaUsageMaintenanceStep(): Promise<MediaUsageMaintenanceStepResult> {
 		return runMediaUsageMaintenanceStep(this.db);
+	}
+
+	async runMediaUsageMaintenanceSlice(): Promise<MediaUsageMaintenanceContinuation> {
+		return runMediaUsageMaintenanceSlice(this.db);
 	}
 
 	/**

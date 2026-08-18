@@ -20,7 +20,6 @@ export const MEDIA_USAGE_WORK_PROCESSING_LIMITS = Object.freeze({
 	retryBaseSeconds: 30,
 	retryMaxSeconds: 15 * 60,
 	retryJitterRatio: 0.25,
-	ordinaryStatementsPerJob: 20,
 });
 
 export type MediaUsageWorkProcessingOutcome =

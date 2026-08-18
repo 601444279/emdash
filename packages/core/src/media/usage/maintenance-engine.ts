@@ -1,6 +1,7 @@
 import { sql, type Kysely } from "kysely";
 
 import type { Database } from "../../database/types.js";
+import { getRequestContext } from "../../request-context.js";
 import { processDueMediaUsageCollectionDeletions } from "./collection-deletion-processor.js";
 import { processDueMediaUsageReconciliationDetailed } from "./reconciliation-processor.js";
 import { processDueMediaUsageWork } from "./work-processor.js";
@@ -21,6 +22,12 @@ export interface MediaUsageMaintenanceStepResult {
 	taskClass: MediaUsageMaintenanceTaskClass | null;
 	turn: number | null;
 }
+
+export const MEDIA_USAGE_MAINTENANCE_LIMITS = Object.freeze({
+	eventQueryCeiling: 900,
+	maxStepQueries: 150,
+	stepStartDeadlineMs: 20_000,
+});
 
 const TASK_CLASSES: readonly MediaUsageMaintenanceTaskClass[] = [
 	"entry_work",
@@ -77,6 +84,25 @@ export async function runMediaUsageMaintenanceStep(
 	};
 }
 
+export async function runMediaUsageMaintenanceSlice(
+	db: Kysely<Database>,
+): Promise<MediaUsageMaintenanceContinuation> {
+	const metrics = getRequestContext()?.metrics;
+	if (!metrics) return (await runMediaUsageMaintenanceStep(db)).continuation;
+
+	let madeProgress = false;
+	let recordedDbCount = metrics.dbCount;
+	while (canStartMediaUsageMaintenanceStep(metrics)) {
+		const result = await runMediaUsageMaintenanceStep(db);
+		if (result.continuation.kind !== "immediate") return result.continuation;
+		madeProgress = true;
+		if (metrics.dbCount === recordedDbCount) return { kind: "immediate" };
+		recordedDbCount = metrics.dbCount;
+	}
+
+	return madeProgress ? { kind: "immediate" } : { kind: "none" };
+}
+
 async function runTaskClass(
 	db: Kysely<Database>,
 	taskClass: MediaUsageMaintenanceTaskClass,
@@ -105,4 +131,12 @@ function inactiveResult(): MediaUsageMaintenanceStepResult {
 		taskClass: null,
 		turn: null,
 	};
+}
+
+function canStartMediaUsageMaintenanceStep(metrics: { start: number; dbCount: number }): boolean {
+	return (
+		metrics.dbCount + MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries <=
+			MEDIA_USAGE_MAINTENANCE_LIMITS.eventQueryCeiling &&
+		performance.now() - metrics.start < MEDIA_USAGE_MAINTENANCE_LIMITS.stepStartDeadlineMs
+	);
 }

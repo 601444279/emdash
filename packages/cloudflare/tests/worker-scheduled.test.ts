@@ -7,6 +7,8 @@ type MaintenanceStepResult = {
 	turn: number | null;
 };
 
+type MaintenanceContinuation = MaintenanceStepResult["continuation"];
+
 const scheduled = vi.hoisted(() => ({
 	general: vi.fn(async () => ({ published: [] })),
 	mediaUsage: vi.fn(async () => ({ outcome: "inactive", taskClass: null, turn: null })),
@@ -16,6 +18,7 @@ const scheduled = vi.hoisted(() => ({
 		taskClass: "entry_work",
 		turn: 0,
 	})),
+	mediaUsageSlice: vi.fn<() => Promise<MaintenanceContinuation>>(async () => ({ kind: "none" })),
 }));
 
 vi.mock("@astrojs/cloudflare/entrypoints/server", () => ({ default: { fetch: vi.fn() } }));
@@ -26,6 +29,7 @@ vi.mock("emdash/middleware", () => ({
 	runScheduledTasks: scheduled.general,
 	runScheduledMediaUsageTasks: scheduled.mediaUsage,
 	runMediaUsageMaintenanceStep: scheduled.mediaUsageStep,
+	runMediaUsageMaintenanceSlice: scheduled.mediaUsageSlice,
 }));
 vi.mock("../src/sandbox/index.js", () => ({ PluginBridge: vi.fn() }));
 
@@ -40,12 +44,14 @@ beforeEach(() => {
 	scheduled.general.mockClear();
 	scheduled.mediaUsage.mockClear();
 	scheduled.mediaUsageStep.mockClear();
+	scheduled.mediaUsageSlice.mockClear();
 	scheduled.mediaUsageStep.mockResolvedValue({
 		state: "idle",
 		continuation: { kind: "none" },
 		taskClass: "entry_work",
 		turn: 0,
 	});
+	scheduled.mediaUsageSlice.mockResolvedValue({ kind: "none" });
 });
 
 it("uses the default Media Usage expression and treats every other expression as general", async () => {
@@ -140,6 +146,7 @@ it("uses configured Cron as a Queue wake without initializing Media Usage", asyn
 	expect(send).toHaveBeenCalledExactlyOnceWith({ version: 1 });
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageStep).not.toHaveBeenCalled();
+	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 });
 
 it("keeps direct scheduled maintenance when the optional Queue is unavailable", async () => {
@@ -173,19 +180,15 @@ it("logs a redacted Cron wake failure and leaves recovery to the next trigger", 
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 });
 
-it("coalesces a delivered batch into one step and one successor", async () => {
+it("coalesces a delivered batch into one slice and one successor", async () => {
 	const send = vi.fn(async () => {});
 	const handler = createMediaUsageQueueHandler(() => queueBinding(send));
-	scheduled.mediaUsageStep.mockResolvedValue({
-		state: "progress",
-		continuation: { kind: "immediate" },
-		taskClass: "entry_work",
-		turn: 0,
-	});
+	scheduled.mediaUsageSlice.mockResolvedValue({ kind: "immediate" });
 
 	await invokeQueue(handler, [wakeMessage(), wakeMessage()], {});
 
-	expect(scheduled.mediaUsageStep).toHaveBeenCalledOnce();
+	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
+	expect(scheduled.mediaUsageStep).not.toHaveBeenCalled();
 	expect(send).toHaveBeenCalledExactlyOnceWith({ version: 1 });
 });
 
@@ -195,7 +198,8 @@ it("lets the Queue drain when the durable database is idle", async () => {
 
 	await invokeQueue(handler, [wakeMessage()], {});
 
-	expect(scheduled.mediaUsageStep).toHaveBeenCalledOnce();
+	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
+	expect(scheduled.mediaUsageStep).not.toHaveBeenCalled();
 	expect(send).not.toHaveBeenCalled();
 });
 
@@ -211,6 +215,7 @@ it("acknowledges invalid wakes without logging their body or running work", asyn
 	expect(warning).toHaveBeenCalledWith("[queue] Ignoring invalid Media Usage wake");
 	expect(JSON.stringify(warning.mock.calls)).not.toContain("do-not-log");
 	expect(scheduled.mediaUsageStep).not.toHaveBeenCalled();
+	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 	expect(send).not.toHaveBeenCalled();
 });
 
@@ -221,12 +226,7 @@ it("retries valid wakes if a delayed successor cannot be sent", async () => {
 	const handler = createMediaUsageQueueHandler(() => queueBinding(send));
 	const invalid = wakeMessage({ version: 9 });
 	const valid = wakeMessage();
-	scheduled.mediaUsageStep.mockResolvedValue({
-		state: "blocked",
-		continuation: { kind: "delayed", delaySeconds: 30 },
-		taskClass: "entry_work",
-		turn: 0,
-	});
+	scheduled.mediaUsageSlice.mockResolvedValue({ kind: "delayed", delaySeconds: 30 });
 	vi.spyOn(console, "warn").mockImplementation(() => {});
 
 	await expect(invokeQueue(handler, [invalid, valid], {})).rejects.toThrow("send failed");
@@ -247,6 +247,7 @@ it("fails before database work when the required Queue binding is missing", asyn
 	expect(invalid.ack).toHaveBeenCalledOnce();
 	expect(valid.ack).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageStep).not.toHaveBeenCalled();
+	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 });
 
 async function invoke<Env>(

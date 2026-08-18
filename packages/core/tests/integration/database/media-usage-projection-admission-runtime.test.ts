@@ -12,6 +12,7 @@ import { afterEach, beforeEach, expect, it } from "vitest";
 import { MediaUsageRepository } from "../../../src/database/repositories/media-usage.js";
 import { refreshContentMediaUsage } from "../../../src/media/usage/content-refresh.js";
 import { loadContentMediaUsageSnapshots } from "../../../src/media/usage/content-snapshots.js";
+import { MEDIA_USAGE_MAINTENANCE_LIMITS } from "../../../src/media/usage/maintenance-engine.js";
 import { buildContentMediaUsageSourceKey } from "../../../src/media/usage/source-key.js";
 import { processMediaUsageWorkAfterWrite } from "../../../src/media/usage/work-processor.js";
 import {
@@ -154,7 +155,7 @@ describeEachDialect("media usage projection admission runtime", (dialect) => {
 		expect(Number(count.count)).toBe(13);
 	});
 
-	it("defers immediately after a reserved conflict inside the 40-query envelope", async () => {
+	it("defers immediately after a reserved conflict inside the shared Paid step reservation", async () => {
 		await insertEntry("conflict", 0);
 		await addMediaUsageMeasurementDraft(
 			ctx.db,
@@ -186,7 +187,7 @@ describeEachDialect("media usage projection admission runtime", (dialect) => {
 				"conflict",
 			);
 			expect(result.outcome).toBe("retry");
-			expect(counter.count).toBeLessThanOrEqual(40);
+			expect(counter.count).toBeLessThanOrEqual(MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries);
 			expect(
 				(await occurrenceCountForSource(sourceKey("conflict", "draft_overlay"))) - draftRowsBefore,
 			).toBe(12);

@@ -15,7 +15,7 @@
 import astroHandler from "@astrojs/cloudflare/entrypoints/server";
 import { createApp } from "astro/app/entrypoint";
 import {
-	runMediaUsageMaintenanceStep,
+	runMediaUsageMaintenanceSlice,
 	runScheduledMediaUsageTasks,
 	runScheduledTasks,
 } from "emdash/middleware";
@@ -145,10 +145,10 @@ export function createMediaUsageQueueHandler<Env>(
 		const queue = resolveMediaUsageQueue(env);
 		if (!queue) throw new Error("Media Usage Queue binding is unavailable");
 
-		const result = await runMediaUsageMaintenanceStep();
-		if (result.continuation.kind === "none") return;
-		if (result.continuation.kind === "delayed") {
-			await queue.send({ version: 1 }, { delaySeconds: result.continuation.delaySeconds });
+		const continuation = await runMediaUsageMaintenanceSlice();
+		if (continuation.kind === "none") return;
+		if (continuation.kind === "delayed") {
+			await queue.send({ version: 1 }, { delaySeconds: continuation.delaySeconds });
 			return;
 		}
 		await queue.send({ version: 1 });

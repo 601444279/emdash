@@ -5,13 +5,10 @@ import { sql, SqliteDialect } from "kysely";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { MediaUsageRepository } from "../../../src/database/repositories/media-usage.js";
-import {
-	EmDashRuntime,
-	MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS,
-	type RuntimeDependencies,
-} from "../../../src/emdash-runtime.js";
+import { EmDashRuntime, type RuntimeDependencies } from "../../../src/emdash-runtime.js";
 import { activateMediaUsageCapture } from "../../../src/media/usage/activation.js";
 import { installMediaUsageCaptureTriggers } from "../../../src/media/usage/capture-triggers.js";
+import { MEDIA_USAGE_MAINTENANCE_LIMITS } from "../../../src/media/usage/maintenance-engine.js";
 import type {
 	CronScheduler,
 	MediaUsageContinuationFn,
@@ -203,6 +200,85 @@ describe("media usage scheduled drivers", () => {
 		await expect(scheduler.runContinuation()).resolves.toEqual({ kind: "none" });
 	});
 
+	it("drains several durable units inside one Cloudflare maintenance slice", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "slice_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		await insertEntry(runtime, fixture.tableName, "entry-2");
+		await insertEntry(runtime, fixture.tableName, "entry-3");
+		const metrics = createRequestMetrics(performance.now());
+
+		const continuation = await runWithContext({ editMode: false, metrics }, () =>
+			runtime!.runMediaUsageMaintenanceSlice(),
+		);
+
+		expect(continuation).toEqual({ kind: "none" });
+		expect(await countWork(runtime)).toBe(0);
+	});
+
+	it("falls back to one unit when a direct slice caller has no query metrics", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "unmetered_slice_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		await insertEntry(runtime, fixture.tableName, "entry-2");
+
+		await expect(runtime.runMediaUsageMaintenanceSlice()).resolves.toEqual({ kind: "immediate" });
+		expect(await countWork(runtime)).toBe(1);
+	});
+
+	it("stops before another unit when the remaining Paid query budget is reserved", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "query_bound_slice_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		await insertEntry(runtime, fixture.tableName, "entry-2");
+		const metrics = createRequestMetrics(performance.now());
+		metrics.dbCount =
+			MEDIA_USAGE_MAINTENANCE_LIMITS.eventQueryCeiling -
+			MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries -
+			10;
+
+		const continuation = await runWithContext({ editMode: false, metrics }, () =>
+			runtime!.runMediaUsageMaintenanceSlice(),
+		);
+
+		expect(continuation).toEqual({ kind: "immediate" });
+		expect(await countWork(runtime)).toBe(1);
+	});
+
+	it("does not create a no-progress continuation when initialization spent the query budget", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "spent_slice_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		const metrics = createRequestMetrics(performance.now());
+		metrics.dbCount =
+			MEDIA_USAGE_MAINTENANCE_LIMITS.eventQueryCeiling -
+			MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries +
+			1;
+
+		const continuation = await runWithContext({ editMode: false, metrics }, () =>
+			runtime!.runMediaUsageMaintenanceSlice(),
+		);
+
+		expect(continuation).toEqual({ kind: "none" });
+		expect(await countWork(runtime)).toBe(1);
+	});
+
+	it("does not start a unit after the Cloudflare slice deadline", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "timed_slice_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		const metrics = createRequestMetrics(
+			performance.now() - MEDIA_USAGE_MAINTENANCE_LIMITS.stepStartDeadlineMs,
+		);
+
+		const continuation = await runWithContext({ editMode: false, metrics }, () =>
+			runtime!.runMediaUsageMaintenanceSlice(),
+		);
+
+		expect(continuation).toEqual({ kind: "none" });
+		expect(await countWork(runtime)).toBe(1);
+	});
+
 	it("starts reconciliation when Node maintenance inherits an expensive request context", async () => {
 		const scheduler = new CapturingScheduler();
 		const metrics = createRequestMetrics(performance.now());
@@ -216,7 +292,7 @@ describe("media usage scheduled drivers", () => {
 			label: "Title",
 			type: "string",
 		});
-		metrics.dbCount = MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS.eventCeiling;
+		metrics.dbCount = MEDIA_USAGE_MAINTENANCE_LIMITS.eventQueryCeiling;
 
 		await expect(activateMediaUsageCapture(runtime.db, { writersDrained: true })).resolves.toEqual({
 			outcome: "active",
@@ -337,7 +413,7 @@ describe("media usage scheduled drivers", () => {
 		expect(await maintenanceTurn(runtime)).toBe(before);
 	});
 
-	it("reserves ten queries of headroom before changing the persisted turn", async () => {
+	it("does not change the persisted turn when the largest Paid unit no longer fits", async () => {
 		runtime = await EmDashRuntime.create(createDeps(null));
 		await runtime.db
 			.updateTable("_emdash_media_usage_activation")
@@ -347,8 +423,9 @@ describe("media usage scheduled drivers", () => {
 		const before = await maintenanceTurn(runtime);
 		const metrics = createRequestMetrics(performance.now());
 		metrics.dbCount =
-			MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS.eventCeiling -
-			MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS.maxClassQueries;
+			MEDIA_USAGE_MAINTENANCE_LIMITS.eventQueryCeiling -
+			MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries +
+			1;
 
 		const result = await runWithContext({ editMode: false, metrics }, () =>
 			runtime!.runScheduledMediaUsageTasks(),
@@ -357,7 +434,7 @@ describe("media usage scheduled drivers", () => {
 		expect(await maintenanceTurn(runtime)).toBe(before);
 	});
 
-	it("measures every mutation class within its exported event reservation", async () => {
+	it("keeps every legacy mutation class inside the shared Paid step reservation", async () => {
 		runtime = await EmDashRuntime.create(createDeps(null));
 		const work = await activateCollection(runtime, "measure_work");
 		await insertEntry(runtime, work.tableName, "entry-1");
@@ -370,21 +447,14 @@ describe("media usage scheduled drivers", () => {
 			.where("collection_id", "=", reconciliation.collectionId)
 			.execute();
 
-		const expected = [
-			["entry_work", MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS.entryWork],
-			["collection_deletion", MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS.collectionDeletion],
-			["reconciliation", MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS.reconciliation],
-		] as const;
-		for (const [taskClass, reservation] of expected) {
+		const expected = ["entry_work", "collection_deletion", "reconciliation"] as const;
+		for (const taskClass of expected) {
 			const metrics = createRequestMetrics(performance.now());
 			const result = await runWithContext({ editMode: false, metrics }, () =>
 				runtime!.runScheduledMediaUsageTasks(),
 			);
 			expect(result.taskClass).toBe(taskClass);
-			expect(metrics.dbCount).toBeLessThanOrEqual(1 + reservation);
-			expect(metrics.dbCount).toBeLessThanOrEqual(
-				MEDIA_USAGE_MAINTENANCE_QUERY_RESERVATIONS.eventCeiling,
-			);
+			expect(metrics.dbCount).toBeLessThanOrEqual(MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries);
 		}
 	});
 });

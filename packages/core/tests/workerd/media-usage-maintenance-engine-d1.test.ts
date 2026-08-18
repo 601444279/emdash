@@ -1,13 +1,22 @@
 import { env } from "cloudflare:test";
-import { Kysely, sql } from "kysely";
+import { Kysely } from "kysely";
 import { afterAll, beforeAll, expect, it } from "vitest";
 
 import { RawBindingD1Dialect } from "../../../cloudflare/src/db/d1-dialect.js";
+import { kyselyLogOption } from "../../src/database/instrumentation.js";
 import { runMigrations } from "../../src/database/migrations/runner.js";
 import type { Database } from "../../src/database/types.js";
-import { installMediaUsageCaptureTriggers } from "../../src/media/usage/capture-triggers.js";
-import { runMediaUsageMaintenanceStep } from "../../src/media/usage/maintenance-engine.js";
-import { SchemaRegistry } from "../../src/schema/registry.js";
+import {
+	MEDIA_USAGE_MAINTENANCE_LIMITS,
+	runMediaUsageMaintenanceSlice,
+	runMediaUsageMaintenanceStep,
+} from "../../src/media/usage/maintenance-engine.js";
+import { createRequestMetrics, runWithContext } from "../../src/request-context.js";
+import {
+	createMediaUsageAdmissionFixture,
+	insertMediaUsageMeasurementEntry,
+	mediaUsageMeasurementData,
+} from "../utils/media-usage-admission-fixture.js";
 
 declare module "cloudflare:test" {
 	interface ProvidedEnv {
@@ -38,50 +47,24 @@ afterAll(async () => {
 	await adminDb.destroy();
 });
 
-it("keeps two idle classes plus one useful D1 unit below the hard query boundary", async () => {
-	const registry = new SchemaRegistry(adminDb);
-	await registry.createCollection({ slug: "d1_engine_work", label: "D1 engine work" });
-	await registry.createField("d1_engine_work", {
-		slug: "title",
-		label: "Title",
-		type: "string",
-	});
-	const collection = await registry.getCollection("d1_engine_work");
-	if (!collection) throw new Error("Expected D1 engine collection");
-	await adminDb
-		.updateTable("_emdash_media_usage_index_status")
-		.set({
-			collection_id: collection.id,
-			status: "complete",
-			capture_state: "installing",
-			reconciliation_required: 0,
-		})
-		.where("adapter_id", "=", "content-media")
-		.where("scope_type", "=", "collection")
-		.where("scope_key", "=", collection.slug)
-		.execute();
-	await installMediaUsageCaptureTriggers(adminDb, {
-		collectionId: collection.id,
-		collectionSlug: collection.slug,
-	});
-	await adminDb
-		.updateTable("_emdash_media_usage_index_status")
-		.set({ capture_state: "active" })
-		.where("collection_id", "=", collection.id)
-		.execute();
+it("keeps the largest entry step below the shared Paid reservation", async () => {
+	const fixture = await createMediaUsageAdmissionFixture(adminDb, "d1_engine_boundary");
 	await adminDb
 		.updateTable("_emdash_media_usage_activation")
 		.set({ state: "active", media_usage_maintenance_turn: 0 })
 		.where("task_key", "=", "incremental_capture")
 		.execute();
-	await sql`
-		INSERT INTO ${sql.ref("ec_d1_engine_work")} (id, slug, status, title)
-		VALUES ('entry-1', 'entry-1', 'published', 'Entry 1')
-	`.execute(adminDb);
+	await insertMediaUsageMeasurementEntry(
+		adminDb,
+		fixture,
+		"boundary-entry",
+		mediaUsageMeasurementData(500, "boundary-entry"),
+	);
 
 	const measurement = emptyMeasurement();
 	const db = new Kysely<Database>({
 		dialect: new RawBindingD1Dialect({ database: captureD1(env.DB, measurement) }),
+		log: kyselyLogOption(),
 	});
 	const startedAt = performance.now();
 	const result = await runMediaUsageMaintenanceStep(db);
@@ -94,11 +77,91 @@ it("keeps two idle classes plus one useful D1 unit below the hard query boundary
 		taskClass: "entry_work",
 		turn: 0,
 	});
-	expect(measurement.queries).toBeLessThan(50);
+	expect(measurement.queries).toBeLessThanOrEqual(MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries);
 	expect(measurement.maxBinds).toBeLessThanOrEqual(100);
 	expect(measurement.maxSqlBytes).toBeLessThan(100 * 1024);
-	expect(measurement.wallDurationMs).toBeLessThan(2_500);
+	expect(measurement.wallDurationMs).toBeLessThan(5_000);
 	console.info(`PR8_D1_MAINTENANCE_STEP=${JSON.stringify(measurement)}`);
+});
+
+it("drains several durable units without exceeding one Paid D1 event", async () => {
+	const fixture = await createMediaUsageAdmissionFixture(adminDb, "d1_engine_slice");
+	await adminDb
+		.updateTable("_emdash_media_usage_activation")
+		.set({ state: "active", media_usage_maintenance_turn: 2 })
+		.where("task_key", "=", "incremental_capture")
+		.execute();
+	for (let index = 0; index < 5; index++) {
+		await insertMediaUsageMeasurementEntry(
+			adminDb,
+			fixture,
+			`slice-entry-${index}`,
+			mediaUsageMeasurementData(index, `slice-entry-${index}`),
+		);
+	}
+
+	const measurement = emptyMeasurement();
+	const db = new Kysely<Database>({
+		dialect: new RawBindingD1Dialect({ database: captureD1(env.DB, measurement) }),
+		log: kyselyLogOption(),
+	});
+	const metrics = createRequestMetrics(performance.now());
+	const startedAt = performance.now();
+	const continuation = await runWithContext({ editMode: false, metrics }, () =>
+		runMediaUsageMaintenanceSlice(db),
+	);
+	measurement.wallDurationMs = Number((performance.now() - startedAt).toFixed(3));
+	const sliceQueryCount = measurement.queries;
+	const remaining = await db
+		.selectFrom("_emdash_media_usage_work")
+		.select((eb) => eb.fn.countAll<number>().as("count"))
+		.where("collection_id", "=", fixture.collectionId)
+		.executeTakeFirstOrThrow();
+	await db.destroy();
+
+	expect(continuation).toEqual({ kind: "none" });
+	expect(Number(remaining.count)).toBe(0);
+	expect(metrics.dbCount).toBe(sliceQueryCount);
+	expect(sliceQueryCount).toBeLessThanOrEqual(MEDIA_USAGE_MAINTENANCE_LIMITS.eventQueryCeiling);
+	expect(measurement.maxBinds).toBeLessThanOrEqual(100);
+	expect(measurement.maxSqlBytes).toBeLessThan(100 * 1024);
+	expect(measurement.wallDurationMs).toBeLessThan(25_000);
+	console.info(`PR8_D1_MAINTENANCE_SLICE=${JSON.stringify(measurement)}`);
+});
+
+it("stops after one unit when a database does not report query metrics", async () => {
+	const fixture = await createMediaUsageAdmissionFixture(adminDb, "d1_engine_unmetered");
+	await adminDb
+		.updateTable("_emdash_media_usage_activation")
+		.set({ state: "active", media_usage_maintenance_turn: 2 })
+		.where("task_key", "=", "incremental_capture")
+		.execute();
+	for (let index = 0; index < 2; index++) {
+		await insertMediaUsageMeasurementEntry(
+			adminDb,
+			fixture,
+			`unmetered-entry-${index}`,
+			mediaUsageMeasurementData(0, `unmetered-entry-${index}`),
+		);
+	}
+
+	const db = new Kysely<Database>({
+		dialect: new RawBindingD1Dialect({ database: env.DB }),
+	});
+	const metrics = createRequestMetrics(performance.now());
+	const continuation = await runWithContext({ editMode: false, metrics }, () =>
+		runMediaUsageMaintenanceSlice(db),
+	);
+	const remaining = await db
+		.selectFrom("_emdash_media_usage_work")
+		.select((eb) => eb.fn.countAll<number>().as("count"))
+		.where("collection_id", "=", fixture.collectionId)
+		.executeTakeFirstOrThrow();
+	await db.destroy();
+
+	expect(continuation).toEqual({ kind: "immediate" });
+	expect(metrics.dbCount).toBe(0);
+	expect(Number(remaining.count)).toBe(1);
 });
 
 function emptyMeasurement(): D1Measurement {

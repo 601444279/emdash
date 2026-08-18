@@ -43,6 +43,7 @@ import { createDeferredTaskTracker } from "../deferred-tasks.js";
 import {
 	DB_INIT_DEADLINE_MS,
 	EmDashRuntime,
+	type MediaUsageMaintenanceContinuation,
 	type MediaUsageMaintenanceResult,
 	type MediaUsageMaintenanceStepResult,
 	type RuntimeDependencies,
@@ -307,6 +308,12 @@ export async function runMediaUsageMaintenanceStep(): Promise<MediaUsageMaintena
 		};
 	}
 	return runOutsideRequest(config, (runtime) => runtime.runMediaUsageMaintenanceStep());
+}
+
+export async function runMediaUsageMaintenanceSlice(): Promise<MediaUsageMaintenanceContinuation> {
+	const config = getConfig();
+	if (!config) return { kind: "none" };
+	return runOutsideRequest(config, (runtime) => runtime.runMediaUsageMaintenanceSlice());
 }
 
 /**

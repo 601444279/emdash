@@ -13,6 +13,7 @@ import { afterEach, beforeEach, expect, it } from "vitest";
 import { MediaUsageRepository } from "../../../src/database/repositories/media-usage.js";
 import type { Database } from "../../../src/database/types.js";
 import { installMediaUsageCaptureTriggers } from "../../../src/media/usage/capture-triggers.js";
+import { MEDIA_USAGE_MAINTENANCE_LIMITS } from "../../../src/media/usage/maintenance-engine.js";
 import {
 	MEDIA_USAGE_WORK_PROCESSING_LIMITS,
 	processDueMediaUsageWork,
@@ -285,7 +286,7 @@ describeEachDialect("media usage durable work processing", (dialect) => {
 		).toBeNull();
 	});
 
-	it("keeps an ordinary job inside the exported statement envelope", async () => {
+	it("keeps an ordinary job inside the shared Paid step reservation", async () => {
 		const fixture = await createActiveFixture(ctx, "measured");
 		await insertEntry(ctx, fixture, "entry-1", "media-1");
 		const counter = new QueryCountingPlugin();
@@ -298,9 +299,7 @@ describeEachDialect("media usage durable work processing", (dialect) => {
 
 		expect(result.outcome).toBe("completed");
 		expect(counter.count).toBeGreaterThan(0);
-		expect(counter.count).toBeLessThanOrEqual(
-			MEDIA_USAGE_WORK_PROCESSING_LIMITS.ordinaryStatementsPerJob,
-		);
+		expect(counter.count).toBeLessThanOrEqual(MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries);
 	});
 });
 
