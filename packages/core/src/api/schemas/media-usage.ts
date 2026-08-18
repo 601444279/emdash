@@ -18,6 +18,7 @@ export const mediaUsageProgressSchema = z
 		status: z.enum(["indexing", "ready", "needs_attention"]),
 		readyCollections: z.number().int().min(0),
 		totalCollections: z.number().int().min(0),
+		indexingStarted: z.boolean().optional(),
 	})
 	.meta({ id: "MediaUsageProgress" });
 

@@ -353,6 +353,7 @@ export interface MediaUsageCollectionProgress {
 	status: "indexing" | "ready" | "needs_attention";
 	readyCollections: number;
 	totalCollections: number;
+	indexingStarted: boolean;
 }
 
 export interface MediaUsageEntrySource {
@@ -784,6 +785,7 @@ export class MediaUsageRepository {
 			needs_attention: boolean | number;
 			ready_collections: number | string;
 			total_collections: number | string;
+			indexing_started: boolean | number;
 		}>`
 			WITH collection_progress AS (
 				SELECT
@@ -797,6 +799,11 @@ export class MediaUsageRepository {
 								AND work.collection_slug = collection.slug
 						)
 					THEN 1 ELSE 0 END AS is_ready,
+					CASE WHEN status.reconciliation_required = 1 AND EXISTS (
+						SELECT 1 FROM _emdash_media_usage_reconciliations AS reconciliation
+						WHERE reconciliation.collection_id = collection.id
+							AND reconciliation.collection_slug = collection.slug
+					) THEN 1 ELSE 0 END AS reconciliation_started,
 					CASE WHEN status.collection_id IS NULL
 						OR COALESCE(status.capture_state, '') <> 'active'
 						OR status.status NOT IN ('complete', 'never', 'running', 'partial', 'failed', 'stale')
@@ -852,6 +859,9 @@ export class MediaUsageRepository {
 				) AS activation_active,
 				COUNT(*) AS total_collections,
 				COALESCE(SUM(is_ready), 0) AS ready_collections,
+				CASE WHEN COALESCE(MAX(is_ready), 0) = 1
+					OR COALESCE(MAX(reconciliation_started), 0) = 1
+				THEN 1 ELSE 0 END AS indexing_started,
 				CASE WHEN COALESCE(MAX(needs_attention), 0) = 1 OR EXISTS (
 					SELECT 1 FROM _emdash_media_usage_collection_deletions AS deletion
 					WHERE deletion.state = 'failed'
@@ -868,11 +878,13 @@ export class MediaUsageRepository {
 		}
 		const readyCollections = Number(row.ready_collections);
 		const totalCollections = Number(row.total_collections);
+		const indexingStarted = Number(row.indexing_started);
 		if (
 			!Number.isSafeInteger(readyCollections) ||
 			!Number.isSafeInteger(totalCollections) ||
 			readyCollections < 0 ||
-			totalCollections < readyCollections
+			totalCollections < readyCollections ||
+			(indexingStarted !== 0 && indexingStarted !== 1)
 		) {
 			throw new Error("Media usage progress query returned invalid counts");
 		}
@@ -884,6 +896,7 @@ export class MediaUsageRepository {
 					: "indexing",
 			readyCollections,
 			totalCollections,
+			indexingStarted: indexingStarted === 1,
 		};
 	}
 

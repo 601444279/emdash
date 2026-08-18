@@ -21,7 +21,7 @@ const ROLE_ADMIN = 50;
 const EMPTY_CONFIRMATIONS = { maintenance: false, writers: false, irreversible: false };
 
 type Confirmation = keyof typeof EMPTY_CONFIRMATIONS;
-type Notice = "busy" | "refreshed" | "unconfirmed" | "version" | "validation" | "denied" | null;
+type Notice = "unconfirmed" | "version" | "validation" | "denied" | null;
 
 export function MediaUsageSettings() {
 	const { t } = useLingui();
@@ -31,12 +31,13 @@ export function MediaUsageSettings() {
 	const [confirmations, setConfirmations] = React.useState(EMPTY_CONFIRMATIONS);
 	const [dialogOpen, setDialogOpen] = React.useState(false);
 	const [notice, setNotice] = React.useState<Notice>(null);
-	const awayGenerationRef = React.useRef(0);
-	const returnGenerationRef = React.useRef(0);
-	const refreshSequenceRef = React.useRef(0);
+	const [pageVisible, setPageVisible] = React.useState(
+		() => typeof document === "undefined" || document.visibilityState !== "hidden",
+	);
 	const submittingRef = React.useRef(false);
-	const focusActiveRef = React.useRef(false);
-	const activeHeadingRef = React.useRef<HTMLHeadingElement>(null);
+	const focusAfterActionRef = React.useRef(false);
+	const stateHeadingRef = React.useRef<HTMLHeadingElement>(null);
+	const wasHiddenRef = React.useRef(false);
 
 	const activationQuery = useQuery({
 		queryKey: MEDIA_USAGE_ACTIVATION_QUERY_KEY,
@@ -46,13 +47,27 @@ export function MediaUsageSettings() {
 		refetchOnMount: "always",
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
+		refetchInterval: (query) => {
+			const activation = query.state.data;
+			return pageVisible &&
+				query.state.status !== "error" &&
+				activation?.state === "activating" &&
+				activation.lastErrorCode === null
+				? 2_000
+				: false;
+		},
+		refetchIntervalInBackground: false,
 	});
 	const progressQuery = useQuery({
 		queryKey: ["media-usage-progress"],
 		queryFn: fetchMediaUsageProgress,
-		enabled: isAdmin && activationQuery.data?.state === "active",
+		enabled: isAdmin && activationQuery.data?.state === "active" && !activationQuery.isError,
 		retry: false,
-		refetchInterval: 60_000,
+		refetchInterval: (query) =>
+			pageVisible && query.state.status !== "error" && query.state.data?.status === "indexing"
+				? 2_000
+				: false,
+		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 	});
@@ -61,67 +76,52 @@ export function MediaUsageSettings() {
 		setConfirmations(EMPTY_CONFIRMATIONS);
 		setDialogOpen(false);
 	}, []);
-	React.useEffect(() => {
-		if (activationQuery.data?.state === "active" || activationQuery.data?.lastErrorCode) {
-			resetConfirmations();
-		}
-	}, [activationQuery.data?.lastErrorCode, activationQuery.data?.state, resetConfirmations]);
-
 	const refreshStatus = React.useCallback(
-		async (reason: "manual" | "ownership" | "ambiguous") => {
+		async (uncertain = false) => {
 			if (submittingRef.current) return;
-			const awayGeneration = awayGenerationRef.current;
-			const refreshSequence = ++refreshSequenceRef.current;
-			if (reason === "ownership" || reason === "ambiguous") setNotice("unconfirmed");
-			if (reason !== "manual") resetConfirmations();
-			const result = await activationQuery.refetch();
-			if (
-				awayGeneration !== awayGenerationRef.current ||
-				refreshSequence !== refreshSequenceRef.current
-			) {
-				return;
+			if (uncertain) {
+				setNotice("unconfirmed");
+				resetConfirmations();
 			}
-			if (!result.isSuccess) {
-				if (reason === "ownership" || reason === "ambiguous") setNotice("unconfirmed");
-				return;
-			}
-			setNotice((current) =>
-				current === "validation" || current === "version"
-					? current
-					: reason === "manual"
-						? null
-						: "refreshed",
-			);
-			if (result.data.state !== "active") focusActiveRef.current = false;
+			const result = await activationQuery.refetch({ cancelRefetch: false });
+			if (!result.isSuccess) return;
+			setNotice((current) => (current === "validation" || current === "version" ? current : null));
 		},
 		[activationQuery, resetConfirmations],
 	);
 
 	React.useEffect(() => {
 		if (!isAdmin) return;
-		const markAway = () => {
-			awayGenerationRef.current++;
-			resetConfirmations();
-		};
-		const returnToPage = () => {
-			const generation = awayGenerationRef.current;
-			if (returnGenerationRef.current === generation) return;
-			returnGenerationRef.current = generation;
-			void refreshStatus("manual");
-		};
 		const visibilityChanged = () => {
-			if (document.visibilityState === "hidden") markAway();
-			else returnToPage();
+			const visible = document.visibilityState !== "hidden";
+			setPageVisible(visible);
+			if (!visible) {
+				wasHiddenRef.current = true;
+				resetConfirmations();
+				return;
+			}
+			if (!wasHiddenRef.current) return;
+			wasHiddenRef.current = false;
+			const activation = activationQuery.data;
+			if (
+				activation?.state === "activating" &&
+				activation.lastErrorCode === null &&
+				!activationQuery.isError
+			) {
+				void activationQuery.refetch({ cancelRefetch: false });
+			} else if (
+				activation?.state === "active" &&
+				progressQuery.data?.status === "indexing" &&
+				!progressQuery.isError
+			) {
+				void progressQuery.refetch({ cancelRefetch: false });
+			}
 		};
-		window.addEventListener("pagehide", markAway);
-		window.addEventListener("pageshow", returnToPage);
 		document.addEventListener("visibilitychange", visibilityChanged);
 		return () => {
-			window.removeEventListener("pagehide", markAway);
-			window.removeEventListener("pageshow", returnToPage);
 			document.removeEventListener("visibilitychange", visibilityChanged);
 		};
-	}, [isAdmin, refreshStatus, resetConfirmations]);
+	}, [activationQuery, isAdmin, progressQuery, resetConfirmations]);
 
 	const advanceMutation = useMutation({
 		mutationFn: async () => {
@@ -132,11 +132,7 @@ export function MediaUsageSettings() {
 		onSuccess: (result) => {
 			queryClient.setQueryData(MEDIA_USAGE_ACTIVATION_QUERY_KEY, result.activation);
 			setNotice(null);
-			setDialogOpen(false);
-			if (result.activation.state !== "active") focusActiveRef.current = false;
-			if (result.activation.state === "active" || result.activation.lastErrorCode) {
-				resetConfirmations();
-			}
+			resetConfirmations();
 		},
 		onError: (caught) => {
 			submittingRef.current = false;
@@ -152,32 +148,34 @@ export function MediaUsageSettings() {
 			caught instanceof MediaUsageActivationRequestError
 				? caught
 				: new MediaUsageActivationRequestError("unknown", null);
-		if (error.kind === "busy") {
-			setDialogOpen(false);
-			setNotice("busy");
-			return;
-		}
 		resetConfirmations();
 		if (error.kind === "denied") return setNotice("denied");
 		if (error.kind === "version_mismatch") return setNotice("version");
 		if (error.kind === "validation") return setNotice("validation");
-		await refreshStatus(error.kind === "ownership_conflict" ? "ownership" : "ambiguous");
+		await refreshStatus(true);
 	};
 
 	const activation = activationQuery.data;
 	const active = activation?.state === "active";
 	React.useEffect(() => {
-		if (!active || !focusActiveRef.current) return;
-		focusActiveRef.current = false;
-		activeHeadingRef.current?.focus();
-	}, [active]);
+		const heading = stateHeadingRef.current;
+		if (
+			!focusAfterActionRef.current ||
+			!pageVisible ||
+			dialogOpen ||
+			advanceMutation.isPending ||
+			!activation ||
+			!heading
+		)
+			return;
+		focusAfterActionRef.current = false;
+		heading.focus();
+	}, [activation, advanceMutation.isPending, dialogOpen, pageVisible]);
 
 	const title = t`Media Usage`;
 	const description = t`Track where media is used across your content.`;
-	const queryDenied = isActivationError(activationQuery.error, "denied");
-	const queryVersion = isActivationError(activationQuery.error, "version_mismatch");
 	if (userLoading) return <LoadingPage title={title} description={description} />;
-	if (!isAdmin || queryDenied || notice === "denied") {
+	if (!isAdmin || isActivationError(activationQuery.error, "denied") || notice === "denied") {
 		return (
 			<MessagePage
 				title={t`Access denied`}
@@ -186,7 +184,7 @@ export function MediaUsageSettings() {
 			/>
 		);
 	}
-	if (queryVersion || notice === "version") {
+	if (isActivationError(activationQuery.error, "version_mismatch") || notice === "version") {
 		return (
 			<MessagePage
 				title={title}
@@ -211,65 +209,39 @@ export function MediaUsageSettings() {
 				description={description}
 				message={t`Activation cannot be confirmed. Keep editing paused and refresh the status.`}
 				action={
-					<Button size="sm" variant="secondary" onClick={() => void refreshStatus("manual")}>
+					<Button size="sm" variant="secondary" onClick={() => void refreshStatus()}>
 						{t`Refresh status`}
 					</Button>
 				}
 			/>
 		);
 	}
-	if (activationQuery.isError || activationQuery.isRefetchError) {
+	const activationReadError = activationQuery.isError || activationQuery.isRefetchError;
+	if (activationReadError && !activation) {
 		return (
 			<MessagePage
 				title={title}
 				description={description}
 				message={t`Couldn’t load Media Usage settings.`}
 				action={
-					<Button size="sm" variant="secondary" onClick={() => void refreshStatus("manual")}>
+					<Button size="sm" variant="secondary" onClick={() => void refreshStatus()}>
 						{t`Try again`}
 					</Button>
 				}
 			/>
 		);
 	}
-	if (activationQuery.isPending || activationQuery.isFetching || !activation) {
+	if (activationQuery.isPending || !activation) {
 		return <LoadingPage title={title} description={description} />;
 	}
 
-	const allConfirmed = Object.values(confirmations).every(Boolean);
-	const storedFailure = activation.lastErrorCode !== null;
-	const blocked = notice === "busy" || advanceMutation.isPending;
-	const actionLabel = storedFailure
-		? t`Retry setup`
-		: activation.state === "expanded"
-			? t`Enable Media Usage`
-			: t`Continue setup`;
-	const liveMessage = active
-		? progressQuery.isError
-			? t`Indexing progress is unavailable.`
-			: progressQuery.isPending
-				? t`Checking indexing progress.`
-				: progressQuery.data?.status === "ready"
-					? t`Media Usage is ready.`
-					: progressQuery.data?.status === "needs_attention"
-						? t`Media Usage needs attention.`
-						: t`Existing content is indexing.`
-		: activation.state === "activating"
-			? t`Setup is in progress.`
-			: t`Media Usage is off.`;
-	const progressAlert = progressQuery.isError || progressQuery.data?.status === "needs_attention";
+	const storedFailure = activation.state === "activating" && activation.lastErrorCode !== null;
+	const canMutate = !activationReadError && (activation.state === "expanded" || storedFailure);
 	const submit = () => {
 		if (submittingRef.current) return;
 		submittingRef.current = true;
-		focusActiveRef.current = true;
+		focusAfterActionRef.current = true;
 		advanceMutation.mutate();
-	};
-	const startOrContinue = () => {
-		if (allConfirmed && activation.state === "activating" && !storedFailure) {
-			submit();
-		} else {
-			setDialogOpen(true);
-		}
 	};
 
 	return (
@@ -277,8 +249,16 @@ export function MediaUsageSettings() {
 			<SettingsSection
 				title={t`Automatic indexing`}
 				actions={
-					active && progressQuery.isError ? (
-						<Button size="sm" variant="secondary" onClick={() => void progressQuery.refetch()}>
+					activationReadError ? (
+						<Button size="sm" variant="secondary" onClick={() => void refreshStatus()}>
+							{t`Try again`}
+						</Button>
+					) : active && progressQuery.isError ? (
+						<Button
+							size="sm"
+							variant="secondary"
+							onClick={() => void progressQuery.refetch({ cancelRefetch: false })}
+						>
 							{t`Try again`}
 						</Button>
 					) : undefined
@@ -288,22 +268,18 @@ export function MediaUsageSettings() {
 					activation={activation}
 					progress={progressQuery.isError ? undefined : progressQuery.data}
 					progressError={progressQuery.isError}
-					activeHeadingRef={activeHeadingRef}
+					activationError={activationReadError}
+					stateHeadingRef={stateHeadingRef}
 				/>
-				{!active && (storedFailure || notice) ? (
-					<SettingRow>
-						<SetupNotice notice={notice} storedFailure={storedFailure} onRefresh={refreshStatus} />
-					</SettingRow>
-				) : null}
-				{!active ? (
+				{canMutate ? (
 					<SettingRow className="flex justify-end">
 						<Button
 							className="w-full sm:w-auto"
-							disabled={blocked}
+							disabled={advanceMutation.isPending}
 							icon={advanceMutation.isPending ? <Loader size="sm" /> : undefined}
-							onClick={startOrContinue}
+							onClick={() => setDialogOpen(true)}
 						>
-							{advanceMutation.isPending ? t`Setting up…` : actionLabel}
+							{storedFailure ? t`Retry setup` : t`Enable Media Usage`}
 						</Button>
 					</SettingRow>
 				) : null}
@@ -311,7 +287,7 @@ export function MediaUsageSettings() {
 
 			<ConfirmationDialog
 				open={dialogOpen}
-				activation={activation}
+				retry={storedFailure}
 				confirmations={confirmations}
 				pending={advanceMutation.isPending}
 				onOpenChange={(open) => {
@@ -321,9 +297,6 @@ export function MediaUsageSettings() {
 				onChange={(key, checked) => setConfirmations((current) => ({ ...current, [key]: checked }))}
 				onConfirm={submit}
 			/>
-			<span className="sr-only" role={progressAlert ? "alert" : "status"} aria-atomic="true">
-				{liveMessage}
-			</span>
 		</SettingsFrame>
 	);
 }
@@ -332,78 +305,96 @@ function StatusRow({
 	activation,
 	progress,
 	progressError,
-	activeHeadingRef,
+	activationError,
+	stateHeadingRef,
 }: {
 	activation: MediaUsageActivationStatus;
 	progress: MediaUsageProgress | undefined;
 	progressError: boolean;
-	activeHeadingRef: React.RefObject<HTMLHeadingElement | null>;
+	activationError: boolean;
+	stateHeadingRef: React.RefObject<HTMLHeadingElement | null>;
 }) {
 	const { t } = useLingui();
 	const active = activation.state === "active";
 	const settingUp = activation.state === "activating";
+	const storedFailure = activation.state === "activating" && activation.lastErrorCode !== null;
+	const starting =
+		active &&
+		!progressError &&
+		(!progress || (progress.status === "indexing" && progress.indexingStarted === false));
 	let heading = t`Automatic indexing is off`;
 	let detail = t`Enable Media Usage to index existing content and keep references up to date.`;
 	let badge = t`Off`;
 	let variant: "neutral" | "warning" | "success" | "error" = "neutral";
 	if (settingUp) {
-		heading = t`Setup is in progress`;
-		detail = t`Keep editing paused until setup is complete.`;
-		badge = t`Setting up`;
-		variant = "warning";
+		heading = storedFailure ? t`Needs attention` : t`Setting up`;
+		detail = storedFailure
+			? t`Keep editing paused, fix the server issue, then retry setup.`
+			: t`Capture is being prepared. Keep editing paused until setup is complete.`;
+		badge = storedFailure ? t`Needs attention` : t`Setting up`;
+		variant = storedFailure ? "error" : "warning";
 	}
 	if (active) {
-		if (progressError) {
-			heading = t`Indexing progress unavailable`;
-			detail = t`New changes are still tracked automatically.`;
-			badge = t`Unavailable`;
-			variant = "error";
-		}
 		heading = progressError
-			? heading
-			: !progress
-				? t`Checking indexing progress`
-				: progress.status === "ready"
-					? t`Media Usage is ready`
+			? t`Needs attention`
+			: starting
+				? t`Starting indexing`
+				: progress?.status === "ready"
+					? t`Ready`
 					: progress?.status === "needs_attention"
-						? t`Media Usage needs attention`
+						? t`Needs attention`
 						: t`Indexing existing content`;
 		detail = progressError
-			? detail
-			: progress
-				? plural(progress.totalCollections, {
-						one: `${progress.readyCollections} of # content type ready`,
-						other: `${progress.readyCollections} of # content types ready`,
-					})
-				: t`Checking indexing progress…`;
-		badge = progressError
-			? badge
-			: !progress
-				? t`Checking`
-				: progress.status === "ready"
-					? t`Ready`
-					: progress.status === "needs_attention"
-						? t`Needs attention`
-						: t`Indexing`;
+			? t`New changes are still tracked automatically.`
+			: starting
+				? t`Background indexing is starting.`
+				: progress
+					? plural(progress.totalCollections, {
+							one: `${progress.readyCollections} of # content type ready`,
+							other: `${progress.readyCollections} of # content types ready`,
+						})
+					: t`Background indexing is starting.`;
+		badge = progressError ? t`Needs attention` : heading;
 		variant = progressError
-			? variant
+			? "error"
 			: progress?.status === "ready"
 				? "success"
 				: progress?.status === "needs_attention"
 					? "error"
 					: "warning";
 	}
+	if (activationError) {
+		const lastState =
+			activation.state === "activating"
+				? t`Setting up`
+				: activation.state === "active"
+					? t`Active`
+					: t`Off`;
+		heading = t`Needs attention`;
+		detail = t`The last confirmed state was ${lastState}. Refresh status before continuing.`;
+		badge = t`Needs attention`;
+		variant = "error";
+	}
+	const progressing =
+		!activationError &&
+		((settingUp && !storedFailure) ||
+			(active && !progressError && (!progress || progress.status === "indexing")));
 	return (
 		<SettingRow>
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-				<div className="min-w-0">
-					<h3
-						ref={active ? activeHeadingRef : undefined}
-						tabIndex={active ? -1 : undefined}
-						className="text-sm font-medium leading-5"
-					>
-						{heading}
-					</h3>
+				<div className="min-w-0" role={storedFailure ? "alert" : undefined}>
+					<div className="flex items-center gap-2">
+						{progressing ? <Loader size="sm" /> : null}
+						<h3
+							ref={stateHeadingRef}
+							tabIndex={-1}
+							aria-live={storedFailure ? "off" : "polite"}
+							aria-atomic="true"
+							className="text-sm font-medium leading-5"
+						>
+							{heading}
+						</h3>
+					</div>
 					<p className="mt-0.5 max-w-2xl text-sm leading-5 text-kumo-subtle">{detail}</p>
 				</div>
 				<Badge variant={variant} className="shrink-0">
@@ -416,7 +407,7 @@ function StatusRow({
 
 function ConfirmationDialog({
 	open,
-	activation,
+	retry,
 	confirmations,
 	pending,
 	onOpenChange,
@@ -424,7 +415,7 @@ function ConfirmationDialog({
 	onConfirm,
 }: {
 	open: boolean;
-	activation: MediaUsageActivationStatus;
+	retry: boolean;
 	confirmations: typeof EMPTY_CONFIRMATIONS;
 	pending: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -456,10 +447,8 @@ function ConfirmationDialog({
 			onClose={() => onOpenChange(false)}
 			title={t`Enable Media Usage`}
 			description={t`Existing content will be indexed automatically after setup is complete.`}
-			confirmLabel={
-				activation.state === "expanded" ? t`Enable and start indexing` : t`Continue setup`
-			}
-			pendingLabel={t`Enabling…`}
+			confirmLabel={retry ? t`Retry setup` : t`Enable Media Usage`}
+			pendingLabel={retry ? t`Retrying…` : t`Enabling…`}
 			variant="primary"
 			isPending={pending}
 			disabled={!confirmed}
@@ -483,51 +472,6 @@ function ConfirmationDialog({
 				))}
 			</fieldset>
 		</ConfirmDialog>
-	);
-}
-
-function SetupNotice({
-	notice,
-	storedFailure,
-	onRefresh,
-}: {
-	notice: Notice;
-	storedFailure: boolean;
-	onRefresh: (reason: "manual") => Promise<void>;
-}) {
-	const { t } = useLingui();
-	if (notice === "busy") {
-		return (
-			<Banner
-				variant="alert"
-				title={t`Another setup request is still running.`}
-				description={t`Keep editing paused and refresh before continuing.`}
-				action={
-					<Button
-						size="sm"
-						variant="secondary"
-						onClick={() => void onRefresh("manual")}
-					>{t`Refresh status`}</Button>
-				}
-			/>
-		);
-	}
-	if (storedFailure) {
-		return (
-			<Banner
-				variant="error"
-				role="alert"
-				title={t`This setup step didn’t finish.`}
-				description={t`Keep editing paused, fix the server issue, then retry setup.`}
-			/>
-		);
-	}
-	return (
-		<Banner
-			variant="alert"
-			title={t`Setup status was refreshed.`}
-			description={t`The status was refreshed. Check the requirements before continuing.`}
-		/>
 	);
 }
 

@@ -232,6 +232,7 @@ export interface MediaUsageProgress {
 	status: "indexing" | "ready" | "needs_attention";
 	readyCollections: number;
 	totalCollections: number;
+	indexingStarted?: boolean;
 }
 
 /** Durable media usage entry-work state */

@@ -389,12 +389,14 @@ export function MediaLibrary({
 				<Banner
 					variant="alert"
 					title={
-						setupStatus.state === "activating" ? t`Finish Media Usage setup` : t`Set up Media Usage`
+						setupStatus.state === "activating"
+							? t`Media Usage is setting up`
+							: t`Set up Media Usage`
 					}
 					description={t`Index existing content and keep Used in results up to date.`}
 					action={
 						<RouterLinkButton to="/settings/media-usage" size="sm" variant="secondary">
-							{setupStatus.state === "activating" ? t`Continue setup` : t`Enable Media Usage`}
+							{setupStatus.state === "activating" ? t`View setup` : t`Open setup`}
 						</RouterLinkButton>
 					}
 				/>

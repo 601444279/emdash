@@ -61,11 +61,53 @@ describe("media usage activation admin API", () => {
 	});
 
 	it("reads validated aggregate indexing progress", async () => {
-		const data = { status: "indexing", readyCollections: 1, totalCollections: 2 } as const;
+		const data = {
+			status: "indexing",
+			readyCollections: 0,
+			totalCollections: 2,
+			indexingStarted: false,
+		} as const;
 		const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(success(data));
 
 		await expect(fetchMediaUsageProgress()).resolves.toEqual(data);
 		expect(fetch.mock.calls[0]?.[0]).toBe(progressUrl);
+	});
+
+	it("accepts an older progress response without the startup signal", async () => {
+		const data = { status: "indexing", readyCollections: 1, totalCollections: 2 } as const;
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(success(data));
+
+		await expect(fetchMediaUsageProgress()).resolves.toEqual(data);
+	});
+
+	it("rejects a malformed progress startup signal", async () => {
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(
+			success({
+				status: "indexing",
+				readyCollections: 1,
+				totalCollections: 2,
+				indexingStarted: "yes",
+			}),
+		);
+
+		await expect(caught(() => fetchMediaUsageProgress())).resolves.toMatchObject({
+			kind: "unknown",
+		});
+	});
+
+	it("rejects progress that claims indexing has not started after a collection is ready", async () => {
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(
+			success({
+				status: "indexing",
+				readyCollections: 1,
+				totalCollections: 2,
+				indexingStarted: false,
+			}),
+		);
+
+		await expect(caught(() => fetchMediaUsageProgress())).resolves.toMatchObject({
+			kind: "unknown",
+		});
 	});
 
 	it("rejects contradictory aggregate progress", async () => {

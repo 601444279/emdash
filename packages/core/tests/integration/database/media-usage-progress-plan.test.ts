@@ -74,6 +74,7 @@ it("keeps aggregate progress to one indexed metadata statement as collections gr
 		status: "ready",
 		readyCollections: 1_000,
 		totalCollections: 1_000,
+		indexingStarted: true,
 	});
 
 	expect(captured).toHaveLength(1);

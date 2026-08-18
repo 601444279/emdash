@@ -97,9 +97,17 @@ describe("MediaLibrary", () => {
 			const screen = await renderLibrary();
 
 			await expect.element(screen.getByText("Set up Media Usage")).toBeInTheDocument();
-			await expect
-				.element(screen.getByRole("link", { name: "Enable Media Usage" }))
-				.toBeInTheDocument();
+			await expect.element(screen.getByRole("link", { name: "Open setup" })).toBeInTheDocument();
+		});
+
+		it("links to the automatic setup status while activation is running", async () => {
+			setupMocks.role = 50;
+			setupMocks.fetchStatus.mockResolvedValue({ state: "activating" });
+
+			const screen = await renderLibrary();
+
+			await expect.element(screen.getByText("Media Usage is setting up")).toBeInTheDocument();
+			await expect.element(screen.getByRole("link", { name: "View setup" })).toBeInTheDocument();
 		});
 
 		it("keeps the library usable when optional setup discovery fails", async () => {

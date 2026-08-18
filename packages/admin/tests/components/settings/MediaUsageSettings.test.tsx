@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as React from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 
 import { render } from "../../utils/render.tsx";
@@ -90,7 +90,9 @@ async function confirmAll(screen: Awaited<ReturnType<typeof renderPage>>["screen
 }
 
 async function submitConfirmation(screen: Awaited<ReturnType<typeof renderPage>>["screen"]) {
-	const confirm = screen.getByRole("button", { name: "Enable and start indexing" });
+	const confirm = screen.getByRole("dialog", { name: "Enable Media Usage" }).getByRole("button", {
+		name: "Enable Media Usage",
+	});
 	confirm.element().focus();
 	await userEvent.keyboard("{Enter}");
 }
@@ -104,7 +106,13 @@ describe("MediaUsageSettings", () => {
 			status: "indexing",
 			readyCollections: 1,
 			totalCollections: 2,
+			indexingStarted: true,
 		});
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
+		vi.restoreAllMocks();
 	});
 
 	it("denies a direct Editor visit before requesting activation status", async () => {
@@ -131,16 +139,17 @@ describe("MediaUsageSettings", () => {
 		await expect.element(screen.getByText("Automatic indexing is off")).toBeInTheDocument();
 		expect(screen.getByRole("checkbox").query()).toBeNull();
 		await openConfirmation(screen);
-		const confirm = screen.getByRole("button", { name: "Enable and start indexing" });
+		const confirm = screen
+			.getByRole("dialog", { name: "Enable Media Usage" })
+			.getByRole("button", { name: "Enable Media Usage" });
 		await expect.element(confirm).toBeDisabled();
 		await confirmAll(screen);
 		await expect.element(confirm).toBeEnabled();
 		confirm.element().focus();
 		await userEvent.keyboard("{Enter}");
 
-		await expect
-			.element(screen.getByRole("button", { name: "Continue setup" }))
-			.toBeInTheDocument();
+		await expect.element(screen.getByRole("heading", { name: "Setting up" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /setup/i }).query()).toBeNull();
 		expect(screen.getByRole("dialog").query()).toBeNull();
 		expect(activationMocks.advance).toHaveBeenCalledOnce();
 		expect(activationMocks.advance).toHaveBeenCalledWith({
@@ -149,10 +158,6 @@ describe("MediaUsageSettings", () => {
 		});
 		expect(activationMocks.fetchStatus).toHaveBeenCalledOnce();
 		expect(queryClient.getQueryData(MEDIA_USAGE_ACTIVATION_QUERY_KEY)).toEqual(activating);
-
-		await userEvent.click(screen.getByRole("button", { name: "Continue setup" }));
-		expect(activationMocks.advance).toHaveBeenCalledTimes(2);
-		expect(screen.getByRole("dialog").query()).toBeNull();
 	});
 
 	it("blocks duplicate activation and renders the confirmed active state", async () => {
@@ -195,20 +200,18 @@ describe("MediaUsageSettings", () => {
 	});
 
 	it("resets confirmations after leaving and returning", async () => {
-		activationMocks.advance.mockResolvedValue({
-			outcome: "activating",
-			processedCollections: 1,
-			activation: status("activating"),
-		});
+		let visibility: DocumentVisibilityState = "visible";
+		vi.spyOn(document, "visibilityState", "get").mockImplementation(() => visibility);
 		const { screen } = await renderPage();
 		await openConfirmation(screen);
 		await confirmAll(screen);
-		await submitConfirmation(screen);
 
-		activationMocks.fetchStatus.mockResolvedValue(status("activating"));
-		window.dispatchEvent(new PageTransitionEvent("pagehide"));
-		window.dispatchEvent(new PageTransitionEvent("pageshow"));
-		await userEvent.click(screen.getByRole("button", { name: "Continue setup" }));
+		visibility = "hidden";
+		document.dispatchEvent(new Event("visibilitychange"));
+		visibility = "visible";
+		document.dispatchEvent(new Event("visibilitychange"));
+		await expect.element(screen.getByRole("dialog")).not.toBeInTheDocument();
+		await userEvent.click(screen.getByRole("button", { name: "Enable Media Usage" }));
 
 		await expect.element(screen.getByRole("dialog", { name: "Enable Media Usage" })).toBeVisible();
 		for (const checkbox of screen.getByRole("checkbox").all()) {
@@ -290,14 +293,15 @@ describe("MediaUsageSettings", () => {
 
 	it.each([
 		["indexing", "Indexing existing content", "1 of 2 content types ready"],
-		["ready", "Media Usage is ready", "2 of 2 content types ready"],
-		["needs_attention", "Media Usage needs attention", "1 of 2 content types ready"],
+		["ready", "Ready", "2 of 2 content types ready"],
+		["needs_attention", "Needs attention", "1 of 2 content types ready"],
 	] as const)("shows %s progress after activation", async (progressStatus, heading, summary) => {
 		activationMocks.fetchStatus.mockResolvedValue(status("active"));
 		activationMocks.fetchProgress.mockResolvedValue({
 			status: progressStatus,
 			readyCollections: progressStatus === "ready" ? 2 : 1,
 			totalCollections: 2,
+			indexingStarted: true,
 		});
 
 		const { screen } = await renderPage();
@@ -305,6 +309,61 @@ describe("MediaUsageSettings", () => {
 		await expect.element(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
 		await expect.element(screen.getByText(summary)).toBeInTheDocument();
 		expect(activationMocks.fetchProgress).toHaveBeenCalledOnce();
+		if (progressStatus === "needs_attention") {
+			expect(screen.getByRole("button", { name: "Retry setup" }).query()).toBeNull();
+		}
+	});
+
+	it("shows startup before historical reconciliation begins", async () => {
+		activationMocks.fetchStatus.mockResolvedValue(status("active"));
+		activationMocks.fetchProgress.mockResolvedValue({
+			status: "indexing",
+			readyCollections: 0,
+			totalCollections: 2,
+			indexingStarted: false,
+		});
+
+		const { screen } = await renderPage();
+
+		await expect.element(screen.getByRole("heading", { name: "Starting indexing" })).toBeVisible();
+	});
+
+	it("treats an older progress response as indexing rather than startup", async () => {
+		activationMocks.fetchStatus.mockResolvedValue(status("active"));
+		activationMocks.fetchProgress.mockResolvedValue({
+			status: "indexing",
+			readyCollections: 0,
+			totalCollections: 2,
+		});
+
+		const { screen } = await renderPage();
+
+		await expect
+			.element(screen.getByRole("heading", { name: "Indexing existing content" }))
+			.toBeVisible();
+	});
+
+	it("shows Retry setup only for a stored activation failure", async () => {
+		activationMocks.fetchStatus.mockResolvedValue(status("activating", { failed: true }));
+
+		const { screen } = await renderPage();
+
+		await expect.element(screen.getByRole("heading", { name: "Needs attention" })).toBeVisible();
+		await userEvent.click(screen.getByRole("button", { name: "Retry setup" }));
+		const dialog = screen.getByRole("dialog", { name: "Enable Media Usage" });
+		await expect.element(dialog).toBeVisible();
+		for (const checkbox of dialog.getByRole("checkbox").all()) {
+			await expect.element(checkbox).not.toBeChecked();
+		}
+	});
+
+	it("shows no mutation action while ordinary activation is progressing", async () => {
+		activationMocks.fetchStatus.mockResolvedValue(status("activating"));
+
+		const { screen } = await renderPage();
+
+		await expect.element(screen.getByRole("heading", { name: "Setting up" })).toBeVisible();
+		expect(screen.getByRole("button", { name: /setup/i }).query()).toBeNull();
 	});
 
 	it("keeps active setup visible when progress cannot be loaded", async () => {
@@ -315,26 +374,158 @@ describe("MediaUsageSettings", () => {
 
 		const { screen } = await renderPage();
 
-		await expect
-			.element(screen.getByRole("heading", { name: "Indexing progress unavailable" }))
-			.toBeInTheDocument();
+		await expect.element(screen.getByRole("heading", { name: "Needs attention" })).toBeVisible();
 		await expect.element(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: /setup/i }).query()).toBeNull();
 	});
 
-	it("keeps a busy request resumable through deliberate refresh", async () => {
+	it("follows another owner after a busy response without another mutation", async () => {
 		activationMocks.advance.mockRejectedValue(new MediaUsageActivationRequestError("busy", 409));
+		activationMocks.fetchStatus
+			.mockResolvedValueOnce(status("expanded"))
+			.mockResolvedValue(status("activating"));
 		const { screen } = await renderPage();
 		await openConfirmation(screen);
 		await confirmAll(screen);
 		await submitConfirmation(screen);
 
-		await expect
-			.element(screen.getByRole("button", { name: "Refresh status" }))
-			.toBeInTheDocument();
-		activationMocks.fetchStatus.mockResolvedValue(status("activating"));
-		await userEvent.click(screen.getByRole("button", { name: "Refresh status" }));
-		await expect.element(screen.getByRole("button", { name: "Continue setup" })).toBeEnabled();
+		await expect.element(screen.getByRole("heading", { name: "Setting up" })).toBeVisible();
+		expect(screen.getByRole("button", { name: "Retry setup" }).query()).toBeNull();
 		expect(activationMocks.fetchStatus).toHaveBeenCalledTimes(2);
+		expect(activationMocks.advance).toHaveBeenCalledOnce();
+	});
+
+	it("moves focus to the recovered state after a slow busy status read", async () => {
+		activationMocks.advance.mockRejectedValue(new MediaUsageActivationRequestError("busy", 409));
+		let finishStatus!: (value: ReturnType<typeof status>) => void;
+		activationMocks.fetchStatus
+			.mockResolvedValueOnce(status("expanded"))
+			.mockImplementation(() => new Promise((resolve) => (finishStatus = resolve)));
+		const { screen } = await renderPage();
+		await openConfirmation(screen);
+		await confirmAll(screen);
+		await submitConfirmation(screen);
+		await expect.element(screen.getByRole("button", { name: "Refresh status" })).toBeVisible();
+
+		finishStatus(status("activating"));
+		const heading = screen.getByRole("heading", { name: "Setting up" });
+		await expect.element(heading).toBeVisible();
+		expect(document.activeElement).toBe(heading.element());
+	});
+
+	it("polls activation every two seconds and stops after it becomes active", async () => {
+		vi.useFakeTimers();
+		let current = status("activating");
+		activationMocks.fetchStatus.mockImplementation(async () => current);
+		const { screen } = await renderPage();
+		await expect.element(screen.getByRole("heading", { name: "Setting up" })).toBeVisible();
+		expect(activationMocks.fetchStatus).toHaveBeenCalledOnce();
+
+		await vi.advanceTimersByTimeAsync(2_000);
+		expect(activationMocks.fetchStatus).toHaveBeenCalledTimes(2);
+		current = status("active");
+		await vi.advanceTimersByTimeAsync(2_000);
+		await expect
+			.element(screen.getByRole("heading", { name: "Indexing existing content" }))
+			.toBeVisible();
+		const completedCalls = activationMocks.fetchStatus.mock.calls.length;
+
+		await vi.advanceTimersByTimeAsync(4_000);
+		expect(activationMocks.fetchStatus).toHaveBeenCalledTimes(completedCalls);
+	});
+
+	it("polls indexing every two seconds and stops when it is ready", async () => {
+		vi.useFakeTimers();
+		activationMocks.fetchStatus.mockResolvedValue(status("active"));
+		let progress: {
+			status: "indexing" | "ready";
+			readyCollections: number;
+			totalCollections: number;
+			indexingStarted: boolean;
+		} = {
+			status: "indexing",
+			readyCollections: 1,
+			totalCollections: 2,
+			indexingStarted: true,
+		};
+		activationMocks.fetchProgress.mockImplementation(async () => progress);
+		const { screen } = await renderPage();
+		await expect
+			.element(screen.getByRole("heading", { name: "Indexing existing content" }))
+			.toBeVisible();
+
+		progress = {
+			status: "ready",
+			readyCollections: 2,
+			totalCollections: 2,
+			indexingStarted: true,
+		};
+		await vi.advanceTimersByTimeAsync(2_000);
+		await expect.element(screen.getByRole("heading", { name: "Ready" })).toBeVisible();
+		const completedCalls = activationMocks.fetchProgress.mock.calls.length;
+
+		await vi.advanceTimersByTimeAsync(4_000);
+		expect(activationMocks.fetchProgress).toHaveBeenCalledTimes(completedCalls);
+	});
+
+	it("pauses polling while hidden and refreshes immediately on return", async () => {
+		vi.useFakeTimers();
+		let visibility: DocumentVisibilityState = "visible";
+		vi.spyOn(document, "visibilityState", "get").mockImplementation(() => visibility);
+		activationMocks.fetchStatus.mockResolvedValue(status("activating"));
+		const { screen } = await renderPage();
+		await expect.element(screen.getByRole("heading", { name: "Setting up" })).toBeVisible();
+
+		visibility = "hidden";
+		document.dispatchEvent(new Event("visibilitychange"));
+		await vi.advanceTimersByTimeAsync(4_000);
+		expect(activationMocks.fetchStatus).toHaveBeenCalledOnce();
+
+		visibility = "visible";
+		document.dispatchEvent(new Event("visibilitychange"));
+		await vi.advanceTimersByTimeAsync(0);
+		expect(activationMocks.fetchStatus).toHaveBeenCalledTimes(2);
+	});
+
+	it("does not duplicate a slow poll when visibility returns", async () => {
+		vi.useFakeTimers();
+		let visibility: DocumentVisibilityState = "visible";
+		vi.spyOn(document, "visibilityState", "get").mockImplementation(() => visibility);
+		let finishPoll!: (value: ReturnType<typeof status>) => void;
+		activationMocks.fetchStatus
+			.mockResolvedValueOnce(status("activating"))
+			.mockImplementation(() => new Promise((resolve) => (finishPoll = resolve)));
+		const { screen } = await renderPage();
+		await expect.element(screen.getByRole("heading", { name: "Setting up" })).toBeVisible();
+
+		await vi.advanceTimersByTimeAsync(2_000);
+		expect(activationMocks.fetchStatus).toHaveBeenCalledTimes(2);
+		visibility = "hidden";
+		document.dispatchEvent(new Event("visibilitychange"));
+		visibility = "visible";
+		document.dispatchEvent(new Event("visibilitychange"));
+		await vi.advanceTimersByTimeAsync(0);
+
+		expect(activationMocks.fetchStatus).toHaveBeenCalledTimes(2);
+		finishPoll(status("activating"));
+		await vi.advanceTimersByTimeAsync(0);
+	});
+
+	it("keeps the confirmed activation context when a poll fails", async () => {
+		vi.useFakeTimers();
+		activationMocks.fetchStatus
+			.mockResolvedValueOnce(status("activating"))
+			.mockRejectedValue(new MediaUsageActivationRequestError("read_failure", 500));
+		const { screen } = await renderPage();
+		await expect.element(screen.getByRole("heading", { name: "Setting up" })).toBeVisible();
+
+		await vi.advanceTimersByTimeAsync(2_000);
+
+		await expect.element(screen.getByRole("heading", { name: "Needs attention" })).toBeVisible();
+		await expect.element(screen.getByText(/last confirmed state was Setting up/)).toBeVisible();
+		await expect.element(screen.getByRole("button", { name: "Try again" })).toBeVisible();
+		const failedCalls = activationMocks.fetchStatus.mock.calls.length;
+		await vi.advanceTimersByTimeAsync(4_000);
+		expect(activationMocks.fetchStatus).toHaveBeenCalledTimes(failedCalls);
 	});
 });
