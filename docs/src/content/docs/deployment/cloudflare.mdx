@@ -10,7 +10,8 @@ Cloudflare Workers provides a fast, globally distributed runtime for EmDash. Thi
 ## Prerequisites
 
 - A Cloudflare account
-- Wrangler CLI installed (`npm install -g wrangler`)
+- Workers Paid when activating automatic Media Usage indexing
+- Wrangler 4.123 or newer (`npx wrangler@latest`)
 - Authenticated with Cloudflare (`wrangler login`)
 
 ## Configure Bindings
@@ -127,10 +128,11 @@ By default, `*/2 * * * *` sends a Media Usage recovery wake and every other expr
 Run `wrangler types` after changing the bindings so `Env.MEDIA_USAGE_QUEUE` is available to
 TypeScript.
 
-The Media Usage Cron sends a recovery wake to this Queue. The consumer processes one bounded,
-durable database unit at a time and sends another wake while work remains. Queue messages contain no
-content identity, and the existing database work rows remain authoritative if a message is retried or
-lost. Concurrency stays at one because D1 processes a database sequentially.
+The Media Usage Cron sends a recovery wake to this Queue. Each consumer invocation processes as many
+bounded, durable database units as fit safely within one Workers Paid event, then sends another wake
+while work remains. Queue messages contain no content identity, and the existing database work rows
+remain authoritative if a message is retried or lost. Concurrency stays at one because D1 processes a
+database sequentially.
 
 Existing custom Workers without a Queue binding keep the previous bounded Cron path. To use different
 schedules, set the corresponding `generalCron` or `mediaUsageCron` option in
