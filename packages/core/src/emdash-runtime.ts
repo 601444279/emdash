@@ -42,6 +42,7 @@ import { getI18nConfig } from "./i18n/config.js";
 import { repairLocaleCasing } from "./i18n/repair-locale-casing.js";
 import { normalizeMediaValue } from "./media/normalize.js";
 import type { MediaProvider, MediaProviderCapabilities } from "./media/types.js";
+import { MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION } from "./media/usage/activation.js";
 import { processDueMediaUsageCollectionDeletions } from "./media/usage/collection-deletion-processor.js";
 import {
 	deleteContentMediaUsage,
@@ -569,6 +570,7 @@ async function runScheduledMediaUsageLane(
 		})
 		.where("task_key", "=", "incremental_capture")
 		.where("state", "=", "active")
+		.where("runtime_generation", "=", MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION)
 		.returning("media_usage_maintenance_turn")
 		.executeTakeFirst();
 	if (!activation) return { outcome: "inactive", taskClass: null, turn: null };
@@ -800,6 +802,10 @@ export class EmDashRuntime {
 
 	async runMediaUsageMaintenanceSlice(): Promise<MediaUsageMaintenanceContinuation> {
 		return runMediaUsageMaintenanceSlice(this.db);
+	}
+
+	wakeMediaUsageMaintenance(): void {
+		this.cronScheduler?.wakeMediaUsageMaintenance?.();
 	}
 
 	/**
@@ -1725,9 +1731,9 @@ export class EmDashRuntime {
 						runWithContext({ editMode: false }, async () => {
 							const runtime = runtimeRef.current;
 							if (runtime) {
-								await runtime.runScheduledMediaUsageTasks();
+								await runtime.runMediaUsageMaintenanceStep();
 							} else {
-								await runScheduledMediaUsageLane(db);
+								await runMediaUsageMaintenanceStep(db);
 							}
 						});
 					const runContinuousMediaUsageMaintenance = () =>

@@ -292,6 +292,10 @@ describe("media usage scheduled drivers", () => {
 			label: "Title",
 			type: "string",
 		});
+		await sql`
+			INSERT INTO ${sql.ref("ec_node_reconciliation")} (id, slug, status, title)
+			VALUES ('existing-entry', 'existing-entry', 'published', 'Existing entry')
+		`.execute(runtime.db);
 		metrics.dbCount = MEDIA_USAGE_MAINTENANCE_LIMITS.eventQueryCeiling;
 
 		await expect(activateMediaUsageCapture(runtime.db, { writersDrained: true })).resolves.toEqual({
@@ -311,12 +315,16 @@ describe("media usage scheduled drivers", () => {
 			await scheduler.runMaintenance();
 		});
 
-		expect(
-			await runtime.db
-				.selectFrom("_emdash_media_usage_reconciliations")
-				.select("collection_id")
-				.executeTakeFirst(),
-		).toBeDefined();
+		const reconciliation = await runtime.db
+			.selectFrom("_emdash_media_usage_reconciliations")
+			.select("collection_id")
+			.executeTakeFirst();
+		const coverage = await runtime.db
+			.selectFrom("_emdash_media_usage_index_status")
+			.select("status")
+			.where("scope_key", "=", "node_reconciliation")
+			.executeTakeFirstOrThrow();
+		expect(reconciliation !== undefined || coverage.status === "complete").toBe(true);
 	});
 
 	it("drains bounded work through a legacy Node scheduler cleanup callback", async () => {
@@ -354,7 +362,7 @@ describe("media usage scheduled drivers", () => {
 		await scheduler.runMaintenance();
 		await scheduler.runMaintenance();
 
-		expect(await deletionPhase(runtime, fixture.collectionId)).toBe("sources");
+		expect(await deletionPhase(runtime, fixture.collectionId)).toBe("status");
 	});
 
 	it("processes a trigger-created job before returning from an authenticated write", async () => {
@@ -411,6 +419,107 @@ describe("media usage scheduled drivers", () => {
 			turn: null,
 		});
 		expect(await maintenanceTurn(runtime)).toBe(before);
+	});
+
+	it("continues confirmed activation one bounded collection at a time", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		await runtime.schemaRegistry.createCollection({ slug: "activation_alpha", label: "Alpha" });
+		await runtime.schemaRegistry.createCollection({ slug: "activation_beta", label: "Beta" });
+
+		await expect(activateMediaUsageCapture(runtime.db, { writersDrained: true })).resolves.toEqual({
+			outcome: "activating",
+			processedCollections: 1,
+			collectionCursor: "activation_alpha",
+		});
+		const confirmed = await activationState(runtime);
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toEqual({
+			state: "progress",
+			continuation: { kind: "immediate" },
+			taskClass: null,
+			turn: null,
+		});
+		expect(await activationState(runtime)).toEqual(
+			expect.objectContaining({
+				state: "active",
+				drain_confirmed_at: confirmed.drain_confirmed_at,
+				attempt_count: confirmed.attempt_count + 1,
+				last_error_code: null,
+			}),
+		);
+	});
+
+	it("does not automatically retry a stored activation failure", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		await runtime.db
+			.updateTable("_emdash_media_usage_activation")
+			.set({
+				state: "activating",
+				drain_confirmed_at: "2026-08-18T12:00:00.000Z",
+				last_error_code: "MEDIA_USAGE_ACTIVATION_FAILED",
+			})
+			.execute();
+		const before = await activationState(runtime);
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toEqual({
+			state: "inactive",
+			continuation: { kind: "none" },
+			taskClass: null,
+			turn: null,
+		});
+		expect(await activationState(runtime)).toEqual(before);
+
+		await expect(activateMediaUsageCapture(runtime.db, { writersDrained: true })).resolves.toEqual({
+			outcome: "active",
+			processedCollections: 0,
+		});
+		expect(await activationState(runtime)).toEqual(
+			expect.objectContaining({
+				state: "active",
+				attempt_count: before.attempt_count + 1,
+				last_error_code: null,
+			}),
+		);
+	});
+
+	it("rejects an incompatible active generation before advancing maintenance", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		await runtime.db
+			.updateTable("_emdash_media_usage_activation")
+			.set({ state: "active", runtime_generation: 2 })
+			.execute();
+		const before = await activationState(runtime);
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toEqual({
+			state: "inactive",
+			continuation: { kind: "none" },
+			taskClass: null,
+			turn: null,
+		});
+		expect(await activationState(runtime)).toEqual(before);
+		await expect(runtime.runScheduledMediaUsageTasks()).resolves.toEqual({
+			outcome: "inactive",
+			taskClass: null,
+			turn: null,
+		});
+		expect(await activationState(runtime)).toEqual(before);
+	});
+
+	it("recovers activation through a legacy Node scheduler heartbeat", async () => {
+		const scheduler = new LegacyCapturingScheduler();
+		runtime = await EmDashRuntime.create(createDeps(() => scheduler));
+		await runtime.schemaRegistry.createCollection({ slug: "legacy_activation_a", label: "A" });
+		await runtime.schemaRegistry.createCollection({ slug: "legacy_activation_b", label: "B" });
+		await expect(
+			activateMediaUsageCapture(runtime.db, { writersDrained: true }),
+		).resolves.toMatchObject({
+			outcome: "activating",
+			processedCollections: 1,
+		});
+
+		await scheduler.runMaintenance();
+
+		expect(await activationState(runtime)).toEqual(expect.objectContaining({ state: "active" }));
 	});
 
 	it("does not change the persisted turn when the largest Paid unit no longer fits", async () => {
@@ -622,6 +731,14 @@ async function maintenanceTurn(runtime: EmDashRuntime): Promise<number> {
 		.where("task_key", "=", "incremental_capture")
 		.executeTakeFirstOrThrow();
 	return row.media_usage_maintenance_turn;
+}
+
+function activationState(runtime: EmDashRuntime) {
+	return runtime.db
+		.selectFrom("_emdash_media_usage_activation")
+		.selectAll()
+		.where("task_key", "=", "incremental_capture")
+		.executeTakeFirstOrThrow();
 }
 
 function canonicalSourceKey(collectionId: string, contentId: string): string {

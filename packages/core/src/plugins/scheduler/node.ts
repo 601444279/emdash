@@ -34,6 +34,7 @@ export class NodeCronScheduler implements CronScheduler {
 	private mediaUsageTimer: ReturnType<typeof setTimeout> | null = null;
 	private mediaUsageInFlight = false;
 	private mediaUsagePending = false;
+	private mediaUsageWakePending = false;
 	private mediaUsageGeneration = 0;
 
 	constructor(private executor: CronExecutor) {}
@@ -48,6 +49,19 @@ export class NodeCronScheduler implements CronScheduler {
 
 	setContinuousMediaUsageMaintenance(fn: MediaUsageContinuationFn): void {
 		this.continuousMediaUsageMaintenance = fn;
+	}
+
+	wakeMediaUsageMaintenance(): void {
+		if (!this.running || !this.continuousMediaUsageMaintenance) return;
+		if (this.mediaUsageInFlight) {
+			this.mediaUsageWakePending = true;
+			return;
+		}
+		if (this.mediaUsageTimer) {
+			clearTimeout(this.mediaUsageTimer);
+			this.mediaUsageTimer = null;
+		}
+		this.armMediaUsageTimer(0);
 	}
 
 	start(): void {
@@ -66,6 +80,7 @@ export class NodeCronScheduler implements CronScheduler {
 			this.mediaUsageTimer = null;
 		}
 		this.mediaUsagePending = false;
+		this.mediaUsageWakePending = false;
 		this.mediaUsageGeneration++;
 	}
 
@@ -202,6 +217,12 @@ export class NodeCronScheduler implements CronScheduler {
 		if (!this.running || generation !== this.mediaUsageGeneration) return;
 		const pending = this.mediaUsagePending;
 		this.mediaUsagePending = false;
+		const wakePending = this.mediaUsageWakePending;
+		this.mediaUsageWakePending = false;
+		if (wakePending) {
+			this.armMediaUsageTimer(0);
+			return;
+		}
 		if (!continuation) return;
 		if (continuation.kind === "immediate") {
 			this.armMediaUsageTimer(0);

@@ -14,11 +14,7 @@
 // @ts-ignore - resolved against the consuming app's Astro build
 import astroHandler from "@astrojs/cloudflare/entrypoints/server";
 import { createApp } from "astro/app/entrypoint";
-import {
-	runMediaUsageMaintenanceSlice,
-	runScheduledMediaUsageTasks,
-	runScheduledTasks,
-} from "emdash/middleware";
+import { runMediaUsageMaintenanceSlice, runScheduledTasks } from "emdash/middleware";
 
 export { PluginBridge } from "./sandbox/index.js";
 
@@ -97,7 +93,7 @@ export function createScheduledHandler<Env = unknown>(
 				return;
 			}
 			ctx.waitUntil(
-				runScheduledMediaUsageTasks().catch((error: unknown) => {
+				runMediaUsageMaintenanceSlice().catch((error: unknown) => {
 					console.error("[scheduled] Media Usage maintenance failed:", error);
 				}),
 			);
@@ -124,6 +120,36 @@ export function createScheduledHandler<Env = unknown>(
 					console.error("[scheduled] runScheduledTasks failed:", error);
 				}),
 		);
+	};
+}
+
+export function createMediaUsageFetchHandler<Env>(
+	handler: ExportedHandler<Env>,
+	resolveMediaUsageQueue: OptionalMediaUsageQueueResolver<Env>,
+): ExportedHandlerFetchHandler<Env> {
+	if (!handler.fetch) throw new Error("Worker fetch handler is unavailable");
+	const fetch = handler.fetch;
+	return async (request, env, ctx) => {
+		const shouldWake =
+			request.method === "POST" &&
+			new URL(request.url).pathname === "/_emdash/api/admin/media-usage/activation";
+		const response = await Reflect.apply(fetch, handler, [request, env, ctx]);
+		if (!shouldWake || !response.ok) return response;
+
+		let reported = false;
+		const reportWakeFailure = () => {
+			if (reported) return;
+			reported = true;
+			console.error("[activation] Failed to queue Media Usage maintenance wake");
+		};
+		try {
+			const queue = resolveMediaUsageQueue(env);
+			if (!queue) return response;
+			ctx.waitUntil(queue.send({ version: 1 }).catch(reportWakeFailure));
+		} catch {
+			reportWakeFailure();
+		}
+		return response;
 	};
 }
 

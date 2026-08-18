@@ -2,6 +2,11 @@ import { sql, type Kysely } from "kysely";
 
 import type { Database } from "../../database/types.js";
 import { getRequestContext } from "../../request-context.js";
+import {
+	continueMediaUsageActivation,
+	MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION,
+	MediaUsageActivationVersionMismatchError,
+} from "./activation.js";
 import { processDueMediaUsageCollectionDeletions } from "./collection-deletion-processor.js";
 import { processDueMediaUsageReconciliationDetailed } from "./reconciliation-processor.js";
 import { processDueMediaUsageWork } from "./work-processor.js";
@@ -45,9 +50,10 @@ export async function runMediaUsageMaintenanceStep(
 		})
 		.where("task_key", "=", "incremental_capture")
 		.where("state", "=", "active")
+		.where("runtime_generation", "=", MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION)
 		.returning("media_usage_maintenance_turn")
 		.executeTakeFirst();
-	if (!activation) return inactiveResult();
+	if (!activation) return runActivationStep(db);
 
 	const startingTurn = activation.media_usage_maintenance_turn;
 	let firstBlocked: { taskClass: MediaUsageMaintenanceTaskClass; turn: number } | null = null;
@@ -82,6 +88,32 @@ export async function runMediaUsageMaintenanceStep(
 		taskClass: TASK_CLASSES[startingTurn],
 		turn: startingTurn,
 	};
+}
+
+async function runActivationStep(db: Kysely<Database>): Promise<MediaUsageMaintenanceStepResult> {
+	try {
+		const result = await continueMediaUsageActivation(db);
+		if (result.outcome === "activating" || result.outcome === "active") {
+			return {
+				state: "progress",
+				continuation: { kind: "immediate" },
+				taskClass: null,
+				turn: null,
+			};
+		}
+		if (result.outcome === "lease_active" || result.outcome === "conflict") {
+			return {
+				state: "blocked",
+				continuation: { kind: "delayed", delaySeconds: 30 },
+				taskClass: null,
+				turn: null,
+			};
+		}
+		return inactiveResult();
+	} catch (error) {
+		if (error instanceof MediaUsageActivationVersionMismatchError) return inactiveResult();
+		throw error;
+	}
 }
 
 export async function runMediaUsageMaintenanceSlice(

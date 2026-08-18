@@ -43,6 +43,17 @@ describe("NodeCronScheduler Media Usage continuation", () => {
 		expect(maintenance).toHaveBeenCalledTimes(2);
 	});
 
+	it("starts Media Usage maintenance immediately when explicitly woken", async () => {
+		const maintenance = vi.fn().mockResolvedValue({ kind: "none" } as const);
+		scheduler.setContinuousMediaUsageMaintenance(maintenance);
+		scheduler.start();
+
+		scheduler.wakeMediaUsageMaintenance();
+		await vi.advanceTimersByTimeAsync(0);
+
+		expect(maintenance).toHaveBeenCalledOnce();
+	});
+
 	it("does not let heartbeats shorten a delayed continuation", async () => {
 		vi.mocked(executor.getNextDueTime).mockImplementation(async () =>
 			new Date(Date.now()).toISOString(),
@@ -59,6 +70,45 @@ describe("NodeCronScheduler Media Usage continuation", () => {
 		await vi.advanceTimersByTimeAsync(29_000);
 		expect(maintenance).toHaveBeenCalledTimes(1);
 		await vi.advanceTimersByTimeAsync(1_000);
+		expect(maintenance).toHaveBeenCalledTimes(2);
+	});
+
+	it("lets an explicit wake replace a delayed continuation", async () => {
+		const maintenance = vi
+			.fn()
+			.mockResolvedValueOnce({ kind: "delayed", delaySeconds: 30 } as const)
+			.mockResolvedValue({ kind: "none" } as const);
+		scheduler.setContinuousMediaUsageMaintenance(maintenance);
+		scheduler.start();
+
+		await vi.advanceTimersToNextTimerAsync();
+		expect(maintenance).toHaveBeenCalledTimes(1);
+		scheduler.wakeMediaUsageMaintenance();
+		await vi.advanceTimersByTimeAsync(0);
+
+		expect(maintenance).toHaveBeenCalledTimes(2);
+	});
+
+	it("keeps an explicit wake requested during a delayed in-flight unit", async () => {
+		let release!: () => void;
+		const held = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const maintenance = vi
+			.fn()
+			.mockImplementationOnce(async () => {
+				await held;
+				return { kind: "delayed", delaySeconds: 30 } as const;
+			})
+			.mockResolvedValue({ kind: "none" } as const);
+		scheduler.setContinuousMediaUsageMaintenance(maintenance);
+		scheduler.start();
+
+		await vi.advanceTimersToNextTimerAsync();
+		scheduler.wakeMediaUsageMaintenance();
+		release();
+		await vi.advanceTimersByTimeAsync(0);
+
 		expect(maintenance).toHaveBeenCalledTimes(2);
 	});
 

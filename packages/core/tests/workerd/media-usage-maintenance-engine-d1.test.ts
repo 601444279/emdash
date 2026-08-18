@@ -1,5 +1,5 @@
 import { env } from "cloudflare:test";
-import { Kysely } from "kysely";
+import { Kysely, sql } from "kysely";
 import { afterAll, beforeAll, expect, it } from "vitest";
 
 import { RawBindingD1Dialect } from "../../../cloudflare/src/db/d1-dialect.js";
@@ -12,6 +12,7 @@ import {
 	runMediaUsageMaintenanceStep,
 } from "../../src/media/usage/maintenance-engine.js";
 import { createRequestMetrics, runWithContext } from "../../src/request-context.js";
+import { SchemaRegistry } from "../../src/schema/registry.js";
 import {
 	createMediaUsageAdmissionFixture,
 	insertMediaUsageMeasurementEntry,
@@ -162,6 +163,69 @@ it("stops after one unit when a database does not report query metrics", async (
 	expect(continuation).toEqual({ kind: "immediate" });
 	expect(metrics.dbCount).toBe(0);
 	expect(Number(remaining.count)).toBe(1);
+});
+
+it("keeps the largest admitted activation trigger replacement inside one step", async () => {
+	await adminDb
+		.updateTable("_emdash_media_usage_activation")
+		.set({
+			state: "expanded",
+			collection_cursor: null,
+			drain_confirmed_at: null,
+			lease_token: null,
+			lease_expires_at: null,
+			last_error_code: null,
+		})
+		.where("task_key", "=", "incremental_capture")
+		.execute();
+	const collection = await new SchemaRegistry(adminDb).createCollection({
+		slug: "aaa_d1_activation_bound",
+		label: "Activation bound",
+	});
+	for (let index = 0; index < 100; index++) {
+		const triggerName = `emdash_mu_bound_${String(index).padStart(3, "0")}`;
+		await sql`
+			CREATE TRIGGER ${sql.ref(triggerName)}
+			AFTER INSERT ON ${sql.ref("ec_aaa_d1_activation_bound")}
+			BEGIN
+				SELECT 1;
+			END
+		`.execute(adminDb);
+	}
+	await adminDb
+		.updateTable("_emdash_media_usage_activation")
+		.set({
+			state: "activating",
+			drain_confirmed_at: "2026-08-18T12:00:00.000Z",
+		})
+		.where("task_key", "=", "incremental_capture")
+		.execute();
+
+	const measurement = emptyMeasurement();
+	const db = new Kysely<Database>({
+		dialect: new RawBindingD1Dialect({ database: captureD1(env.DB, measurement) }),
+		log: kyselyLogOption(),
+	});
+	const metrics = createRequestMetrics(performance.now());
+	const result = await runWithContext({ editMode: false, metrics }, () =>
+		runMediaUsageMaintenanceStep(db),
+	);
+	const status = await adminDb
+		.selectFrom("_emdash_media_usage_index_status")
+		.select("capture_state")
+		.where("collection_id", "=", collection.id)
+		.executeTakeFirstOrThrow();
+	await db.destroy();
+
+	expect(result).toEqual({
+		state: "progress",
+		continuation: { kind: "immediate" },
+		taskClass: null,
+		turn: null,
+	});
+	expect(status.capture_state).toBe("active");
+	expect(measurement.queries).toBeLessThanOrEqual(MEDIA_USAGE_MAINTENANCE_LIMITS.maxStepQueries);
+	expect(metrics.dbCount).toBe(measurement.queries);
 });
 
 function emptyMeasurement(): D1Measurement {

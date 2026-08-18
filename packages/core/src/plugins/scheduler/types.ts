@@ -26,6 +26,8 @@ export interface CronScheduler {
 	setMediaUsageMaintenance?(fn: SystemCleanupFn): void;
 	/** Register continuation-capable Media Usage maintenance. */
 	setContinuousMediaUsageMaintenance?(fn: MediaUsageContinuationFn): void;
+	/** Request Media Usage maintenance without waiting for the next heartbeat. */
+	wakeMediaUsageMaintenance?(): void;
 }
 
 /**
