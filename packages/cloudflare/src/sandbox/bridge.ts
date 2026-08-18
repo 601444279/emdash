@@ -4,23 +4,31 @@
  * Provides controlled access to database operations for sandboxed plugins.
  * The sandbox gets a SERVICE BINDING to this entrypoint, not direct DB access.
  * All operations are validated and scoped to the plugin.
- *
  */
 
-import type { D1Database } from "@cloudflare/workers-types";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import { WorkerEntrypoint } from "cloudflare:workers";
-import type { ContentCreateOptions, Database, I18nConfig, SandboxEmailSendCallback } from "emdash";
+import type {
+	ContentCreateOptions,
+	ContentItem,
+	Database,
+	I18nConfig,
+	MediaItem,
+	SandboxEmailSendCallback,
+} from "emdash";
 import {
 	ContentRepository,
 	createSandboxRouteError,
 	getSandboxRouteErrorDetails,
-	ulid,
+	MediaRepository,
 	PluginStorageRepository,
 	resolveContentCreateLocale,
+	ulid,
+	UserRepository,
 } from "emdash";
-import { Kysely } from "kysely";
-import { D1Dialect } from "kysely-d1";
+import { type Kysely } from "kysely";
 
+import { withBridgeDb } from "./bridge-db.js";
 import { sandboxHttpFetch } from "./bridge-http.js";
 
 /** Regex to validate collection names (prevent SQL injection) */
@@ -68,19 +76,7 @@ export function setEmailSendCallback(callback: SandboxEmailSendCallback | null):
 }
 
 /**
- * Serialize a value for D1 storage.
- * Mirrors core's serializeValue: objects/arrays → JSON strings,
- * booleans → 0/1, null/undefined → null, everything else passthrough.
- */
-function serializeValue(value: unknown): unknown {
-	if (value === null || value === undefined) return null;
-	if (typeof value === "boolean") return value ? 1 : 0;
-	if (typeof value === "object") return JSON.stringify(value);
-	return value;
-}
-
-/**
- * Deserialize a row from D1 into a ContentItem matching core's plugin API.
+ * Deserialize a row into a ContentItem matching core's plugin API.
  * Extracts system columns, deserializes JSON fields, and returns the
  * canonical shape: { id, type, data, createdAt, updatedAt, locale }.
  */
@@ -121,12 +117,12 @@ function rowToContentItem(
 	};
 }
 
-/** Narrow an unknown D1 column value to a string ("" when it isn't one). */
+/** Narrow an unknown database column value to a string ("" when it isn't one). */
 function columnString(value: unknown): string {
 	return typeof value === "string" ? value : "";
 }
 
-/** Narrow an unknown, nullable D1 column value to `string | null`. */
+/** Narrow an unknown, nullable column value to `string | null`. */
 function columnNullableString(value: unknown): string | null {
 	return typeof value === "string" ? value : null;
 }
@@ -186,11 +182,70 @@ function rowToTaxonomyTerm(row: Record<string, unknown>): {
 	};
 }
 
+function contentItemToBridgeItem(item: ContentItem): {
+	id: string;
+	type: string;
+	data: Record<string, unknown>;
+	createdAt: string;
+	updatedAt: string;
+	locale: string;
+} {
+	return {
+		id: item.id,
+		type: item.type,
+		data: item.data,
+		createdAt: item.createdAt,
+		updatedAt: item.updatedAt,
+		locale: item.locale ?? "en",
+	};
+}
+
+function mediaItemToBridgeItem(item: MediaItem): {
+	id: string;
+	filename: string;
+	mimeType: string;
+	size: number | null;
+	url: string;
+	createdAt: string;
+} {
+	return {
+		id: item.id,
+		filename: item.filename,
+		mimeType: item.mimeType,
+		size: item.size,
+		url: `/_emdash/api/media/file/${item.storageKey}`,
+		createdAt: item.createdAt,
+	};
+}
+
+interface BridgeUser {
+	id: string;
+	email: string;
+	name: string | null;
+	role: number;
+	createdAt: string;
+}
+
+function userToBridgeItem(user: BridgeUser): {
+	id: string;
+	email: string;
+	name: string | null;
+	role: number;
+	createdAt: string;
+} {
+	return {
+		id: user.id,
+		email: user.email,
+		name: user.name,
+		role: user.role,
+		createdAt: user.createdAt,
+	};
+}
+
 /**
  * Environment bindings required by PluginBridge
  */
 export interface PluginBridgeEnv {
-	DB: D1Database;
 	MEDIA?: R2Bucket;
 }
 
@@ -223,13 +278,13 @@ export interface PluginBridgeProps {
  * 3. Plugins call bridge methods which validate and proxy to the database
  */
 export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridgeProps> {
-	private async assertMediaUsageActivationWriteAllowed(): Promise<void> {
+	private async assertMediaUsageActivationWriteAllowed(db: Kysely<Database>): Promise<void> {
 		try {
-			const activation = await this.env.DB.prepare(
-				"SELECT state FROM _emdash_media_usage_activation WHERE task_key = ? LIMIT 1",
-			)
-				.bind("incremental_capture")
-				.first<{ state: string }>();
+			const activation = await db
+				.selectFrom("_emdash_media_usage_activation")
+				.select("state")
+				.where("task_key", "=", "incremental_capture")
+				.executeTakeFirst();
 			if (activation?.state === "activating") {
 				throw createSandboxRouteError("MEDIA_USAGE_ACTIVATION_IN_PROGRESS");
 			}
@@ -248,7 +303,10 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 	 * query/count operations support WHERE/ORDER BY/cursor pagination
 	 * matching in-process and workerd sandbox plugins.
 	 */
-	private getStorageRepo(collection: string): PluginStorageRepository {
+	private getStorageRepo(
+		db: Kysely<Database>,
+		collection: string,
+	): PluginStorageRepository<unknown> {
 		const { pluginId, storageConfig } = this.ctx.props;
 		const config = storageConfig?.[collection];
 		// Merge unique indexes into the indexes list since both are queryable
@@ -256,10 +314,7 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			...(config?.indexes ?? []),
 			...(config?.uniqueIndexes ?? []),
 		];
-		const db = new Kysely<unknown>({
-			dialect: new D1Dialect({ database: this.env.DB }),
-		});
-		// eslint-disable-next-line typescript-eslint/no-unsafe-type-assertion -- Kysely<unknown> is compatible with PluginStorageRepository's expected db
+		// eslint-disable-next-line typescript-eslint/no-unsafe-type-assertion -- Kysely<Database> is compatible with PluginStorageRepository's expected db
 		return new PluginStorageRepository(db as never, pluginId, collection, allIndexes);
 	}
 
@@ -273,50 +328,75 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 	 */
 	async kvGet(key: string): Promise<unknown> {
 		const { pluginId } = this.ctx.props;
-		const result = await this.env.DB.prepare(
-			"SELECT data FROM _plugin_storage WHERE plugin_id = ? AND collection = '__kv' AND id = ?",
-		)
-			.bind(pluginId, key)
-			.first<{ data: string }>();
-		if (!result) return null;
-		try {
-			return JSON.parse(result.data);
-		} catch {
-			return result.data;
-		}
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			const row = await db
+				.selectFrom("_plugin_storage")
+				.select("data")
+				.where("plugin_id", "=", pluginId)
+				.where("collection", "=", "__kv")
+				.where("id", "=", key)
+				.executeTakeFirst();
+			if (!row?.data) return null;
+			try {
+				return JSON.parse(row.data as string);
+			} catch {
+				return row.data;
+			}
+		});
 	}
 
 	async kvSet(key: string, value: unknown): Promise<void> {
 		const { pluginId } = this.ctx.props;
-		await this.env.DB.prepare(
-			"INSERT OR REPLACE INTO _plugin_storage (plugin_id, collection, id, data, updated_at) VALUES (?, '__kv', ?, ?, datetime('now'))",
-		)
-			.bind(pluginId, key, JSON.stringify(value))
-			.run();
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			const now = new Date().toISOString();
+			await db
+				.insertInto("_plugin_storage")
+				.values({
+					plugin_id: pluginId,
+					collection: "__kv",
+					id: key,
+					data: JSON.stringify(value),
+					updated_at: now,
+				})
+				.onConflict((oc) =>
+					oc.columns(["plugin_id", "collection", "id"]).doUpdateSet({
+						data: JSON.stringify(value),
+						updated_at: now,
+					}),
+				)
+				.execute();
+		});
 	}
 
 	async kvDelete(key: string): Promise<boolean> {
 		const { pluginId } = this.ctx.props;
-		const result = await this.env.DB.prepare(
-			"DELETE FROM _plugin_storage WHERE plugin_id = ? AND collection = '__kv' AND id = ?",
-		)
-			.bind(pluginId, key)
-			.run();
-		return (result.meta?.changes ?? 0) > 0;
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			const result = await db
+				.deleteFrom("_plugin_storage")
+				.where("plugin_id", "=", pluginId)
+				.where("collection", "=", "__kv")
+				.where("id", "=", key)
+				.executeTakeFirst();
+			return (result.numDeletedRows ?? 0n) > 0n;
+		});
 	}
 
 	async kvList(prefix: string = ""): Promise<Array<{ key: string; value: unknown }>> {
 		const { pluginId } = this.ctx.props;
-		const results = await this.env.DB.prepare(
-			"SELECT id, data FROM _plugin_storage WHERE plugin_id = ? AND collection = '__kv' AND id LIKE ?",
-		)
-			.bind(pluginId, prefix + "%")
-			.all<{ id: string; data: string }>();
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			const rows = await db
+				.selectFrom("_plugin_storage")
+				.select(["id", "data"])
+				.where("plugin_id", "=", pluginId)
+				.where("collection", "=", "__kv")
+				.where("id", "like", `${prefix}%`)
+				.execute();
 
-		return (results.results ?? []).map((row) => ({
-			key: row.id,
-			value: JSON.parse(row.data),
-		}));
+			return rows.map((row) => ({
+				key: row.id,
+				value: JSON.parse(row.data as string) as unknown,
+			}));
+		});
 	}
 
 	// =========================================================================
@@ -324,42 +404,33 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 	// =========================================================================
 
 	async storageGet(collection: string, id: string): Promise<unknown> {
-		const { pluginId, storageCollections } = this.ctx.props;
+		const { storageCollections } = this.ctx.props;
 		if (!storageCollections.includes(collection)) {
 			throw new Error(`Storage collection not declared: ${collection}`);
 		}
-		const result = await this.env.DB.prepare(
-			"SELECT data FROM _plugin_storage WHERE plugin_id = ? AND collection = ? AND id = ?",
-		)
-			.bind(pluginId, collection, id)
-			.first<{ data: string }>();
-		if (!result) return null;
-		return JSON.parse(result.data);
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			return this.getStorageRepo(db, collection).get(id);
+		});
 	}
 
 	async storagePut(collection: string, id: string, data: unknown): Promise<void> {
-		const { pluginId, storageCollections } = this.ctx.props;
+		const { storageCollections } = this.ctx.props;
 		if (!storageCollections.includes(collection)) {
 			throw new Error(`Storage collection not declared: ${collection}`);
 		}
-		await this.env.DB.prepare(
-			"INSERT OR REPLACE INTO _plugin_storage (plugin_id, collection, id, data, updated_at) VALUES (?, ?, ?, ?, datetime('now'))",
-		)
-			.bind(pluginId, collection, id, JSON.stringify(data))
-			.run();
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			await this.getStorageRepo(db, collection).put(id, data);
+		});
 	}
 
 	async storageDelete(collection: string, id: string): Promise<boolean> {
-		const { pluginId, storageCollections } = this.ctx.props;
+		const { storageCollections } = this.ctx.props;
 		if (!storageCollections.includes(collection)) {
 			throw new Error(`Storage collection not declared: ${collection}`);
 		}
-		const result = await this.env.DB.prepare(
-			"DELETE FROM _plugin_storage WHERE plugin_id = ? AND collection = ? AND id = ?",
-		)
-			.bind(pluginId, collection, id)
-			.run();
-		return (result.meta?.changes ?? 0) > 0;
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			return this.getStorageRepo(db, collection).delete(id);
+		});
 	}
 
 	async storageQuery(
@@ -379,20 +450,22 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!storageCollections.includes(collection)) {
 			throw new Error(`Storage collection not declared: ${collection}`);
 		}
-		// Delegate to PluginStorageRepository for proper WHERE/ORDER BY/cursor support
-		const repo = this.getStorageRepo(collection);
-		const result = await repo.query({
-			// eslint-disable-next-line typescript-eslint/no-unsafe-type-assertion -- WhereClause is structurally Record<string, unknown>
-			where: opts.where as never,
-			orderBy: opts.orderBy,
-			limit: opts.limit,
-			cursor: opts.cursor,
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			// Delegate to PluginStorageRepository for proper WHERE/ORDER BY/cursor support
+			const repo = this.getStorageRepo(db, collection);
+			const result = await repo.query({
+				// eslint-disable-next-line typescript-eslint/no-unsafe-type-assertion -- WhereClause is structurally Record<string, unknown>
+				where: opts.where as never,
+				orderBy: opts.orderBy,
+				limit: opts.limit,
+				cursor: opts.cursor,
+			});
+			return {
+				items: result.items,
+				hasMore: result.hasMore,
+				cursor: result.cursor,
+			};
 		});
-		return {
-			items: result.items,
-			hasMore: result.hasMore,
-			cursor: result.cursor,
-		};
 	}
 
 	async storageCount(collection: string, where?: Record<string, unknown>): Promise<number> {
@@ -400,70 +473,44 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!storageCollections.includes(collection)) {
 			throw new Error(`Storage collection not declared: ${collection}`);
 		}
-		const repo = this.getStorageRepo(collection);
-		// eslint-disable-next-line typescript-eslint/no-unsafe-type-assertion -- WhereClause is structurally Record<string, unknown>
-		return repo.count(where as never);
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			const repo = this.getStorageRepo(db, collection);
+			// eslint-disable-next-line typescript-eslint/no-unsafe-type-assertion -- WhereClause is structurally Record<string, unknown>
+			return repo.count(where as never);
+		});
 	}
 
 	async storageGetMany(collection: string, ids: string[]): Promise<Map<string, unknown>> {
-		const { pluginId, storageCollections } = this.ctx.props;
+		const { storageCollections } = this.ctx.props;
 		if (!storageCollections.includes(collection)) {
 			throw new Error(`Storage collection not declared: ${collection}`);
 		}
-		if (ids.length === 0) return new Map();
-
-		const placeholders = ids.map(() => "?").join(",");
-		const results = await this.env.DB.prepare(
-			`SELECT id, data FROM _plugin_storage WHERE plugin_id = ? AND collection = ? AND id IN (${placeholders})`,
-		)
-			.bind(pluginId, collection, ...ids)
-			.all<{ id: string; data: string }>();
-
-		const map = new Map<string, unknown>();
-		for (const row of results.results ?? []) {
-			map.set(row.id, JSON.parse(row.data));
-		}
-		return map;
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			return this.getStorageRepo(db, collection).getMany(ids);
+		});
 	}
 
 	async storagePutMany(
 		collection: string,
 		items: Array<{ id: string; data: unknown }>,
 	): Promise<void> {
-		const { pluginId, storageCollections } = this.ctx.props;
+		const { storageCollections } = this.ctx.props;
 		if (!storageCollections.includes(collection)) {
 			throw new Error(`Storage collection not declared: ${collection}`);
 		}
-		if (items.length === 0) return;
-
-		// D1 doesn't support batch in prepare, so we do individual inserts
-		// In future, we could use batch API
-		for (const item of items) {
-			await this.env.DB.prepare(
-				"INSERT OR REPLACE INTO _plugin_storage (plugin_id, collection, id, data, updated_at) VALUES (?, ?, ?, ?, datetime('now'))",
-			)
-				.bind(pluginId, collection, item.id, JSON.stringify(item.data))
-				.run();
-		}
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			await this.getStorageRepo(db, collection).putMany(items);
+		});
 	}
 
 	async storageDeleteMany(collection: string, ids: string[]): Promise<number> {
-		const { pluginId, storageCollections } = this.ctx.props;
+		const { storageCollections } = this.ctx.props;
 		if (!storageCollections.includes(collection)) {
 			throw new Error(`Storage collection not declared: ${collection}`);
 		}
-		if (ids.length === 0) return 0;
-
-		let deleted = 0;
-		for (const id of ids) {
-			const result = await this.env.DB.prepare(
-				"DELETE FROM _plugin_storage WHERE plugin_id = ? AND collection = ? AND id = ?",
-			)
-				.bind(pluginId, collection, id)
-				.run();
-			deleted += result.meta?.changes ?? 0;
-		}
-		return deleted;
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			return this.getStorageRepo(db, collection).deleteMany(ids);
+		});
 	}
 
 	// =========================================================================
@@ -489,19 +536,10 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!COLLECTION_NAME_REGEX.test(collection)) {
 			throw new Error(`Invalid collection name: ${collection}`);
 		}
-		try {
-			// Content tables use ec_${collection} naming (no leading underscore)
-			// Exclude soft-deleted items
-			const result = await this.env.DB.prepare(
-				`SELECT * FROM ec_${collection} WHERE id = ? AND deleted_at IS NULL`,
-			)
-				.bind(id)
-				.first();
-			if (!result) return null;
-			return rowToContentItem(collection, result);
-		} catch {
-			return null;
-		}
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			const item = await new ContentRepository(db).findById(collection, id);
+			return item ? contentItemToBridgeItem(item) : null;
+		});
 	}
 
 	async contentList(
@@ -528,28 +566,28 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			throw new Error(`Invalid collection name: ${collection}`);
 		}
 		const limit = Math.min(opts.limit ?? 50, 100);
-		try {
+		return withBridgeDb({ isWrite: false }, async (db) => {
 			// Content tables use ec_${collection} naming (no leading underscore)
 			// Exclude soft-deleted items. Ordered by ULID (id DESC) for deterministic
 			// cursor pagination. ULIDs are time-sortable so this approximates created_at DESC.
-			let sql = `SELECT * FROM ec_${collection} WHERE deleted_at IS NULL`;
-			const params: unknown[] = [];
+			let query = db
+				.selectFrom(`ec_${collection}` as keyof Database)
+				.selectAll()
+				.where("deleted_at", "is", null);
 
 			if (opts.cursor) {
-				sql += " AND id < ?";
-				params.push(opts.cursor);
+				query = query.where("id", "<", opts.cursor);
 			}
 
-			sql += " ORDER BY id DESC LIMIT ?";
-			params.push(limit + 1);
+			const rows = await query
+				.orderBy("id", "desc")
+				.limit(limit + 1)
+				.execute();
 
-			const results = await this.env.DB.prepare(sql)
-				.bind(...params)
-				.all();
-
-			const rows = results.results ?? [];
 			const pageRows = rows.slice(0, limit);
-			const items = pageRows.map((row) => rowToContentItem(collection, row));
+			const items = pageRows.map((row) =>
+				rowToContentItem(collection, row as Record<string, unknown>),
+			);
 			const hasMore = rows.length > limit;
 
 			return {
@@ -557,9 +595,7 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 				cursor: hasMore && items.length > 0 ? items.at(-1)!.id : undefined,
 				hasMore,
 			};
-		} catch {
-			return { items: [], hasMore: false };
-		}
+		});
 	}
 
 	async contentCreate(
@@ -582,63 +618,21 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			throw new Error(`Invalid collection name: ${collection}`);
 		}
 		const locale = resolveContentCreateLocale(options?.locale, this.ctx.props.i18nConfig ?? null);
-		await this.assertMediaUsageActivationWriteAllowed();
 
-		const id = ulid();
-		const now = new Date().toISOString();
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			await this.assertMediaUsageActivationWriteAllowed(db);
 
-		// Build columns and values arrays — quote identifiers to avoid SQL keyword collisions
-		const columns: string[] = [
-			'"id"',
-			'"slug"',
-			'"status"',
-			'"author_id"',
-			'"created_at"',
-			'"updated_at"',
-			'"version"',
-			'"locale"',
-			'"translation_group"',
-		];
-		const values: unknown[] = [
-			id,
-			typeof data.slug === "string" ? data.slug : null,
-			typeof data.status === "string" ? data.status : "draft",
-			typeof data.author_id === "string" ? data.author_id : null,
-			now,
-			now,
-			1,
-			locale,
-			id,
-		];
+			const created = await new ContentRepository(db).create({
+				type: collection,
+				data,
+				status: typeof data.status === "string" ? data.status : "draft",
+				slug: typeof data.slug === "string" ? data.slug : undefined,
+				authorId: typeof data.author_id === "string" ? data.author_id : undefined,
+				locale,
+			});
 
-		// Append user data fields (skip system columns, quote identifiers)
-		for (const [key, value] of Object.entries(data)) {
-			if (!SYSTEM_COLUMNS.has(key) && COLLECTION_NAME_REGEX.test(key)) {
-				columns.push(`"${key}"`);
-				values.push(serializeValue(value));
-			}
-		}
-
-		const placeholders = columns.map(() => "?").join(", ");
-		const columnList = columns.join(", ");
-
-		await this.env.DB.prepare(
-			`INSERT INTO ec_${collection} (${columnList}) VALUES (${placeholders})`,
-		)
-			.bind(...values)
-			.run();
-
-		// Re-read the created row
-		const created = await this.env.DB.prepare(
-			`SELECT * FROM ec_${collection} WHERE id = ? AND deleted_at IS NULL`,
-		)
-			.bind(id)
-			.first();
-
-		if (!created) {
-			return { id, type: collection, data: {}, createdAt: now, updatedAt: now, locale };
-		}
-		return rowToContentItem(collection, created);
+			return contentItemToBridgeItem(created);
+		});
 	}
 
 	async contentUpdate(
@@ -660,23 +654,16 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!COLLECTION_NAME_REGEX.test(collection)) {
 			throw new Error(`Invalid collection name: ${collection}`);
 		}
-		await this.assertMediaUsageActivationWriteAllowed();
-		const db = new Kysely<Database>({
-			dialect: new D1Dialect({ database: this.env.DB }),
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			await this.assertMediaUsageActivationWriteAllowed(db);
+			const updated = await new ContentRepository(db).updateDraftAware(collection, id, {
+				data,
+				status: typeof data.status === "string" ? data.status : undefined,
+				slug:
+					data.slug === undefined ? undefined : typeof data.slug === "string" ? data.slug : null,
+			});
+			return contentItemToBridgeItem(updated);
 		});
-		const updated = await new ContentRepository(db).updateDraftAware(collection, id, {
-			data,
-			status: typeof data.status === "string" ? data.status : undefined,
-			slug: data.slug === undefined ? undefined : typeof data.slug === "string" ? data.slug : null,
-		});
-		return {
-			id: updated.id,
-			type: updated.type,
-			data: updated.data,
-			createdAt: updated.createdAt,
-			updatedAt: updated.updatedAt,
-			locale: updated.locale ?? "en",
-		};
 	}
 
 	async contentDelete(collection: string, id: string): Promise<boolean> {
@@ -687,16 +674,10 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!COLLECTION_NAME_REGEX.test(collection)) {
 			throw new Error(`Invalid collection name: ${collection}`);
 		}
-		await this.assertMediaUsageActivationWriteAllowed();
-
-		// Soft-delete: set deleted_at timestamp
-		const now = new Date().toISOString();
-		const result = await this.env.DB.prepare(
-			`UPDATE ec_${collection} SET deleted_at = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL`,
-		)
-			.bind(now, now, id)
-			.run();
-		return (result.meta?.changes ?? 0) > 0;
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			await this.assertMediaUsageActivationWriteAllowed(db);
+			return new ContentRepository(db).delete(collection, id);
+		});
 	}
 
 	// =========================================================================
@@ -717,24 +698,21 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!capabilities.includes("taxonomies:read")) {
 			throw new Error("Missing capability: taxonomies:read");
 		}
-		let sql = "SELECT * FROM _emdash_taxonomy_defs";
-		const params: unknown[] = [];
-		if (opts.locale !== undefined) {
-			sql += " WHERE locale = ?";
-			params.push(opts.locale);
-		}
-		sql += " ORDER BY name ASC";
-		const results = await this.env.DB.prepare(sql)
-			.bind(...params)
-			.all();
-		return (results.results ?? []).map((row) => ({
-			name: columnString(row.name),
-			label: columnString(row.label),
-			labelSingular: columnNullableString(row.label_singular),
-			hierarchical: row.hierarchical === 1,
-			collections: columnStringArray(row.collections),
-			locale: columnString(row.locale),
-		}));
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			let query = db.selectFrom("_emdash_taxonomy_defs").selectAll().orderBy("name", "asc");
+			if (opts.locale !== undefined) {
+				query = query.where("locale", "=", opts.locale);
+			}
+			const rows = await query.execute();
+			return rows.map((row) => ({
+				name: columnString(row.name),
+				label: columnString(row.label),
+				labelSingular: columnNullableString(row.label_singular),
+				hierarchical: row.hierarchical === 1,
+				collections: columnStringArray(row.collections),
+				locale: columnString(row.locale),
+			}));
+		});
 	}
 
 	async taxonomyTerms(
@@ -756,19 +734,20 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!capabilities.includes("taxonomies:read")) {
 			throw new Error("Missing capability: taxonomies:read");
 		}
-		let sql = "SELECT * FROM taxonomies WHERE name = ?";
-		const params: unknown[] = [taxonomy];
-		if (opts.locale !== undefined) {
-			sql += " AND locale = ?";
-			params.push(opts.locale);
-		}
-		// Manual order first, then label with `id ASC` as a stable tiebreaker for
-		// terms sharing both — matching core's TaxonomyRepository.findByName.
-		sql += " ORDER BY sort_order ASC, label ASC, id ASC";
-		const results = await this.env.DB.prepare(sql)
-			.bind(...params)
-			.all();
-		return (results.results ?? []).map(rowToTaxonomyTerm);
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			let query = db.selectFrom("taxonomies").selectAll().where("name", "=", taxonomy);
+			if (opts.locale !== undefined) {
+				query = query.where("locale", "=", opts.locale);
+			}
+			// Manual order first, then label with `id ASC` as a stable tiebreaker for
+			// terms sharing both — matching core's TaxonomyRepository.findByName.
+			const rows = await query
+				.orderBy("sort_order", "asc")
+				.orderBy("label", "asc")
+				.orderBy("id", "asc")
+				.execute();
+			return rows.map(rowToTaxonomyTerm);
+		});
 	}
 
 	async taxonomyEntryTerms(
@@ -791,26 +770,26 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!capabilities.includes("taxonomies:read")) {
 			throw new Error("Missing capability: taxonomies:read");
 		}
-		// The pivot stores the term's translation_group in taxonomy_id, so the
-		// join resolves an assignment into each locale's term row.
-		let sql =
-			"SELECT taxonomies.* FROM content_taxonomies " +
-			"JOIN taxonomies ON taxonomies.translation_group = content_taxonomies.taxonomy_id " +
-			"WHERE content_taxonomies.collection = ? AND content_taxonomies.entry_id = ?";
-		const params: unknown[] = [collection, entryId];
-		if (opts.taxonomy !== undefined) {
-			sql += " AND taxonomies.name = ?";
-			params.push(opts.taxonomy);
-		}
-		if (opts.locale !== undefined) {
-			sql += " AND taxonomies.locale = ?";
-			params.push(opts.locale);
-		}
-		sql += " ORDER BY taxonomies.locale ASC";
-		const results = await this.env.DB.prepare(sql)
-			.bind(...params)
-			.all();
-		return (results.results ?? []).map(rowToTaxonomyTerm);
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			// The pivot stores the term's translation_group in taxonomy_id, so the
+			// join resolves an assignment into each locale's term row.
+			let query = db
+				.selectFrom("content_taxonomies")
+				.innerJoin("taxonomies", "taxonomies.translation_group", "content_taxonomies.taxonomy_id")
+				.selectAll("taxonomies")
+				.where("content_taxonomies.collection", "=", collection)
+				.where("content_taxonomies.entry_id", "=", entryId);
+
+			if (opts.taxonomy !== undefined) {
+				query = query.where("taxonomies.name", "=", opts.taxonomy);
+			}
+			if (opts.locale !== undefined) {
+				query = query.where("taxonomies.locale", "=", opts.locale);
+			}
+
+			const rows = await query.orderBy("taxonomies.locale", "asc").execute();
+			return rows.map(rowToTaxonomyTerm);
+		});
 	}
 
 	// =========================================================================
@@ -829,23 +808,10 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!capabilities.includes("media:read")) {
 			throw new Error("Missing capability: media:read");
 		}
-		const result = await this.env.DB.prepare("SELECT * FROM media WHERE id = ?").bind(id).first<{
-			id: string;
-			filename: string;
-			mime_type: string;
-			size: number | null;
-			storage_key: string;
-			created_at: string;
-		}>();
-		if (!result) return null;
-		return {
-			id: result.id,
-			filename: result.filename,
-			mimeType: result.mime_type,
-			size: result.size,
-			url: `/_emdash/api/media/file/${result.storage_key}`,
-			createdAt: result.created_at,
-		};
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			const item = await new MediaRepository(db).findById(id);
+			return item ? mediaItemToBridgeItem(item) : null;
+		});
 	}
 
 	async mediaList(opts: { limit?: number; cursor?: string; mimeType?: string } = {}): Promise<{
@@ -864,52 +830,18 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!capabilities.includes("media:read")) {
 			throw new Error("Missing capability: media:read");
 		}
-		const limit = Math.min(opts.limit ?? 50, 100);
-		// Only return ready items (matching core's MediaRepository.findMany default)
-		let sql = "SELECT * FROM media WHERE status = 'ready'";
-		const params: unknown[] = [];
-
-		if (opts.mimeType) {
-			sql += " AND mime_type LIKE ?";
-			params.push(opts.mimeType + "%");
-		}
-
-		if (opts.cursor) {
-			sql += " AND id < ?";
-			params.push(opts.cursor);
-		}
-
-		sql += " ORDER BY id DESC LIMIT ?";
-		params.push(limit + 1);
-
-		const results = await this.env.DB.prepare(sql)
-			.bind(...params)
-			.all<{
-				id: string;
-				filename: string;
-				mime_type: string;
-				size: number | null;
-				storage_key: string;
-				created_at: string;
-			}>();
-
-		const rows = results.results ?? [];
-		const pageRows = rows.slice(0, limit);
-		const items = pageRows.map((row) => ({
-			id: row.id,
-			filename: row.filename,
-			mimeType: row.mime_type,
-			size: row.size,
-			url: `/_emdash/api/media/file/${row.storage_key}`,
-			createdAt: row.created_at,
-		}));
-		const hasMore = rows.length > limit;
-
-		return {
-			items,
-			cursor: hasMore && items.length > 0 ? items.at(-1)!.id : undefined,
-			hasMore,
-		};
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			const result = await new MediaRepository(db).findMany({
+				limit: opts.limit,
+				cursor: opts.cursor,
+				mimeType: opts.mimeType,
+			});
+			return {
+				items: result.items.map(mediaItemToBridgeItem),
+				cursor: result.nextCursor,
+				hasMore: result.nextCursor !== undefined,
+			};
+		});
 	}
 
 	/**
@@ -944,7 +876,6 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			);
 		}
 
-		const mediaId = ulid();
 		// Derive extension from basename only, validate it's a simple extension
 		const basename = filename.includes("/")
 			? filename.slice(filename.lastIndexOf("/") + 1)
@@ -952,8 +883,8 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		const rawExt = basename.includes(".") ? basename.slice(basename.lastIndexOf(".")) : "";
 		const ext = FILE_EXT_REGEX.test(rawExt) ? rawExt : "";
 		// Flat storage key matching core convention: ${ulid}${ext}
+		const mediaId = ulid();
 		const storageKey = `${mediaId}${ext}`;
-		const now = new Date().toISOString();
 
 		// Write bytes to R2 first, then create DB record.
 		// If DB insert fails, clean up the R2 object to prevent orphans.
@@ -962,12 +893,20 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		});
 
 		try {
-			// Create confirmed media record with ISO timestamp (matching core)
-			await this.env.DB.prepare(
-				"INSERT INTO media (id, filename, mime_type, size, storage_key, status, created_at) VALUES (?, ?, ?, ?, ?, 'ready', ?)",
-			)
-				.bind(mediaId, filename, contentType, bytes.byteLength, storageKey, now)
-				.run();
+			return await withBridgeDb({ isWrite: true }, async (db) => {
+				await new MediaRepository(db).create({
+					filename,
+					mimeType: contentType,
+					size: bytes.byteLength,
+					storageKey,
+					status: "ready",
+				});
+				return {
+					mediaId,
+					storageKey,
+					url: `/_emdash/api/media/file/${storageKey}`,
+				};
+			});
 		} catch (error) {
 			// Clean up R2 object on DB failure to prevent orphans
 			try {
@@ -978,12 +917,6 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			}
 			throw error;
 		}
-
-		return {
-			mediaId,
-			storageKey,
-			url: `/_emdash/api/media/file/${storageKey}`,
-		};
 	}
 
 	async mediaDelete(id: string): Promise<boolean> {
@@ -992,27 +925,21 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 			throw new Error("Missing capability: media:write");
 		}
 
-		// Look up the storage key before deleting
-		const media = await this.env.DB.prepare("SELECT storage_key FROM media WHERE id = ?")
-			.bind(id)
-			.first<{ storage_key: string }>();
+		return withBridgeDb({ isWrite: true }, async (db) => {
+			const storageKey = await new MediaRepository(db).deleteWithStorageKey(id);
 
-		if (!media) return false;
-
-		// Delete the DB row
-		const result = await this.env.DB.prepare("DELETE FROM media WHERE id = ?").bind(id).run();
-
-		// Delete from R2 if the binding is available
-		if (this.env.MEDIA && media.storage_key) {
-			try {
-				await this.env.MEDIA.delete(media.storage_key);
-			} catch {
-				// Log but don't fail - the DB row is already deleted
-				console.warn(`[plugin-bridge] Failed to delete R2 object: ${media.storage_key}`);
+			// Delete from R2 if the binding is available
+			if (this.env.MEDIA && storageKey) {
+				try {
+					await this.env.MEDIA.delete(storageKey);
+				} catch {
+					// Log but don't fail - the DB row is already deleted
+					console.warn(`[plugin-bridge] Failed to delete R2 object: ${storageKey}`);
+				}
 			}
-		}
 
-		return (result.meta?.changes ?? 0) > 0;
+			return storageKey !== null;
+		});
 	}
 
 	// =========================================================================
@@ -1046,25 +973,10 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!capabilities.includes("users:read")) {
 			throw new Error("Missing capability: users:read");
 		}
-		const result = await this.env.DB.prepare(
-			"SELECT id, email, name, role, created_at FROM users WHERE id = ?",
-		)
-			.bind(id)
-			.first<{
-				id: string;
-				email: string;
-				name: string | null;
-				role: number;
-				created_at: string;
-			}>();
-		if (!result) return null;
-		return {
-			id: result.id,
-			email: result.email,
-			name: result.name,
-			role: result.role,
-			createdAt: result.created_at,
-		};
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			const user = await new UserRepository(db).findById(id);
+			return user ? userToBridgeItem(user) : null;
+		});
 	}
 
 	async userGetByEmail(email: string): Promise<{
@@ -1078,25 +990,10 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!capabilities.includes("users:read")) {
 			throw new Error("Missing capability: users:read");
 		}
-		const result = await this.env.DB.prepare(
-			"SELECT id, email, name, role, created_at FROM users WHERE email = ?",
-		)
-			.bind(email.toLowerCase())
-			.first<{
-				id: string;
-				email: string;
-				name: string | null;
-				role: number;
-				created_at: string;
-			}>();
-		if (!result) return null;
-		return {
-			id: result.id,
-			email: result.email,
-			name: result.name,
-			role: result.role,
-			createdAt: result.created_at,
-		};
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			const user = await new UserRepository(db).findByEmail(email);
+			return user ? userToBridgeItem(user) : null;
+		});
 	}
 
 	async userList(opts?: { role?: number; limit?: number; cursor?: string }): Promise<{
@@ -1113,53 +1010,18 @@ export class PluginBridge extends WorkerEntrypoint<PluginBridgeEnv, PluginBridge
 		if (!capabilities.includes("users:read")) {
 			throw new Error("Missing capability: users:read");
 		}
-		const limit = Math.max(1, Math.min(opts?.limit ?? 50, 100));
-		let sql = "SELECT id, email, name, role, created_at FROM users";
-		const params: unknown[] = [];
-		const conditions: string[] = [];
-
-		if (opts?.role !== undefined) {
-			conditions.push("role = ?");
-			params.push(opts.role);
-		}
-
-		if (opts?.cursor) {
-			conditions.push("id < ?");
-			params.push(opts.cursor);
-		}
-
-		if (conditions.length > 0) {
-			sql += ` WHERE ${conditions.join(" AND ")}`;
-		}
-
-		sql += " ORDER BY id DESC LIMIT ?";
-		params.push(limit + 1);
-
-		const results = await this.env.DB.prepare(sql)
-			.bind(...params)
-			.all<{
-				id: string;
-				email: string;
-				name: string | null;
-				role: number;
-				created_at: string;
-			}>();
-
-		const rows = results.results ?? [];
-		const pageRows = rows.slice(0, limit);
-		const items = pageRows.map((row) => ({
-			id: row.id,
-			email: row.email,
-			name: row.name,
-			role: row.role,
-			createdAt: row.created_at,
-		}));
-		const hasMore = rows.length > limit;
-
-		return {
-			items,
-			nextCursor: hasMore && items.length > 0 ? items.at(-1)!.id : undefined,
-		};
+		return withBridgeDb({ isWrite: false }, async (db) => {
+			const result = await new UserRepository(db).findMany({
+				// eslint-disable-next-line typescript-eslint/no-unsafe-type-assertion -- bridge accepts any numeric role; repository narrows to known levels
+				role: opts?.role as never,
+				limit: opts?.limit,
+				cursor: opts?.cursor,
+			});
+			return {
+				items: result.items.map(userToBridgeItem),
+				nextCursor: result.nextCursor,
+			};
+		});
 	}
 
 	// =========================================================================

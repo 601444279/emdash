@@ -22,6 +22,7 @@ vi.mock("cloudflare:workers", () => ({
 }));
 
 import { PluginBridge } from "../../src/sandbox/bridge.js";
+import { createTestDb, testState } from "./helpers.js";
 
 type Row = Record<string, unknown>;
 
@@ -42,15 +43,7 @@ function fakeD1(rows: Row[], recorded: RecordedQuery[]) {
 				},
 				async all() {
 					recorded.push({ sql, params: statement.params });
-					return { results: rows };
-				},
-				async first() {
-					recorded.push({ sql, params: statement.params });
-					return rows[0] ?? null;
-				},
-				async run() {
-					recorded.push({ sql, params: statement.params });
-					return { meta: { changes: 0 } };
+					return { results: rows, meta: { changes: 0 } };
 				},
 			};
 			return statement;
@@ -69,9 +62,9 @@ function makeBridge(capabilities: string[], rows: Row[] = []) {
 			storageCollections: [],
 		},
 	};
-	const env = { DB: fakeD1(rows, recorded) };
+	testState.currentDb = createTestDb(fakeD1(rows, recorded));
 	// eslint-disable-next-line typescript/no-unsafe-type-assertion -- fake ctx/env stand in for the Workers runtime injections
-	const bridge = new PluginBridge(ctx as never, env as never);
+	const bridge = new PluginBridge(ctx as never, {} as never);
 	return { bridge, recorded };
 }
 
@@ -84,6 +77,8 @@ const TERM_ROW: Row = {
 	data: '{"color":"red"}',
 	locale: "en",
 	translation_group: "tg-1",
+	// Ensure stable tiebreaker against the unordered term row used in join tests.
+	sort_order: 0,
 };
 
 describe("PluginBridge taxonomy methods — capability enforcement", () => {
@@ -148,7 +143,7 @@ describe("taxonomyList", () => {
 
 		expect(recorded[0]?.sql).not.toContain("locale");
 		expect(recorded[0]?.params).toEqual([]);
-		expect(recorded[1]?.sql).toContain("WHERE locale = ?");
+		expect(recorded[1]?.sql).toMatch(/where\s+["']?locale["']?\s*=\s*\?/i);
 		expect(recorded[1]?.params).toEqual(["de"]);
 	});
 });
@@ -182,20 +177,22 @@ describe("taxonomyTerms", () => {
 		await bridge.taxonomyTerms("category");
 		await bridge.taxonomyTerms("category", { locale: "fr" });
 
-		expect(recorded[0]?.sql).toContain("WHERE name = ?");
+		expect(recorded[0]?.sql).toMatch(/where\s+["']?name["']?\s*=\s*\?/i);
 		expect(recorded[0]?.params).toEqual(["category"]);
-		expect(recorded[1]?.sql).toContain("AND locale = ?");
+		expect(recorded[1]?.sql).toMatch(/["']?locale["']?\s*=\s*\?/i);
 		expect(recorded[1]?.params).toEqual(["category", "fr"]);
 	});
 
 	// Terms carry a manual order, so a plugin reading through the bridge has to
 	// get the same order core's TaxonomyRepository.findByName returns. The clause
-	// is a raw string here, so assert it rather than trusting it.
+	// is built through Kysely here, so assert the ordering is preserved.
 	it("orders by the manual position ahead of the label", async () => {
 		const { bridge, recorded } = makeBridge(["taxonomies:read"]);
 		await bridge.taxonomyTerms("category");
 
-		expect(recorded[0]?.sql).toContain("ORDER BY sort_order ASC, label ASC, id ASC");
+		expect(recorded[0]?.sql).toMatch(
+			/order by\s+["']?sort_order["']?\s+asc,?\s+["']?label["']?\s+asc,?\s+["']?id["']?\s+asc/i,
+		);
 	});
 });
 
@@ -204,8 +201,8 @@ describe("taxonomyEntryTerms", () => {
 		const { bridge, recorded } = makeBridge(["taxonomies:read"], [TERM_ROW]);
 		const terms = await bridge.taxonomyEntryTerms("posts", "post-1");
 
-		expect(recorded[0]?.sql).toContain(
-			"JOIN taxonomies ON taxonomies.translation_group = content_taxonomies.taxonomy_id",
+		expect(recorded[0]?.sql).toMatch(
+			/join\s+["']?taxonomies["']?\s+on\s+["']?taxonomies["']?\.["']?translation_group["']?\s*=\s*["']?content_taxonomies["']?\.["']?taxonomy_id["']?/i,
 		);
 		expect(recorded[0]?.params).toEqual(["posts", "post-1"]);
 		expect(terms[0]?.taxonomy).toBe("category");
@@ -215,8 +212,8 @@ describe("taxonomyEntryTerms", () => {
 		const { bridge, recorded } = makeBridge(["taxonomies:read"]);
 		await bridge.taxonomyEntryTerms("posts", "post-1", { taxonomy: "tag", locale: "de" });
 
-		expect(recorded[0]?.sql).toContain("AND taxonomies.name = ?");
-		expect(recorded[0]?.sql).toContain("AND taxonomies.locale = ?");
+		expect(recorded[0]?.sql).toMatch(/["']?taxonomies["']?\.["']?name["']?\s*=\s*\?/i);
+		expect(recorded[0]?.sql).toMatch(/["']?taxonomies["']?\.["']?locale["']?\s*=\s*\?/i);
 		expect(recorded[0]?.params).toEqual(["posts", "post-1", "tag", "de"]);
 	});
 });
