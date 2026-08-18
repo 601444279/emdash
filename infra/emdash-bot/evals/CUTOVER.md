@@ -123,7 +123,7 @@ updating at cutover** until the follow-up lands.
 
 ## Eval gate (fill after the live pre-flight run)
 
-Run `pnpm evals -- --all` against the staging worker (see `evals/README.md`),
+Run `pnpm evals --all` against the staging worker (see `evals/README.md`),
 then paste the summary here. **Do not merge until this reads GATE PASSED.**
 
 Latest full run: 2026-08-10, results

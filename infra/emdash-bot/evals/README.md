@@ -60,11 +60,11 @@ The gate passes only with **zero confident-wrong and zero errors**.
 ## Usage
 
 ```sh
-pnpm evals -- --case 917               # one case
-pnpm evals -- --case 917 --case 895    # several
-pnpm evals -- --category not_reproducible
-pnpm evals -- --comparison             # six-case model comparison subset
-pnpm evals -- --all
+pnpm evals --case 917               # one case
+pnpm evals --case 917 --case 895    # several
+pnpm evals --category not_reproducible
+pnpm evals --comparison             # six-case model comparison subset
+pnpm evals --all
 ```
 
 ### Compare Workers AI models
@@ -72,9 +72,9 @@ pnpm evals -- --all
 `MODEL` selects an allow-listed model for authenticated eval dispatches. It does not change the production default. Use `--comparison` for three confirmed bugs spanning easy through hard, two not-reproducible cases, and one needs-info case:
 
 ```sh
-MODEL=cloudflare/@cf/moonshotai/kimi-k2.7-code pnpm evals -- --comparison
-MODEL=cloudflare/@cf/deepseek-ai/deepseek-v4-flash-0731 pnpm evals -- --comparison
-MODEL=cloudflare/@cf/deepseek-ai/deepseek-v4-pro-0813 pnpm evals -- --comparison
+MODEL=cloudflare/@cf/moonshotai/kimi-k2.7-code pnpm evals --comparison
+MODEL=cloudflare/@cf/deepseek-ai/deepseek-v4-flash-0731 pnpm evals --comparison
+MODEL=cloudflare/@cf/deepseek-ai/deepseek-v4-pro-0813 pnpm evals --comparison
 ```
 
 Each report prints the model and writes it into the JSON artifact. The artifact filename also includes the model slug, so sequential comparison runs do not produce ambiguous results. Run the comparison against a staging Worker that includes the eval model selector; production webhook dispatches omit the field and continue to use Kimi K2.7 Code.

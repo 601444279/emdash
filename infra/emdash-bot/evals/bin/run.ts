@@ -1,10 +1,10 @@
 // Operator CLI for the investigation-bot eval harness.
 //
-//   pnpm evals -- --case 917
-//   pnpm evals -- --case 917 --case 895
-//   pnpm evals -- --category not_reproducible
-//   pnpm evals -- --comparison
-//   pnpm evals -- --all
+//   pnpm evals --case 917
+//   pnpm evals --case 917 --case 895
+//   pnpm evals --category not_reproducible
+//   pnpm evals --comparison
+//   pnpm evals --all
 //
 // Requires a DEPLOYED worker and live bindings. Environment:
 //   WORKER_URL    base URL of the deployed bot worker
