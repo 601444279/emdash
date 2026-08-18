@@ -42,10 +42,11 @@ type MediaUsageSourceNullableStringColumn =
 	| "last_attempted_at"
 	| "last_error_code";
 const OCCURRENCE_BIND_COLUMNS = 13;
+const D1_MAX_BOUND_PARAMETERS = 100;
 export const MEDIA_USAGE_GENERATION_WRITE_LEASE_MS = 60 * 60 * 1000;
 const OCCURRENCE_INSERT_BATCH_SIZE = Math.max(
 	1,
-	Math.floor(SQL_BATCH_SIZE / OCCURRENCE_BIND_COLUMNS),
+	Math.floor(D1_MAX_BOUND_PARAMETERS / OCCURRENCE_BIND_COLUMNS),
 );
 
 function cleanupDeleteBatchSize(cleanupLease: MediaUsageCleanupLease | undefined): number {

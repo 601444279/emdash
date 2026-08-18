@@ -27,8 +27,9 @@ const CONTENT_USAGE_COLLECTION_LOCKS_KEY = Symbol.for("emdash.mediaUsage.collect
 const CONTENT_USAGE_REFRESH_MAX_ATTEMPTS = 2;
 
 export const MEDIA_USAGE_PROJECTION_ADMISSION_LIMITS = Object.freeze({
-	maxOccurrenceMutationUnitsPerClaim: 12,
-	maxProjectionMutationBytesPerClaim: 512 * 1024,
+	maxOccurrenceMutationUnitsPerClaim: 500,
+	maxProjectionMutationBytesPerVariant: 2_000_000,
+	maxProjectionMutationBytesPerClaim: 4_000_000,
 });
 
 export interface ContentMediaUsageAdmissionBudget {
@@ -107,6 +108,7 @@ export async function planContentMediaUsageProjectionAdmission(
 		.filter((source): source is MediaUsageSource => source !== undefined);
 	let deletionOccurrenceUnits = 0;
 	let deletionBytes = 0;
+	let largestDeletionBytes = 0;
 	for (const source of absentSources) {
 		const measurement = await repo.measureSourceGenerationDeletion(
 			source.sourceKey,
@@ -119,7 +121,10 @@ export async function planContentMediaUsageProjectionAdmission(
 				: { outcome: "intrinsic_resource_limit" };
 		}
 		deletionOccurrenceUnits += measurement.occurrenceCount;
-		deletionBytes += storedMediaUsageSourceByteLength(source) + measurement.occurrenceBytes * 2;
+		const sourceDeletionBytes =
+			storedMediaUsageSourceByteLength(source) + measurement.occurrenceBytes * 2;
+		deletionBytes += sourceDeletionBytes;
+		largestDeletionBytes = Math.max(largestDeletionBytes, sourceDeletionBytes);
 	}
 
 	const noOpSourceKeys = new Set<string>();
@@ -128,6 +133,7 @@ export async function planContentMediaUsageProjectionAdmission(
 		noOpSourceKeys,
 		deletionOccurrenceUnits,
 		deletionBytes,
+		largestDeletionBytes,
 	);
 	if (exceedsProjectionAdmissionLimits(cost)) {
 		for (const snapshot of snapshots) {
@@ -144,6 +150,7 @@ export async function planContentMediaUsageProjectionAdmission(
 			noOpSourceKeys,
 			deletionOccurrenceUnits,
 			deletionBytes,
+			largestDeletionBytes,
 		);
 	}
 
@@ -175,6 +182,7 @@ export async function planContentMediaUsageProjectionAdmission(
 interface ProjectionAdmissionCost {
 	occurrenceMutationUnits: number;
 	projectionMutationBytes: number;
+	largestProjectionMutationBytes: number;
 }
 
 function projectionAdmissionCost(
@@ -182,17 +190,23 @@ function projectionAdmissionCost(
 	noOpSourceKeys: ReadonlySet<string>,
 	deletionOccurrenceUnits: number,
 	deletionBytes: number,
+	largestDeletionBytes: number,
 ): ProjectionAdmissionCost {
 	return snapshots.reduce<ProjectionAdmissionCost>(
 		(cost, snapshot) => {
 			if (noOpSourceKeys.has(snapshot.source.sourceKey)) return cost;
 			cost.occurrenceMutationUnits += snapshot.occurrences.length;
 			cost.projectionMutationBytes += snapshot.projectionByteLength;
+			cost.largestProjectionMutationBytes = Math.max(
+				cost.largestProjectionMutationBytes,
+				snapshot.projectionByteLength,
+			);
 			return cost;
 		},
 		{
 			occurrenceMutationUnits: deletionOccurrenceUnits,
 			projectionMutationBytes: deletionBytes,
+			largestProjectionMutationBytes: largestDeletionBytes,
 		},
 	);
 }
@@ -201,6 +215,8 @@ function exceedsProjectionAdmissionLimits(cost: ProjectionAdmissionCost): boolea
 	return (
 		cost.occurrenceMutationUnits >
 			MEDIA_USAGE_PROJECTION_ADMISSION_LIMITS.maxOccurrenceMutationUnitsPerClaim ||
+		cost.largestProjectionMutationBytes >
+			MEDIA_USAGE_PROJECTION_ADMISSION_LIMITS.maxProjectionMutationBytesPerVariant ||
 		cost.projectionMutationBytes >
 			MEDIA_USAGE_PROJECTION_ADMISSION_LIMITS.maxProjectionMutationBytesPerClaim
 	);
