@@ -81,6 +81,7 @@ On Cloudflare Workers, scheduled publishing, plugin cron, and maintenance tasks 
 
 ```ts title="src/worker.ts"
 import handler, {
+	createMediaUsageFetchHandler,
 	createMediaUsageQueueHandler,
 	createScheduledHandler,
 	type MediaUsageWakeMessage,
@@ -93,6 +94,7 @@ const resolveMediaUsageQueue = (env: Env) => env.MEDIA_USAGE_QUEUE;
 
 export default {
 	...handler,
+	fetch: createMediaUsageFetchHandler(handler, resolveMediaUsageQueue),
 	scheduled: createScheduledHandler({ resolveMediaUsageQueue }),
 	queue: createMediaUsageQueueHandler(resolveMediaUsageQueue),
 } satisfies ExportedHandler<Env, MediaUsageWakeMessage>;
@@ -134,20 +136,25 @@ while work remains. Queue messages contain no content identity, and the existing
 remain authoritative if a message is retried or lost. Concurrency stays at one because D1 processes a
 database sequentially.
 
-Existing custom Workers without a Queue binding keep the previous bounded Cron path. To use different
-schedules, set the corresponding `generalCron` or `mediaUsageCron` option in
-`createScheduledHandler()` and use the same expression in `wrangler.jsonc`.
+Existing custom Workers without a Queue binding run a bounded maintenance slice on each Media Usage
+Cron event. To use different schedules, set the corresponding `generalCron` or `mediaUsageCron`
+option in `createScheduledHandler()` and use the same expression in `wrangler.jsonc`.
 
 <Aside type="caution">
-	Without the general trigger, scheduled publishing and plugin cron do not run. Without the dedicated Media Usage trigger, automatic historical reconciliation cannot start or recover after Queue retries are exhausted. Local `astro dev` still uses the in-process scheduler.
+	Without the general trigger, scheduled publishing and plugin cron do not run. Without the dedicated Media Usage trigger, an interrupted or exhausted Queue chain cannot recover automatically. Local `astro dev` still uses the in-process scheduler.
 </Aside>
 
 ### Enable automatic media usage indexing
 
 Keep `mediaUsageCron` running, then pause all application and direct database writes. Open
-**Settings → Media Usage**, select **Enable Media Usage**, confirm the safety requirements, and use
-**Continue setup** until setup finishes. Resume writers only after activation is active. The page
-then shows how many content types have finished indexing existing content.
+**Settings → Media Usage**, select **Enable Media Usage**, and confirm the safety requirements once.
+EmDash queues the remaining setup work and starts indexing existing content. This work continues if
+you close the page. The Media Usage Cron recovers setup or indexing after an interrupted Queue chain.
+
+Keep writers stopped while the page shows **Setting up**. Resume writers when it shows **Starting
+indexing**, **Indexing existing content**, or **Ready**. While the page is visible, it refreshes
+progress every two seconds. If **Needs attention** offers **Retry setup**, keep writers stopped, fix
+the server error, and retry. An indexing failure after setup is active does not block writers.
 
 The [REST procedure](/reference/rest-api/#enable-automatic-media-usage-indexing) remains available
 for API operators.

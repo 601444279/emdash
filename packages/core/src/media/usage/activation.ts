@@ -415,33 +415,24 @@ async function claimActivation(
 	mode: MediaUsageActivationClaimMode,
 ): Promise<Selectable<MediaUsageActivationTable> | null> {
 	const now = timestampOffset(db, 0);
+	const claimValues = {
+		lease_token: leaseToken,
+		lease_expires_at: timestampOffset(db, MEDIA_USAGE_ACTIVATION_LIMITS.leaseDurationSeconds),
+		attempt_count: sql<number>`attempt_count + 1`,
+		last_attempted_at: now,
+		updated_at: now,
+	};
 	let claim = db
 		.updateTable("_emdash_media_usage_activation")
 		.set(
 			mode === "confirmed"
 				? {
+						...claimValues,
 						state: "activating",
 						drain_confirmed_at: now,
-						lease_token: leaseToken,
-						lease_expires_at: timestampOffset(
-							db,
-							MEDIA_USAGE_ACTIVATION_LIMITS.leaseDurationSeconds,
-						),
-						attempt_count: sql<number>`attempt_count + 1`,
-						last_attempted_at: now,
 						last_error_code: null,
-						updated_at: now,
 					}
-				: {
-						lease_token: leaseToken,
-						lease_expires_at: timestampOffset(
-							db,
-							MEDIA_USAGE_ACTIVATION_LIMITS.leaseDurationSeconds,
-						),
-						attempt_count: sql<number>`attempt_count + 1`,
-						last_attempted_at: now,
-						updated_at: now,
-					},
+				: claimValues,
 		)
 		.where("task_key", "=", ACTIVATION_KEY)
 		.where("runtime_generation", "=", MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION);

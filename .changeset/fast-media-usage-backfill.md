@@ -3,4 +3,4 @@
 "@emdash-cms/cloudflare": patch
 ---
 
-Speeds up automatic Media Usage indexing on Workers Paid and raises the per-item limit to 500 media occurrences.
+Speeds up Media Usage setup and historical indexing on Workers Paid, including entries with up to 500 media occurrences.

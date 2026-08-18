@@ -3,4 +3,4 @@
 "@emdash-cms/admin": minor
 ---
 
-Adds guided Media Usage setup and historical indexing progress for administrators.
+Adds one-action Media Usage setup with live historical indexing status for administrators.

@@ -375,6 +375,7 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			status: "indexing",
 			readyCollections: 1,
 			totalCollections: 2,
+			indexingStarted: true,
 		});
 
 		await ctx.db
@@ -393,6 +394,7 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			status: "needs_attention",
 			readyCollections: 1,
 			totalCollections: 2,
+			indexingStarted: true,
 		});
 
 		await ctx.db.deleteFrom("_emdash_media_usage_work").execute();
@@ -405,6 +407,7 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			status: "ready",
 			readyCollections: 2,
 			totalCollections: 2,
+			indexingStarted: true,
 		});
 
 		await ctx.db
@@ -422,6 +425,7 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			status: "ready",
 			readyCollections: 2,
 			totalCollections: 2,
+			indexingStarted: true,
 		});
 
 		await ctx.db
@@ -433,6 +437,7 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			status: "needs_attention",
 			readyCollections: 1,
 			totalCollections: 2,
+			indexingStarted: true,
 		});
 
 		await ctx.db
@@ -454,6 +459,7 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			status: "ready",
 			readyCollections: 1,
 			totalCollections: 1,
+			indexingStarted: true,
 		});
 		await ctx.db
 			.updateTable("_emdash_media_usage_collection_deletions")
@@ -464,6 +470,7 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			status: "needs_attention",
 			readyCollections: 1,
 			totalCollections: 1,
+			indexingStarted: true,
 		});
 
 		await ctx.db
@@ -475,6 +482,7 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			status: "needs_attention",
 			readyCollections: 0,
 			totalCollections: 1,
+			indexingStarted: false,
 		});
 	});
 
