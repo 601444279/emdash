@@ -3,20 +3,28 @@
 //   pnpm evals -- --case 917
 //   pnpm evals -- --case 917 --case 895
 //   pnpm evals -- --category not_reproducible
+//   pnpm evals -- --comparison
 //   pnpm evals -- --all
 //
 // Requires a DEPLOYED worker and live bindings. Environment:
 //   WORKER_URL    base URL of the deployed bot worker
 //   ADMIN_TOKEN   bearer token for /agents/* (the worker's GITHUB_WEBHOOK_SECRET)
-//   GH_TOKEN      GitHub token to read issue titles/bodies (read-only)
+//   GH_TOKEN      optional GitHub token for higher read-only API limits
 //   REPO          owner/name to investigate against (default emdash-cms/emdash)
 //   TIMEOUT_MS    per-case verdict timeout (default 1800000)
 //   POLL_MS       snapshot poll interval (default 15000)
+//   MODEL         allow-listed Workers AI model (default Kimi K2.7 Code)
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+	BOT_MODELS,
+	DEFAULT_BOT_MODEL,
+	botModelSlug,
+	parseBotModel,
+} from "../../.flue/lib/models.ts";
 import { loadDataset } from "../src/dataset.ts";
 import { formatReport, toJson } from "../src/format.ts";
 import { runEvals, type RunConfig, type Selection } from "../src/runner.ts";
@@ -39,10 +47,13 @@ function parseSelection(argv: readonly string[]): Selection {
 	const numbers: number[] = [];
 	let category: Category | undefined;
 	let all = false;
+	let comparison = false;
 	for (let i = 0; i < argv.length; i += 1) {
 		const arg = argv[i];
 		if (arg === "--all") {
 			all = true;
+		} else if (arg === "--comparison") {
+			comparison = true;
 		} else if (arg === "--case") {
 			const value = argv[(i += 1)];
 			if (!value) fail("--case needs an issue number");
@@ -62,8 +73,9 @@ function parseSelection(argv: readonly string[]): Selection {
 	}
 	if (numbers.length > 0) return { kind: "cases", numbers };
 	if (category) return { kind: "category", category };
+	if (comparison) return { kind: "comparison" };
 	if (all) return { kind: "all" };
-	fail("select cases with --case <n>, --category <c>, or --all");
+	fail("select cases with --case <n>, --category <c>, --comparison, or --all");
 }
 
 function requireEnv(name: string): string {
@@ -82,13 +94,17 @@ async function main(): Promise<void> {
 	const dataset = loadDataset();
 	const [owner, repo] = (process.env.REPO ?? "emdash-cms/emdash").split("/");
 	if (!owner || !repo) fail("REPO must be owner/name");
+	const modelValue = process.env.MODEL ?? DEFAULT_BOT_MODEL;
+	const model = parseBotModel(modelValue);
+	if (!model) fail(`MODEL must be one of ${BOT_MODELS.join(", ")}`);
 
 	const config: RunConfig = {
 		baseUrl: requireEnv("WORKER_URL"),
 		token: requireEnv("ADMIN_TOKEN"),
-		githubToken: requireEnv("GH_TOKEN"),
+		...(process.env.GH_TOKEN ? { githubToken: process.env.GH_TOKEN } : {}),
 		owner,
 		repo,
+		model,
 		...(process.env.TIMEOUT_MS ? { timeoutMs: Number(process.env.TIMEOUT_MS) } : {}),
 		...(process.env.POLL_MS ? { pollMs: Number(process.env.POLL_MS) } : {}),
 	};
@@ -96,12 +112,15 @@ async function main(): Promise<void> {
 	const results = await runEvals(config, dataset, selection);
 	const summary = summarize(results);
 
-	console.log(`\n${formatReport(results, summary)}\n`);
+	console.log(`\n${formatReport(results, summary, model)}\n`);
 
 	const dir = join(dirname(fileURLToPath(import.meta.url)), "../results");
 	mkdirSync(dir, { recursive: true });
-	const file = join(dir, `${new Date().toISOString().replace(/[:.]/g, "-")}.json`);
-	writeFileSync(file, `${JSON.stringify(toJson(results, summary), null, 2)}\n`);
+	const file = join(
+		dir,
+		`${new Date().toISOString().replace(/[:.]/g, "-")}-${botModelSlug(model)}.json`,
+	);
+	writeFileSync(file, `${JSON.stringify(toJson(results, summary, undefined, model), null, 2)}\n`);
 	console.log(`results written to ${file}`);
 
 	process.exit(summary.gatePassed ? 0 : 1);

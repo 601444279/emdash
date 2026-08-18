@@ -3,16 +3,18 @@
 // scores them. Pure scoring/formatting live in their own modules and are the
 // only parts CI exercises.
 
+import { DEFAULT_BOT_MODEL, type BotModel } from "../../.flue/lib/models.ts";
 import { dispatchInvestigation, waitForResult, type AgentEndpoint } from "./client.ts";
-import { checkoutRefFor, filterByCategory, findCase } from "./dataset.ts";
+import { checkoutRefFor, filterByCategory, findCase, modelComparisonCases } from "./dataset.ts";
 import { scoreCase } from "./scorer.ts";
 import type { Category, Dataset, EvalCase, ScoredResult } from "./types.ts";
 
 export interface RunConfig extends AgentEndpoint {
 	/** GitHub token used to read issue titles/bodies (read-only). */
-	readonly githubToken: string;
+	readonly githubToken?: string;
 	readonly owner: string;
 	readonly repo: string;
+	readonly model?: BotModel;
 	/** Per-case verdict timeout. Defaults to 30 min (the agent's durability ceiling). */
 	readonly timeoutMs?: number;
 	readonly pollMs?: number;
@@ -22,6 +24,7 @@ export interface RunConfig extends AgentEndpoint {
 
 export type Selection =
 	| { readonly kind: "all" }
+	| { readonly kind: "comparison" }
 	| { readonly kind: "category"; readonly category: Category }
 	| { readonly kind: "cases"; readonly numbers: readonly number[] };
 
@@ -32,6 +35,8 @@ export function selectCases(dataset: Dataset, selection: Selection): EvalCase[] 
 	switch (selection.kind) {
 		case "all":
 			return [...dataset.cases];
+		case "comparison":
+			return modelComparisonCases(dataset);
 		case "category":
 			return filterByCategory(dataset, selection.category);
 		case "cases": {
@@ -51,14 +56,17 @@ interface Issue {
 	readonly body: string;
 }
 
-async function fetchIssue(config: RunConfig, number: number): Promise<Issue> {
+export async function fetchIssue(
+	config: Pick<RunConfig, "owner" | "repo" | "githubToken">,
+	number: number,
+): Promise<Issue> {
 	const response = await fetch(
 		`https://api.github.com/repos/${config.owner}/${config.repo}/issues/${number}`,
 		{
 			headers: {
-				authorization: `Bearer ${config.githubToken}`,
 				accept: "application/vnd.github+json",
 				"user-agent": "emdash-bot-evals",
+				...(config.githubToken ? { authorization: `Bearer ${config.githubToken}` } : {}),
 			},
 		},
 	);
@@ -71,8 +79,14 @@ async function fetchIssue(config: RunConfig, number: number): Promise<Issue> {
 
 async function runOne(config: RunConfig, evalCase: EvalCase): Promise<ScoredResult> {
 	const log = config.log ?? console.log;
+	const model = config.model ?? DEFAULT_BOT_MODEL;
+	const startedAt = Date.now();
+	const scored = (input: Parameters<typeof scoreCase>[1]): ScoredResult => ({
+		...scoreCase(evalCase, input),
+		durationMs: Date.now() - startedAt,
+	});
 	const baseRef = checkoutRefFor(evalCase);
-	log(`#${evalCase.number} [${evalCase.category}] dispatching @ ${baseRef.slice(0, 12)}`);
+	log(`#${evalCase.number} [${evalCase.category}] dispatching ${model} @ ${baseRef.slice(0, 12)}`);
 	try {
 		const issue = await fetchIssue(config, evalCase.number);
 		const runId = crypto.randomUUID();
@@ -81,6 +95,7 @@ async function runOne(config: RunConfig, evalCase: EvalCase): Promise<ScoredResu
 			runId,
 			issueNumber: evalCase.number,
 			mode: "diagnose",
+			model,
 			arg: null,
 			issueTitle: issue.title,
 			issueBody: issue.body,
@@ -96,15 +111,15 @@ async function runOne(config: RunConfig, evalCase: EvalCase): Promise<ScoredResu
 			},
 		);
 		if (!reported) {
-			return scoreCase(evalCase, { error: "run settled without a reported verdict" });
+			return scored({ error: "run settled without a reported verdict" });
 		}
-		const scored = scoreCase(evalCase, reported);
-		log(`#${evalCase.number} -> ${scored.outcome} (${scored.grade})`);
-		return scored;
+		const result = scored(reported);
+		log(`#${evalCase.number} -> ${result.outcome} (${result.grade})`);
+		return result;
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
 		log(`#${evalCase.number} -> ERROR: ${message}`);
-		return scoreCase(evalCase, { error: message });
+		return scored({ error: message });
 	}
 }
 

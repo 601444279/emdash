@@ -63,8 +63,21 @@ The gate passes only with **zero confident-wrong and zero errors**.
 pnpm evals -- --case 917               # one case
 pnpm evals -- --case 917 --case 895    # several
 pnpm evals -- --category not_reproducible
+pnpm evals -- --comparison             # six-case model comparison subset
 pnpm evals -- --all
 ```
+
+### Compare Workers AI models
+
+`MODEL` selects an allow-listed model for authenticated eval dispatches. It does not change the production default. Use `--comparison` for three confirmed bugs spanning easy through hard, two not-reproducible cases, and one needs-info case:
+
+```sh
+MODEL=cloudflare/@cf/moonshotai/kimi-k2.7-code pnpm evals -- --comparison
+MODEL=cloudflare/@cf/deepseek-ai/deepseek-v4-flash-0731 pnpm evals -- --comparison
+MODEL=cloudflare/@cf/deepseek-ai/deepseek-v4-pro-0813 pnpm evals -- --comparison
+```
+
+Each report prints the model and writes it into the JSON artifact. The artifact filename also includes the model slug, so sequential comparison runs do not produce ambiguous results. Run the comparison against a staging Worker that includes the eval model selector; production webhook dispatches omit the field and continue to use Kimi K2.7 Code.
 
 ### Environment
 
@@ -72,10 +85,13 @@ pnpm evals -- --all
 | ------------- | ------------------------------------------------------------------- |
 | `WORKER_URL`  | Base URL of the deployed bot worker                                 |
 | `ADMIN_TOKEN` | Bearer token for `/agents/*` (the worker's `GITHUB_WEBHOOK_SECRET`) |
-| `GH_TOKEN`    | GitHub token to read issue titles/bodies (read-only)                |
+| `GH_TOKEN`    | Optional token for higher GitHub read-only API limits               |
 | `REPO`        | `owner/name` to investigate (default `emdash-cms/emdash`)           |
 | `TIMEOUT_MS`  | Per-case verdict timeout (default 1800000 = 30 min)                 |
 | `POLL_MS`     | Snapshot poll interval (default 15000)                              |
+| `MODEL`       | Allow-listed Workers AI model (default Kimi K2.7 Code)              |
+
+Issue bodies come from GitHub's public API. `GH_TOKEN` is optional for this public repository; set it when running enough cases to risk the unauthenticated API rate limit.
 
 Results print as a table plus a gate banner and are written to
 `evals/results/<timestamp>.json` (gitignored). The process exits non-zero if the

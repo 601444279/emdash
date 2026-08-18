@@ -1,6 +1,7 @@
 // Results formatting: a plain-text table + a prominent gate banner, plus the
 // JSON artifact the operator keeps alongside the run. Pure and unit-tested.
 
+import { DEFAULT_BOT_MODEL, type BotModel } from "../../.flue/lib/models.ts";
 import type { Summary } from "./scorer.ts";
 import type { ScoredResult } from "./types.ts";
 
@@ -22,6 +23,10 @@ function pad(value: string, width: number): string {
 	return value.length >= width ? value : value + " ".repeat(width - value.length);
 }
 
+function formatDuration(durationMs: number | undefined): string {
+	return durationMs === undefined ? "-" : `${(durationMs / 1_000).toFixed(1)}s`;
+}
+
 export function formatTable(results: readonly ScoredResult[]): string {
 	const rows = results.map((r) => ({
 		num: `#${r.number}`,
@@ -30,6 +35,7 @@ export function formatTable(results: readonly ScoredResult[]): string {
 		ref: r.checkoutRef === "main" ? "main" : r.checkoutRef.slice(0, 8),
 		outcome: r.outcome,
 		grade: GRADE_MARK[r.grade],
+		duration: formatDuration(r.durationMs),
 		detail: r.reason,
 	}));
 	const headers = {
@@ -39,6 +45,7 @@ export function formatTable(results: readonly ScoredResult[]): string {
 		ref: "ref",
 		outcome: "outcome",
 		grade: "grade",
+		duration: "duration",
 		detail: "detail",
 	};
 	const all = [headers, ...rows];
@@ -49,6 +56,7 @@ export function formatTable(results: readonly ScoredResult[]): string {
 		ref: Math.max(...all.map((r) => r.ref.length)),
 		outcome: Math.max(...all.map((r) => r.outcome.length)),
 		grade: Math.max(...all.map((r) => r.grade.length)),
+		duration: Math.max(...all.map((r) => r.duration.length)),
 	};
 	const line = (r: (typeof all)[number]) =>
 		[
@@ -58,6 +66,7 @@ export function formatTable(results: readonly ScoredResult[]): string {
 			pad(r.ref, widths.ref),
 			pad(r.outcome, widths.outcome),
 			pad(r.grade, widths.grade),
+			pad(r.duration, widths.duration),
 			r.detail,
 		].join("  ");
 	return [line(headers), ...rows.map(line)].join("\n");
@@ -81,6 +90,7 @@ export function formatSummary(summary: Summary): string {
 
 export interface ResultsJson {
 	readonly generatedAt: string;
+	readonly model: BotModel;
 	readonly summary: Summary;
 	readonly results: readonly ScoredResult[];
 }
@@ -89,10 +99,15 @@ export function toJson(
 	results: readonly ScoredResult[],
 	summary: Summary,
 	generatedAt: string = new Date().toISOString(),
+	model: BotModel = DEFAULT_BOT_MODEL,
 ): ResultsJson {
-	return { generatedAt, summary, results };
+	return { generatedAt, model, summary, results };
 }
 
-export function formatReport(results: readonly ScoredResult[], summary: Summary): string {
-	return `${formatTable(results)}\n${formatSummary(summary)}`;
+export function formatReport(
+	results: readonly ScoredResult[],
+	summary: Summary,
+	model: BotModel = DEFAULT_BOT_MODEL,
+): string {
+	return `model: ${model}\n\n${formatTable(results)}\n${formatSummary(summary)}`;
 }

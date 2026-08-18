@@ -112,6 +112,8 @@ export interface ScoredResult {
 	readonly anchorsMatched: readonly string[];
 	readonly summary: string | null;
 	readonly reason: string;
+	/** End-to-end dispatch-to-verdict time, recorded by live eval runs. */
+	readonly durationMs?: number;
 	/** Set when grade is "error". */
 	readonly error?: string;
 }

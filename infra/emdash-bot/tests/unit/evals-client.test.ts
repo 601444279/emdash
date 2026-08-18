@@ -1,6 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
+import { BOT_MODELS } from "../../.flue/lib/models.js";
 import {
+	dispatchInvestigation,
 	extractInvestigationResult,
 	waitForResult,
 	type Snapshot,
@@ -14,6 +16,36 @@ const REPORTED = {
 	publication: null,
 	verification: [],
 };
+
+afterEach(() => vi.unstubAllGlobals());
+
+test("dispatch includes the selected eval model in initial data", async () => {
+	const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+		new Response(JSON.stringify({ submissionId: "submission-1" }), {
+			status: 202,
+			headers: { "content-type": "application/json" },
+		}),
+	);
+	vi.stubGlobal("fetch", fetchMock);
+
+	await dispatchInvestigation({ baseUrl: "https://worker.test", token: "secret" }, "eval-917-run", {
+		runId: "run-1",
+		issueNumber: 917,
+		mode: "diagnose",
+		model: BOT_MODELS[1],
+		arg: null,
+		issueTitle: "Scheduled posts fail",
+		issueBody: "body",
+		previousBranchSha: null,
+		baseRef: "main",
+	});
+
+	const request = fetchMock.mock.calls[0]?.[1];
+	if (typeof request?.body !== "string") throw new Error("expected string request body");
+	expect(JSON.parse(request.body)).toMatchObject({
+		initialData: { model: BOT_MODELS[1] },
+	});
+});
 
 describe("extractInvestigationResult", () => {
 	test("finds the reported payload nested in a snapshot data part", () => {

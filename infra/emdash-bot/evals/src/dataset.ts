@@ -13,6 +13,7 @@ import * as v from "valibot";
 import type { Category, Dataset, EvalCase, PreFix } from "./types.ts";
 
 const CATEGORIES = ["CONFIRMED_BUG", "NOT_REPRODUCIBLE", "NEEDS_INFO"] as const;
+const MODEL_COMPARISON_CASE_NUMBERS = [2344, 917, 2245, 1413, 914, 1272] as const;
 const COMMIT_SHA = /^[0-9a-f]{40}$/i;
 
 const preFixSchema = v.object({
@@ -88,6 +89,14 @@ export function filterByCategory(dataset: Dataset, category: Category): EvalCase
 
 export function findCase(dataset: Dataset, number: number): EvalCase | undefined {
 	return dataset.cases.find((c) => c.number === number);
+}
+
+export function modelComparisonCases(dataset: Dataset): EvalCase[] {
+	return MODEL_COMPARISON_CASE_NUMBERS.map((number) => {
+		const evalCase = findCase(dataset, number);
+		if (!evalCase) throw new Error(`model comparison case #${number} is missing`);
+		return evalCase;
+	});
 }
 
 const DATASET_PATH = join(dirname(fileURLToPath(import.meta.url)), "../dataset.json");

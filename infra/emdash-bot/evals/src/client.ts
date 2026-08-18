@@ -6,6 +6,7 @@
 // `extractInvestigationResult` is pure and unit-tested; the network calls are
 // operator-only.
 
+import type { BotModel } from "../../.flue/lib/models.ts";
 import type { ReportedResult } from "./types.ts";
 
 const TRAILING_SLASH = /\/$/;
@@ -25,6 +26,7 @@ export interface InvestigateInitialData {
 	readonly runId: string;
 	readonly issueNumber: number;
 	readonly mode: "diagnose";
+	readonly model: BotModel;
 	readonly arg: string | null;
 	readonly issueTitle: string;
 	readonly issueBody: string;

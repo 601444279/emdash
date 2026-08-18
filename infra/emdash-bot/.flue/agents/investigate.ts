@@ -53,6 +53,7 @@ import {
 	updateBranch,
 } from "../lib/github.js";
 import { applyInvestigationResult } from "../lib/investigation-result.js";
+import { BOT_MODELS, DEFAULT_BOT_MODEL } from "../lib/models.js";
 import { FLUE_RUN_TIMEOUT_MS, SANDBOX_SLEEP_AFTER_SECONDS } from "../lib/run-policy.js";
 import { buildTimeoutSummaryPrompt, isTimeoutSummaryDelivery } from "../lib/timeout-recovery.js";
 import { untarInto } from "../lib/untar.js";
@@ -100,6 +101,7 @@ const initialDataSchema = v.object({
 	runId: v.pipe(v.string(), v.minLength(1)),
 	issueNumber: v.number(),
 	mode: v.picklist(["repro", "implement", "revise", "diagnose", "fix"]),
+	model: v.optional(v.picklist(BOT_MODELS)),
 	arg: v.optional(v.nullable(v.string())),
 	issueTitle: v.pipe(v.string(), v.minLength(1)),
 	issueBody: v.string(),
@@ -210,7 +212,7 @@ export function Investigate({ id }: AgentProps) {
 	const [lastFailure, setLastFailure] = usePersistentState<RunFailure | null>("last-failure", null);
 	const writeResult = useDataWriter("investigation", { schema: reportedResultSchema });
 
-	useModel("cloudflare/@cf/moonshotai/kimi-k2.7-code");
+	useModel(input.model ?? DEFAULT_BOT_MODEL);
 	if (isTimeoutSummaryDelivery(delivery)) {
 		return buildTimeoutSummaryPrompt({ mode: input.mode, verification, lastFailure });
 	}

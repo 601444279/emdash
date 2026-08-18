@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import { BOT_MODELS } from "../../.flue/lib/models.js";
 import { formatReport, formatSummary, formatTable, toJson } from "../../evals/src/format.ts";
 import { summarize } from "../../evals/src/scorer.ts";
 import type { ScoredResult } from "../../evals/src/types.ts";
@@ -23,7 +24,7 @@ function result(overrides: Partial<ScoredResult>): ScoredResult {
 describe("formatTable", () => {
 	test("renders a header and one row per result with a short ref", () => {
 		const table = formatTable([
-			result({}),
+			result({ durationMs: 12_345 }),
 			result({
 				number: 1413,
 				category: "NOT_REPRODUCIBLE",
@@ -38,6 +39,7 @@ describe("formatTable", () => {
 		expect(table).toContain("c0c6c72e");
 		expect(table).not.toContain("c0c6c72e0a75e9560f204e3780cafb5baf6a9b4b");
 		expect(table).toContain("main");
+		expect(table).toContain("12.3s");
 	});
 });
 
@@ -71,8 +73,9 @@ describe("formatSummary", () => {
 describe("toJson", () => {
 	test("carries the summary and results with a fixed timestamp", () => {
 		const results = [result({})];
-		const json = toJson(results, summarize(results), "2026-08-08T00:00:00.000Z");
+		const json = toJson(results, summarize(results), "2026-08-08T00:00:00.000Z", BOT_MODELS[1]);
 		expect(json.generatedAt).toBe("2026-08-08T00:00:00.000Z");
+		expect(json.model).toBe(BOT_MODELS[1]);
 		expect(json.summary.gatePassed).toBe(true);
 		expect(json.results).toHaveLength(1);
 	});
@@ -81,7 +84,8 @@ describe("toJson", () => {
 describe("formatReport", () => {
 	test("combines the table and the summary banner", () => {
 		const results = [result({})];
-		const report = formatReport(results, summarize(results));
+		const report = formatReport(results, summarize(results), BOT_MODELS[1]);
+		expect(report).toContain(BOT_MODELS[1]);
 		expect(report).toContain("#917");
 		expect(report).toContain("GATE PASSED");
 	});

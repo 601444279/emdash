@@ -3,6 +3,7 @@ import { describe, expect, test } from "vitest";
 import {
 	checkoutRefFor,
 	loadDataset,
+	modelComparisonCases,
 	parseDataset,
 	resolvePreFixRef,
 } from "../../evals/src/dataset.ts";
@@ -132,5 +133,21 @@ describe("committed dataset.json", () => {
 		for (const c of ds.cases.filter((x) => x.category !== "CONFIRMED_BUG")) {
 			expect(checkoutRefFor(c)).toBe("main");
 		}
+	});
+
+	test("the model comparison subset spans outcomes and difficulty", () => {
+		const comparison = modelComparisonCases(ds);
+		expect(comparison.map((item) => item.number)).toEqual([2344, 917, 2245, 1413, 914, 1272]);
+		expect(comparison.map((item) => item.category)).toEqual([
+			"CONFIRMED_BUG",
+			"CONFIRMED_BUG",
+			"CONFIRMED_BUG",
+			"NOT_REPRODUCIBLE",
+			"NOT_REPRODUCIBLE",
+			"NEEDS_INFO",
+		]);
+		expect(new Set(comparison.map((item) => item.difficulty))).toEqual(
+			new Set(["easy", "medium", "hard"]),
+		);
 	});
 });
