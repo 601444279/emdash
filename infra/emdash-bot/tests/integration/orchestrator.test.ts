@@ -17,11 +17,13 @@
 // Each test uses a fresh DO instance via `getByName(uniqueName)` so test
 // ordering doesn't matter.
 
+import { runInDurableObject } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { applyInvestigationResult } from "../../.flue/lib/investigation-result.js";
 import type { NormalizedEvent } from "../../.flue/lib/orchestrator.js";
+import { RUN_TRACE_EVENT_LIMIT } from "../../.flue/lib/run-trace.js";
 
 interface TestEnv {
 	Orchestrator: Env["Orchestrator"];
@@ -159,6 +161,111 @@ describe("OrchestratorDO (workers-pool)", () => {
 			},
 		]);
 		expect(snapshot.progress[0]).not.toHaveProperty("runId");
+	});
+
+	test("persists an idempotent paginated public trace for the current run", async () => {
+		const stub = testEnv.Orchestrator.getByName(uniqueIssueName());
+		await stub.debugSetStaleRun(
+			"trace-run",
+			Date.now() - 1_000,
+			"investigate-trace-run",
+			"implement",
+		);
+		const first = {
+			key: "submission-1:1:turn",
+			at: Date.now() - 500,
+			kind: "turn" as const,
+			title: "Model turn",
+			detail: "deepseek-v4 · 100 tokens",
+			tone: "active" as const,
+			turnId: "turn-1",
+			durationMs: 1_000,
+			output: "Inspect the bridge.",
+		};
+		const second = {
+			key: "submission-1:2:tool",
+			at: Date.now(),
+			kind: "tool" as const,
+			title: "read_file",
+			detail: null,
+			tone: "success" as const,
+			toolCallId: "call-1",
+			durationMs: 5,
+			output: "bridge source",
+		};
+
+		await expect(stub.recordRunTraceEvent({ runId: "stale-run", event: first })).resolves.toBe(
+			false,
+		);
+		await expect(stub.recordRunTraceEvent({ runId: "trace-run", event: first })).resolves.toBe(
+			true,
+		);
+		await expect(stub.recordRunTraceEvent({ runId: "trace-run", event: first })).resolves.toBe(
+			true,
+		);
+		await expect(stub.recordRunTraceEvent({ runId: "trace-run", event: second })).resolves.toBe(
+			true,
+		);
+
+		const latest = await stub.getPublicRunTrace({ limit: 1 });
+		expect(latest.runs).toMatchObject([{ runId: "trace-run", mode: "implement", eventCount: 2 }]);
+		expect(latest.selectedRunId).toBe("trace-run");
+		expect(latest.events).toMatchObject([{ kind: "tool", output: "bridge source" }]);
+		expect(latest.nextBefore).toEqual(expect.any(Number));
+
+		const earlier = await stub.getPublicRunTrace({
+			runId: "trace-run",
+			before: latest.nextBefore ?? undefined,
+			limit: 1,
+		});
+		expect(earlier.events).toMatchObject([{ kind: "turn", output: "Inspect the bridge." }]);
+		expect(earlier.nextBefore).toBeNull();
+	});
+
+	test("bounds persisted trace history to the newest events", async () => {
+		const stub = testEnv.Orchestrator.getByName(uniqueIssueName());
+		await stub.debugSetStaleRun(
+			"bounded-trace-run",
+			Date.now() - 1_000,
+			"investigate-bounded-trace-run",
+			"implement",
+		);
+		await runInDurableObject(stub, (_instance, state) => {
+			state.storage.sql.exec(
+				`WITH RECURSIVE sequence(value) AS (
+					SELECT 1
+					UNION ALL
+					SELECT value + 1 FROM sequence WHERE value < ?
+				)
+				INSERT INTO run_trace_events
+					(event_key, run_id, mode, recorded_at, event_type, payload)
+				SELECT 'seed-' || value, 'bounded-trace-run', 'implement', value, 'turn', ?
+				FROM sequence`,
+				RUN_TRACE_EVENT_LIMIT + 1,
+				JSON.stringify({
+					key: "seed",
+					at: 1,
+					kind: "turn",
+					title: "Model turn",
+					tone: "active",
+				}),
+			);
+		});
+
+		await stub.recordRunTraceEvent({
+			runId: "bounded-trace-run",
+			event: {
+				key: "newest-event",
+				at: Date.now(),
+				kind: "tool",
+				title: "run_check",
+				tone: "success",
+			},
+		});
+
+		const trace = await stub.getPublicRunTrace({ limit: 1 });
+		expect(trace.runs[0]?.eventCount).toBe(RUN_TRACE_EVENT_LIMIT);
+		expect(trace.events[0]?.key).toBe("newest-event");
 	});
 
 	test("duplicate deliveryId is deduped on the second event() call", async () => {
