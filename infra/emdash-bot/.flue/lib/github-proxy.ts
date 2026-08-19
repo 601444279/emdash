@@ -138,7 +138,7 @@ export async function inspectGithubRequest(
 				: {
 						allowed: false,
 						stage: "receive-pack",
-						reason: "git push may only update the current issue's bot artifacts branch",
+						reason: "git push may only update the current issue's bot branch",
 						refs: inspection.refs,
 						parseError: inspection.parseError,
 					};
@@ -223,7 +223,10 @@ async function inspectReceivePack(
 				}
 				const length = Number.parseInt(header, 16);
 				if (length === 0) {
-					const allowed = new Set([`refs/heads/bot/artifacts-${issueNumber}`]);
+					const allowed = new Set([
+						`refs/heads/bot/fix-${issueNumber}`,
+						`refs/heads/bot/artifacts-${issueNumber}`,
+					]);
 					return { allowed: refs.length > 0 && refs.every((ref) => allowed.has(ref)), refs };
 				}
 				if (length < 4 || length > MAX_RECEIVE_PACK_COMMAND_BYTES) {

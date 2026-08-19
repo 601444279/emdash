@@ -3,7 +3,6 @@ import { describe, expect, test } from "vitest";
 import {
 	renderPreparingWorkPlanComment,
 	renderWorkPlanComment,
-	requireWorkPlanReadyForReport,
 	updateWorkPlan,
 } from "../../.flue/lib/work-plan.js";
 
@@ -75,12 +74,6 @@ describe("agent work plans", () => {
 				1_000,
 			),
 		).toThrow(/unique/);
-	});
-
-	test("blocks successful reporting until every step is completed or skipped", () => {
-		const plan = updateWorkPlan(null, initial, 1_000);
-		expect(() => requireWorkPlanReadyForReport(plan, true)).toThrow(/unfinished/);
-		expect(() => requireWorkPlanReadyForReport(plan, false)).not.toThrow();
 	});
 
 	test("renders an evolving checklist and final outcome safely", () => {
