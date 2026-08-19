@@ -65,20 +65,6 @@ export function updateWorkPlan(
 	return { summary, steps, updatedAt };
 }
 
-export function requireWorkPlanReadyForReport(plan: WorkPlan | null, succeeded: boolean): void {
-	if (!plan)
-		throw new Error("Create a work plan with update_work_plan before reporting the result");
-	if (!succeeded) return;
-	const unfinished = plan.steps.filter(
-		(step) => step.status !== "completed" && step.status !== "skipped",
-	);
-	if (unfinished.length > 0) {
-		throw new Error(
-			`work plan has unfinished steps: ${unfinished.map((step) => step.id).join(", ")}`,
-		);
-	}
-}
-
 export function renderWorkPlanComment(input: {
 	plan: WorkPlan;
 	mode: RunMode;
