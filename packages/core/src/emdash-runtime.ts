@@ -2112,6 +2112,7 @@ export class EmDashRuntime {
 				createSandboxRunnerOptions(
 					{
 						db,
+						databaseDescriptor: deps.config.database,
 						beforeContentWrite: () => assertMediaUsageActivationWriteAllowed(db),
 						mediaStorage: mediaStorage
 							? {
@@ -2236,6 +2237,7 @@ export class EmDashRuntime {
 				createSandboxRunnerOptions(
 					{
 						db,
+						databaseDescriptor: deps.config.database,
 						beforeContentWrite: () => assertMediaUsageActivationWriteAllowed(db),
 						mediaStorage: {
 							upload: (opts) =>

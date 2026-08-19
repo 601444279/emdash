@@ -12,7 +12,6 @@ vi.mock("cloudflare:workers", () => ({
 }));
 
 import { PluginBridge } from "../../src/sandbox/bridge.js";
-import { createTestDb, testState } from "./helpers.js";
 
 const bridgeContext = {
 	props: {
@@ -25,13 +24,12 @@ const bridgeContext = {
 };
 
 function makeBridge(db: unknown, i18nConfig?: { defaultLocale: string; locales: string[] } | null) {
-	testState.currentDb = createTestDb(db);
 	return new PluginBridge(
 		{
 			...bridgeContext,
 			props: { ...bridgeContext.props, i18nConfig },
 		} as never,
-		{} as never,
+		{ DB: db } as never,
 	);
 }
 
@@ -43,17 +41,12 @@ describe("PluginBridge content write fence", () => {
 					bind() {
 						return this;
 					},
-					async all() {
+					async first() {
 						return {
-							results: [
-								{
-									id: "post-id",
-									locale: "fr",
-									created_at: "2026-08-16T00:00:00.000Z",
-									updated_at: "2026-08-16T00:00:00.000Z",
-								},
-							],
-							meta: { changes: 0 },
+							id: "post-id",
+							locale: "fr",
+							created_at: "2026-08-16T00:00:00.000Z",
+							updated_at: "2026-08-16T00:00:00.000Z",
 						};
 					},
 				};
@@ -74,11 +67,11 @@ describe("PluginBridge content write fence", () => {
 					bind() {
 						return this;
 					},
-					async all() {
-						return {
-							results: [{ state: "activating" }],
-							meta: { changes: 0 },
-						};
+					async first() {
+						return { state: "activating" };
+					},
+					async run() {
+						return { meta: { changes: 1 } };
 					},
 				};
 			},
@@ -103,20 +96,18 @@ describe("PluginBridge content write fence", () => {
 					bind() {
 						return statement;
 					},
-					async all() {
+					async first() {
 						if (sql.includes("_emdash_media_usage_activation")) {
 							throw new Error("D1_ERROR: no such table: _emdash_media_usage_activation");
 						}
 						return {
-							results: [
-								{
-									id: "created-id",
-									created_at: "2026-08-09T00:00:00.000Z",
-									updated_at: "2026-08-09T00:00:00.000Z",
-								},
-							],
-							meta: { changes: 1 },
+							id: "created-id",
+							created_at: "2026-08-09T00:00:00.000Z",
+							updated_at: "2026-08-09T00:00:00.000Z",
 						};
+					},
+					async run() {
+						return { meta: { changes: 1 } };
 					},
 				};
 				return statement;
@@ -136,7 +127,7 @@ describe("PluginBridge content write fence", () => {
 					bind() {
 						return this;
 					},
-					async all() {
+					async first() {
 						throw new Error("private database failure");
 					},
 				};
@@ -187,21 +178,19 @@ describe("PluginBridge content write fence", () => {
 						statements.push({ sql, values });
 						return statement;
 					},
-					async all() {
+					async first() {
 						if (sql.includes("_emdash_media_usage_activation")) {
 							throw new Error("D1_ERROR: no such table: _emdash_media_usage_activation");
 						}
 						return {
-							results: [
-								{
-									id: "created-id",
-									locale: expected,
-									created_at: "2026-08-16T00:00:00.000Z",
-									updated_at: "2026-08-16T00:00:00.000Z",
-								},
-							],
-							meta: { changes: 1 },
+							id: "created-id",
+							locale: expected,
+							created_at: "2026-08-16T00:00:00.000Z",
+							updated_at: "2026-08-16T00:00:00.000Z",
 						};
+					},
+					async run() {
+						return { meta: { changes: 1 } };
 					},
 				};
 				return statement;
@@ -209,7 +198,7 @@ describe("PluginBridge content write fence", () => {
 		};
 
 		const created = await makeBridge(db, config).contentCreate("posts", {}, options);
-		const insert = statements.find(({ sql }) => /insert into/i.test(sql));
+		const insert = statements.find(({ sql }) => sql.startsWith("INSERT INTO"));
 
 		expect(insert?.sql).toContain('"locale"');
 		expect(insert?.values).toContain(expected);
@@ -218,7 +207,7 @@ describe("PluginBridge content write fence", () => {
 		expect(created).toMatchObject({ locale: expected });
 	});
 
-	it("rejects invalid locale options before querying the database", async () => {
+	it("rejects invalid locale options before querying D1", async () => {
 		const prepare = vi.fn();
 		const bridge = makeBridge({ prepare }, { defaultLocale: "en", locales: ["en", "fr"] });
 

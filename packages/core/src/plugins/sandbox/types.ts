@@ -10,6 +10,7 @@
 import type { Kysely } from "kysely";
 
 import type { Database } from "../../database/types.js";
+import type { DatabaseDescriptor } from "../../db/adapters.js";
 import type { PluginManifest, RequestMeta, UserInfo } from "../types.js";
 
 /**
@@ -69,6 +70,15 @@ export interface SandboxOptions {
 	storage?: PluginCodeStorage;
 	/** Database for bridge operations */
 	db: Kysely<Database>;
+	/**
+	 * Database descriptor for the configured adapter.
+	 *
+	 * Sandboxed runners that talk to the database across an isolate boundary
+	 * (e.g. Cloudflare Worker Loader's PluginBridge DO) receive this descriptor
+	 * so they can resolve an event-scoped connection in the same backend as the
+	 * rest of the site, rather than assuming a hardcoded D1 binding.
+	 */
+	databaseDescriptor?: DatabaseDescriptor;
 	/** Called immediately before a sandboxed plugin content mutation. */
 	beforeContentWrite?: () => Promise<void>;
 	/** Default resource limits */

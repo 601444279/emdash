@@ -24,10 +24,9 @@ import {
 	type SandboxRunnerFactory,
 	type SerializedRequest,
 	type PluginManifest,
-	type I18nConfig,
 } from "emdash";
 
-import { setEmailSendCallback } from "./bridge.js";
+import { setEmailSendCallback, type PluginBridgeProps } from "./bridge.js";
 import type { WorkerLoader, WorkerStub, PluginBridgeBinding, WorkerLoaderLimits } from "./types.js";
 import { generatePluginWrapper } from "./wrapper.js";
 
@@ -46,19 +45,6 @@ const DEFAULT_LIMITS = {
 	subrequests: 10,
 	wallTimeMs: 30_000,
 } as const;
-
-export interface PluginBridgeProps {
-	pluginId: string;
-	pluginVersion: string;
-	capabilities: string[];
-	allowedHosts: string[];
-	storageCollections: string[];
-	i18nConfig?: I18nConfig | null;
-	storageConfig?: Record<
-		string,
-		{ indexes?: Array<string | string[]>; uniqueIndexes?: Array<string | string[]> }
-	>;
-}
 
 /**
  * Get the Worker Loader binding from env
@@ -179,6 +165,7 @@ export class CloudflareSandboxRunner implements SandboxRunner {
 			code,
 			loader,
 			pluginBridge,
+			this.options,
 			this.resolvedLimits,
 			this.siteInfo,
 		);
@@ -212,6 +199,7 @@ class CloudflareSandboxedPlugin implements SandboxedPluginInstance {
 	private createBridge: (opts: { props: PluginBridgeProps }) => PluginBridgeBinding;
 	private code: string;
 	private wrapperCode: string | null = null;
+	private options: SandboxOptions;
 	private limits: ResolvedLimits;
 	private siteInfo?: {
 		name: string;
@@ -225,6 +213,7 @@ class CloudflareSandboxedPlugin implements SandboxedPluginInstance {
 		code: string,
 		loader: WorkerLoader,
 		createBridge: (opts: { props: PluginBridgeProps }) => PluginBridgeBinding,
+		options: SandboxOptions,
 		limits: ResolvedLimits,
 		siteInfo?: {
 			name: string;
@@ -238,6 +227,7 @@ class CloudflareSandboxedPlugin implements SandboxedPluginInstance {
 		this.code = code;
 		this.loader = loader;
 		this.createBridge = createBridge;
+		this.options = options;
 		this.limits = limits;
 		this.siteInfo = siteInfo;
 	}
@@ -276,6 +266,7 @@ class CloudflareSandboxedPlugin implements SandboxedPluginInstance {
 				storageCollections: Object.keys(this.manifest.storage || {}),
 				i18nConfig: getI18nConfig(),
 				storageConfig: this.manifest.storage,
+				databaseDescriptor: this.options.databaseDescriptor,
 			},
 		});
 

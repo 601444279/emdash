@@ -19,6 +19,7 @@ export {
 	ContentRepository,
 	MediaRepository,
 	PluginStorageRepository,
+	TaxonomyRepository,
 	UserRepository,
 	OptionsRepository,
 	EmDashValidationError,
