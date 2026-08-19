@@ -80,6 +80,46 @@ describe("media usage activation admin API", () => {
 		await expect(fetchMediaUsageProgress()).resolves.toEqual(data);
 	});
 
+	it("reads a finalizing progress snapshot", async () => {
+		const data = {
+			status: "indexing",
+			readyCollections: 1,
+			totalCollections: 2,
+			indexingStarted: true,
+			finalizing: true,
+		} as const;
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(success(data));
+
+		await expect(fetchMediaUsageProgress()).resolves.toEqual(data);
+	});
+
+	it.each([
+		[
+			"false signal",
+			{ status: "indexing", readyCollections: 1, totalCollections: 2, finalizing: false },
+		],
+		[
+			"ready state",
+			{ status: "ready", readyCollections: 2, totalCollections: 2, finalizing: true },
+		],
+		[
+			"not started",
+			{
+				status: "indexing",
+				readyCollections: 0,
+				totalCollections: 2,
+				indexingStarted: false,
+				finalizing: true,
+			},
+		],
+	] as const)("rejects a contradictory finalizing %s", async (_label, data) => {
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(success(data));
+
+		await expect(caught(() => fetchMediaUsageProgress())).resolves.toMatchObject({
+			kind: "unknown",
+		});
+	});
+
 	it("rejects a malformed progress startup signal", async () => {
 		vi.spyOn(globalThis, "fetch").mockResolvedValue(
 			success({

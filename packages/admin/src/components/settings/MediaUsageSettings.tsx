@@ -339,21 +339,25 @@ function StatusRow({
 			? t`Needs attention`
 			: starting
 				? t`Starting indexing`
-				: progress?.status === "ready"
-					? t`Ready`
-					: progress?.status === "needs_attention"
-						? t`Needs attention`
-						: t`Indexing existing content`;
+				: progress?.finalizing
+					? t`Finishing setup`
+					: progress?.status === "ready"
+						? t`Ready`
+						: progress?.status === "needs_attention"
+							? t`Needs attention`
+							: t`Indexing existing content`;
 		detail = progressError
 			? t`New changes are still tracked automatically.`
 			: starting
 				? t`Background indexing is starting.`
-				: progress
-					? plural(progress.totalCollections, {
-							one: `${progress.readyCollections} of # content type ready`,
-							other: `${progress.readyCollections} of # content types ready`,
-						})
-					: t`Background indexing is starting.`;
+				: progress?.finalizing
+					? t`All existing content is indexed. Checking that Media Usage is ready.`
+					: progress
+						? plural(progress.totalCollections, {
+								one: `${progress.readyCollections} of # content type ready`,
+								other: `${progress.readyCollections} of # content types ready`,
+							})
+						: t`Background indexing is starting.`;
 		badge = progressError ? t`Needs attention` : heading;
 		variant = progressError
 			? "error"

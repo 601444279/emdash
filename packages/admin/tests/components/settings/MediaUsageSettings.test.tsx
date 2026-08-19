@@ -314,6 +314,26 @@ describe("MediaUsageSettings", () => {
 		}
 	});
 
+	it("shows finalization after existing content is indexed", async () => {
+		activationMocks.fetchStatus.mockResolvedValue(status("active"));
+		activationMocks.fetchProgress.mockResolvedValue({
+			status: "indexing",
+			readyCollections: 1,
+			totalCollections: 2,
+			indexingStarted: true,
+			finalizing: true,
+		});
+
+		const { screen } = await renderPage();
+
+		await expect.element(screen.getByRole("heading", { name: "Finishing setup" })).toBeVisible();
+		await expect
+			.element(
+				screen.getByText("All existing content is indexed. Checking that Media Usage is ready."),
+			)
+			.toBeVisible();
+	});
+
 	it("shows startup before historical reconciliation begins", async () => {
 		activationMocks.fetchStatus.mockResolvedValue(status("active"));
 		activationMocks.fetchProgress.mockResolvedValue({

@@ -19,6 +19,7 @@ export const mediaUsageProgressSchema = z
 		readyCollections: z.number().int().min(0),
 		totalCollections: z.number().int().min(0),
 		indexingStarted: z.boolean().optional(),
+		finalizing: z.literal(true).optional(),
 	})
 	.meta({ id: "MediaUsageProgress" });
 

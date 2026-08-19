@@ -377,18 +377,68 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 			totalCollections: 2,
 			indexingStarted: true,
 		});
+		await ctx.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set({ status: "running", cursor: "finalizing-run", change_epoch: 1 })
+			.where("collection_id", "=", "collection-posts")
+			.execute();
+		await ctx.db
+			.insertInto("_emdash_media_usage_reconciliations")
+			.values({
+				collection_id: "collection-posts",
+				collection_slug: "posts",
+				run_token: "finalizing-run",
+				target_epoch: 1,
+				state: "pending",
+				phase: "sources",
+				next_attempt_at: "2026-08-16T00:00:00.000Z",
+			})
+			.execute();
+		await expect(progress()).resolves.toEqual({
+			status: "indexing",
+			readyCollections: 1,
+			totalCollections: 2,
+			indexingStarted: true,
+			finalizing: true,
+		});
+		await ctx.db
+			.updateTable("_emdash_media_usage_reconciliations")
+			.set({ state: "retry" })
+			.where("collection_id", "=", "collection-posts")
+			.execute();
+		await expect(progress()).resolves.toEqual({
+			status: "indexing",
+			readyCollections: 1,
+			totalCollections: 2,
+			indexingStarted: true,
+		});
+		await ctx.db
+			.updateTable("_emdash_media_usage_reconciliations")
+			.set({ state: "pending" })
+			.where("collection_id", "=", "collection-posts")
+			.execute();
 
 		await ctx.db
 			.insertInto("_emdash_media_usage_work")
 			.values({
 				collection_id: "collection-posts",
 				collection_slug: "posts",
-				content_id: "failed-entry",
+				content_id: "remaining-entry",
 				change_epoch: 1,
-				state: "failed",
+				state: "pending",
 				next_attempt_at: "2026-08-16T00:00:00.000Z",
-				last_error_code: "MEDIA_USAGE_PROCESSING_FAILED",
 			})
+			.execute();
+		await expect(progress()).resolves.toEqual({
+			status: "indexing",
+			readyCollections: 1,
+			totalCollections: 2,
+			indexingStarted: true,
+		});
+		await ctx.db
+			.updateTable("_emdash_media_usage_work")
+			.set({ state: "failed", last_error_code: "MEDIA_USAGE_PROCESSING_FAILED" })
+			.where("collection_id", "=", "collection-posts")
 			.execute();
 		await expect(progress()).resolves.toEqual({
 			status: "needs_attention",
@@ -398,6 +448,7 @@ describeEachDialect("MediaUsageRepository reads", (dialect) => {
 		});
 
 		await ctx.db.deleteFrom("_emdash_media_usage_work").execute();
+		await ctx.db.deleteFrom("_emdash_media_usage_reconciliations").execute();
 		await ctx.db
 			.updateTable("_emdash_media_usage_index_status")
 			.set({ status: "complete", reconciliation_required: 0 })

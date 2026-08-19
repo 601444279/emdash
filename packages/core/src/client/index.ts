@@ -233,6 +233,7 @@ export interface MediaUsageProgress {
 	readyCollections: number;
 	totalCollections: number;
 	indexingStarted?: boolean;
+	finalizing?: true;
 }
 
 /** Durable media usage entry-work state */

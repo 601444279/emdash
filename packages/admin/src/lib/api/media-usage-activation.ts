@@ -27,6 +27,7 @@ export interface MediaUsageProgress {
 	readyCollections: number;
 	totalCollections: number;
 	indexingStarted?: boolean;
+	finalizing?: true;
 }
 
 export type MediaUsageActivationErrorKind =
@@ -182,6 +183,7 @@ function isMediaUsageProgress(value: unknown): value is MediaUsageProgress {
 	const ready = value.readyCollections;
 	const total = value.totalCollections;
 	const indexingStarted = value.indexingStarted;
+	const finalizing = value.finalizing;
 	if (
 		typeof ready !== "number" ||
 		!Number.isSafeInteger(ready) ||
@@ -190,7 +192,10 @@ function isMediaUsageProgress(value: unknown): value is MediaUsageProgress {
 		!Number.isSafeInteger(total) ||
 		total < ready ||
 		(indexingStarted !== undefined && typeof indexingStarted !== "boolean") ||
-		(indexingStarted === false && ready !== 0)
+		(indexingStarted === false && ready !== 0) ||
+		(finalizing !== undefined && finalizing !== true) ||
+		(finalizing === true &&
+			(value.status !== "indexing" || indexingStarted !== true || ready >= total))
 	)
 		return false;
 	return value.status === "needs_attention" || (value.status === "ready") === (ready === total);
