@@ -36,6 +36,7 @@ export type MediaUsageReconciliationOutcome =
 export interface MediaUsageReconciliationDetailedResult {
 	outcome: MediaUsageReconciliationOutcome;
 	consumedUnit: boolean;
+	hasDeferredCandidate: boolean;
 }
 
 export type MediaUsageReconciliationScanOutcome =
@@ -58,19 +59,21 @@ export async function processDueMediaUsageReconciliationDetailed(
 		.select("state")
 		.where("task_key", "=", "incremental_capture")
 		.executeTakeFirst();
-	if (activation?.state !== "active") return { outcome: "inactive", consumedUnit: false };
+	if (activation?.state !== "active") {
+		return { outcome: "inactive", consumedUnit: false, hasDeferredCandidate: false };
+	}
 
 	const reconciliation = new MediaUsageReconciliationRepository(db);
 	if (await reconciliation.deleteOneObsolete()) {
-		return { outcome: "completed", consumedUnit: true };
+		return { outcome: "completed", consumedUnit: true, hasDeferredCandidate: false };
 	}
 	const [failed] = await reconciliation.findFailed(1);
 	if (failed) {
 		if (await reconciliation.finishFailedCoverage(failed.collectionId, failed.runToken)) {
-			return { outcome: "failed", consumedUnit: true };
+			return { outcome: "failed", consumedUnit: true, hasDeferredCandidate: false };
 		}
 		if (await reconciliation.resetFailedForNewEpoch(failed)) {
-			return { outcome: "advanced", consumedUnit: true };
+			return { outcome: "advanced", consumedUnit: true, hasDeferredCandidate: false };
 		}
 	}
 
@@ -91,6 +94,8 @@ export async function processDueMediaUsageReconciliationDetailed(
 		return {
 			outcome: candidates.length === 0 ? "not_due" : "claim_lost",
 			consumedUnit: seeded,
+			hasDeferredCandidate:
+				candidates.length === 0 && (await reconciliation.hasDeferredCandidate()),
 		};
 	}
 
@@ -98,6 +103,7 @@ export async function processDueMediaUsageReconciliationDetailed(
 		return {
 			outcome: await processClaimedReconciliation(db, claim),
 			consumedUnit: true,
+			hasDeferredCandidate: false,
 		};
 	} catch (error) {
 		const terminal = claim.attemptCount + 1 >= MEDIA_USAGE_RECONCILIATION_LIMITS.maxAttempts;
@@ -109,10 +115,16 @@ export async function processDueMediaUsageReconciliationDetailed(
 			retryDelaySeconds: retryDelaySeconds(claim.attemptCount),
 			terminal,
 		});
-		if (!recorded) return { outcome: "claim_lost", consumedUnit: true };
+		if (!recorded) {
+			return { outcome: "claim_lost", consumedUnit: true, hasDeferredCandidate: false };
+		}
 		if (terminal) await reconciliation.finishFailedCoverage(claim.collectionId, claim.runToken);
 		console.error("[media-usage:reconciliation] Processing failed:", error);
-		return { outcome: terminal ? "failed" : "retry", consumedUnit: true };
+		return {
+			outcome: terminal ? "failed" : "retry",
+			consumedUnit: true,
+			hasDeferredCandidate: false,
+		};
 	}
 }
 

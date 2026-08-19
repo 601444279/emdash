@@ -9,6 +9,8 @@ import { EmDashRuntime, type RuntimeDependencies } from "../../../src/emdash-run
 import { activateMediaUsageCapture } from "../../../src/media/usage/activation.js";
 import { installMediaUsageCaptureTriggers } from "../../../src/media/usage/capture-triggers.js";
 import { MEDIA_USAGE_MAINTENANCE_LIMITS } from "../../../src/media/usage/maintenance-engine.js";
+import { processDueMediaUsageReconciliation } from "../../../src/media/usage/reconciliation-processor.js";
+import { processDueMediaUsageWork } from "../../../src/media/usage/work-processor.js";
 import type {
 	CronScheduler,
 	MediaUsageContinuationFn,
@@ -132,6 +134,54 @@ describe("media usage scheduled drivers", () => {
 		expect(await countWork(runtime)).toBe(1);
 	});
 
+	it("keeps a blocked due reconciliation on its delayed continuation", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "blocked_due_reconciliation");
+		const runToken = "blocked-due-run";
+		await runtime.db
+			.updateTable("_emdash_media_usage_index_status")
+			.set({
+				status: "running",
+				cursor: runToken,
+				change_epoch: 1,
+				reconciliation_required: 1,
+			})
+			.where("collection_id", "=", fixture.collectionId)
+			.execute();
+		await runtime.db
+			.insertInto("_emdash_media_usage_reconciliations")
+			.values({
+				collection_id: fixture.collectionId,
+				collection_slug: "blocked_due_reconciliation",
+				run_token: runToken,
+				target_epoch: 1,
+				field_fingerprint: "blocked-due-fields",
+				state: "pending",
+				phase: "sources",
+				next_attempt_at: "2000-01-01T00:00:00.000Z",
+			})
+			.execute();
+		await runtime.db
+			.updateTable("_emdash_media_usage_activation")
+			.set({ media_usage_maintenance_turn: 1 })
+			.where("task_key", "=", "incremental_capture")
+			.execute();
+		await sql`
+			CREATE TRIGGER block_due_reconciliation_claim
+			BEFORE UPDATE OF state ON _emdash_media_usage_reconciliations
+			WHEN NEW.state = 'leased'
+			BEGIN
+				SELECT RAISE(IGNORE);
+			END
+		`.execute(runtime.db);
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toMatchObject({
+			state: "blocked",
+			continuation: { kind: "delayed", delaySeconds: 30 },
+			taskClass: "reconciliation",
+		});
+	});
+
 	it("stops continuation only after a full idle maintenance pass", async () => {
 		runtime = await EmDashRuntime.create(createDeps(null));
 		await activateCollection(runtime, "idle_posts");
@@ -141,6 +191,49 @@ describe("media usage scheduled drivers", () => {
 			continuation: { kind: "none" },
 			taskClass: "entry_work",
 			turn: 0,
+		});
+	});
+
+	it("continues reconciliation immediately after entry work drains", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		await runtime.schemaRegistry.createCollection({
+			slug: "deferred_reconciliation",
+			label: "Deferred reconciliation",
+		});
+		await runtime.schemaRegistry.createField("deferred_reconciliation", {
+			slug: "title",
+			label: "Title",
+			type: "string",
+		});
+		await runtime.schemaRegistry.createField("deferred_reconciliation", {
+			slug: "image",
+			label: "Image",
+			type: "image",
+		});
+		await sql`
+			INSERT INTO ${sql.ref("ec_deferred_reconciliation")} (id, slug, status, title)
+			VALUES
+				('entry-1', 'entry-1', 'published', 'Entry 1'),
+				('entry-2', 'entry-2', 'published', 'Entry 2')
+		`.execute(runtime.db);
+		await expect(activateMediaUsageCapture(runtime.db, { writersDrained: true })).resolves.toEqual({
+			outcome: "active",
+			processedCollections: 1,
+		});
+
+		await expect(processDueMediaUsageReconciliation(runtime.db)).resolves.toBe("advanced");
+		await expect(processDueMediaUsageReconciliation(runtime.db)).resolves.toBe("deferred");
+		await processDueMediaUsageWork(runtime.db);
+		await processDueMediaUsageWork(runtime.db);
+		expect(await countWork(runtime)).toBe(0);
+		expect(
+			await runtime.db.selectFrom("_emdash_media_usage_reconciliations").select("state").execute(),
+		).toEqual([expect.objectContaining({ state: "pending" })]);
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toMatchObject({
+			state: "progress",
+			continuation: { kind: "immediate" },
+			taskClass: "reconciliation",
 		});
 	});
 
@@ -277,6 +370,21 @@ describe("media usage scheduled drivers", () => {
 
 		expect(continuation).toEqual({ kind: "none" });
 		expect(await countWork(runtime)).toBe(1);
+	});
+
+	it("continues a metered Queue slice beyond the old twenty-second cutoff", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "long_io_slice_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		await insertEntry(runtime, fixture.tableName, "entry-2");
+		const metrics = createRequestMetrics(performance.now() - 20_001);
+
+		const continuation = await runWithContext({ editMode: false, metrics }, () =>
+			runtime!.runMediaUsageMaintenanceSlice(),
+		);
+
+		expect(continuation).toEqual({ kind: "none" });
+		expect(await countWork(runtime)).toBe(0);
 	});
 
 	it("starts reconciliation when Node maintenance inherits an expensive request context", async () => {

@@ -9,6 +9,7 @@ import {
 } from "./activation.js";
 import { processDueMediaUsageCollectionDeletions } from "./collection-deletion-processor.js";
 import { processDueMediaUsageReconciliationDetailed } from "./reconciliation-processor.js";
+import { MediaUsageReconciliationRepository } from "./reconciliation.js";
 import { processDueMediaUsageWork } from "./work-processor.js";
 
 export type MediaUsageMaintenanceTaskClass =
@@ -31,7 +32,7 @@ export interface MediaUsageMaintenanceStepResult {
 export const MEDIA_USAGE_MAINTENANCE_LIMITS = Object.freeze({
 	eventQueryCeiling: 900,
 	maxStepQueries: 150,
-	stepStartDeadlineMs: 20_000,
+	stepStartDeadlineMs: 14 * 60_000,
 });
 
 const TASK_CLASSES: readonly MediaUsageMaintenanceTaskClass[] = [
@@ -57,6 +58,7 @@ export async function runMediaUsageMaintenanceStep(
 
 	const startingTurn = activation.media_usage_maintenance_turn;
 	let firstBlocked: { taskClass: MediaUsageMaintenanceTaskClass; turn: number } | null = null;
+	let blockedReconciliationTurn: number | null = null;
 
 	for (let offset = 0; offset < TASK_CLASSES.length; offset++) {
 		const turn = (startingTurn + offset) % TASK_CLASSES.length;
@@ -71,7 +73,22 @@ export async function runMediaUsageMaintenanceStep(
 				turn,
 			};
 		}
-		if (outcome === "blocked" && !firstBlocked) firstBlocked = { taskClass, turn };
+		if (outcome === "blocked") {
+			if (!firstBlocked) firstBlocked = { taskClass, turn };
+			if (taskClass === "reconciliation") blockedReconciliationTurn = turn;
+		}
+	}
+
+	if (
+		blockedReconciliationTurn !== null &&
+		(await new MediaUsageReconciliationRepository(db).wakeDrainedBarrierCandidate())
+	) {
+		return {
+			state: "progress",
+			continuation: { kind: "immediate" },
+			taskClass: "reconciliation",
+			turn: blockedReconciliationTurn,
+		};
 	}
 
 	if (firstBlocked) {
@@ -153,7 +170,7 @@ async function runTaskClass(
 	const result = await processDueMediaUsageReconciliationDetailed(db);
 	if (result.outcome === "inactive") return "inactive";
 	if (result.consumedUnit) return "progress";
-	return result.outcome === "claim_lost" ? "blocked" : "idle";
+	return result.outcome === "claim_lost" || result.hasDeferredCandidate ? "blocked" : "idle";
 }
 
 function inactiveResult(): MediaUsageMaintenanceStepResult {

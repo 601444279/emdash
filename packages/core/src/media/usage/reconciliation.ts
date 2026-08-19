@@ -751,6 +751,70 @@ export class MediaUsageReconciliationRepository {
 		return result.rows.map(rowToRecord);
 	}
 
+	async hasDeferredCandidate(): Promise<boolean> {
+		const row = await this.db
+			.selectFrom("_emdash_media_usage_reconciliations")
+			.select("collection_id")
+			.where("state", "in", ["pending", "retry", "leased"])
+			.limit(1)
+			.executeTakeFirst();
+		return row !== undefined;
+	}
+
+	async wakeDrainedBarrierCandidate(): Promise<boolean> {
+		const now = timestampOffset(this.db, 0);
+		const candidateIsDue = timestampIsDue(this.db, "reconciliation.next_attempt_at");
+		const targetIsDue = timestampIsDue(
+			this.db,
+			"_emdash_media_usage_reconciliations.next_attempt_at",
+		);
+		const result = await sql<{ collection_id: string }>`
+			UPDATE _emdash_media_usage_reconciliations
+			SET next_attempt_at = ${now}, updated_at = ${now}
+			WHERE collection_id = (
+				SELECT reconciliation.collection_id
+				FROM _emdash_media_usage_reconciliations AS reconciliation
+				INNER JOIN _emdash_media_usage_index_status AS status
+					ON status.collection_id = reconciliation.collection_id
+					AND status.scope_key = reconciliation.collection_slug
+				WHERE reconciliation.state = 'pending'
+					AND reconciliation.target_epoch IS NOT NULL
+					AND NOT ${candidateIsDue}
+					AND status.adapter_id = ${CONTENT_ADAPTER_ID}
+					AND status.scope_type = ${COLLECTION_SCOPE}
+					AND status.capture_state = 'active'
+					AND status.reconciliation_required = 1
+					AND status.status = 'running'
+					AND status.cursor = reconciliation.run_token
+					AND status.change_epoch = reconciliation.target_epoch
+					AND NOT EXISTS (
+						SELECT 1 FROM _emdash_media_usage_work AS work
+						WHERE work.collection_id = reconciliation.collection_id
+					)
+					AND NOT EXISTS (
+						SELECT 1 FROM _emdash_media_usage_collection_deletions AS deletion
+						WHERE deletion.collection_id = reconciliation.collection_id
+					)
+				ORDER BY reconciliation.next_attempt_at, reconciliation.updated_at,
+					reconciliation.collection_id
+				LIMIT 1
+			)
+			AND state = 'pending'
+			AND NOT ${targetIsDue}
+			AND EXISTS (
+				SELECT 1 FROM _emdash_media_usage_activation AS activation
+				WHERE activation.task_key = ${ACTIVATION_KEY}
+					AND activation.state = 'active'
+			)
+			AND NOT EXISTS (
+				SELECT 1 FROM _emdash_media_usage_work AS work
+				WHERE work.collection_id = _emdash_media_usage_reconciliations.collection_id
+			)
+			RETURNING collection_id
+		`.execute(this.db);
+		return result.rows.length === 1;
+	}
+
 	async findFailed(limit: number): Promise<MediaUsageReconciliationRecord[]> {
 		assertLimit(limit);
 		const rows = await this.db
