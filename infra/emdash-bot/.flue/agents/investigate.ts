@@ -508,6 +508,11 @@ export function Investigate({ id }: AgentProps) {
 						setLastFailure({ stage: "verification", message: safeFailureMessage(error) });
 						throw error;
 					}
+					await recordInvestigationProgress(input, {
+						kind: "candidate_publishing",
+						title: "Publishing candidate",
+						detail: `Preparing bot/fix-${input.issueNumber} from the verified candidate`,
+					});
 					let snapshot: CandidateSnapshot;
 					try {
 						snapshot = await env.snapshotCandidate();
