@@ -47,26 +47,43 @@ const TASK_CLASS_TURNS: Record<MediaUsageMaintenanceTaskClass, number> = {
 	reconciliation: 2,
 };
 
+interface MediaUsageMaintenanceSliceState {
+	activationActive: boolean;
+	idleTaskClasses: Set<MediaUsageMaintenanceTaskClass>;
+	recoveredIncrementalFinalizations: boolean;
+}
+
 export async function runMediaUsageMaintenanceStep(
 	db: Kysely<Database>,
 ): Promise<MediaUsageMaintenanceStepResult> {
-	const activation = await db
-		.selectFrom("_emdash_media_usage_activation")
-		.select(["state", "runtime_generation"])
-		.where("task_key", "=", "incremental_capture")
-		.executeTakeFirst();
+	return runMediaUsageMaintenanceStepWithState(db);
+}
+
+async function runMediaUsageMaintenanceStepWithState(
+	db: Kysely<Database>,
+	sliceState?: MediaUsageMaintenanceSliceState,
+): Promise<MediaUsageMaintenanceStepResult> {
+	const activation = sliceState?.activationActive
+		? { state: "active", runtime_generation: MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION }
+		: await db
+				.selectFrom("_emdash_media_usage_activation")
+				.select(["state", "runtime_generation"])
+				.where("task_key", "=", "incremental_capture")
+				.executeTakeFirst();
 	if (
 		activation?.state !== "active" ||
 		activation.runtime_generation !== MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION
 	) {
 		return runActivationStep(db);
 	}
+	if (sliceState) sliceState.activationActive = true;
 
 	let firstBlocked: { taskClass: MediaUsageMaintenanceTaskClass; turn: number } | null = null;
 	let blockedReconciliationTurn: number | null = null;
 	let firstProgress: { taskClass: MediaUsageMaintenanceTaskClass; turn: number } | null = null;
 
 	for (const taskClass of TASK_CLASSES) {
+		if (sliceState?.idleTaskClasses.has(taskClass)) continue;
 		const turn = TASK_CLASS_TURNS[taskClass];
 		const metrics = getRequestContext()?.metrics;
 		if (metrics && !canStartMediaUsageMaintenanceStep(metrics)) {
@@ -83,8 +100,18 @@ export async function runMediaUsageMaintenanceStep(
 						turn,
 					};
 		}
-		const outcome = await runTaskClass(db, taskClass);
+		const outcome = await runTaskClass(db, taskClass, sliceState);
 		if (outcome === "inactive") return inactiveResult();
+		if (sliceState) {
+			if (outcome === "idle") sliceState.idleTaskClasses.add(taskClass);
+			else sliceState.idleTaskClasses.delete(taskClass);
+			if (outcome === "progress" && taskClass === "entry_work") {
+				sliceState.idleTaskClasses.delete("reconciliation");
+			}
+			if (outcome === "progress" && taskClass === "reconciliation") {
+				sliceState.idleTaskClasses.delete("entry_work");
+			}
+		}
 		if (outcome === "progress" && !firstProgress) firstProgress = { taskClass, turn };
 		if (outcome === "blocked") {
 			if (!firstBlocked) firstBlocked = { taskClass, turn };
@@ -159,10 +186,15 @@ export async function runMediaUsageMaintenanceSlice(
 	const metrics = getRequestContext()?.metrics;
 	if (!metrics) return (await runMediaUsageMaintenanceStep(db)).continuation;
 
+	const sliceState: MediaUsageMaintenanceSliceState = {
+		activationActive: false,
+		idleTaskClasses: new Set(),
+		recoveredIncrementalFinalizations: false,
+	};
 	let madeProgress = false;
 	let recordedDbCount = metrics.dbCount;
 	while (canStartMediaUsageMaintenanceStep(metrics)) {
-		const result = await runMediaUsageMaintenanceStep(db);
+		const result = await runMediaUsageMaintenanceStepWithState(db, sliceState);
 		if (result.continuation.kind !== "immediate") return result.continuation;
 		madeProgress = true;
 		if (metrics.dbCount === recordedDbCount) return { kind: "immediate" };
@@ -175,9 +207,17 @@ export async function runMediaUsageMaintenanceSlice(
 async function runTaskClass(
 	db: Kysely<Database>,
 	taskClass: MediaUsageMaintenanceTaskClass,
+	sliceState?: MediaUsageMaintenanceSliceState,
 ): Promise<"inactive" | "idle" | "blocked" | "progress"> {
 	if (taskClass === "entry_work") {
-		const result = await processDueMediaUsageWork(db);
+		const recoverIncrementalFinalizations = !sliceState?.recoveredIncrementalFinalizations;
+		const result = await processDueMediaUsageWork(db, {
+			activationKnownActive: true,
+			recoverIncrementalFinalizations,
+		});
+		if (sliceState && recoverIncrementalFinalizations) {
+			sliceState.recoveredIncrementalFinalizations = true;
+		}
 		if (result.claimedCount > 0) return "progress";
 		return result.candidateCount > 0 ? "blocked" : "idle";
 	}
@@ -187,7 +227,9 @@ async function runTaskClass(
 		return result.candidateCount > 0 ? "blocked" : "idle";
 	}
 
-	const result = await processDueMediaUsageReconciliationDetailed(db);
+	const result = await processDueMediaUsageReconciliationDetailed(db, {
+		activationKnownActive: true,
+	});
 	if (result.outcome === "inactive") return "inactive";
 	if (result.consumedUnit) return "progress";
 	return result.outcome === "claim_lost" || result.hasDeferredCandidate ? "blocked" : "idle";

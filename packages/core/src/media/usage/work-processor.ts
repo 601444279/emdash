@@ -54,6 +54,11 @@ export interface MediaUsageWorkTickResult {
 	admissionClosed: boolean;
 }
 
+export interface ProcessDueMediaUsageWorkOptions {
+	activationKnownActive?: boolean;
+	recoverIncrementalFinalizations?: boolean;
+}
+
 export async function processMediaUsageWorkAfterWrite(
 	db: Kysely<Database>,
 	collectionSlug: string,
@@ -102,6 +107,7 @@ export async function processMediaUsageWorkAfterWrite(
 
 export async function processDueMediaUsageWork(
 	db: Kysely<Database>,
+	options: ProcessDueMediaUsageWorkOptions = {},
 ): Promise<MediaUsageWorkTickResult> {
 	const startedAt = Date.now();
 	const result: MediaUsageWorkTickResult = {
@@ -116,12 +122,14 @@ export async function processDueMediaUsageWork(
 		admissionClosed: false,
 	};
 
-	if (!(await isIncrementalCaptureActive(db))) {
+	if (!options.activationKnownActive && !(await isIncrementalCaptureActive(db))) {
 		result.durationMs = Date.now() - startedAt;
 		return result;
 	}
 
-	await new MediaUsageRepository(db).recoverIncrementalFinalizations();
+	if (options.recoverIncrementalFinalizations ?? true) {
+		await new MediaUsageRepository(db).recoverIncrementalFinalizations();
+	}
 	const repo = new MediaUsageWorkRepository(db);
 	const candidates = await repo.claimDueWorkBatch({
 		limit: MEDIA_USAGE_WORK_PROCESSING_LIMITS.candidatesPerTick,

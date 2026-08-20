@@ -134,19 +134,22 @@ describeEachDialect("media usage reconciliation finalization", (dialect) => {
 		await expect(processDueMediaUsageReconciliation(ctx.db)).resolves.toBe("advanced");
 		await expect(processDueMediaUsageWork(ctx.db)).resolves.toMatchObject({ completedCount: 500 });
 		await expect(processDueMediaUsageReconciliation(ctx.db)).resolves.toBe("advanced");
-		await expect(processDueMediaUsageReconciliation(ctx.db)).resolves.toBe("advanced");
+		await expect(processDueMediaUsageReconciliation(ctx.db)).resolves.toBe("completed");
 
-		const reconciliation = await ctx.db
-			.selectFrom("_emdash_media_usage_reconciliations")
-			.select("source_cursor")
-			.where("collection_id", "=", collection.id)
-			.executeTakeFirstOrThrow();
-		const upperSource = await ctx.db
-			.selectFrom("_emdash_media_usage_sources")
-			.select((eb) => eb.fn.max<string>("source_key").as("source_key"))
-			.where("collection_id", "=", collection.id)
-			.executeTakeFirstOrThrow();
-		expect(reconciliation.source_cursor).toBe(upperSource.source_key);
+		expect(
+			await ctx.db
+				.selectFrom("_emdash_media_usage_reconciliations")
+				.select("collection_id")
+				.where("collection_id", "=", collection.id)
+				.executeTakeFirst(),
+		).toBeUndefined();
+		expect(
+			await ctx.db
+				.selectFrom("_emdash_media_usage_index_status")
+				.select(["status", "reconciliation_required"])
+				.where("collection_id", "=", collection.id)
+				.executeTakeFirstOrThrow(),
+		).toEqual({ status: "complete", reconciliation_required: 0 });
 	});
 
 	it("preserves automatic ownership until failed work reaches terminal coverage", async () => {

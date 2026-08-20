@@ -40,6 +40,10 @@ export interface MediaUsageReconciliationDetailedResult {
 	hasDeferredCandidate: boolean;
 }
 
+export interface ProcessDueMediaUsageReconciliationOptions {
+	activationKnownActive?: boolean;
+}
+
 export type MediaUsageReconciliationScanOutcome =
 	| "advanced"
 	| "exhausted"
@@ -54,14 +58,17 @@ export async function processDueMediaUsageReconciliation(
 
 export async function processDueMediaUsageReconciliationDetailed(
 	db: Kysely<Database>,
+	options: ProcessDueMediaUsageReconciliationOptions = {},
 ): Promise<MediaUsageReconciliationDetailedResult> {
-	const activation = await db
-		.selectFrom("_emdash_media_usage_activation")
-		.select("state")
-		.where("task_key", "=", "incremental_capture")
-		.executeTakeFirst();
-	if (activation?.state !== "active") {
-		return { outcome: "inactive", consumedUnit: false, hasDeferredCandidate: false };
+	if (!options.activationKnownActive) {
+		const activation = await db
+			.selectFrom("_emdash_media_usage_activation")
+			.select("state")
+			.where("task_key", "=", "incremental_capture")
+			.executeTakeFirst();
+		if (activation?.state !== "active") {
+			return { outcome: "inactive", consumedUnit: false, hasDeferredCandidate: false };
+		}
 	}
 
 	const reconciliation = new MediaUsageReconciliationRepository(db);
@@ -133,9 +140,11 @@ export async function processClaimedMediaUsageReconciliationScan(
 	db: Kysely<Database>,
 	claim: MediaUsageReconciliationClaim,
 	options: { releaseOnExhausted?: boolean } = {},
+	knownCurrent?: MediaUsageReconciliationRecord,
 ): Promise<MediaUsageReconciliationScanOutcome> {
 	const reconciliation = new MediaUsageReconciliationRepository(db);
-	let current = await reconciliation.findByIdentity(claim.collectionId, claim.runToken);
+	let current =
+		knownCurrent ?? (await reconciliation.findByIdentity(claim.collectionId, claim.runToken));
 	if (!current || current.leaseToken !== claim.leaseToken || current.phase !== "scan") {
 		return "deferred";
 	}
@@ -162,8 +171,15 @@ export async function processClaimedMediaUsageReconciliationScan(
 		) {
 			return "deferred";
 		}
-		current = await reconciliation.findByIdentity(claim.collectionId, claim.runToken);
-		if (!current) return "deferred";
+		current = {
+			...current,
+			targetEpoch,
+			fieldFingerprint,
+			scanCursor: null,
+			scanUpperId,
+			sourceCursor: null,
+			sourceUpperKey: null,
+		};
 	} else {
 		fields = await loadContentMediaUsageFields(db, claim.collectionSlug, claim.collectionId);
 		fieldFingerprint = await buildContentMediaUsageFieldFingerprint(fields);
@@ -213,8 +229,7 @@ async function processClaimedReconciliation(
 	claim: MediaUsageReconciliationClaim,
 ): Promise<MediaUsageReconciliationOutcome> {
 	const reconciliation = new MediaUsageReconciliationRepository(db);
-	let current = await reconciliation.findByIdentity(claim.collectionId, claim.runToken);
-	if (!current || current.leaseToken !== claim.leaseToken) return "claim_lost";
+	let current: MediaUsageReconciliationRecord = claim;
 	if (current.targetEpoch !== null && !(await reconciliation.ownsRun(claim, current.targetEpoch))) {
 		return restartReconciliation(db, reconciliation, claim, current);
 	}
@@ -229,16 +244,24 @@ async function processClaimedReconciliation(
 	}
 
 	if (current.phase === "scan") {
-		const outcome = await processClaimedMediaUsageReconciliationScan(db, claim, {
-			releaseOnExhausted: false,
-		});
+		const outcome = await processClaimedMediaUsageReconciliationScan(
+			db,
+			claim,
+			{
+				releaseOnExhausted: false,
+			},
+			current,
+		);
 		if (outcome === "restart_required") {
 			current =
 				(await reconciliation.findByIdentity(claim.collectionId, claim.runToken)) ?? current;
 			return restartReconciliation(db, reconciliation, claim, current);
 		}
 		if (outcome !== "exhausted") return outcome;
-		current = (await reconciliation.findByIdentity(claim.collectionId, claim.runToken)) ?? current;
+		if (current.targetEpoch === null || current.fieldFingerprint === null) {
+			current =
+				(await reconciliation.findByIdentity(claim.collectionId, claim.runToken)) ?? current;
+		}
 		const barrier = await reconciliation.findWorkBarrier(claim.collectionId);
 		if (barrier.state === "failed") {
 			return failReconciliation(reconciliation, claim, barrier.errorCode, true);
@@ -284,6 +307,7 @@ async function processSourcePhase(
 		MEDIA_USAGE_RECONCILIATION_LIMITS.sourcePageSize,
 	);
 	if (page.length > 0) {
+		let enqueuedMissingContent = false;
 		const malformed = page.some(
 			(source) =>
 				!source.contentId ||
@@ -312,6 +336,7 @@ async function processSourcePhase(
 				phase: "sources",
 				contentIds: enqueueIds,
 			});
+			enqueuedMissingContent = true;
 		}
 		if (
 			!(await reconciliation.checkpointSources({
@@ -323,8 +348,13 @@ async function processSourcePhase(
 		) {
 			return "claim_lost";
 		}
-		if (!(await reconciliation.release({ ...claim, delaySeconds: 0 }))) return "claim_lost";
-		return "advanced";
+		if (
+			enqueuedMissingContent ||
+			page.length === MEDIA_USAGE_RECONCILIATION_LIMITS.sourcePageSize
+		) {
+			if (!(await reconciliation.release({ ...claim, delaySeconds: 0 }))) return "claim_lost";
+			return "advanced";
+		}
 	}
 
 	const barrier = await reconciliation.findWorkBarrier(claim.collectionId);

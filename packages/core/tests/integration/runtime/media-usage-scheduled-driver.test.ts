@@ -1,14 +1,26 @@
 import { randomUUID } from "node:crypto";
 
 import Database from "better-sqlite3";
-import { sql, SqliteDialect } from "kysely";
+import {
+	sql,
+	SqliteDialect,
+	type KyselyPlugin,
+	type PluginTransformQueryArgs,
+	type PluginTransformResultArgs,
+	type QueryResult,
+	type RootOperationNode,
+	type UnknownRow,
+} from "kysely";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { MediaUsageRepository } from "../../../src/database/repositories/media-usage.js";
 import { EmDashRuntime, type RuntimeDependencies } from "../../../src/emdash-runtime.js";
 import { activateMediaUsageCapture } from "../../../src/media/usage/activation.js";
 import { installMediaUsageCaptureTriggers } from "../../../src/media/usage/capture-triggers.js";
-import { MEDIA_USAGE_MAINTENANCE_LIMITS } from "../../../src/media/usage/maintenance-engine.js";
+import {
+	MEDIA_USAGE_MAINTENANCE_LIMITS,
+	runMediaUsageMaintenanceSlice,
+} from "../../../src/media/usage/maintenance-engine.js";
 import { processDueMediaUsageReconciliation } from "../../../src/media/usage/reconciliation-processor.js";
 import { processDueMediaUsageWork } from "../../../src/media/usage/work-processor.js";
 import type {
@@ -326,6 +338,43 @@ describe("media usage scheduled drivers", () => {
 
 		expect(continuation).toEqual({ kind: "none" });
 		expect(await countWork(runtime)).toBe(0);
+	});
+
+	it("does not re-probe idle classes while draining historical coverage", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		await runtime.schemaRegistry.createCollection({ slug: "bulk_history", label: "Bulk history" });
+		await runtime.schemaRegistry.createField("bulk_history", {
+			slug: "hero",
+			label: "Hero",
+			type: "image",
+		});
+		await sql`
+			WITH RECURSIVE sequence(value) AS (
+				VALUES (0)
+				UNION ALL
+				SELECT value + 1 FROM sequence WHERE value < 499
+			)
+			INSERT INTO ${sql.ref("ec_bulk_history")} (id, slug, status, hero)
+			SELECT
+				printf('entry-%03d', value),
+				printf('entry-%03d', value),
+				'published',
+				json_object('id', printf('media-%03d', value), 'provider', 'local')
+			FROM sequence
+		`.execute(runtime.db);
+		await expect(
+			activateMediaUsageCapture(runtime.db, { writersDrained: true }),
+		).resolves.toMatchObject({ outcome: "active" });
+		const counter = new QueryCountingPlugin();
+		const metrics = createRequestMetrics(performance.now());
+
+		await expect(
+			runWithContext({ editMode: false, metrics }, () =>
+				runMediaUsageMaintenanceSlice(runtime!.db.withPlugin(counter)),
+			),
+		).resolves.toEqual({ kind: "none" });
+
+		expect(counter.count).toBeLessThan(75);
 	});
 
 	it("runs one complete batch when a direct slice caller has no query metrics", async () => {
@@ -749,6 +798,19 @@ class CapturingScheduler implements CronScheduler {
 		await this.maintenance();
 		if (!this.mediaUsageMaintenance) throw new Error("Expected Media Usage maintenance callback");
 		await this.mediaUsageMaintenance();
+	}
+}
+
+class QueryCountingPlugin implements KyselyPlugin {
+	count = 0;
+
+	transformQuery(args: PluginTransformQueryArgs): RootOperationNode {
+		this.count++;
+		return args.node;
+	}
+
+	transformResult(args: PluginTransformResultArgs): Promise<QueryResult<UnknownRow>> {
+		return Promise.resolve(args.result);
 	}
 }
 
