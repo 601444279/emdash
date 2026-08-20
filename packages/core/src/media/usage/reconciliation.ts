@@ -2,6 +2,7 @@ import { sql, type Kysely, type RawBuilder, type Selectable } from "kysely";
 import { ulid } from "ulidx";
 
 import { isPostgres } from "../../database/dialect-helpers.js";
+import { jsonTextValues } from "../../database/json-recordset.js";
 import type { Database, MediaUsageReconciliationTable } from "../../database/types.js";
 import { validateIdentifier } from "../../database/validate.js";
 
@@ -366,8 +367,8 @@ export class MediaUsageReconciliationRepository {
 		reconciliation: MediaUsageReconciliationRecord,
 		limit: number,
 	): Promise<MediaUsageReconciliationSourceCandidate[]> {
-		if (!Number.isSafeInteger(limit) || limit < 1 || limit > 50) {
-			throw new Error("Reconciliation source page limit must be from 1 to 50");
+		if (!Number.isSafeInteger(limit) || limit < 1 || limit > 1_000) {
+			throw new Error("Reconciliation source page limit must be from 1 to 1000");
 		}
 		if (!reconciliation.leaseToken || reconciliation.targetEpoch === null) return [];
 		let query = this.db
@@ -400,12 +401,16 @@ export class MediaUsageReconciliationRepository {
 	): Promise<string[]> {
 		const unique = [...new Set(contentIds)];
 		if (unique.length === 0) return [];
-		if (unique.length > 50 || unique.some((contentId) => !contentId)) {
+		if (unique.length > 1_000 || unique.some((contentId) => !contentId)) {
 			throw new Error("Reconciliation source page has invalid content identity");
 		}
 		const tableName = contentTableName(collectionSlug);
+		const requested = jsonTextValues(this.db, unique);
 		const existing = await sql<{ id: string }>`
-			SELECT id FROM ${sql.ref(tableName)} WHERE id IN (${sql.join(unique)})
+			WITH requested AS (${requested})
+			SELECT content.id
+			FROM ${sql.ref(tableName)} AS content
+			INNER JOIN requested ON requested.value = content.id
 		`.execute(this.db);
 		const present = new Set(existing.rows.map((row) => row.id));
 		return unique.filter((contentId) => !present.has(contentId));

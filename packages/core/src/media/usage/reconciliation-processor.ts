@@ -16,7 +16,7 @@ import { CONTENT_SOURCE_SCHEMA_VERSION } from "./types.js";
 export const MEDIA_USAGE_RECONCILIATION_LIMITS = Object.freeze({
 	candidatesPerTick: 4,
 	scanPageSize: 1_000,
-	sourcePageSize: 50,
+	sourcePageSize: 1_000,
 	leaseDurationSeconds: 60,
 	maxAttempts: 5,
 	retryBaseSeconds: 30,
