@@ -65,7 +65,7 @@ describe("media usage scheduled drivers", () => {
 		expect(await countWork(runtime)).toBe(0);
 	});
 
-	it("processes at most one useful maintenance unit per step", async () => {
+	it("processes one due entry batch per maintenance step", async () => {
 		runtime = await EmDashRuntime.create(createDeps(null));
 		const fixture = await activateCollection(runtime, "one_unit_posts");
 		await insertEntry(runtime, fixture.tableName, "entry-1");
@@ -76,7 +76,7 @@ describe("media usage scheduled drivers", () => {
 			continuation: { kind: "immediate" },
 			taskClass: "entry_work",
 		});
-		expect(await countWork(runtime)).toBe(1);
+		expect(await countWork(runtime)).toBe(0);
 	});
 
 	it("delays one continuation when every visible claim is blocked", async () => {
@@ -287,8 +287,6 @@ describe("media usage scheduled drivers", () => {
 		await insertEntry(runtime, fixture.tableName, "entry-2");
 
 		await expect(scheduler.runMaintenance()).resolves.toEqual({ kind: "immediate" });
-		expect(await countWork(runtime)).toBe(1);
-		await expect(scheduler.runContinuation()).resolves.toEqual({ kind: "immediate" });
 		expect(await countWork(runtime)).toBe(0);
 		await expect(scheduler.runContinuation()).resolves.toEqual({ kind: "none" });
 	});
@@ -309,14 +307,14 @@ describe("media usage scheduled drivers", () => {
 		expect(await countWork(runtime)).toBe(0);
 	});
 
-	it("falls back to one unit when a direct slice caller has no query metrics", async () => {
+	it("runs one complete batch when a direct slice caller has no query metrics", async () => {
 		runtime = await EmDashRuntime.create(createDeps(null));
 		const fixture = await activateCollection(runtime, "unmetered_slice_posts");
 		await insertEntry(runtime, fixture.tableName, "entry-1");
 		await insertEntry(runtime, fixture.tableName, "entry-2");
 
 		await expect(runtime.runMediaUsageMaintenanceSlice()).resolves.toEqual({ kind: "immediate" });
-		expect(await countWork(runtime)).toBe(1);
+		expect(await countWork(runtime)).toBe(0);
 	});
 
 	it("stops before another unit when the remaining Paid query budget is reserved", async () => {
@@ -335,7 +333,7 @@ describe("media usage scheduled drivers", () => {
 		);
 
 		expect(continuation).toEqual({ kind: "immediate" });
-		expect(await countWork(runtime)).toBe(1);
+		expect(await countWork(runtime)).toBe(0);
 	});
 
 	it("does not create a no-progress continuation when initialization spent the query budget", async () => {

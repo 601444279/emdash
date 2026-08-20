@@ -172,7 +172,7 @@ it("drains several durable units through the deployed D1 session path", async ()
 	expect(Number(remaining.count)).toBe(0);
 });
 
-it("stops after one unit when a database does not report query metrics", async () => {
+it("runs one complete batch when a database does not report query metrics", async () => {
 	const fixture = await createMediaUsageAdmissionFixture(adminDb, "d1_engine_unmetered");
 	await adminDb
 		.updateTable("_emdash_media_usage_activation")
@@ -204,7 +204,7 @@ it("stops after one unit when a database does not report query metrics", async (
 
 	expect(continuation).toEqual({ kind: "immediate" });
 	expect(metrics.dbCount).toBe(0);
-	expect(Number(remaining.count)).toBe(1);
+	expect(Number(remaining.count)).toBe(0);
 });
 
 it("keeps the largest admitted activation trigger replacement inside one step", async () => {

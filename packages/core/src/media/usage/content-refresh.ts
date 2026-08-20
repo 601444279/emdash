@@ -2,17 +2,24 @@ import { sql, type Kysely } from "kysely";
 
 import { tableExists } from "../../database/dialect-helpers.js";
 import {
+	type MediaUsageExistingSourceProjection,
 	MediaUsageRepository,
+	type MediaUsageNewSourceProjection,
 	type MediaUsageSource,
 } from "../../database/repositories/media-usage.js";
 import type { Database } from "../../database/types.js";
 import { validateIdentifier } from "../../database/validate.js";
 import { isI18nEnabled } from "../../i18n/config.js";
-import { loadContentMediaUsageFields } from "./content-fields.js";
+import {
+	loadContentMediaUsageFields,
+	type ContentMediaUsageFieldDiscovery,
+} from "./content-fields.js";
 import {
 	CONTENT_SOURCE_SCHEMA_VERSION,
 	loadContentMediaUsageSnapshots,
+	loadContentMediaUsageSnapshotsBatch,
 	type ContentMediaUsageSnapshot,
+	type LoadContentMediaUsageSnapshotsResult,
 } from "./content-snapshots.js";
 import {
 	buildContentMediaUsageSourceKey,
@@ -67,6 +74,9 @@ interface ContentMediaUsageRefreshOptions {
 	collectionId?: string;
 	durableWork?: boolean;
 	admissionBudget?: ContentMediaUsageAdmissionBudget;
+	fieldDiscovery?: ContentMediaUsageFieldDiscovery;
+	observedSources?: ReadonlyMap<string, MediaUsageSource>;
+	snapshotsResult?: LoadContentMediaUsageSnapshotsResult;
 }
 
 export interface ContentMediaUsageRefreshResult {
@@ -257,6 +267,196 @@ export async function refreshContentMediaUsageForWork(
 	);
 }
 
+export interface ContentMediaUsageWorkRefreshInput {
+	collectionId: string;
+	collectionSlug: string;
+	contentId: string;
+}
+
+export interface ContentMediaUsageWorkBatchOptions {
+	shouldContinue?: () => boolean;
+}
+
+export async function refreshContentMediaUsageForWorkBatch(
+	db: Kysely<Database>,
+	items: readonly ContentMediaUsageWorkRefreshInput[],
+	options: ContentMediaUsageWorkBatchOptions = {},
+): Promise<Map<string, ContentMediaUsageRefreshResult>> {
+	const results = new Map<string, ContentMediaUsageRefreshResult>();
+	const collections = new Map<string, ContentMediaUsageWorkRefreshInput[]>();
+	for (const item of items) {
+		const key = `${item.collectionId}\u0000${item.collectionSlug}`;
+		const collectionItems = collections.get(key) ?? [];
+		collectionItems.push(item);
+		collections.set(key, collectionItems);
+	}
+	for (const collectionItems of collections.values()) {
+		if (options.shouldContinue && !options.shouldContinue()) break;
+		const first = collectionItems[0];
+		if (!first) continue;
+		validateIdentifier(first.collectionSlug, "collection slug");
+		if (!first.collectionId)
+			throw new Error("Durable media usage work requires a collection identity");
+		await withContentUsageCollectionLock(first.collectionSlug, async () => {
+			const fieldDiscovery = await loadContentMediaUsageFields(
+				db,
+				first.collectionSlug,
+				first.collectionId,
+			);
+			const sourceKeys = collectionItems.flatMap((item) =>
+				contentSourceKeys(item.collectionSlug, item.contentId, item.collectionId),
+			);
+			const repo = new MediaUsageRepository(db);
+			const observedSources = await repo.findSources(sourceKeys);
+			const snapshots = await loadContentMediaUsageSnapshotsBatch(
+				db,
+				first.collectionSlug,
+				collectionItems.map((item) => item.contentId),
+				fieldDiscovery,
+				{ collectionId: first.collectionId, identityVersion: 1 },
+				{ shouldContinue: options.shouldContinue },
+			);
+			const newSourceProjections: MediaUsageNewSourceProjection[] = [];
+			const newSourceKeys = new Map<string, string[]>();
+			const existingSourceProjections: MediaUsageExistingSourceProjection[] = [];
+			const unchangedSourceProjections: MediaUsageExistingSourceProjection[] = [];
+			const existingSourceKeys = new Map<
+				string,
+				{ allCount: number; changed: string[]; unchanged: string[] }
+			>();
+			for (const item of collectionItems) {
+				const snapshotsResult = snapshots.get(item.contentId);
+				const itemSourceKeys = contentSourceKeys(
+					item.collectionSlug,
+					item.contentId,
+					item.collectionId,
+				);
+				if (!snapshotsResult?.success) {
+					continue;
+				}
+				const snapshotsByKey = new Map(
+					snapshotsResult.snapshots.map(
+						(snapshot) => [snapshot.source.sourceKey, snapshot] as const,
+					),
+				);
+				const existing = itemSourceKeys
+					.map((sourceKey) => observedSources.get(sourceKey))
+					.filter((source): source is MediaUsageSource => source !== undefined);
+				const allNew = existing.length === 0;
+				const allExisting =
+					existing.length === snapshotsResult.snapshots.length &&
+					existing.every((source) => snapshotsByKey.has(source.sourceKey));
+				if (!allNew && !allExisting) continue;
+				const admission = await planContentMediaUsageProjectionAdmission(
+					repo,
+					snapshotsResult.snapshots,
+					observedSources,
+					itemSourceKeys,
+					createContentMediaUsageAdmissionBudget(),
+				);
+				if (admission.outcome !== "admitted") {
+					results.set(
+						contentRefreshKey(item.collectionId, item.contentId),
+						admissionFailureResult(admission.outcome),
+					);
+					continue;
+				}
+				const key = contentRefreshKey(item.collectionId, item.contentId);
+				if (allNew) {
+					newSourceProjections.push(
+						...snapshotsResult.snapshots.map((snapshot) => ({
+							source: snapshot.source,
+							occurrences: snapshot.occurrences,
+						})),
+					);
+					newSourceKeys.set(
+						key,
+						snapshotsResult.snapshots.map((snapshot) => snapshot.source.sourceKey),
+					);
+					continue;
+				}
+				const changed: string[] = [];
+				const unchanged: string[] = [];
+				for (const snapshot of snapshotsResult.snapshots) {
+					const expectedSource = observedSources.get(snapshot.source.sourceKey);
+					if (!expectedSource) continue;
+					if (
+						expectedSource.sourceFingerprint === snapshot.source.sourceFingerprint &&
+						expectedSource.sourceCompleteness ===
+							(snapshot.source.sourceCompleteness ?? "complete") &&
+						expectedSource.lastErrorCode === null
+					) {
+						unchanged.push(snapshot.source.sourceKey);
+						unchangedSourceProjections.push({
+							source: snapshot.source,
+							occurrences: snapshot.occurrences,
+							expectedSource,
+						});
+						continue;
+					}
+					changed.push(snapshot.source.sourceKey);
+					existingSourceProjections.push({
+						source: snapshot.source,
+						occurrences: snapshot.occurrences,
+						expectedSource,
+					});
+				}
+				existingSourceKeys.set(key, {
+					allCount: snapshotsResult.snapshots.length,
+					changed,
+					unchanged,
+				});
+			}
+			const insertedSourceKeys = await repo.replaceNewSourcesBatch(newSourceProjections);
+			const replacedSourceKeys = await repo.replaceExistingSourcesBatch(existingSourceProjections);
+			const matchedSourceKeys = await repo.matchingExistingSourcesBatch(unchangedSourceProjections);
+			for (const [key, expectedSourceKeys] of newSourceKeys) {
+				results.set(
+					key,
+					expectedSourceKeys.every((sourceKey) => insertedSourceKeys.has(sourceKey))
+						? {
+								success: true,
+								refreshedSourceCount: expectedSourceKeys.length,
+								deletedSourceCount: 0,
+								failedSourceCount: 0,
+							}
+						: generationConflictResult({ refreshedSourceCount: 0, deletedSourceCount: 0 }),
+				);
+			}
+			for (const [key, expected] of existingSourceKeys) {
+				results.set(
+					key,
+					expected.changed.every((sourceKey) => replacedSourceKeys.has(sourceKey)) &&
+						expected.unchanged.every((sourceKey) => matchedSourceKeys.has(sourceKey))
+						? {
+								success: true,
+								refreshedSourceCount: expected.allCount,
+								deletedSourceCount: 0,
+								failedSourceCount: 0,
+							}
+						: generationConflictResult({ refreshedSourceCount: 0, deletedSourceCount: 0 }),
+				);
+			}
+			for (const item of collectionItems) {
+				const key = contentRefreshKey(item.collectionId, item.contentId);
+				if (!snapshots.has(item.contentId)) continue;
+				if (results.has(key)) continue;
+				const result = await withContentUsageLock(item.collectionSlug, item.contentId, () =>
+					refreshContentMediaUsageUnlocked(db, item.collectionSlug, item.contentId, {
+						collectionId: item.collectionId,
+						durableWork: true,
+						fieldDiscovery,
+						observedSources,
+						snapshotsResult: snapshots.get(item.contentId),
+					}),
+				);
+				results.set(key, result);
+			}
+		});
+	}
+	return results;
+}
+
 async function refreshContentMediaUsageUnlocked(
 	db: Kysely<Database>,
 	collectionSlug: string,
@@ -310,19 +510,18 @@ async function refreshContentMediaUsageAttempt(
 ): Promise<ContentMediaUsageRefreshResult> {
 	const repo = new MediaUsageRepository(db);
 	const canonicalSourceKeys = contentSourceKeys(collectionSlug, contentId, options.collectionId);
-	const observedSources = await repo.findSources(canonicalSourceKeys);
-	const snapshotsResult = await loadContentMediaUsageSnapshots(
-		db,
-		collectionSlug,
-		contentId,
-		undefined,
-		options.collectionId ? { collectionId: options.collectionId, identityVersion: 1 } : undefined,
-	);
+	const observedSources = options.observedSources ?? (await repo.findSources(canonicalSourceKeys));
+	const snapshotsResult =
+		options.snapshotsResult ??
+		(await loadContentMediaUsageSnapshots(
+			db,
+			collectionSlug,
+			contentId,
+			options.fieldDiscovery,
+			options.collectionId ? { collectionId: options.collectionId, identityVersion: 1 } : undefined,
+		));
 	if (!snapshotsResult.success) {
 		if (snapshotsResult.error === "CONTENT_NOT_FOUND" && options.collectionId) {
-			if (!(await contentCollectionExists(db, collectionSlug, options.collectionId))) {
-				return generationConflictResult({ refreshedSourceCount: 0, deletedSourceCount: 0 });
-			}
 			if (!options.admissionBudget)
 				throw new Error("Durable media usage work requires an admission budget");
 			const admission = await planContentMediaUsageProjectionAdmission(
@@ -352,10 +551,7 @@ async function refreshContentMediaUsageAttempt(
 			: markSnapshotFailure(db, collectionSlug, snapshotsResult);
 	}
 
-	if (!(await contentCollectionExists(db, collectionSlug, options.collectionId))) {
-		if (options.collectionId) {
-			return generationConflictResult({ refreshedSourceCount: 0, deletedSourceCount: 0 });
-		}
+	if (!options.collectionId && !(await contentCollectionExists(db, collectionSlug))) {
 		const deletedSourceCount = await repo.deleteContentSources(collectionSlug, contentId);
 		return { ...ZERO_RESULT, deletedSourceCount };
 	}
@@ -397,10 +593,7 @@ async function refreshContentMediaUsageAttempt(
 		}
 		refreshedSourceCount++;
 	}
-	if (!(await contentCollectionExists(db, collectionSlug, options.collectionId))) {
-		if (options.collectionId) {
-			return generationConflictResult({ refreshedSourceCount, deletedSourceCount: 0 });
-		}
+	if (!options.collectionId && !(await contentCollectionExists(db, collectionSlug))) {
 		const deletedSourceCount = await repo.deleteContentSources(collectionSlug, contentId);
 		return { ...ZERO_RESULT, deletedSourceCount };
 	}
@@ -436,6 +629,10 @@ async function refreshContentMediaUsageAttempt(
 		deletedSourceCount,
 		failedSourceCount: 0,
 	};
+}
+
+export function contentRefreshKey(collectionId: string, contentId: string): string {
+	return `${collectionId}\u0000${contentId}`;
 }
 
 function contentSourceKeys(

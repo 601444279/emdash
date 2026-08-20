@@ -15,7 +15,8 @@ import { CONTENT_SOURCE_SCHEMA_VERSION } from "./types.js";
 
 export const MEDIA_USAGE_RECONCILIATION_LIMITS = Object.freeze({
 	candidatesPerTick: 4,
-	pageSize: 50,
+	scanPageSize: 1_000,
+	sourcePageSize: 50,
 	leaseDurationSeconds: 60,
 	maxAttempts: 5,
 	retryBaseSeconds: 30,
@@ -171,7 +172,10 @@ export async function processClaimedMediaUsageReconciliationScan(
 	if (current.fieldFingerprint !== fieldFingerprint || current.targetEpoch === null) {
 		return "restart_required";
 	}
-	const contentIds = await reconciliation.findScanPage(current, 50);
+	const contentIds = await reconciliation.findScanPage(
+		current,
+		MEDIA_USAGE_RECONCILIATION_LIMITS.scanPageSize,
+	);
 	if (contentIds.length === 0) {
 		if (options.releaseOnExhausted ?? true) {
 			await reconciliation.release({ ...claim, delaySeconds: 30 });
@@ -213,6 +217,15 @@ async function processClaimedReconciliation(
 	if (!current || current.leaseToken !== claim.leaseToken) return "claim_lost";
 	if (current.targetEpoch !== null && !(await reconciliation.ownsRun(claim, current.targetEpoch))) {
 		return restartReconciliation(db, reconciliation, claim, current);
+	}
+	if (current.targetEpoch !== null) {
+		await new MediaUsageWorkRepository(db).deleteObsoleteReconciliationWork({
+			collectionId: claim.collectionId,
+			collectionSlug: claim.collectionSlug,
+			runToken: claim.runToken,
+			leaseToken: claim.leaseToken,
+			targetEpoch: current.targetEpoch,
+		});
 	}
 
 	if (current.phase === "scan") {
@@ -268,7 +281,7 @@ async function processSourcePhase(
 
 	const page = await reconciliation.findSourcePage(
 		current,
-		MEDIA_USAGE_RECONCILIATION_LIMITS.pageSize,
+		MEDIA_USAGE_RECONCILIATION_LIMITS.sourcePageSize,
 	);
 	if (page.length > 0) {
 		const malformed = page.some(

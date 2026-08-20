@@ -147,8 +147,8 @@ export class MediaUsageReconciliationRepository {
 		reconciliation: MediaUsageReconciliationRecord,
 		limit: number,
 	): Promise<string[]> {
-		if (!Number.isSafeInteger(limit) || limit < 1 || limit > 50) {
-			throw new Error("Reconciliation scan page limit must be from 1 to 50");
+		if (!Number.isSafeInteger(limit) || limit < 1 || limit > 1_000) {
+			throw new Error("Reconciliation scan page limit must be from 1 to 1000");
 		}
 		if (!reconciliation.leaseToken || reconciliation.targetEpoch === null) return [];
 		const tableName = contentTableName(reconciliation.collectionSlug);
