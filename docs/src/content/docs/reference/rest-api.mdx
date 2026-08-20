@@ -414,12 +414,12 @@ Set both fields to `true`:
 
 - `writersDrained`: Application and direct database writes have stopped, and any writes already in
   progress have finished.
-- `maintenanceReady`: Scheduled background tasks are running through `mediaUsageCron` on Cloudflare
+- `maintenanceReady`: Scheduled background tasks are running through the general Cron on Cloudflare
   or the built-in scheduler on Node.js.
 
 #### Enable indexing in production
 
-1. Confirm that scheduled background tasks are running: `mediaUsageCron` on Cloudflare, or the
+1. Confirm that scheduled background tasks are running: the general Cron on Cloudflare, or the
    built-in scheduler on Node.js.
 2. Stop all application and direct database writes. Wait for writes already in progress to finish.
 3. Call `GET` to check the current state.

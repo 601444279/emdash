@@ -8,6 +8,7 @@ import {
 import { MediaUsageRepository } from "../../database/repositories/media-usage.js";
 import { withTransaction } from "../../database/transaction.js";
 import type { Database } from "../../database/types.js";
+import { getRequestContext } from "../../request-context.js";
 import {
 	contentRefreshKey,
 	refreshContentMediaUsageForWorkBatch,
@@ -58,6 +59,7 @@ export async function processMediaUsageWorkAfterWrite(
 	collectionSlug: string,
 	contentId: string,
 ): Promise<MediaUsageWorkProcessingResult> {
+	const startedAt = Date.now();
 	if (!(await isIncrementalCaptureActive(db))) {
 		return { outcome: "inactive", claimed: false };
 	}
@@ -74,11 +76,7 @@ export async function processMediaUsageWorkAfterWrite(
 	});
 	if (!claimed) return { outcome: "claim_lost", claimed: false };
 	try {
-		const processed = await runClaimedBatch(
-			db,
-			[claimed],
-			Date.now() + MEDIA_USAGE_WORK_PROCESSING_LIMITS.maxTickDurationMs,
-		);
+		const processed = await runClaimedBatch(db, [claimed], bulkDeadlineMs(startedAt));
 		return processed.get(workResultKey(claimed)) ?? { outcome: "claim_lost", claimed: false };
 	} catch (error) {
 		const transitioned = await repo.retryClaimedWorkBatch({
@@ -130,15 +128,11 @@ export async function processDueMediaUsageWork(
 		leaseDurationSeconds: MEDIA_USAGE_WORK_PROCESSING_LIMITS.leaseDurationSeconds,
 	});
 	result.candidateCount =
-		candidates.length > 0 || !(await repo.hasDueWork()) ? candidates.length : 1;
+		candidates.length > 0 || !(await repo.hasNonterminalWork()) ? candidates.length : 1;
 
 	let processedBatch: Map<string, MediaUsageWorkProcessingResult>;
 	try {
-		processedBatch = await runClaimedBatch(
-			db,
-			candidates,
-			startedAt + MEDIA_USAGE_WORK_PROCESSING_LIMITS.maxTickDurationMs,
-		);
+		processedBatch = await runClaimedBatch(db, candidates, bulkDeadlineMs(startedAt));
 	} catch (error) {
 		const transitioned = await repo.retryClaimedWorkBatch({
 			work: candidates.map(workLease),
@@ -225,20 +219,71 @@ async function processClaimedBatch(
 	if (current.length === 0) return results;
 
 	const refreshes = await refreshContentMediaUsageForWorkBatch(db, current, {
-		shouldContinue: () => Date.now() < deadlineMs,
+		shouldContinue: () => canContinueBulkWork(deadlineMs),
 	});
 	const successful: MediaUsageWorkRecord[] = [];
 	const unstarted: MediaUsageWorkRecord[] = [];
+	const failedRefreshes: Array<{
+		candidate: MediaUsageWorkRecord;
+		refresh: ContentMediaUsageRefreshResult;
+	}> = [];
 	for (const candidate of current) {
 		const refresh = refreshes.get(contentRefreshKey(candidate.collectionId, candidate.contentId));
 		if (refresh?.success) successful.push(candidate);
 		else if (!refresh) unstarted.push(candidate);
-		else {
-			results.set(
-				workResultKey(candidate),
-				await transitionClaimedFailure(db, repo, candidate, refresh ?? failedRefreshResult()),
-			);
+		else failedRefreshes.push({ candidate, refresh });
+	}
+	const terminalFailureCollections = new Map<string, Set<string>>();
+	const failureGroups = new Map<
+		string,
+		{
+			errorCode: string;
+			retryDelaySeconds: number;
+			terminal: boolean;
+			candidates: MediaUsageWorkRecord[];
 		}
+	>();
+	for (const failure of failedRefreshes) {
+		const errorCode = processingErrorCode(failure.refresh.errorCode);
+		const terminal =
+			errorCode === "MEDIA_USAGE_RESOURCE_LIMIT" ||
+			failure.candidate.attemptCount + 1 >= MEDIA_USAGE_WORK_PROCESSING_LIMITS.maxAttempts;
+		const delay = retryDelaySeconds(failure.candidate.attemptCount);
+		const key = `${errorCode}\u0000${terminal ? "terminal" : String(delay)}`;
+		const group = failureGroups.get(key) ?? {
+			errorCode,
+			retryDelaySeconds: delay,
+			terminal,
+			candidates: [],
+		};
+		group.candidates.push(failure.candidate);
+		failureGroups.set(key, group);
+	}
+	for (const group of failureGroups.values()) {
+		const transitioned = await repo.retryClaimedWorkBatch({
+			work: group.candidates.map(workLease),
+			errorCode: group.errorCode,
+			retryDelaySeconds: group.retryDelaySeconds,
+			maxAttempts: group.terminal ? 1 : MEDIA_USAGE_WORK_PROCESSING_LIMITS.maxAttempts,
+		});
+		for (const candidate of group.candidates) {
+			const state = transitioned.get(workIdentityKey(candidate));
+			if (state === "failed") {
+				const collections = terminalFailureCollections.get(group.errorCode) ?? new Set<string>();
+				collections.add(candidate.collectionId);
+				terminalFailureCollections.set(group.errorCode, collections);
+			}
+			results.set(workResultKey(candidate), {
+				outcome: state ?? "superseded",
+				claimed: true,
+			});
+		}
+	}
+	for (const [errorCode, collectionIds] of terminalFailureCollections) {
+		await new MediaUsageRepository(db).recordIncrementalFailuresByCollection({
+			collectionIds: [...collectionIds],
+			errorCode,
+		});
 	}
 	const released = await repo.releaseClaimedWorkBatch(unstarted.map(workLease));
 	for (const candidate of unstarted) {
@@ -257,23 +302,54 @@ async function processClaimedBatch(
 		successfulByCollection.set(key, collection);
 	}
 	const readyToComplete: MediaUsageWorkRecord[] = [];
+	const deferredCompletion: MediaUsageWorkRecord[] = [];
+	const lostFinalization: MediaUsageWorkRecord[] = [];
+	let pendingFinalizationQueries = 2;
 	for (const collection of successfulByCollection.values()) {
 		const first = collection[0];
 		if (!first) continue;
+		const metrics = getRequestContext()?.metrics;
+		if (metrics && metrics.dbCount + pendingFinalizationQueries + 4 > 900) {
+			deferredCompletion.push(...collection);
+			continue;
+		}
 		const finalization = await usage.prepareIncrementalFinalization({
 			collectionId: first.collectionId,
 			collectionSlug: first.collectionSlug,
 		});
 		if (finalization.outcome !== "lost") {
 			readyToComplete.push(...collection);
+			pendingFinalizationQueries += 2;
 			continue;
 		}
-		for (const candidate of collection) {
-			results.set(
-				workResultKey(candidate),
-				await transitionClaimedFailure(db, repo, candidate, generationConflictResult()),
-			);
-		}
+		lostFinalization.push(...collection);
+		pendingFinalizationQueries += 2;
+	}
+	const lostTransitions = await repo.retryClaimedWorkBatch({
+		work: lostFinalization.map(workLease),
+		errorCode: "MEDIA_USAGE_GENERATION_CONFLICT",
+		retryDelaySeconds: MEDIA_USAGE_WORK_PROCESSING_LIMITS.retryBaseSeconds,
+		maxAttempts: MEDIA_USAGE_WORK_PROCESSING_LIMITS.maxAttempts,
+	});
+	const lostFailedCollections = new Set<string>();
+	for (const candidate of lostFinalization) {
+		const state = lostTransitions.get(workIdentityKey(candidate));
+		if (state === "failed") lostFailedCollections.add(candidate.collectionId);
+		results.set(workResultKey(candidate), {
+			outcome: state ?? "superseded",
+			claimed: true,
+		});
+	}
+	await usage.recordIncrementalFailuresByCollection({
+		collectionIds: [...lostFailedCollections],
+		errorCode: "MEDIA_USAGE_GENERATION_CONFLICT",
+	});
+	const deferred = await repo.releaseClaimedWorkBatch(deferredCompletion.map(workLease));
+	for (const candidate of deferredCompletion) {
+		results.set(workResultKey(candidate), {
+			outcome: deferred.has(workIdentityKey(candidate)) ? "not_due" : "superseded",
+			claimed: true,
+		});
 	}
 	const completed = await repo.completeWorkBatch(readyToComplete.map(workLease));
 	const completedCollections = new Map<string, MediaUsageWorkRecord>();
@@ -292,55 +368,6 @@ async function processClaimedBatch(
 		});
 	}
 	return results;
-}
-
-async function transitionClaimedFailure(
-	db: Kysely<Database>,
-	repo: MediaUsageWorkRepository,
-	claimed: MediaUsageWorkRecord,
-	refresh: ContentMediaUsageRefreshResult,
-): Promise<MediaUsageWorkProcessingResult> {
-	if (!claimed.leaseToken) return { outcome: "claim_lost", claimed: false };
-	const lease = workLease(claimed);
-
-	if (!(await collectionIdentityIsCurrent(db, claimed.collectionId, claimed.collectionSlug))) {
-		return {
-			outcome: (await repo.completeWork(lease)) ? "obsolete" : "superseded",
-			claimed: true,
-		};
-	}
-
-	const errorCode = processingErrorCode(refresh.errorCode);
-	const terminal =
-		errorCode === "MEDIA_USAGE_RESOURCE_LIMIT" ||
-		claimed.attemptCount + 1 >= MEDIA_USAGE_WORK_PROCESSING_LIMITS.maxAttempts;
-	if (terminal) {
-		const failed = await repo.failWork({ ...lease, errorCode });
-		if (failed) {
-			await new MediaUsageRepository(db).recordIncrementalFailure({
-				collectionId: claimed.collectionId,
-				collectionSlug: claimed.collectionSlug,
-				contentId: claimed.contentId,
-				workVersion: claimed.workVersion,
-				errorCode,
-			});
-		}
-		return {
-			outcome: failed ? "failed" : "superseded",
-			claimed: true,
-		};
-	}
-
-	return {
-		outcome: (await repo.retryWork({
-			...lease,
-			errorCode,
-			retryDelaySeconds: retryDelaySeconds(claimed.attemptCount),
-		}))
-			? "retry"
-			: "superseded",
-		claimed: true,
-	};
 }
 
 async function findCurrentCollectionIdentities(
@@ -395,24 +422,17 @@ function chunkCollectionIds(ids: readonly string[]): string[][] {
 	return batches;
 }
 
-function failedRefreshResult(): ContentMediaUsageRefreshResult {
-	return {
-		success: false,
-		refreshedSourceCount: 0,
-		deletedSourceCount: 0,
-		failedSourceCount: 0,
-		errorCode: "CONTENT_USAGE_REFRESH_ERROR",
-	};
+function canContinueBulkWork(deadlineMs: number): boolean {
+	if (Date.now() >= deadlineMs) return false;
+	const metrics = getRequestContext()?.metrics;
+	return !metrics || metrics.dbCount + 150 <= 900;
 }
 
-function generationConflictResult(): ContentMediaUsageRefreshResult {
-	return {
-		success: false,
-		refreshedSourceCount: 0,
-		deletedSourceCount: 0,
-		failedSourceCount: 0,
-		errorCode: "CONTENT_USAGE_GENERATION_CONFLICT",
-	};
+function bulkDeadlineMs(startedAt: number): number {
+	const metrics = getRequestContext()?.metrics;
+	if (!metrics) return startedAt + MEDIA_USAGE_WORK_PROCESSING_LIMITS.maxTickDurationMs;
+	const elapsedMs = Math.max(0, performance.now() - metrics.start);
+	return Date.now() + Math.max(0, MEDIA_USAGE_WORK_PROCESSING_LIMITS.maxTickDurationMs - elapsedMs);
 }
 
 async function isIncrementalCaptureActive(db: Kysely<Database>): Promise<boolean> {
@@ -422,20 +442,6 @@ async function isIncrementalCaptureActive(db: Kysely<Database>): Promise<boolean
 		.where("task_key", "=", "incremental_capture")
 		.executeTakeFirst();
 	return row?.state === "active";
-}
-
-async function collectionIdentityIsCurrent(
-	db: Kysely<Database>,
-	collectionId: string,
-	collectionSlug: string,
-): Promise<boolean> {
-	const row = await db
-		.selectFrom("_emdash_collections")
-		.select("id")
-		.where("id", "=", collectionId)
-		.where("slug", "=", collectionSlug)
-		.executeTakeFirst();
-	return row !== undefined;
 }
 
 function retryDelaySeconds(attemptCount: number): number {

@@ -101,6 +101,24 @@ describe("media usage scheduled drivers", () => {
 		expect(await countWork(runtime)).toBe(1);
 	});
 
+	it("keeps a delayed continuation while retry work is waiting", async () => {
+		runtime = await EmDashRuntime.create(createDeps(null));
+		const fixture = await activateCollection(runtime, "delayed_retry_posts");
+		await insertEntry(runtime, fixture.tableName, "entry-1");
+		await runtime.db
+			.updateTable("_emdash_media_usage_work")
+			.set({ state: "retry", next_attempt_at: "2100-01-01T00:00:00.000Z" })
+			.execute();
+
+		await expect(runtime.runMediaUsageMaintenanceStep()).resolves.toEqual({
+			state: "blocked",
+			continuation: { kind: "delayed", delaySeconds: 30 },
+			taskClass: "entry_work",
+			turn: 0,
+		});
+		expect(await countWork(runtime)).toBe(1);
+	});
+
 	it("continues useful entry work after a reconciliation claim is lost", async () => {
 		runtime = await EmDashRuntime.create(createDeps(null));
 		const work = await activateCollection(runtime, "seed_claim_work");

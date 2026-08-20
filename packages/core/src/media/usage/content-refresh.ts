@@ -325,6 +325,7 @@ export async function refreshContentMediaUsageForWorkBatch(
 				{ allCount: number; changed: string[]; unchanged: string[] }
 			>();
 			for (const item of collectionItems) {
+				if (options.shouldContinue && !options.shouldContinue()) break;
 				const snapshotsResult = snapshots.get(item.contentId);
 				const itemSourceKeys = contentSourceKeys(
 					item.collectionSlug,
@@ -438,6 +439,7 @@ export async function refreshContentMediaUsageForWorkBatch(
 				);
 			}
 			for (const item of collectionItems) {
+				if (options.shouldContinue && !options.shouldContinue()) break;
 				const key = contentRefreshKey(item.collectionId, item.contentId);
 				if (!snapshots.has(item.contentId)) continue;
 				if (results.has(key)) continue;

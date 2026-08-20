@@ -32,7 +32,7 @@ export interface MediaUsageMaintenanceStepResult {
 export const MEDIA_USAGE_MAINTENANCE_LIMITS = Object.freeze({
 	eventQueryCeiling: 900,
 	maxStepQueries: 150,
-	stepStartDeadlineMs: 14 * 60_000,
+	stepStartDeadlineMs: 12 * 60_000,
 });
 
 const TASK_CLASSES: readonly MediaUsageMaintenanceTaskClass[] = [

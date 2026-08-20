@@ -14,7 +14,11 @@
 // @ts-ignore - resolved against the consuming app's Astro build
 import astroHandler from "@astrojs/cloudflare/entrypoints/server";
 import { createApp } from "astro/app/entrypoint";
-import { runMediaUsageMaintenanceSlice, runScheduledTasks } from "emdash/middleware";
+import {
+	runMediaUsageMaintenanceSlice,
+	runScheduledTasks,
+	runScheduledTasksWithMediaUsage,
+} from "emdash/middleware";
 
 export { PluginBridge } from "./sandbox/index.js";
 
@@ -89,41 +93,46 @@ export function createScheduledHandler<Env = unknown>(
 			return;
 		}
 
-		const wakeMediaUsage = () => {
-			let queue: Queue<MediaUsageWakeMessage> | undefined;
-			try {
-				queue = options?.resolveMediaUsageQueue?.(env);
-			} catch {
-				console.error("[scheduled] Failed to queue Media Usage maintenance wake");
-				return false;
-			}
-			if (queue) {
-				ctx.waitUntil(
-					queue.send({ version: 1 }).catch(() => {
-						console.error("[scheduled] Failed to queue Media Usage maintenance wake");
-					}),
-				);
-				return true;
-			}
+		let queue: Queue<MediaUsageWakeMessage> | undefined;
+		try {
+			queue = options?.resolveMediaUsageQueue?.(env);
+		} catch {
+			console.error("[scheduled] Failed to queue Media Usage maintenance wake");
+		}
+		const queueWake = () => {
+			if (!queue) return;
 			ctx.waitUntil(
-				runMediaUsageMaintenanceSlice().catch((error: unknown) => {
-					console.error("[scheduled] Media Usage maintenance failed:", error);
+				queue.send({ version: 1 }).catch(() => {
+					console.error("[scheduled] Failed to queue Media Usage maintenance wake");
 				}),
 			);
-			return true;
 		};
 
-		wakeMediaUsage();
 		if (!isGeneral) {
+			if (queue) {
+				queueWake();
+			} else if (configuredMediaUsageCron !== undefined) {
+				ctx.waitUntil(
+					runMediaUsageMaintenanceSlice().catch((error: unknown) => {
+						console.error("[scheduled] Media Usage maintenance failed:", error);
+					}),
+				);
+			}
 			return;
 		}
+
+		if (queue) queueWake();
+		const runGeneral =
+			queue || configuredMediaUsageCron !== undefined
+				? runScheduledTasks
+				: runScheduledTasksWithMediaUsage;
 		ctx.waitUntil(
 			// Invalidate incrementally as each collection batch publishes, so a
 			// scheduled() invocation killed mid-sweep (CPU/wall-clock limits on a
 			// large backlog) still purged the cache tags for everything it managed
 			// to publish — not just whatever completed before a single end-of-sweep
 			// purge that may never run.
-			runScheduledTasks({ onPublished: invalidatePublishedTags })
+			runGeneral({ onPublished: invalidatePublishedTags })
 				.then(({ published }) => {
 					if (published.length > 0) {
 						console.log(`[scheduled] Published ${published.length} scheduled item(s)`);

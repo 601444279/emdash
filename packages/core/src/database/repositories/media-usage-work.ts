@@ -612,23 +612,11 @@ export class MediaUsageWorkRepository {
 		return rows.map(rowToWork);
 	}
 
-	async hasDueWork(): Promise<boolean> {
+	async hasNonterminalWork(): Promise<boolean> {
 		const row = await this.db
-			.selectFrom("_emdash_media_usage_work as work")
-			.select("work.content_id")
-			.where((eb) =>
-				eb.or([
-					eb.and([
-						eb("work.state", "in", ["pending", "retry"]),
-						this.timestampIsDue("work.next_attempt_at"),
-					]),
-					eb.and([
-						eb("work.state", "=", "leased"),
-						eb("work.lease_expires_at", "is not", null),
-						this.timestampIsDue("work.lease_expires_at"),
-					]),
-				]),
-			)
+			.selectFrom("_emdash_media_usage_work")
+			.select("content_id")
+			.where("state", "in", ["pending", "retry", "leased"])
 			.limit(1)
 			.executeTakeFirst();
 		return row !== undefined;

@@ -9,17 +9,27 @@ type MaintenanceStepResult = {
 
 type MaintenanceContinuation = MaintenanceStepResult["continuation"];
 
-const scheduled = vi.hoisted(() => ({
-	general: vi.fn(async () => ({ published: [] })),
-	mediaUsage: vi.fn(async () => ({ outcome: "inactive", taskClass: null, turn: null })),
-	mediaUsageStep: vi.fn<() => Promise<MaintenanceStepResult>>(async () => ({
-		state: "idle",
-		continuation: { kind: "none" },
-		taskClass: "entry_work",
-		turn: 0,
-	})),
-	mediaUsageSlice: vi.fn<() => Promise<MaintenanceContinuation>>(async () => ({ kind: "none" })),
-}));
+const scheduled = vi.hoisted(() => {
+	const general = vi.fn(async (_options?: unknown) => ({ published: [] }));
+	const mediaUsageSlice = vi.fn<() => Promise<MaintenanceContinuation>>(async () => ({
+		kind: "none",
+	}));
+	return {
+		general,
+		generalWithMediaUsage: vi.fn(async (options) => ({
+			...(await general(options)),
+			mediaUsage: await mediaUsageSlice(),
+		})),
+		mediaUsage: vi.fn(async () => ({ outcome: "inactive", taskClass: null, turn: null })),
+		mediaUsageStep: vi.fn<() => Promise<MaintenanceStepResult>>(async () => ({
+			state: "idle",
+			continuation: { kind: "none" },
+			taskClass: "entry_work",
+			turn: 0,
+		})),
+		mediaUsageSlice,
+	};
+});
 const astro = vi.hoisted(() => ({ fetch: vi.fn() }));
 
 vi.mock("@astrojs/cloudflare/entrypoints/server", () => ({ default: { fetch: astro.fetch } }));
@@ -28,6 +38,7 @@ vi.mock("astro/app/entrypoint", () => ({
 }));
 vi.mock("emdash/middleware", () => ({
 	runScheduledTasks: scheduled.general,
+	runScheduledTasksWithMediaUsage: scheduled.generalWithMediaUsage,
 	runScheduledMediaUsageTasks: scheduled.mediaUsage,
 	runMediaUsageMaintenanceStep: scheduled.mediaUsageStep,
 	runMediaUsageMaintenanceSlice: scheduled.mediaUsageSlice,
@@ -47,6 +58,7 @@ beforeEach(() => {
 	astro.fetch.mockReset();
 	astro.fetch.mockResolvedValue(new Response(null, { status: 204 }));
 	scheduled.general.mockClear();
+	scheduled.generalWithMediaUsage.mockClear();
 	scheduled.mediaUsage.mockClear();
 	scheduled.mediaUsageStep.mockClear();
 	scheduled.mediaUsageSlice.mockClear();
@@ -63,16 +75,19 @@ it("retains the default Media Usage expression as a compatibility alias", async 
 	const handler = createScheduledHandler();
 
 	await invoke(handler, "custom expression");
+	expect(scheduled.generalWithMediaUsage).toHaveBeenCalledOnce();
 	expect(scheduled.general).toHaveBeenCalledOnce();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
 
+	scheduled.generalWithMediaUsage.mockClear();
 	scheduled.general.mockClear();
 	scheduled.mediaUsageSlice.mockClear();
 	await invoke(handler, "*/2 * * * *");
+	expect(scheduled.generalWithMediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.general).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
-	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
+	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 });
 
 it("keeps the configured Media Usage expression as a recovery-only alias", async () => {
@@ -82,13 +97,16 @@ it("keeps the configured Media Usage expression as a recovery-only alias", async
 	});
 
 	await invoke(handler, "* * * * *");
+	expect(scheduled.generalWithMediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.general).toHaveBeenCalledOnce();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
-	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
+	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 
+	scheduled.generalWithMediaUsage.mockClear();
 	scheduled.general.mockClear();
 	scheduled.mediaUsageSlice.mockClear();
 	await invoke(handler, "*/2 * * * *");
+	expect(scheduled.generalWithMediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.general).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
@@ -107,14 +125,14 @@ it("allows either default expression to be overridden independently", async () =
 
 	scheduled.mediaUsageSlice.mockClear();
 	await invoke(customMedia, "15 * * * *");
-	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
+	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 	expect(scheduled.general).toHaveBeenCalledOnce();
 
 	scheduled.general.mockClear();
 	scheduled.mediaUsageSlice.mockClear();
 	const customGeneral = createScheduledHandler({ generalCron: "0 * * * *" });
 	await invoke(customGeneral, "*/2 * * * *");
-	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
+	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 	expect(scheduled.general).not.toHaveBeenCalled();
 
 	scheduled.mediaUsageSlice.mockClear();
@@ -216,7 +234,7 @@ it("uses configured Cron as a Queue wake without initializing Media Usage", asyn
 	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 });
 
-it("uses one bounded maintenance slice when the optional Queue is unavailable", async () => {
+it("leaves a compatibility-only Cron idle when the optional Queue is unavailable", async () => {
 	const handler = createScheduledHandler({
 		resolveMediaUsageQueue: () => undefined,
 	});
@@ -225,6 +243,18 @@ it("uses one bounded maintenance slice when the optional Queue is unavailable", 
 
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageStep).not.toHaveBeenCalled();
+	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
+});
+
+it("runs general and Media Usage maintenance in one context without a Queue", async () => {
+	const handler = createScheduledHandler({
+		resolveMediaUsageQueue: () => undefined,
+	});
+
+	await invoke(handler, "15 * * * *", {});
+
+	expect(scheduled.generalWithMediaUsage).toHaveBeenCalledOnce();
+	expect(scheduled.general).toHaveBeenCalledOnce();
 	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
 });
 

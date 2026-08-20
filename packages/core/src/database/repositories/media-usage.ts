@@ -736,6 +736,8 @@ export class MediaUsageRepository {
 		const leasesPayload = JSON.stringify(
 			prepared.map((item) => ({
 				source_key: item.row.source_key,
+				collection_id: item.row.collection_id,
+				collection_slug: item.row.collection_slug,
 				generation: item.generation,
 				lease_token: item.leaseToken,
 				expires_at: expiresAt,
@@ -750,6 +752,22 @@ export class MediaUsageRepository {
 			)
 			SELECT source_key, generation, lease_token, expires_at, created_at
 			FROM input
+			WHERE EXISTS (
+				SELECT 1
+				FROM _emdash_collections AS collection
+				INNER JOIN _emdash_media_usage_index_status AS status
+					ON status.collection_id = collection.id
+					AND status.scope_key = collection.slug
+				WHERE collection.id = input.collection_id
+					AND collection.slug = input.collection_slug
+					AND status.adapter_id = 'content-media'
+					AND status.scope_type = 'collection'
+					AND status.capture_state = 'active'
+					AND NOT EXISTS (
+						SELECT 1 FROM _emdash_media_usage_collection_deletions AS deletion
+						WHERE deletion.collection_id = input.collection_id
+					)
+			)
 		`.execute(this.db);
 
 		try {
@@ -880,6 +898,8 @@ export class MediaUsageRepository {
 		const leasesPayload = JSON.stringify(
 			prepared.map((item) => ({
 				source_key: item.row.source_key,
+				collection_id: item.row.collection_id,
+				collection_slug: item.row.collection_slug,
 				generation: item.generation,
 				lease_token: item.leaseToken,
 				expires_at: expiresAt,
@@ -894,6 +914,22 @@ export class MediaUsageRepository {
 			)
 			SELECT source_key, generation, lease_token, expires_at, created_at
 			FROM input
+			WHERE EXISTS (
+				SELECT 1
+				FROM _emdash_collections AS collection
+				INNER JOIN _emdash_media_usage_index_status AS status
+					ON status.collection_id = collection.id
+					AND status.scope_key = collection.slug
+				WHERE collection.id = input.collection_id
+					AND collection.slug = input.collection_slug
+					AND status.adapter_id = 'content-media'
+					AND status.scope_type = 'collection'
+					AND status.capture_state = 'active'
+					AND NOT EXISTS (
+						SELECT 1 FROM _emdash_media_usage_collection_deletions AS deletion
+						WHERE deletion.collection_id = input.collection_id
+					)
+			)
 		`.execute(this.db);
 
 		try {
@@ -2957,6 +2993,7 @@ export class MediaUsageRepository {
 		prepared: readonly {
 			projection: MediaUsageNewSourceProjection;
 			generation: string;
+			leaseToken: string;
 			row: { source_key: string };
 		}[],
 		now: string,
@@ -2976,6 +3013,7 @@ export class MediaUsageRepository {
 				media_kind: occurrence.mediaKind ?? null,
 				mime_type: occurrence.mimeType ?? null,
 				created_at: now,
+				lease_token: item.leaseToken,
 			})),
 		);
 		for (const rowBatch of chunkJsonRows(rows)) {
@@ -2992,6 +3030,14 @@ export class MediaUsageRepository {
 					reference_type, media_id, provider, provider_asset_id, media_kind,
 					mime_type, created_at
 				FROM input
+				WHERE EXISTS (
+					SELECT 1
+					FROM _emdash_media_usage_generation_writes AS writer
+					WHERE writer.source_key = input.source_key
+						AND writer.generation = input.generation
+						AND writer.lease_token = input.lease_token
+						AND ${this.generationWriteLeaseExpiryIsInFuture("writer.expires_at")}
+				)
 			`.execute(this.db);
 		}
 	}
@@ -3012,7 +3058,8 @@ export class MediaUsageRepository {
 					entry.value ->> 'provider_asset_id' AS provider_asset_id,
 					entry.value ->> 'media_kind' AS media_kind,
 					entry.value ->> 'mime_type' AS mime_type,
-					entry.value ->> 'created_at' AS created_at
+					entry.value ->> 'created_at' AS created_at,
+					entry.value ->> 'lease_token' AS lease_token
 				FROM jsonb_array_elements(${payload}::jsonb) AS entry(value)
 			`;
 		}
@@ -3030,7 +3077,8 @@ export class MediaUsageRepository {
 				json_extract(entry.value, '$.provider_asset_id') AS provider_asset_id,
 				json_extract(entry.value, '$.media_kind') AS media_kind,
 				json_extract(entry.value, '$.mime_type') AS mime_type,
-				json_extract(entry.value, '$.created_at') AS created_at
+				json_extract(entry.value, '$.created_at') AS created_at,
+				json_extract(entry.value, '$.lease_token') AS lease_token
 			FROM json_each(${payload}) AS entry
 		`;
 	}
@@ -3127,6 +3175,8 @@ export class MediaUsageRepository {
 			return sql`
 				SELECT
 					entry.value ->> 'source_key' AS source_key,
+					entry.value ->> 'collection_id' AS collection_id,
+					entry.value ->> 'collection_slug' AS collection_slug,
 					entry.value ->> 'generation' AS generation,
 					entry.value ->> 'lease_token' AS lease_token,
 					entry.value ->> 'expires_at' AS expires_at,
@@ -3137,6 +3187,8 @@ export class MediaUsageRepository {
 		return sql`
 			SELECT
 				json_extract(entry.value, '$.source_key') AS source_key,
+				json_extract(entry.value, '$.collection_id') AS collection_id,
+				json_extract(entry.value, '$.collection_slug') AS collection_slug,
 				json_extract(entry.value, '$.generation') AS generation,
 				json_extract(entry.value, '$.lease_token') AS lease_token,
 				json_extract(entry.value, '$.expires_at') AS expires_at,

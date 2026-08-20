@@ -291,6 +291,18 @@ export async function runScheduledTasks(
 	return runOutsideRequest(config, (runtime) => runtime.runScheduledTasks(options));
 }
 
+export async function runScheduledTasksWithMediaUsage(
+	options: { onPublished?: (refs: PublishedRef[]) => Promise<void> } = {},
+): Promise<{ published: PublishedRef[]; mediaUsage: MediaUsageMaintenanceContinuation }> {
+	const config = getConfig();
+	if (!config) return { published: [], mediaUsage: { kind: "none" } };
+	return runOutsideRequest(config, async (runtime) => {
+		const scheduled = await runtime.runScheduledTasks(options);
+		const mediaUsage = await runtime.runMediaUsageMaintenanceSlice();
+		return { ...scheduled, mediaUsage };
+	});
+}
+
 export async function runScheduledMediaUsageTasks(): Promise<MediaUsageMaintenanceResult> {
 	const config = getConfig();
 	if (!config) return { outcome: "inactive", taskClass: null, turn: null };
