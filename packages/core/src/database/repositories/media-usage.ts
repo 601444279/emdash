@@ -615,16 +615,18 @@ export class MediaUsageRepository {
 		const uniqueSourceKeys = [...new Set(sourceKeys)];
 		const sources = new Map<string, MediaUsageSource>();
 		if (uniqueSourceKeys.length === 0) return sources;
-		const input = jsonTextValues(this.db, uniqueSourceKeys);
-		const result = await sql<Selectable<MediaUsageSourceTable>>`
-			WITH requested AS (${input})
-			SELECT source.*
-			FROM _emdash_media_usage_sources AS source
-			INNER JOIN requested ON requested.value = source.source_key
-		`.execute(this.db);
-		for (const row of result.rows) {
-			const source = rowToSource(row);
-			sources.set(source.sourceKey, source);
+		for (const sourceKeyBatch of chunkJsonRows(uniqueSourceKeys)) {
+			const input = jsonTextValues(this.db, sourceKeyBatch);
+			const result = await sql<Selectable<MediaUsageSourceTable>>`
+				WITH requested AS (${input})
+				SELECT source.*
+				FROM _emdash_media_usage_sources AS source
+				INNER JOIN requested ON requested.value = source.source_key
+			`.execute(this.db);
+			for (const row of result.rows) {
+				const source = rowToSource(row);
+				sources.set(source.sourceKey, source);
+			}
 		}
 
 		return sources;

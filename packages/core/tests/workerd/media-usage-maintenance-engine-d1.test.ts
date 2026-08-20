@@ -6,6 +6,7 @@ import { RawBindingD1Dialect } from "../../../cloudflare/src/db/d1-dialect.js";
 import { createRequestScopedDb } from "../../../cloudflare/src/db/d1.js";
 import { kyselyLogOption } from "../../src/database/instrumentation.js";
 import { runMigrations } from "../../src/database/migrations/runner.js";
+import { MediaUsageRepository } from "../../src/database/repositories/media-usage.js";
 import type { Database } from "../../src/database/types.js";
 import {
 	MEDIA_USAGE_MAINTENANCE_LIMITS,
@@ -47,6 +48,18 @@ beforeAll(async () => {
 
 afterAll(async () => {
 	await adminDb.destroy();
+});
+
+it("keeps full-repair source lookups within D1 value limits", async () => {
+	const collectionId = "collection-" + "x".repeat(40);
+	const sourceKeys = Array.from(
+		{ length: 50_000 },
+		(_, index) => `content:${collectionId}:${String(index).padStart(8, "0")}:draft_overlay`,
+	);
+
+	await expect(new MediaUsageRepository(adminDb).findSources(sourceKeys)).resolves.toEqual(
+		new Map(),
+	);
 });
 
 it("keeps the largest entry step below the shared Paid reservation", async () => {
