@@ -299,13 +299,17 @@ describeEachDialect("media usage durable work processing", (dialect) => {
 		});
 		expect(marker.outcome).toBe("marked");
 		expect(
-			await work.completeWork({
-				collectionId: fixture.collectionId,
-				contentId: "entry-1",
-				workVersion: claimed.workVersion,
-				leaseToken: claimed.leaseToken,
-			}),
-		).toBe(true);
+			await work.completeWorkBatch([
+				{
+					collectionId: fixture.collectionId,
+					contentId: "entry-1",
+					workVersion: claimed.workVersion,
+					leaseToken: claimed.leaseToken,
+				},
+			]),
+		).toEqual(
+			new Set([`${fixture.collectionId}\u0000entry-1\u0000${String(claimed.workVersion)}`]),
+		);
 		expect(
 			await ctx.db
 				.selectFrom("_emdash_media_usage_index_status")

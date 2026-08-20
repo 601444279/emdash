@@ -18,7 +18,6 @@ import {
 
 export const MEDIA_USAGE_WORK_PROCESSING_LIMITS = Object.freeze({
 	candidatesPerTick: 1_000,
-	jobsPerTick: 1_000,
 	maxTickDurationMs: 12 * 60_000,
 	leaseDurationSeconds: 20 * 60,
 	maxAttempts: 5,

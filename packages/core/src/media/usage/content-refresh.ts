@@ -249,24 +249,6 @@ export async function refreshContentMediaUsage(
 	);
 }
 
-export async function refreshContentMediaUsageForWork(
-	db: Kysely<Database>,
-	collectionId: string,
-	collectionSlug: string,
-	contentId: string,
-): Promise<ContentMediaUsageRefreshResult> {
-	validateIdentifier(collectionSlug, "collection slug");
-	if (!collectionId) throw new Error("Durable media usage work requires a collection identity");
-	return withContentUsageCollectionLock(collectionSlug, () =>
-		withContentUsageLock(collectionSlug, contentId, () =>
-			refreshContentMediaUsageUnlocked(db, collectionSlug, contentId, {
-				collectionId,
-				durableWork: true,
-			}),
-		),
-	);
-}
-
 export interface ContentMediaUsageWorkRefreshInput {
 	collectionId: string;
 	collectionSlug: string;
