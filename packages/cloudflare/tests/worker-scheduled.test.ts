@@ -59,21 +59,23 @@ beforeEach(() => {
 	scheduled.mediaUsageSlice.mockResolvedValue({ kind: "none" });
 });
 
-it("uses the default Media Usage expression and treats every other expression as general", async () => {
+it("retains the default Media Usage expression as a compatibility alias", async () => {
 	const handler = createScheduledHandler();
 
 	await invoke(handler, "custom expression");
 	expect(scheduled.general).toHaveBeenCalledOnce();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
+	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
 
 	scheduled.general.mockClear();
+	scheduled.mediaUsageSlice.mockClear();
 	await invoke(handler, "*/2 * * * *");
 	expect(scheduled.general).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
 });
 
-it("dispatches distinct configured cron expressions to exactly one lane", async () => {
+it("keeps the configured Media Usage expression as a recovery-only alias", async () => {
 	const handler = createScheduledHandler({
 		generalCron: "* * * * *",
 		mediaUsageCron: "*/2 * * * *",
@@ -82,8 +84,10 @@ it("dispatches distinct configured cron expressions to exactly one lane", async 
 	await invoke(handler, "* * * * *");
 	expect(scheduled.general).toHaveBeenCalledOnce();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
+	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
 
 	scheduled.general.mockClear();
+	scheduled.mediaUsageSlice.mockClear();
 	await invoke(handler, "*/2 * * * *");
 	expect(scheduled.general).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
@@ -103,10 +107,11 @@ it("allows either default expression to be overridden independently", async () =
 
 	scheduled.mediaUsageSlice.mockClear();
 	await invoke(customMedia, "15 * * * *");
-	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
+	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
 	expect(scheduled.general).toHaveBeenCalledOnce();
 
 	scheduled.general.mockClear();
+	scheduled.mediaUsageSlice.mockClear();
 	const customGeneral = createScheduledHandler({ generalCron: "0 * * * *" });
 	await invoke(customGeneral, "*/2 * * * *");
 	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
@@ -114,10 +119,11 @@ it("allows either default expression to be overridden independently", async () =
 
 	scheduled.mediaUsageSlice.mockClear();
 	await invoke(customGeneral, "0 * * * *");
-	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
+	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
 	expect(scheduled.general).toHaveBeenCalledOnce();
 
 	scheduled.general.mockClear();
+	scheduled.mediaUsageSlice.mockClear();
 	await invoke(customGeneral, "15 * * * *");
 	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 	expect(scheduled.general).not.toHaveBeenCalled();
@@ -185,7 +191,7 @@ it("rejects empty or aliased configured expressions", () => {
 		/non-empty/i,
 	);
 	expect(() => createScheduledHandler({ mediaUsageCron: " " })).toThrow(/non-empty/i);
-	expect(() => createScheduledHandler({ generalCron: " */2 * * * * " })).toThrow(/must differ/i);
+	expect(createScheduledHandler({ generalCron: " */2 * * * * " })).toBeTypeOf("function");
 });
 
 it("keeps the existing non-generic scheduled options type usable", () => {

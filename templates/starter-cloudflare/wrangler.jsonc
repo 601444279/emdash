@@ -39,8 +39,11 @@
 			},
 		],
 	},
+	"limits": {
+		"cpu_ms": 300000,
+	},
 	// General maintenance plus the bounded Media Usage lane (see src/worker.ts)
 	"triggers": {
-		"crons": ["* * * * *", "*/2 * * * *"],
+		"crons": ["* * * * *"],
 	},
 }

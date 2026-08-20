@@ -40,10 +40,9 @@ async function invalidatePublishedTags(
 }
 
 /**
- * Build a Worker `scheduled()` handler. By default the every-two-minutes
- * expression runs Media Usage maintenance and every other expression runs
- * general maintenance. Configuring a general expression changes that lane
- * from catch-all to exact.
+ * Build a Worker `scheduled()` handler. General maintenance independently
+ * wakes Media Usage recovery. The optional Media Usage expression remains a
+ * compatibility alias for deployments that already have a second trigger.
  */
 export interface MediaUsageWakeMessage {
 	version: 1;
@@ -67,22 +66,36 @@ export function createScheduledHandler<Env = unknown>(
 	options?: ScheduledHandlerOptions<Env>,
 ): ExportedHandlerScheduledHandler<Env> {
 	const generalCron = options?.generalCron?.trim();
-	const mediaUsageCron = options?.mediaUsageCron?.trim() ?? DEFAULT_MEDIA_USAGE_CRON;
-	if ((options?.generalCron !== undefined && !generalCron) || !mediaUsageCron) {
+	const configuredMediaUsageCron = options?.mediaUsageCron?.trim();
+	const mediaUsageCron =
+		configuredMediaUsageCron ??
+		(generalCron === DEFAULT_MEDIA_USAGE_CRON ? undefined : DEFAULT_MEDIA_USAGE_CRON);
+	if (
+		(options?.generalCron !== undefined && !generalCron) ||
+		(options?.mediaUsageCron !== undefined && !configuredMediaUsageCron)
+	) {
 		throw new Error("Configured scheduled-handler expressions must be non-empty");
 	}
-	if (generalCron === mediaUsageCron) {
+	if (generalCron !== undefined && generalCron === mediaUsageCron) {
 		throw new Error("General and Media Usage Cron expressions must differ");
 	}
 
 	return (controller, env, ctx) => {
-		if (controller.cron === mediaUsageCron) {
+		const isMediaUsageAlias = mediaUsageCron !== undefined && controller.cron === mediaUsageCron;
+		const isGeneral =
+			generalCron !== undefined ? controller.cron === generalCron : !isMediaUsageAlias;
+		if (!isGeneral && !isMediaUsageAlias) {
+			console.warn(`[scheduled] Ignoring unexpected Cron expression: ${controller.cron}`);
+			return;
+		}
+
+		const wakeMediaUsage = () => {
 			let queue: Queue<MediaUsageWakeMessage> | undefined;
 			try {
 				queue = options?.resolveMediaUsageQueue?.(env);
 			} catch {
 				console.error("[scheduled] Failed to queue Media Usage maintenance wake");
-				return;
+				return false;
 			}
 			if (queue) {
 				ctx.waitUntil(
@@ -90,17 +103,18 @@ export function createScheduledHandler<Env = unknown>(
 						console.error("[scheduled] Failed to queue Media Usage maintenance wake");
 					}),
 				);
-				return;
+				return true;
 			}
 			ctx.waitUntil(
 				runMediaUsageMaintenanceSlice().catch((error: unknown) => {
 					console.error("[scheduled] Media Usage maintenance failed:", error);
 				}),
 			);
-			return;
-		}
-		if (generalCron !== undefined && controller.cron !== generalCron) {
-			console.warn(`[scheduled] Ignoring unexpected Cron expression: ${controller.cron}`);
+			return true;
+		};
+
+		wakeMediaUsage();
+		if (!isGeneral) {
 			return;
 		}
 		ctx.waitUntil(

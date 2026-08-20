@@ -9,7 +9,7 @@
 
 import { Permissions } from "@emdash-cms/auth";
 import type { Element } from "@emdash-cms/blocks";
-import { Kysely, sql, type Dialect } from "kysely";
+import { Kysely, type Dialect } from "kysely";
 import virtualConfig from "virtual:emdash/config";
 import { z } from "zod";
 
@@ -42,8 +42,6 @@ import { getI18nConfig } from "./i18n/config.js";
 import { repairLocaleCasing } from "./i18n/repair-locale-casing.js";
 import { normalizeMediaValue } from "./media/normalize.js";
 import type { MediaProvider, MediaProviderCapabilities } from "./media/types.js";
-import { MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION } from "./media/usage/activation.js";
-import { processDueMediaUsageCollectionDeletions } from "./media/usage/collection-deletion-processor.js";
 import {
 	deleteContentMediaUsage,
 	findNonTranslatableSiblingContentIds,
@@ -58,11 +56,7 @@ import {
 	type MediaUsageMaintenanceStepResult,
 	type MediaUsageMaintenanceTaskClass,
 } from "./media/usage/maintenance-engine.js";
-import { processDueMediaUsageReconciliation } from "./media/usage/reconciliation-processor.js";
-import {
-	processDueMediaUsageWork,
-	processMediaUsageWorkAfterWrite,
-} from "./media/usage/work-processor.js";
+import { processMediaUsageWorkAfterWrite } from "./media/usage/work-processor.js";
 import { createSandboxRunnerOptions } from "./plugins/sandbox/runner-options.js";
 import { getSandboxRouteErrorDetails } from "./plugins/sandbox/types.js";
 import type {
@@ -563,29 +557,15 @@ async function runScheduledMediaUsageLane(
 		return { outcome: "admission_closed", taskClass: null, turn: null };
 	}
 
-	const activation = await db
-		.updateTable("_emdash_media_usage_activation")
-		.set({
-			media_usage_maintenance_turn: sql<number>`(media_usage_maintenance_turn + 1) % 3`,
-		})
-		.where("task_key", "=", "incremental_capture")
-		.where("state", "=", "active")
-		.where("runtime_generation", "=", MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION)
-		.returning("media_usage_maintenance_turn")
-		.executeTakeFirst();
-	if (!activation) return { outcome: "inactive", taskClass: null, turn: null };
-
-	const turn = activation.media_usage_maintenance_turn;
-	if (turn === 0) {
-		await processDueMediaUsageWork(db);
-		return { outcome: "processed", taskClass: "entry_work", turn };
+	const result = await runMediaUsageMaintenanceStep(db);
+	if (result.state === "inactive" || result.taskClass === null || result.turn === null) {
+		return { outcome: "inactive", taskClass: null, turn: null };
 	}
-	if (turn === 1) {
-		await processDueMediaUsageCollectionDeletions(db);
-		return { outcome: "processed", taskClass: "collection_deletion", turn };
-	}
-	await processDueMediaUsageReconciliation(db);
-	return { outcome: "processed", taskClass: "reconciliation", turn };
+	return {
+		outcome: "processed",
+		taskClass: result.taskClass,
+		turn: result.turn,
+	};
 }
 
 /**

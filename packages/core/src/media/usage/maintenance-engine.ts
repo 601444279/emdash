@@ -1,4 +1,4 @@
-import { sql, type Kysely } from "kysely";
+import type { Kysely } from "kysely";
 
 import type { Database } from "../../database/types.js";
 import { getRequestContext } from "../../request-context.js";
@@ -36,47 +36,67 @@ export const MEDIA_USAGE_MAINTENANCE_LIMITS = Object.freeze({
 });
 
 const TASK_CLASSES: readonly MediaUsageMaintenanceTaskClass[] = [
-	"entry_work",
 	"collection_deletion",
+	"entry_work",
 	"reconciliation",
 ];
+
+const TASK_CLASS_TURNS: Record<MediaUsageMaintenanceTaskClass, number> = {
+	entry_work: 0,
+	collection_deletion: 1,
+	reconciliation: 2,
+};
 
 export async function runMediaUsageMaintenanceStep(
 	db: Kysely<Database>,
 ): Promise<MediaUsageMaintenanceStepResult> {
 	const activation = await db
-		.updateTable("_emdash_media_usage_activation")
-		.set({
-			media_usage_maintenance_turn: sql<number>`(media_usage_maintenance_turn + 1) % 3`,
-		})
+		.selectFrom("_emdash_media_usage_activation")
+		.select(["state", "runtime_generation"])
 		.where("task_key", "=", "incremental_capture")
-		.where("state", "=", "active")
-		.where("runtime_generation", "=", MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION)
-		.returning("media_usage_maintenance_turn")
 		.executeTakeFirst();
-	if (!activation) return runActivationStep(db);
+	if (
+		activation?.state !== "active" ||
+		activation.runtime_generation !== MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION
+	) {
+		return runActivationStep(db);
+	}
 
-	const startingTurn = activation.media_usage_maintenance_turn;
 	let firstBlocked: { taskClass: MediaUsageMaintenanceTaskClass; turn: number } | null = null;
 	let blockedReconciliationTurn: number | null = null;
+	let firstProgress: { taskClass: MediaUsageMaintenanceTaskClass; turn: number } | null = null;
 
-	for (let offset = 0; offset < TASK_CLASSES.length; offset++) {
-		const turn = (startingTurn + offset) % TASK_CLASSES.length;
-		const taskClass = TASK_CLASSES[turn];
+	for (const taskClass of TASK_CLASSES) {
+		const turn = TASK_CLASS_TURNS[taskClass];
+		const metrics = getRequestContext()?.metrics;
+		if (metrics && !canStartMediaUsageMaintenanceStep(metrics)) {
+			return firstProgress
+				? {
+						state: "progress",
+						continuation: { kind: "immediate" },
+						...firstProgress,
+					}
+				: {
+						state: "blocked",
+						continuation: { kind: "immediate" },
+						taskClass,
+						turn,
+					};
+		}
 		const outcome = await runTaskClass(db, taskClass);
 		if (outcome === "inactive") return inactiveResult();
-		if (outcome === "progress") {
-			return {
-				state: "progress",
-				continuation: { kind: "immediate" },
-				taskClass,
-				turn,
-			};
-		}
+		if (outcome === "progress" && !firstProgress) firstProgress = { taskClass, turn };
 		if (outcome === "blocked") {
 			if (!firstBlocked) firstBlocked = { taskClass, turn };
 			if (taskClass === "reconciliation") blockedReconciliationTurn = turn;
 		}
+	}
+	if (firstProgress) {
+		return {
+			state: "progress",
+			continuation: { kind: "immediate" },
+			...firstProgress,
+		};
 	}
 
 	if (
@@ -102,8 +122,8 @@ export async function runMediaUsageMaintenanceStep(
 	return {
 		state: "idle",
 		continuation: { kind: "none" },
-		taskClass: TASK_CLASSES[startingTurn],
-		turn: startingTurn,
+		taskClass: TASK_CLASSES[0],
+		turn: TASK_CLASS_TURNS[TASK_CLASSES[0]],
 	};
 }
 
