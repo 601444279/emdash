@@ -14,11 +14,7 @@
 // @ts-ignore - resolved against the consuming app's Astro build
 import astroHandler from "@astrojs/cloudflare/entrypoints/server";
 import { createApp } from "astro/app/entrypoint";
-import {
-	runMediaUsageMaintenanceSlice,
-	runScheduledTasks,
-	runScheduledTasksWithMediaUsage,
-} from "emdash/middleware";
+import { runMediaUsageMaintenanceSlice, runScheduledTasks } from "emdash/middleware";
 
 export { PluginBridge } from "./sandbox/index.js";
 
@@ -122,26 +118,31 @@ export function createScheduledHandler<Env = unknown>(
 		}
 
 		if (queue) queueWake();
-		const runGeneral =
-			queue || configuredMediaUsageCron !== undefined
-				? runScheduledTasks
-				: runScheduledTasksWithMediaUsage;
 		ctx.waitUntil(
-			// Invalidate incrementally as each collection batch publishes, so a
-			// scheduled() invocation killed mid-sweep (CPU/wall-clock limits on a
-			// large backlog) still purged the cache tags for everything it managed
-			// to publish — not just whatever completed before a single end-of-sweep
-			// purge that may never run.
-			runGeneral({ onPublished: invalidatePublishedTags })
-				.then(({ published }) => {
+			(async () => {
+				try {
+					// Invalidate incrementally as each collection batch publishes, so a
+					// scheduled() invocation killed mid-sweep (CPU/wall-clock limits on a
+					// large backlog) still purged the cache tags for everything it managed
+					// to publish — not just whatever completed before a single end-of-sweep
+					// purge that may never run.
+					const { published } = await runScheduledTasks({
+						onPublished: invalidatePublishedTags,
+					});
 					if (published.length > 0) {
 						console.log(`[scheduled] Published ${published.length} scheduled item(s)`);
 					}
-					return undefined;
-				})
-				.catch((error: unknown) => {
+				} catch (error) {
 					console.error("[scheduled] runScheduledTasks failed:", error);
-				}),
+				}
+				if (!queue && configuredMediaUsageCron === undefined) {
+					try {
+						await runMediaUsageMaintenanceSlice();
+					} catch (error) {
+						console.error("[scheduled] Media Usage maintenance failed:", error);
+					}
+				}
+			})(),
 		);
 	};
 }

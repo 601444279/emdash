@@ -16,10 +16,6 @@ const scheduled = vi.hoisted(() => {
 	}));
 	return {
 		general,
-		generalWithMediaUsage: vi.fn(async (options) => ({
-			...(await general(options)),
-			mediaUsage: await mediaUsageSlice(),
-		})),
 		mediaUsage: vi.fn(async () => ({ outcome: "inactive", taskClass: null, turn: null })),
 		mediaUsageStep: vi.fn<() => Promise<MaintenanceStepResult>>(async () => ({
 			state: "idle",
@@ -38,7 +34,6 @@ vi.mock("astro/app/entrypoint", () => ({
 }));
 vi.mock("emdash/middleware", () => ({
 	runScheduledTasks: scheduled.general,
-	runScheduledTasksWithMediaUsage: scheduled.generalWithMediaUsage,
 	runScheduledMediaUsageTasks: scheduled.mediaUsage,
 	runMediaUsageMaintenanceStep: scheduled.mediaUsageStep,
 	runMediaUsageMaintenanceSlice: scheduled.mediaUsageSlice,
@@ -58,7 +53,6 @@ beforeEach(() => {
 	astro.fetch.mockReset();
 	astro.fetch.mockResolvedValue(new Response(null, { status: 204 }));
 	scheduled.general.mockClear();
-	scheduled.generalWithMediaUsage.mockClear();
 	scheduled.mediaUsage.mockClear();
 	scheduled.mediaUsageStep.mockClear();
 	scheduled.mediaUsageSlice.mockClear();
@@ -75,16 +69,13 @@ it("retains the default Media Usage expression as a compatibility alias", async 
 	const handler = createScheduledHandler();
 
 	await invoke(handler, "custom expression");
-	expect(scheduled.generalWithMediaUsage).toHaveBeenCalledOnce();
 	expect(scheduled.general).toHaveBeenCalledOnce();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
 
-	scheduled.generalWithMediaUsage.mockClear();
 	scheduled.general.mockClear();
 	scheduled.mediaUsageSlice.mockClear();
 	await invoke(handler, "*/2 * * * *");
-	expect(scheduled.generalWithMediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.general).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
@@ -97,16 +88,13 @@ it("keeps the configured Media Usage expression as a recovery-only alias", async
 	});
 
 	await invoke(handler, "* * * * *");
-	expect(scheduled.generalWithMediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.general).toHaveBeenCalledOnce();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 
-	scheduled.generalWithMediaUsage.mockClear();
 	scheduled.general.mockClear();
 	scheduled.mediaUsageSlice.mockClear();
 	await invoke(handler, "*/2 * * * *");
-	expect(scheduled.generalWithMediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.general).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsage).not.toHaveBeenCalled();
 	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
@@ -246,16 +234,32 @@ it("leaves a compatibility-only Cron idle when the optional Queue is unavailable
 	expect(scheduled.mediaUsageSlice).not.toHaveBeenCalled();
 });
 
-it("runs general and Media Usage maintenance in one context without a Queue", async () => {
+it("runs general and Media Usage maintenance without a Queue", async () => {
 	const handler = createScheduledHandler({
 		resolveMediaUsageQueue: () => undefined,
 	});
 
 	await invoke(handler, "15 * * * *", {});
 
-	expect(scheduled.generalWithMediaUsage).toHaveBeenCalledOnce();
 	expect(scheduled.general).toHaveBeenCalledOnce();
 	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
+});
+
+it("still runs Media Usage recovery when general maintenance fails without a Queue", async () => {
+	const error = vi.spyOn(console, "error").mockImplementation(() => {});
+	scheduled.general.mockRejectedValueOnce(new Error("private general failure"));
+	const handler = createScheduledHandler({
+		resolveMediaUsageQueue: () => undefined,
+	});
+
+	await invoke(handler, "15 * * * *", {});
+
+	expect(scheduled.general).toHaveBeenCalledOnce();
+	expect(scheduled.mediaUsageSlice).toHaveBeenCalledOnce();
+	expect(error).toHaveBeenCalledExactlyOnceWith(
+		"[scheduled] runScheduledTasks failed:",
+		expect.any(Error),
+	);
 });
 
 it("logs a redacted Cron wake failure and leaves recovery to the next trigger", async () => {
