@@ -635,6 +635,23 @@ https://${domain}/123456
 	});
 
 	describe("table blocks", () => {
+		it("detects header row from a first row of <th> cells", () => {
+			const content = `<!-- wp:table -->
+<table>
+<tbody>
+<tr><th>Name</th><th>Age</th></tr>
+<tr><td>James</td><td>83</td></tr>
+</tbody>
+</table>
+<!-- /wp:table -->`;
+
+			const result = gutenbergToPortableText(content);
+			const tbl = result[0] as PortableTextTableBlock;
+
+			expect(tbl.hasHeaderRow).toBe(true);
+			expect(tbl.rows[0]!.cells.every((c) => c.isHeader === true)).toBe(true);
+		});
+
 		it("converts table with header and body", () => {
 			const content = `<!-- wp:table -->
 <table>
@@ -1141,6 +1158,66 @@ describe("htmlToPortableText", () => {
 		const block = result[0] as PortableTextTextBlock;
 		expect(block.children.some((c) => c.marks?.includes("strong"))).toBe(true);
 		expect(block.children.some((c) => c.marks?.includes("em"))).toBe(true);
+	});
+
+	it("converts classic tables to table blocks", () => {
+		const html = `<p>Before.</p>
+<table><tbody>
+<tr><th><b>Role</b></th><th>Salary</th></tr>
+<tr><td><a href="mailto:apply@example.com">Developer</a></td><td>20-50k</td></tr>
+</tbody></table>
+<p>After.</p>`;
+		const result = htmlToPortableText(html);
+
+		expect(result.map((b) => b._type)).toEqual(["block", "table", "block"]);
+
+		const table = result[1] as PortableTextTableBlock;
+		expect(table.hasHeaderRow).toBe(true);
+		expect(table.rows).toHaveLength(2);
+		expect(table.rows[0]!.cells).toHaveLength(2);
+		expect(table.rows[1]!.cells).toHaveLength(2);
+
+		const headerCell = table.rows[0]!.cells[0]!;
+		expect(headerCell.isHeader).toBe(true);
+		expect(headerCell.content.some((c) => c.marks?.includes("strong"))).toBe(true);
+
+		const linkCell = table.rows[1]!.cells[0]!;
+		expect(linkCell.markDefs).toHaveLength(1);
+		expect(linkCell.markDefs?.[0]).toMatchObject({
+			_type: "link",
+			href: "mailto:apply@example.com",
+		});
+	});
+
+	it("keeps tables without <th> as regular data rows", () => {
+		const html = `<table><tbody>
+<tr><td>One</td><td>Two</td></tr>
+</tbody></table>`;
+		const result = htmlToPortableText(html);
+
+		const table = result[0] as PortableTextTableBlock;
+		expect(table._type).toBe("table");
+		expect(table.hasHeaderRow).toBe(false);
+		expect(table.rows[0]!.cells[0]!.isHeader).toBeUndefined();
+	});
+
+	it("treats tables containing images as image/paragraph content", () => {
+		const html = `<table><tbody>
+<tr><td><img src="photo.jpg" alt="Photo"></td></tr>
+<tr><td>Photo caption</td></tr>
+</tbody></table>`;
+		const result = htmlToPortableText(html);
+
+		const image = result.find((b) => b._type === "image") as PortableTextImageBlock;
+		expect(image).toBeDefined();
+		expect(image.asset.url).toBe("photo.jpg");
+		expect(image.alt).toBe("Photo");
+
+		const textBlocks = result.filter((b) => b._type === "block") as PortableTextTextBlock[];
+		const hasCaption = textBlocks.some((b) =>
+			b.children.some((c) => c.text.includes("Photo caption")),
+		);
+		expect(hasCaption).toBe(true);
 	});
 });
 

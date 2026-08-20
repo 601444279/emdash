@@ -594,12 +594,16 @@ export const table: BlockTransformer = (block, _options, context) => {
 		return [];
 	}
 
+	const firstRowCells = rows[0]?.cells;
+	const hasHeaderRow =
+		!!theadMatch || (firstRowCells !== undefined && firstRowCells.every((cell) => cell.isHeader));
+
 	return [
 		{
 			_type: "table" as const,
 			_key: context.generateKey(),
 			rows,
-			hasHeaderRow: !!theadMatch,
+			hasHeaderRow,
 		},
 	];
 };

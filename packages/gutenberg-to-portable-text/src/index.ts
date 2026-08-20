@@ -9,6 +9,7 @@
 import { parse } from "@wordpress/block-serialization-default-parser";
 
 import { parseInlineContent } from "./inline.js";
+import { table as coreTable } from "./transformers/core.js";
 import { getTransformer } from "./transformers/index.js";
 import type {
 	GutenbergBlock,
@@ -19,7 +20,8 @@ import type {
 
 // Regex patterns for HTML parsing and conversion
 const BLOCK_ELEMENT_PATTERN =
-	/<(p|h[1-6]|blockquote|pre|ul|ol|figure|div|hr)[^>]*>([\s\S]*?)<\/\1>|<(hr|br)\s*\/?>|<img\s+[^>]+\/?>/gu;
+	/<(p|h[1-6]|blockquote|pre|ul|ol|figure|div|hr|table)[^>]*>([\s\S]*?)<\/\1>|<(hr|br)\s*\/?>|<img\s+[^>]+\/?>/gu;
+const TABLE_IMAGE_PATTERN = /<img\b/i;
 const LINKED_IMAGE_PATTERN = /<a\s+[^>]*href=["']([^"']+)["'][^>]*>\s*<img\s+([^>]+)\/?>\s*<\/a>/gu;
 const STANDALONE_IMAGE_PATTERN = /<img\s+[^>]+\/?>/gu;
 const IMG_TAG_PATTERN = /<img[^>]+>/i;
@@ -346,6 +348,96 @@ export function htmlToPortableText(
 						markDefs: markDefs.length > 0 ? markDefs : undefined,
 					});
 				}
+				break;
+			}
+
+			case "table": {
+				// Tables used as image-plus-caption wrappers lose their images when
+				// converted to data-table cells, so fall back to image/paragraph
+				// handling for them.
+				if (TABLE_IMAGE_PATTERN.test(content)) {
+					const linkedImgPositions: Array<{ start: number; end: number }> = [];
+
+					LINKED_IMAGE_PATTERN.lastIndex = 0;
+					let linkedMatch;
+					while ((linkedMatch = LINKED_IMAGE_PATTERN.exec(content)) !== null) {
+						const linkUrl = decodeUrlEntities(linkedMatch[1]!);
+						const imgAttrs = linkedMatch[2]!;
+						const srcMatch = imgAttrs.match(SRC_ATTR_PATTERN);
+						const altMatch = imgAttrs.match(ALT_ATTR_PATTERN);
+						if (srcMatch?.[1]) {
+							const imgUrl = decodeUrlEntities(srcMatch[1]);
+							blocks.push({
+								_type: "image",
+								_key: generateKey(),
+								asset: {
+									_type: "reference",
+									_ref: imgUrl,
+									url: imgUrl,
+								},
+								alt: altMatch?.[1],
+								link: linkUrl,
+							});
+						}
+						linkedImgPositions.push({
+							start: linkedMatch.index,
+							end: linkedMatch.index + linkedMatch[0].length,
+						});
+					}
+
+					STANDALONE_IMAGE_PATTERN.lastIndex = 0;
+					let imgMatch;
+					while ((imgMatch = STANDALONE_IMAGE_PATTERN.exec(content)) !== null) {
+						const isLinked = linkedImgPositions.some(
+							(pos) => imgMatch!.index >= pos.start && imgMatch!.index < pos.end,
+						);
+						if (isLinked) continue;
+
+						const srcMatch = imgMatch[0].match(SRC_ATTR_PATTERN);
+						const altMatch = imgMatch[0].match(ALT_ATTR_PATTERN);
+						if (srcMatch?.[1]) {
+							const imgUrl = decodeUrlEntities(srcMatch[1]);
+							blocks.push({
+								_type: "image",
+								_key: generateKey(),
+								asset: {
+									_type: "reference",
+									_ref: imgUrl,
+									url: imgUrl,
+								},
+								alt: altMatch?.[1],
+							});
+						}
+					}
+
+					let textContent = content
+						.replace(LINKED_IMAGE_PATTERN, "")
+						.replace(STANDALONE_IMAGE_PATTERN, "")
+						.trim();
+					if (textContent) {
+						const { children, markDefs } = parseInlineContent(textContent, generateKey);
+						if (children.some((c) => c.text.trim())) {
+							blocks.push({
+								_type: "block",
+								_key: generateKey(),
+								style: "normal",
+								children,
+								markDefs: markDefs.length > 0 ? markDefs : undefined,
+							});
+						}
+					}
+					break;
+				}
+
+				const tableBlock: GutenbergBlock = {
+					blockName: "core/table",
+					attrs: {},
+					innerHTML: fullMatch,
+					innerBlocks: [],
+					innerContent: [fullMatch],
+				};
+				const context = createTransformContext(options, generateKey);
+				blocks.push(...coreTable(tableBlock, options, context));
 				break;
 			}
 
