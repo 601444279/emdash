@@ -1,3 +1,4 @@
+import pullRequestTemplate from "../../../../.github/PULL_REQUEST_TEMPLATE.md?raw";
 import type { Kind, StateId } from "./machine.js";
 import {
 	artifactsBranch,
@@ -188,24 +189,65 @@ export function renderPreviewReadyAsk(input: {
 		.join("\n");
 }
 
+export interface PullRequestCopy {
+	readonly title: string;
+	readonly description: string;
+}
+
+const TYPE_SECTION_HEADING_RE = /^## Type of change\b/im;
+const BUG_FIX_CHECKBOX_RE = /^- \[ ] Bug fix\b(.*)$/im;
+const FEATURE_CHECKBOX_RE = /^- \[ ] Feature\b(.*)$/im;
+const AI_DISCLOSURE_CHECKBOX_RE = /^- \[ ] This PR includes AI-generated code\b.*$/im;
+
+export function fillPullRequestTemplate(template: string, kind: Kind): string {
+	const typeSectionStart = template.search(TYPE_SECTION_HEADING_RE);
+	if (typeSectionStart === -1) throw new Error("pull request template is missing its type section");
+	const typeCheckbox = kind === "bug" ? BUG_FIX_CHECKBOX_RE : FEATURE_CHECKBOX_RE;
+	const typeLabel = kind === "bug" ? "Bug fix" : "Feature";
+	const templateBody = template.slice(typeSectionStart);
+	if (!typeCheckbox.test(templateBody)) {
+		throw new Error(`pull request template is missing its ${typeLabel} checkbox`);
+	}
+	if (!AI_DISCLOSURE_CHECKBOX_RE.test(templateBody)) {
+		throw new Error("pull request template is missing its AI disclosure checkbox");
+	}
+	return templateBody
+		.replace(typeCheckbox, `- [x] ${typeLabel}$1`)
+		.replace(
+			AI_DISCLOSURE_CHECKBOX_RE,
+			"- [x] This PR includes AI-generated code — model/tool: emdashbot + Kimi K2.7 Code",
+		)
+		.trim();
+}
+
 /**
  * Body for the draft PR opened when the reporter confirms the change. References
  * the issue (so merging closes it), points at the preview the reporter just
- * verified, and flags that a maintainer must review before merge.
+ * verified, and fills the repository's pull request template.
  */
-export function renderDraftPrBody(issueNumber: number, previewPackage?: string): string {
+export function renderDraftPrBody(input: {
+	issueNumber: number;
+	kind: Kind;
+	description: string;
+	previewPackage?: string;
+}): string {
+	const completedTemplate = fillPullRequestTemplate(pullRequestTemplate, input.kind);
 	return [
-		`Closes #${issueNumber}.`,
+		"## What does this PR do?",
+		"",
+		input.description.trim(),
+		"",
+		`Closes #${input.issueNumber}.`,
 		"",
 		"A candidate change the reporter confirmed against their own site via the preview build:",
 		"",
 		"```bash",
-		previewInstallCommand(issueNumber, previewPackage),
+		previewInstallCommand(input.issueNumber, input.previewPackage),
 		"```",
 		"",
-		"Review the candidate diff and its verification before merging.",
-		"",
 		"<sub>Opened automatically by emdashbot as a draft. A maintainer must review before merge.</sub>",
+		"",
+		completedTemplate,
 	].join("\n");
 }
 
