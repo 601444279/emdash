@@ -145,3 +145,21 @@ export function getEnvAllowedOrigins(): string[] {
 export function getPublicUrl(url: URL, config: SiteUrlConfig | undefined, path: string): string {
 	return `${getPublicOrigin(url, config)}${path}`;
 }
+
+const BASE_TRAILING_SLASH_RE = /\/$/;
+
+/**
+ * Return the Astro `base` path for the site, normalized for URL building.
+ *
+ * Reads `import.meta.env.BASE_URL` so it works in both `.astro` components
+ * and SSR route handlers. Returns `""` when no base is configured, and
+ * strips any trailing slash so callers can safely append root-relative
+ * paths that already start with `/`.
+ *
+ * @returns Normalized base path, e.g. `"/field-notes"` or `""`
+ */
+export function getBasePath(): string {
+	const base = typeof import.meta.env !== "undefined" ? (import.meta.env.BASE_URL ?? "/") : "/";
+	if (base === "/") return "";
+	return base.replace(BASE_TRAILING_SLASH_RE, "");
+}

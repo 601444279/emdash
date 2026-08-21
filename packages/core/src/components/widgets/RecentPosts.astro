@@ -1,4 +1,5 @@
 ---
+import { getBasePath } from "../../api/public-url.js";
 import { getEmDashCollection } from "../../query.js";
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const { count = 5, showThumbnails = false, showDate = true } = Astro.props;
+const base = getBasePath();
 
 const { entries: posts } = await getEmDashCollection("posts", {
 	limit: count,
@@ -36,7 +38,7 @@ function getString(data: Record<string, unknown>, key: string): string | undefin
 							class="widget-recent-posts__thumbnail"
 						/>
 					)}
-					<a href={`/posts/${post.id}`} class="widget-recent-posts__link">
+					<a href={`${base}/posts/${post.id}`} class="widget-recent-posts__link">
 						{title}
 					</a>
 					{showDate && publishedAt && (

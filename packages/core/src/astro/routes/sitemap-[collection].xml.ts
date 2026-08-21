@@ -18,7 +18,7 @@
 import type { APIRoute } from "astro";
 
 import { handleSitemapData } from "#api/handlers/seo.js";
-import { getPublicOrigin } from "#api/public-url.js";
+import { getBasePath, getPublicOrigin } from "#api/public-url.js";
 import { getSiteSettingsWithDb } from "#settings/index.js";
 
 import { getI18nConfig, isI18nEnabled } from "../../i18n/config.js";
@@ -51,6 +51,7 @@ export const GET: APIRoute = async ({ params, locals, url }) => {
 			TRAILING_SLASH_RE,
 			"",
 		);
+		const base = getBasePath();
 
 		const result = await handleSitemapData(emdash.db, collectionSlug);
 
@@ -104,7 +105,7 @@ export const GET: APIRoute = async ({ params, locals, url }) => {
 				id: entry.id,
 			});
 			const localized = await localizePath(path, entry.locale);
-			const absolute = localized === null ? null : `${siteUrl}${localized}`;
+			const absolute = localized === null ? null : `${siteUrl}${base}${localized}`;
 			urlByEntry.set(entry.id, absolute);
 			return absolute;
 		};

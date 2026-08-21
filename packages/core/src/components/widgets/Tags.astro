@@ -3,6 +3,7 @@
  * Tags widget component
  * Displays a tag cloud with optional counts
  */
+import { getBasePath } from "../../api/public-url.js";
 import { getTaxonomyTerms } from "../../taxonomies/index.js";
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const { showCount = false, limit = 20 } = Astro.props;
+const base = getBasePath();
 
 const allTags = await getTaxonomyTerms("tag", { includeCounts: showCount });
 const tags = allTags.slice(0, limit);
@@ -22,7 +24,7 @@ const tags = allTags.slice(0, limit);
 			<ul class="widget-tags__cloud">
 				{tags.map((tag) => (
 					<li>
-						<a href={`/tag/${tag.slug}`} class="widget-tags__link">
+						<a href={`${base}/tag/${tag.slug}`} class="widget-tags__link">
 							{tag.label}
 						</a>
 						{showCount && tag.count !== undefined && (

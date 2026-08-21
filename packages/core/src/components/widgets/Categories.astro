@@ -3,6 +3,7 @@
  * Categories widget component
  * Displays a list of categories with optional post counts
  */
+import { getBasePath } from "../../api/public-url.js";
 import { getTaxonomyTerms } from "../../taxonomies/index.js";
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const { showCount = true, hierarchical = true } = Astro.props;
+const base = getBasePath();
 
 const categories = await getTaxonomyTerms("category", { includeCounts: showCount });
 ---
@@ -20,7 +22,7 @@ const categories = await getTaxonomyTerms("category", { includeCounts: showCount
 		categories.length > 0 ? (
 			categories.map((category) => (
 				<li>
-					<a href={`/category/${category.slug}`} class="widget-categories__link">
+					<a href={`${base}/category/${category.slug}`} class="widget-categories__link">
 						{category.label}
 					</a>
 					{showCount && category.count !== undefined && (

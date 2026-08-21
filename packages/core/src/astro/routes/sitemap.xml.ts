@@ -11,7 +11,7 @@
 import type { APIRoute } from "astro";
 
 import { handleSitemapData } from "#api/handlers/seo.js";
-import { getPublicOrigin } from "#api/public-url.js";
+import { getBasePath, getPublicOrigin } from "#api/public-url.js";
 import { getSiteSettingsWithDb } from "#settings/index.js";
 
 export const prerender = false;
@@ -39,6 +39,7 @@ export const GET: APIRoute = async ({ locals, url }) => {
 			TRAILING_SLASH_RE,
 			"",
 		);
+		const base = getBasePath();
 
 		const result = await handleSitemapData(emdash.db);
 
@@ -57,7 +58,7 @@ export const GET: APIRoute = async ({ locals, url }) => {
 		];
 
 		for (const col of collections) {
-			const loc = `${siteUrl}/sitemap-${encodeURIComponent(col.collection)}.xml`;
+			const loc = `${siteUrl}${base}/sitemap-${encodeURIComponent(col.collection)}.xml`;
 			lines.push("  <sitemap>");
 			lines.push(`    <loc>${escapeXml(loc)}</loc>`);
 			lines.push(`    <lastmod>${escapeXml(col.lastmod)}</lastmod>`);

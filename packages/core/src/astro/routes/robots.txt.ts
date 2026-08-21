@@ -10,7 +10,7 @@
 
 import type { APIRoute } from "astro";
 
-import { getPublicOrigin } from "#api/public-url.js";
+import { getBasePath, getPublicOrigin } from "#api/public-url.js";
 import { getSiteSettingsWithDb } from "#settings/index.js";
 
 export const prerender = false;
@@ -34,7 +34,8 @@ export const GET: APIRoute = async ({ locals, url }) => {
 			TRAILING_SLASH_RE,
 			"",
 		);
-		const sitemapUrl = `${siteUrl}/sitemap.xml`;
+		const base = getBasePath();
+		const sitemapUrl = `${siteUrl}${base}/sitemap.xml`;
 
 		// Use custom robots.txt if configured
 		if (settings.seo?.robotsTxt) {
