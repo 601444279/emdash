@@ -1108,7 +1108,8 @@ export function renderToolbar(config: ToolbarConfig): string {
     ecFetch("/_emdash/api/media?mimeType=image/&limit=30", { credentials: "same-origin" })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      var items = data.items || [];
+      var payload = data && data.data ? data.data : data;
+      var items = payload.items || [];
       var loadingEl = browser.querySelector(".emdash-img-loading");
       if (loadingEl) loadingEl.remove();
 
@@ -1277,8 +1278,9 @@ export function renderToolbar(config: ToolbarConfig): string {
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (!data.item) throw new Error("Upload failed");
-      var item = data.item;
+      var payload = data && data.data ? data.data : data;
+      if (!payload.item) throw new Error("Upload failed");
+      var item = payload.item;
       selectMediaItem(item, annotation, element, imgEl);
     })
     .catch(function(err) {

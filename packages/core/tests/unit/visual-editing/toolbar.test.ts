@@ -93,4 +93,20 @@ describe("renderToolbar", () => {
 		expect(html).toContain("emdash-tb-badge--saved");
 		expect(html).toContain("emdash-tb-badge--error");
 	});
+
+	it("unwraps the { success, data } envelope returned by /_emdash/api/media on upload", () => {
+		// Regression for #2514: the media upload endpoint returns { success, data: { item } },
+		// but the image popover read data.item from the raw envelope, making uploads always fail.
+		const html = renderToolbar({ editMode: true, isPreview: false });
+		expect(html).toContain("var payload = data && data.data ? data.data : data;");
+		expect(html).toContain('if (!payload.item) throw new Error("Upload failed")');
+	});
+
+	it("unwraps the { success, data } envelope returned by /_emdash/api/media when browsing", () => {
+		// Regression for #2514: the media list endpoint returns { success, data: { items } },
+		// but the popover read data.items from the raw envelope, so it always showed no images.
+		const html = renderToolbar({ editMode: true, isPreview: false });
+		expect(html).toContain("var payload = data && data.data ? data.data : data;");
+		expect(html).toContain("var items = payload.items || [];");
+	});
 });
