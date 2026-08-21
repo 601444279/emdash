@@ -13,15 +13,19 @@
 
 import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 import { CodeBlockExtension } from "../../src/components/editor/CodeBlockNode";
 
 describe("CodeBlockExtension", () => {
 	let editor: Editor;
+	let element: HTMLDivElement;
 
 	beforeEach(() => {
+		element = document.createElement("div");
+		document.body.append(element);
 		editor = new Editor({
+			element,
 			extensions: [
 				StarterKit.configure({
 					heading: { levels: [1, 2, 3] },
@@ -35,6 +39,7 @@ describe("CodeBlockExtension", () => {
 
 	afterEach(() => {
 		editor.destroy();
+		element.remove();
 	});
 
 	it("registers the codeBlock schema node", () => {
@@ -73,5 +78,58 @@ describe("CodeBlockExtension", () => {
 		editor.commands.updateAttributes("codeBlock", { language: "typescript" });
 		const node = editor.getJSON().content?.find((n) => n.type === "codeBlock");
 		expect((node as { attrs?: { language?: string } }).attrs?.language).toBe("typescript");
+	});
+
+	it.each([
+		["javascript", 'const greeting = "hello";'],
+		["dockerfile", "FROM node:22"],
+	])("renders syntax tokens for %s", async (language, code) => {
+		editor.commands.insertContent({
+			type: "codeBlock",
+			attrs: { language },
+			content: [{ type: "text", text: code }],
+		});
+
+		await vi.waitFor(() => {
+			expect(element.querySelectorAll('span[class*="hljs-"]').length).toBeGreaterThan(0);
+		});
+
+		expect(JSON.stringify(editor.getJSON())).not.toContain("hljs-");
+	});
+
+	it.each(["plaintext", "astro", "zig", "custom-language", null, undefined])(
+		"leaves %s code unhighlighted",
+		async (language) => {
+			editor.commands.insertContent({
+				type: "codeBlock",
+				attrs: { language },
+				content: [{ type: "text", text: 'const greeting = "hello";' }],
+			});
+
+			await vi.waitFor(() => {
+				expect(element.querySelectorAll('span[class*="hljs-"]')).toHaveLength(0);
+			});
+		},
+	);
+
+	it("updates decorations when the selected language changes", async () => {
+		editor.commands.insertContent({
+			type: "codeBlock",
+			attrs: { language: "javascript" },
+			content: [{ type: "text", text: 'const greeting = "hello";' }],
+		});
+
+		await vi.waitFor(() => {
+			expect(element.querySelectorAll('span[class*="hljs-"]').length).toBeGreaterThan(0);
+		});
+
+		editor.commands.setNodeSelection(0);
+		editor.commands.updateAttributes("codeBlock", { language: "astro" });
+
+		await vi.waitFor(() => {
+			expect(element.querySelectorAll('span[class*="hljs-"]')).toHaveLength(0);
+		});
+		const node = editor.getJSON().content?.find((item) => item.type === "codeBlock");
+		expect(node?.content?.[0]?.text).toBe('const greeting = "hello";');
 	});
 });
