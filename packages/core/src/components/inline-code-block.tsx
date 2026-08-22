@@ -184,13 +184,17 @@ function CheckIcon() {
 
 async function copyTextToClipboard(text: string): Promise<void> {
 	if (navigator.clipboard?.writeText) {
-		await navigator.clipboard.writeText(text);
-		return;
+		try {
+			await navigator.clipboard.writeText(text);
+			return;
+		} catch {}
 	}
 
+	const activeElement = document.activeElement;
 	const textarea = document.createElement("textarea");
 	textarea.value = text;
 	textarea.readOnly = true;
+	textarea.dataset.emdashClipboardFallback = "";
 	textarea.style.position = "fixed";
 	textarea.style.opacity = "0";
 	document.body.append(textarea);
@@ -204,6 +208,9 @@ async function copyTextToClipboard(text: string): Promise<void> {
 		if (previousRange) {
 			selection?.removeAllRanges();
 			selection?.addRange(previousRange);
+		}
+		if (activeElement instanceof HTMLElement && activeElement.isConnected) {
+			activeElement.focus();
 		}
 	}
 }
