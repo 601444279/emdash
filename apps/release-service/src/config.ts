@@ -5,30 +5,45 @@ import {
 } from "@atcute/oauth-node-client";
 import { getDelegatedReleasePermission } from "@emdash-cms/registry-lexicons";
 
+import { createEnvelopeEncryption, type EnvelopeEncryption } from "./crypto/encryption.js";
+
 export type ConfigurationBindings = Record<
-	keyof Pick<Env, "PUBLIC_ORIGIN" | "OAUTH_REDIRECT_URIS" | "OAUTH_ASSERTION_KEYSET">,
+	keyof Pick<
+		Env,
+		| "PUBLIC_ORIGIN"
+		| "DEPLOYMENT_ID"
+		| "OAUTH_REDIRECT_URIS"
+		| "OAUTH_ASSERTION_KEYSET"
+		| "ENCRYPTION_KEYRING"
+	>,
 	string
 >;
 
 const BASE64URL_PATTERN = /^[A-Za-z0-9_-]+$/;
+const DEPLOYMENT_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$/;
 const MAX_ASSERTION_KEYSET_CHARS = 64 * 1024;
 const MAX_ASSERTION_KEYS = 8;
 const CONFIGURATION_CACHE_SYMBOL = Symbol.for("@emdash-cms/release-service/configuration-cache");
 const CONFIGURATION_BINDING_KEYS = [
 	"PUBLIC_ORIGIN",
+	"DEPLOYMENT_ID",
 	"OAUTH_REDIRECT_URIS",
 	"OAUTH_ASSERTION_KEYSET",
 ] as const satisfies readonly (keyof ConfigurationBindings)[];
 
 interface ConfigurationCacheEntry {
 	snapshot: readonly string[];
-	promise: Promise<ServiceConfiguration>;
+	promise: Promise<CachedServiceConfiguration>;
 }
 
 export interface ServiceConfiguration {
 	publicOrigin: string;
+	deploymentId: string;
 	oauth: OAuthConfiguration;
+	encryption: EnvelopeEncryption;
 }
+
+type CachedServiceConfiguration = Omit<ServiceConfiguration, "encryption">;
 
 export type P256AssertionPrivateJwk = ClientAssertionPrivateJwk & {
 	kty: "EC";
@@ -195,17 +210,23 @@ async function parseAssertionKeyset(value: string): Promise<{
 	}
 }
 
-async function parseConfiguration(bindings: ConfigurationBindings): Promise<ServiceConfiguration> {
+async function parseConfiguration(
+	bindings: ConfigurationBindings,
+): Promise<CachedServiceConfiguration> {
 	const issues: string[] = [];
 	const publicOrigin = parseOrigin(bindings.PUBLIC_ORIGIN);
 	if (!publicOrigin) issues.push("PUBLIC_ORIGIN_INVALID");
+	const deploymentId = DEPLOYMENT_ID_PATTERN.test(bindings.DEPLOYMENT_ID)
+		? bindings.DEPLOYMENT_ID
+		: null;
+	if (!deploymentId) issues.push("DEPLOYMENT_ID_INVALID");
 	const redirectUris = publicOrigin
 		? parseRedirectUris(bindings.OAUTH_REDIRECT_URIS, publicOrigin)
 		: null;
 	if (!redirectUris) issues.push("OAUTH_REDIRECT_URIS_INVALID");
 	const assertionKeyset = await parseAssertionKeyset(bindings.OAUTH_ASSERTION_KEYSET);
 	if (!assertionKeyset) issues.push("OAUTH_ASSERTION_KEYSET_INVALID");
-	if (!publicOrigin || !redirectUris || !assertionKeyset || issues.length > 0) {
+	if (!publicOrigin || !deploymentId || !redirectUris || !assertionKeyset || issues.length > 0) {
 		throw new ConfigurationError(issues);
 	}
 	const permission = getDelegatedReleasePermission();
@@ -225,6 +246,7 @@ async function parseConfiguration(bindings: ConfigurationBindings): Promise<Serv
 	};
 	return {
 		publicOrigin,
+		deploymentId,
 		oauth: {
 			clientMetadata,
 			releaseNsid: permission.collection,
@@ -244,14 +266,25 @@ function getConfigurationCache(): WeakMap<object, ConfigurationCacheEntry> {
 	return (target[CONFIGURATION_CACHE_SYMBOL] ??= new WeakMap());
 }
 
-export function loadConfiguration(bindings: ConfigurationBindings): Promise<ServiceConfiguration> {
+export async function loadConfiguration(
+	bindings: ConfigurationBindings,
+): Promise<ServiceConfiguration> {
 	const snapshot = CONFIGURATION_BINDING_KEYS.map((key) => bindings[key]);
 	const cache = getConfigurationCache();
 	const cached = cache.get(bindings);
-	if (cached?.snapshot.every((value, index) => value === snapshot[index])) {
-		return cached.promise;
+	let promise = cached?.snapshot.every((value, index) => value === snapshot[index])
+		? cached.promise
+		: null;
+	if (!promise) {
+		promise = parseConfiguration(bindings);
+		cache.set(bindings, { snapshot, promise });
 	}
-	const promise = parseConfiguration(bindings);
-	cache.set(bindings, { snapshot, promise });
-	return promise;
+	const configuration = await promise;
+	let encryption: EnvelopeEncryption;
+	try {
+		encryption = createEnvelopeEncryption(bindings.ENCRYPTION_KEYRING, configuration.deploymentId);
+	} catch {
+		throw new ConfigurationError(["ENCRYPTION_KEYRING_INVALID"]);
+	}
+	return { ...configuration, encryption };
 }

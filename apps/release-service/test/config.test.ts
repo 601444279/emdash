@@ -32,6 +32,7 @@ describe("release-service OAuth configuration", () => {
 
 	it.each([
 		["empty origin", { ...TEST_BINDINGS, PUBLIC_ORIGIN: "" }],
+		["empty deployment ID", { ...TEST_BINDINGS, DEPLOYMENT_ID: "" }],
 		["HTTP origin", { ...TEST_BINDINGS, PUBLIC_ORIGIN: "http://release.example.invalid" }],
 		["origin path", { ...TEST_BINDINGS, PUBLIC_ORIGIN: "https://release.example.invalid/path" }],
 		[
@@ -40,6 +41,7 @@ describe("release-service OAuth configuration", () => {
 		],
 		["empty redirects", { ...TEST_BINDINGS, OAUTH_REDIRECT_URIS: "[]" }],
 		["malformed keyset", { ...TEST_BINDINGS, OAUTH_ASSERTION_KEYSET: "not-json" }],
+		["malformed encryption keyring", { ...TEST_BINDINGS, ENCRYPTION_KEYRING: "not-json" }],
 		[
 			"missing active key",
 			{
@@ -62,5 +64,17 @@ describe("release-service OAuth configuration", () => {
 		],
 	])("fails closed for %s", async (_name, bindings) => {
 		await expect(loadConfiguration(bindings)).rejects.toBeInstanceOf(ConfigurationError);
+	});
+
+	it("does not retain an encryption keyring in the configuration cache", async () => {
+		const bindings = { ...TEST_BINDINGS };
+		await expect(loadConfiguration(bindings)).resolves.toMatchObject({
+			deploymentId: TEST_BINDINGS.DEPLOYMENT_ID,
+		});
+
+		bindings.ENCRYPTION_KEYRING = "not-json";
+		await expect(loadConfiguration(bindings)).rejects.toMatchObject({
+			issues: ["ENCRYPTION_KEYRING_INVALID"],
+		});
 	});
 });

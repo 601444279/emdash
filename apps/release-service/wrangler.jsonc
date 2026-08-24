@@ -8,10 +8,11 @@
 	"compatibility_flags": ["nodejs_compat"],
 	"vars": {
 		"PUBLIC_ORIGIN": "",
+		"DEPLOYMENT_ID": "",
 		"OAUTH_REDIRECT_URIS": "[]",
 	},
 	"secrets": {
-		"required": ["OAUTH_ASSERTION_KEYSET"],
+		"required": ["OAUTH_ASSERTION_KEYSET", "ENCRYPTION_KEYRING"],
 	},
 	"observability": {
 		"enabled": true,

@@ -42,8 +42,11 @@ describe("release-service Worker", () => {
 	it("fails configuration closed without exposing binding names", async () => {
 		const bindings = {
 			PUBLIC_ORIGIN: "",
+			DEPLOYMENT_ID: "test-release-service",
 			OAUTH_REDIRECT_URIS: "[]",
 			OAUTH_ASSERTION_KEYSET: TEST_ASSERTION_KEYSET,
+			ENCRYPTION_KEYRING:
+				'{"current":1,"keys":[{"version":1,"key":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8"}]}',
 		} satisfies ConfigurationBindings;
 		const response = await handleRequest(new Request("https://test/health"), bindings);
 		expect(response.status).toBe(503);
@@ -73,8 +76,11 @@ describe("release-service Worker", () => {
 				new Request("https://release.example.invalid/__test/failure"),
 				{
 					PUBLIC_ORIGIN: "https://release.example.invalid",
+					DEPLOYMENT_ID: "test-release-service",
 					OAUTH_REDIRECT_URIS: '["https://release.example.invalid/oauth/callback"]',
 					OAUTH_ASSERTION_KEYSET: TEST_ASSERTION_KEYSET,
+					ENCRYPTION_KEYRING:
+						'{"current":1,"keys":[{"version":1,"key":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8"}]}',
 				},
 				[route],
 			);
