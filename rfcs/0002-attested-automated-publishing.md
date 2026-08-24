@@ -157,7 +157,7 @@ It holds, per delegating author, an atproto session authorised with a **granular
 
 It authenticates to atproto as a confidential OAuth client (`private_key_jwt`). Sessions are refreshable and revocable. Removing a client key from the published JWKS prevents sessions bound to that key from refreshing after the authorization server observes the change; an already-issued access token may remain usable until expiry. Emergency revocation therefore calls the authorization server's revocation endpoint and pauses publication before retiring client keys.
 
-The first supported-PDS matrix covers Bluesky-hosted PDS and Cirrus. Dedicated accounts are available for both. Neither is advertised as supported until the exact create-only, refresh, and revocation conformance run passes, and no broader scope is used as a fallback.
+The first supported-PDS matrix covers the Bluesky PDS implementation hosted by npmX (`npmx.social`) and Cirrus. Dedicated accounts are available for both. Neither is advertised as supported until the exact create-only, refresh, and revocation conformance run passes, and no broader scope is used as a fallback.
 
 It also holds _staged release intents_ pending human approval and runs the passkey ceremonies for approvers the author has authorised; see [Staged releases](#staged-releases).
 
