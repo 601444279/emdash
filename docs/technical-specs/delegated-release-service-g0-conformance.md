@@ -6,7 +6,7 @@ Companion design: [RFC PR #1870](https://github.com/emdash-cms/emdash/pull/1870)
 
 ## Outcome
 
-G0 establishes whether the delegated release service can hold the exact authority defined by the protocol on the first supported PDS implementations. The initial matrix covers Bluesky-hosted PDS and Cirrus.
+G0 establishes whether the delegated release service can hold the exact authority defined by the protocol on the first supported PDS implementations. The initial matrix covers the Bluesky PDS software hosted by npmX (`npmx.social`) and Cirrus.
 
 Each provider must prove that the exact delegated scope:
 
@@ -25,7 +25,7 @@ No result permits a fallback to `transition:generic` or another broad scope.
 
 Dedicated test accounts are available for:
 
-- Bluesky-hosted PDS; and
+- Bluesky PDS software hosted by npmX (`npmx.social`); and
 - Cirrus.
 
 Keep account handles, recovery material, OAuth state, DPoP keys, access tokens, refresh tokens, and client assertion private keys outside the repository. The evidence report contains the account DID, PDS URL, requested and returned scopes, token expiry metadata, probe results, and public release URI/CID. These values do not grant account access.
@@ -88,6 +88,20 @@ node packages/plugin-cli/dist/index.mjs pds-conformance \
 Review the generated report. `probes.passed` must be `true`, and the returned stored scope must equal the requested exact scope. Record the emitted DID for later phases.
 
 The authorization phase proves granular scope enforcement through an AT Protocol loopback public client. It does not prove confidential-client assertion, refresh, or client-key behavior.
+
+### npmX Bluesky-PDS result
+
+The public-client authorization run completed on 2026-08-24:
+
+- Account DID: `did:plc:2rskihsyau3rbh26veoi7mtx`
+- OAuth issuer and PDS: `https://npmx.social`
+- Granted scope: `atproto repo:com.emdashcms.experimental.package.release?action=create`
+- Created release: `at://did:plc:2rskihsyau3rbh26veoi7mtx/com.emdashcms.experimental.package.release/emdash_g0_conformance:0.0.0-g0.355d87f8c7c7`
+- Created CID: `bafyreidsvjqaaad5hn2dgstxx4slnnngw4lkj26mp3h7uvitzw2dk6nruu`
+- Update, delete, profile-create, and unrelated-create probes: HTTP 403 `ScopeMissingError`
+- Redacted evidence SHA-256: `d4be775c634969f8eb465f1c0c37a0788a388368314fc515a64774cfeec12590`
+
+This result passes the public-client exact-scope column. Refresh, explicit revocation, confidential-client scope, and assertion-key removal remain pending.
 
 ## Phase 2: refresh observation
 
@@ -166,10 +180,10 @@ Do not commit raw evidence until it has been inspected for unexpected provider d
 
 ## Result matrix
 
-| Provider           | Public-client scope   | Public-client refresh | Public-client revocation | Confidential scope         | Confidential refresh | Revocation/key removal | Status            |
-| ------------------ | --------------------- | --------------------- | ------------------------ | -------------------------- | -------------------- | ---------------------- | ----------------- |
-| Bluesky-hosted PDS | Pending authorization | Pending               | Pending                  | Pending service deployment | Pending              | Pending                | Not supported yet |
-| Cirrus             | Pending authorization | Pending               | Pending                  | Pending service deployment | Pending              | Pending                | Not supported yet |
+| Provider            | Public-client scope   | Public-client refresh | Public-client revocation | Confidential scope         | Confidential refresh | Revocation/key removal | Status              |
+| ------------------- | --------------------- | --------------------- | ------------------------ | -------------------------- | -------------------- | ---------------------- | ------------------- |
+| Bluesky PDS at npmX | Pass (2026-08-24)     | Pending after expiry  | Pending                  | Pending service deployment | Pending              | Pending                | Public scope passed |
+| Cirrus              | Pending authorization | Pending               | Pending                  | Pending service deployment | Pending              | Pending                | Not supported yet   |
 
 ## G0 completion criteria
 
@@ -177,7 +191,7 @@ G0 is complete only when:
 
 - the RFC names the active exact scope and rejects broad fallback;
 - the RFC and service specification agree on actors, authentication, Durable Object ownership, asynchronous intents, policy, approval, and provenance;
-- the public-client preflight passes on Bluesky-hosted PDS and Cirrus;
+- the public-client preflight passes on the npmX-hosted Bluesky PDS and Cirrus;
 - the confidential-client scope and refresh run passes on both;
 - explicit revocation and client-key removal observations are recorded for both;
 - any implementation difference is resolved in code, the support matrix, or the RFC before support is claimed; and
