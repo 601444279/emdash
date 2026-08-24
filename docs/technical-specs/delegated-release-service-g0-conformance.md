@@ -1,6 +1,6 @@
 # Delegated release service G0 PDS conformance
 
-Status: Prepared; real-account authorization pending
+Status: Public-client scope passed; refresh and confidential-client runs pending
 
 Companion design: [RFC PR #1870](https://github.com/emdash-cms/emdash/pull/1870)
 
@@ -103,6 +103,20 @@ The public-client authorization run completed on 2026-08-24:
 
 This result passes the public-client exact-scope column. Refresh, explicit revocation, confidential-client scope, and assertion-key removal remain pending.
 
+### Cirrus result
+
+The public-client authorization run completed on 2026-08-24:
+
+- Account DID: `did:web:emdashtestaccount.emdashcms.com`
+- OAuth issuer and PDS: `https://emdashtestaccount.emdashcms.com`
+- Granted scope: `atproto repo:com.emdashcms.experimental.package.release?action=create`
+- Created release: `at://did:web:emdashtestaccount.emdashcms.com/com.emdashcms.experimental.package.release/emdash_g0_conformance:0.0.0-g0.fa6b3dc0fe41`
+- Created CID: `bafyreid6wzle4fvp2uyany3fzusg6gsewccyg4zjr6b3urhp2ijmphfmqu`
+- Update, delete, profile-create, and unrelated-create probes: HTTP 403 `InsufficientScope`
+- Redacted evidence SHA-256: `1abf5e389223879a41c7e260077b33ad457160acaed0ac328a158b1d8e6ec102`
+
+This result passes the public-client exact-scope column. Refresh, explicit revocation, confidential-client scope, and assertion-key removal remain pending.
+
 ## Phase 2: refresh observation
 
 Wait until the `oauth.after.expiresAt` value from the authorization report has passed. Run the resume phase with the DID, not the handle:
@@ -180,10 +194,10 @@ Do not commit raw evidence until it has been inspected for unexpected provider d
 
 ## Result matrix
 
-| Provider            | Public-client scope   | Public-client refresh | Public-client revocation | Confidential scope         | Confidential refresh | Revocation/key removal | Status              |
-| ------------------- | --------------------- | --------------------- | ------------------------ | -------------------------- | -------------------- | ---------------------- | ------------------- |
-| Bluesky PDS at npmX | Pass (2026-08-24)     | Pending after expiry  | Pending                  | Pending service deployment | Pending              | Pending                | Public scope passed |
-| Cirrus              | Pending authorization | Pending               | Pending                  | Pending service deployment | Pending              | Pending                | Not supported yet   |
+| Provider            | Public-client scope | Public-client refresh | Public-client revocation | Confidential scope         | Confidential refresh | Revocation/key removal | Status              |
+| ------------------- | ------------------- | --------------------- | ------------------------ | -------------------------- | -------------------- | ---------------------- | ------------------- |
+| Bluesky PDS at npmX | Pass (2026-08-24)   | Pending after expiry  | Pending                  | Pending service deployment | Pending              | Pending                | Public scope passed |
+| Cirrus              | Pass (2026-08-24)   | Pending after expiry  | Pending                  | Pending service deployment | Pending              | Pending                | Public scope passed |
 
 ## G0 completion criteria
 
