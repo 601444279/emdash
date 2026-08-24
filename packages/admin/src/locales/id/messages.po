@@ -430,7 +430,7 @@ msgstr "Pengaturan {pluginName}"
 msgid "{readingTime, plural, one {# min read} other {# min read}}"
 msgstr "{readingTime, plural, other {# menit baca}}"
 
-#: packages/admin/src/components/MediaLibrary.tsx:263
+#: packages/admin/src/components/MediaLibrary.tsx:264
 msgid "{resultCount, plural, one {# item} other {# items}}"
 msgstr "{resultCount, plural, one {# item} other {# item}}"
 
@@ -919,7 +919,7 @@ msgstr "Semua Sumber"
 msgid "All statuses"
 msgstr "Semua status"
 
-#: packages/admin/src/components/MediaLibrary.tsx:396
+#: packages/admin/src/components/MediaLibrary.tsx:397
 #: packages/admin/src/components/Redirects.tsx:432
 msgid "All types"
 msgstr "Semua tipe"
@@ -963,19 +963,19 @@ msgstr "Cocokkan juga byline yang tertaut ke penulis entri saat entri belum memi
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:376
 #: packages/admin/src/components/editor/ImageNode.tsx:231
-#: packages/admin/src/components/MediaLibrary.tsx:552
+#: packages/admin/src/components/MediaLibrary.tsx:553
 msgid "Alt text"
 msgstr "Teks alternatif"
 
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:344
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:533
-#: packages/admin/src/components/MediaDetailPanel.tsx:354
-#: packages/admin/src/components/MediaDetailPanel.tsx:371
+#: packages/admin/src/components/MediaDetailPanel.tsx:368
+#: packages/admin/src/components/MediaDetailPanel.tsx:385
 msgid "Alt Text"
 msgstr "Teks Alt"
 
-#: packages/admin/src/components/MediaLibrary.tsx:812
-#: packages/admin/src/components/MediaLibrary.tsx:869
+#: packages/admin/src/components/MediaLibrary.tsx:811
+#: packages/admin/src/components/MediaLibrary.tsx:868
 msgid "Alt text set"
 msgstr "Teks alt diatur"
 
@@ -1147,7 +1147,7 @@ msgid "Astro"
 msgstr "Astro"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:66
-#: packages/admin/src/components/MediaLibrary.tsx:399
+#: packages/admin/src/components/MediaLibrary.tsx:400
 msgid "Audio"
 msgstr "Audio"
 
@@ -1470,7 +1470,7 @@ msgstr "Dapat melihat konten"
 #: packages/admin/src/components/editor/ImageNode.tsx:253
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:406
 #: packages/admin/src/components/FieldEditor.tsx:678
-#: packages/admin/src/components/MediaDetailPanel.tsx:416
+#: packages/admin/src/components/MediaDetailPanel.tsx:430
 #: packages/admin/src/components/MediaPickerModal.tsx:805
 #: packages/admin/src/components/MenuEditor.tsx:438
 #: packages/admin/src/components/MenuEditor.tsx:623
@@ -1533,7 +1533,7 @@ msgstr "Persetujuan kapabilitas"
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:382
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:352
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:541
-#: packages/admin/src/components/MediaDetailPanel.tsx:381
+#: packages/admin/src/components/MediaDetailPanel.tsx:395
 msgid "Caption"
 msgstr "Keterangan"
 
@@ -1644,13 +1644,13 @@ msgid "Clear completed"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:947
-#: packages/admin/src/components/MediaLibrary.tsx:460
+#: packages/admin/src/components/MediaLibrary.tsx:461
 #: packages/admin/src/components/users/UserList.tsx:129
 msgid "Clear filters"
 msgstr "Bersihkan filter"
 
-#: packages/admin/src/components/MediaLibrary.tsx:460
-#: packages/admin/src/components/MediaLibrary.tsx:484
+#: packages/admin/src/components/MediaLibrary.tsx:461
+#: packages/admin/src/components/MediaLibrary.tsx:485
 msgid "Clear search"
 msgstr "Bersihkan pencarian"
 
@@ -1685,8 +1685,8 @@ msgstr "Klik tautan di email untuk masuk."
 #: packages/admin/src/components/FieldEditor.tsx:377
 #: packages/admin/src/components/FieldEditor.tsx:381
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:449
-#: packages/admin/src/components/MediaDetailPanel.tsx:229
-#: packages/admin/src/components/MediaDetailPanel.tsx:416
+#: packages/admin/src/components/MediaDetailPanel.tsx:231
+#: packages/admin/src/components/MediaDetailPanel.tsx:430
 #: packages/admin/src/components/MediaPickerModal.tsx:529
 #: packages/admin/src/components/MediaPickerModal.tsx:535
 #: packages/admin/src/components/MediaPickerModal.tsx:539
@@ -1999,7 +1999,7 @@ msgstr "Salin token"
 
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:322
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:323
-#: packages/admin/src/components/MediaDetailPanel.tsx:301
+#: packages/admin/src/components/MediaDetailPanel.tsx:315
 msgid "Copy URL"
 msgstr "Salin URL"
 
@@ -2375,8 +2375,8 @@ msgstr "Ditetapkan dalam kode"
 #: packages/admin/src/components/editor/BlockMenu.tsx:318
 #: packages/admin/src/components/editor/HtmlBlockNode.tsx:130
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:378
-#: packages/admin/src/components/MediaDetailPanel.tsx:410
-#: packages/admin/src/components/MediaDetailPanel.tsx:453
+#: packages/admin/src/components/MediaDetailPanel.tsx:424
+#: packages/admin/src/components/MediaDetailPanel.tsx:467
 #: packages/admin/src/components/MenuEditor.tsx:549
 #: packages/admin/src/components/MenuList.tsx:258
 #: packages/admin/src/components/Redirects.tsx:603
@@ -2392,7 +2392,7 @@ msgid "Delete"
 msgstr "Hapus"
 
 #. placeholder {0}: item.filename
-#: packages/admin/src/components/MediaDetailPanel.tsx:452
+#: packages/admin/src/components/MediaDetailPanel.tsx:466
 msgid "Delete \"{0}\"? This cannot be undone."
 msgstr "Hapus \"{0}\"? Ini tidak dapat dibatalkan."
 
@@ -2476,7 +2476,7 @@ msgstr "Hapus blok HTML"
 msgid "Delete image"
 msgstr "Hapus gambar"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:451
+#: packages/admin/src/components/MediaDetailPanel.tsx:465
 msgid "Delete Media?"
 msgstr "Hapus Media?"
 
@@ -2539,8 +2539,8 @@ msgstr "Menghapus \"{0}\" juga akan menghapus {1, plural, one {# nilai tersimpan
 #: packages/admin/src/components/comments/CommentInbox.tsx:409
 #: packages/admin/src/components/ContentTypeEditor.tsx:688
 #: packages/admin/src/components/ContentTypeList.tsx:237
-#: packages/admin/src/components/MediaDetailPanel.tsx:410
-#: packages/admin/src/components/MediaDetailPanel.tsx:454
+#: packages/admin/src/components/MediaDetailPanel.tsx:424
+#: packages/admin/src/components/MediaDetailPanel.tsx:468
 #: packages/admin/src/components/MenuList.tsx:259
 #: packages/admin/src/components/Redirects.tsx:604
 #: packages/admin/src/components/Sections.tsx:309
@@ -2583,7 +2583,7 @@ msgstr "Deskripsikan gambar..."
 
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:347
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:536
-#: packages/admin/src/components/MediaDetailPanel.tsx:374
+#: packages/admin/src/components/MediaDetailPanel.tsx:388
 msgid "Describe this image for accessibility"
 msgstr "Deskripsikan gambar ini untuk aksesibilitas"
 
@@ -2644,7 +2644,7 @@ msgstr "Tidak menerima email?"
 msgid "Diff"
 msgstr "Diff"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:280
+#: packages/admin/src/components/MediaDetailPanel.tsx:294
 msgid "Dimensions:"
 msgstr "Dimensi:"
 
@@ -2692,7 +2692,7 @@ msgstr "Menonaktifkan <0>{0}</0> akan mencegah mereka login hingga diaktifkan ke
 msgid "Disabling..."
 msgstr "Menonaktifkan..."
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:438
+#: packages/admin/src/components/MediaDetailPanel.tsx:452
 msgid "Discard"
 msgstr "Abaikan"
 
@@ -2701,7 +2701,7 @@ msgstr "Abaikan"
 msgid "Discard changes"
 msgstr "Buang perubahan"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:436
+#: packages/admin/src/components/MediaDetailPanel.tsx:450
 msgid "Discard changes?"
 msgstr "Abaikan perubahan?"
 
@@ -2709,7 +2709,7 @@ msgstr "Abaikan perubahan?"
 msgid "Discard draft changes?"
 msgstr "Buang perubahan draf?"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:439
+#: packages/admin/src/components/MediaDetailPanel.tsx:453
 msgid "Discarding..."
 msgstr "Mengabaikan..."
 
@@ -2775,7 +2775,7 @@ msgid "Dockerfile"
 msgstr "Dockerfile"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:63
-#: packages/admin/src/components/MediaLibrary.tsx:400
+#: packages/admin/src/components/MediaLibrary.tsx:401
 msgid "Documents"
 msgstr "Dokumen"
 
@@ -2897,7 +2897,7 @@ msgstr "Seret widget ke sini untuk menambahkannya"
 msgid "Drag widgets into an area to add them"
 msgstr "Seret widget ke area untuk menambahkannya"
 
-#: packages/admin/src/components/MediaLibrary.tsx:316
+#: packages/admin/src/components/MediaLibrary.tsx:317
 msgid "Drop files to upload"
 msgstr ""
 
@@ -3938,13 +3938,13 @@ msgstr "File {0}"
 msgid "File from media library"
 msgstr "File dari pustaka media"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:325
-#: packages/admin/src/components/MediaDetailPanel.tsx:342
-#: packages/admin/src/components/MediaLibrary.tsx:549
+#: packages/admin/src/components/MediaDetailPanel.tsx:339
+#: packages/admin/src/components/MediaDetailPanel.tsx:356
+#: packages/admin/src/components/MediaLibrary.tsx:550
 msgid "Filename"
 msgstr "Nama file"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:120
+#: packages/admin/src/components/MediaDetailPanel.tsx:122
 msgid "Filename cannot be changed after upload"
 msgstr "Nama file tidak dapat diubah setelah diunggah"
 
@@ -3985,7 +3985,7 @@ msgstr "Filter berdasarkan sumber"
 msgid "Filter by status"
 msgstr "Filter berdasarkan status"
 
-#: packages/admin/src/components/MediaLibrary.tsx:402
+#: packages/admin/src/components/MediaLibrary.tsx:403
 #: packages/admin/src/components/Redirects.tsx:433
 msgid "Filter by type"
 msgstr "Filter berdasarkan tipe"
@@ -4079,7 +4079,7 @@ msgstr "Verifikasi Google"
 msgid "GraphQL"
 msgstr "GraphQL"
 
-#: packages/admin/src/components/MediaLibrary.tsx:423
+#: packages/admin/src/components/MediaLibrary.tsx:424
 msgid "Grid view"
 msgstr "Tampilan kisi"
 
@@ -4273,7 +4273,7 @@ msgstr "URL gambar diperbarui di"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:61
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:192
-#: packages/admin/src/components/MediaLibrary.tsx:397
+#: packages/admin/src/components/MediaLibrary.tsx:398
 msgid "Images"
 msgstr "Gambar"
 
@@ -4708,10 +4708,10 @@ msgstr "Biarkan tidak ditetapkan"
 msgid "Left"
 msgstr "Kiri"
 
-#: packages/admin/src/components/MediaLibrary.tsx:134
-#: packages/admin/src/components/MediaLibrary.tsx:240
-#: packages/admin/src/components/MediaLibrary.tsx:329
-#: packages/admin/src/components/MediaLibrary.tsx:605
+#: packages/admin/src/components/MediaLibrary.tsx:135
+#: packages/admin/src/components/MediaLibrary.tsx:241
+#: packages/admin/src/components/MediaLibrary.tsx:330
+#: packages/admin/src/components/MediaLibrary.tsx:606
 #: packages/admin/src/components/MediaPickerModal.tsx:211
 #: packages/admin/src/components/MediaPickerModal.tsx:509
 msgid "Library"
@@ -4762,7 +4762,7 @@ msgstr "LinkedIn"
 msgid "Links"
 msgstr "Tautan"
 
-#: packages/admin/src/components/MediaLibrary.tsx:432
+#: packages/admin/src/components/MediaLibrary.tsx:433
 msgid "List view"
 msgstr "Tampilan daftar"
 
@@ -4783,7 +4783,7 @@ msgstr "Muat lebih"
 
 #: packages/admin/src/components/ContentList.tsx:724
 #: packages/admin/src/components/ContentList.tsx:782
-#: packages/admin/src/components/MediaLibrary.tsx:598
+#: packages/admin/src/components/MediaLibrary.tsx:599
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/users/UserList.tsx:169
 msgid "Load More"
@@ -4864,7 +4864,7 @@ msgstr "Memuat widget..."
 #: packages/admin/src/components/ContentList.tsx:782
 #: packages/admin/src/components/ContentPickerModal.tsx:225
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
-#: packages/admin/src/components/MediaLibrary.tsx:598
+#: packages/admin/src/components/MediaLibrary.tsx:599
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/PortableTextEditor.tsx:2413
 #: packages/admin/src/components/Redirects.tsx:560
@@ -4982,11 +4982,11 @@ msgstr "Kelola pengalihan URL dan lihat kesalahan 404."
 msgid "Manage your passkeys and authentication"
 msgstr "Kelola passkey dan autentikasi Anda"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:317
+#: packages/admin/src/components/MediaDetailPanel.tsx:331
 msgid "Managed by {providerName}"
 msgstr "Dikelola oleh {providerName}"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:318
+#: packages/admin/src/components/MediaDetailPanel.tsx:332
 msgid "Managed by an external media provider"
 msgstr "Dikelola oleh penyedia media eksternal"
 
@@ -5060,7 +5060,7 @@ msgstr "MDX"
 msgid "Media"
 msgstr "Media"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:222
+#: packages/admin/src/components/MediaDetailPanel.tsx:224
 msgid "Media Details"
 msgstr "Detail Media"
 
@@ -5082,7 +5082,7 @@ msgid "Media import was skipped"
 msgstr "Impor media dilewati"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:153
-#: packages/admin/src/components/MediaLibrary.tsx:324
+#: packages/admin/src/components/MediaLibrary.tsx:325
 msgid "Media Library"
 msgstr "Pustaka Media"
 
@@ -5456,8 +5456,8 @@ msgstr "Belum ada {0}. Buat satu untuk memulai."
 msgid "No 404 errors recorded yet."
 msgstr "Belum ada kesalahan 404 tercatat."
 
-#: packages/admin/src/components/MediaLibrary.tsx:812
-#: packages/admin/src/components/MediaLibrary.tsx:869
+#: packages/admin/src/components/MediaLibrary.tsx:811
+#: packages/admin/src/components/MediaLibrary.tsx:868
 msgid "No alt text"
 msgstr "Tidak ada teks alt"
 
@@ -5600,8 +5600,8 @@ msgstr "Tidak ada hasil yang cocok"
 msgid "No matching bylines."
 msgstr "Tidak ada byline yang cocok."
 
-#: packages/admin/src/components/MediaLibrary.tsx:452
-#: packages/admin/src/components/MediaLibrary.tsx:480
+#: packages/admin/src/components/MediaLibrary.tsx:453
+#: packages/admin/src/components/MediaLibrary.tsx:481
 msgid "No matching media"
 msgstr "Tidak ada media yang cocok"
 
@@ -5618,11 +5618,11 @@ msgstr "Tanpa maksimum"
 msgid "No media available from this provider"
 msgstr "Tidak ada media yang tersedia dari penyedia ini"
 
-#: packages/admin/src/components/MediaLibrary.tsx:503
+#: packages/admin/src/components/MediaLibrary.tsx:504
 msgid "No media available from this provider."
 msgstr "Tidak ada media yang tersedia dari penyedia ini."
 
-#: packages/admin/src/components/MediaLibrary.tsx:502
+#: packages/admin/src/components/MediaLibrary.tsx:503
 #: packages/admin/src/components/MediaPickerModal.tsx:688
 msgid "No media found"
 msgstr "Tidak ada media yang ditemukan"
@@ -5676,7 +5676,7 @@ msgstr "Tidak ada plugin yang cocok dengan \"{debouncedQuery}\"."
 msgid "No preview"
 msgstr "Tidak ada pratinjau"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:304
+#: packages/admin/src/components/MediaDetailPanel.tsx:318
 msgid "No public URL available"
 msgstr "Tidak ada URL publik yang tersedia"
 
@@ -5847,7 +5847,7 @@ msgstr "Keterangan opsional"
 msgid "Optional caption displayed below the image"
 msgstr "Keterangan opsional di bawah gambar"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:384
+#: packages/admin/src/components/MediaDetailPanel.tsx:398
 msgid "Optional caption for display"
 msgstr "Keterangan opsional untuk tampilan"
 
@@ -6253,7 +6253,7 @@ msgstr "Menyiapkan..."
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:167
 #: packages/admin/src/components/ContentTypeEditor.tsx:81
-#: packages/admin/src/components/MediaLibrary.tsx:548
+#: packages/admin/src/components/MediaLibrary.tsx:549
 msgid "Preview"
 msgstr "Pratinjau"
 
@@ -6839,7 +6839,7 @@ msgstr "Jendela sama"
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:264
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:417
-#: packages/admin/src/components/MediaDetailPanel.tsx:425
+#: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
 #: packages/admin/src/components/Redirects.tsx:191
 #: packages/admin/src/components/SaveButton.tsx:32
@@ -6888,7 +6888,7 @@ msgstr "\"{0}\" disimpan."
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1191
 #: packages/admin/src/components/FieldEditor.tsx:689
-#: packages/admin/src/components/MediaDetailPanel.tsx:425
+#: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
 #: packages/admin/src/components/PluginSettings.tsx:166
 #: packages/admin/src/components/PluginSettings.tsx:209
@@ -7012,7 +7012,7 @@ msgstr "Cari {0}"
 msgid "Search {0}..."
 msgstr "Cari {0}..."
 
-#: packages/admin/src/components/MediaLibrary.tsx:378
+#: packages/admin/src/components/MediaLibrary.tsx:379
 #: packages/admin/src/components/MediaPickerModal.tsx:626
 msgid "Search by filename..."
 msgstr "Cari berdasarkan nama file..."
@@ -7060,7 +7060,7 @@ msgstr "Optimisasi dan verifikasi mesin pencari"
 msgid "Search form"
 msgstr "Formulir pencarian"
 
-#: packages/admin/src/components/MediaLibrary.tsx:379
+#: packages/admin/src/components/MediaLibrary.tsx:380
 #: packages/admin/src/components/MediaPickerModal.tsx:627
 msgid "Search media"
 msgstr "Cari media"
@@ -7104,7 +7104,7 @@ msgstr "Cari untuk mempersempit daftar"
 msgid "Search users"
 msgstr "Cari pengguna"
 
-#: packages/admin/src/components/MediaLibrary.tsx:378
+#: packages/admin/src/components/MediaLibrary.tsx:379
 #: packages/admin/src/components/MediaPickerModal.tsx:626
 msgid "Search..."
 msgstr "Cari..."
@@ -7587,11 +7587,11 @@ msgstr "URL Situs"
 msgid "Sites on Cloudflare D1 can additionally restore the database to any minute within the last 30 days using D1 Time Travel — always on, no setup required."
 msgstr "Situs di Cloudflare D1 juga dapat memulihkan basis data ke menit mana pun dalam 30 hari terakhir menggunakan D1 Time Travel — selalu aktif, tanpa perlu penyiapan."
 
-#: packages/admin/src/components/MediaLibrary.tsx:551
+#: packages/admin/src/components/MediaLibrary.tsx:552
 msgid "Size"
 msgstr "Ukuran"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:274
+#: packages/admin/src/components/MediaDetailPanel.tsx:288
 msgid "Size:"
 msgstr "Ukuran:"
 
@@ -8249,7 +8249,7 @@ msgstr "Tempat sampah kosong."
 msgid "True/false toggle"
 msgstr "Toggle benar/salah"
 
-#: packages/admin/src/components/MediaLibrary.tsx:456
+#: packages/admin/src/components/MediaLibrary.tsx:457
 msgid "Try a broader media type or clear your filters."
 msgstr "Coba jenis media yang lebih luas atau bersihkan filter Anda."
 
@@ -8278,11 +8278,11 @@ msgstr "Coba Lagi"
 msgid "Try another code"
 msgstr "Coba kode lain"
 
-#: packages/admin/src/components/MediaLibrary.tsx:481
+#: packages/admin/src/components/MediaLibrary.tsx:482
 msgid "Try another filename or clear your search."
 msgstr "Coba nama berkas lain atau bersihkan pencarian Anda."
 
-#: packages/admin/src/components/MediaLibrary.tsx:455
+#: packages/admin/src/components/MediaLibrary.tsx:456
 msgid "Try another filename, or clear your search and filters."
 msgstr "Coba nama berkas lain, atau bersihkan pencarian dan filter Anda."
 
@@ -8310,7 +8310,7 @@ msgstr "Twitter"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:260
 #: packages/admin/src/components/FieldEditor.tsx:600
-#: packages/admin/src/components/MediaLibrary.tsx:550
+#: packages/admin/src/components/MediaLibrary.tsx:551
 #: packages/admin/src/routes/byline-schema.tsx:240
 msgid "Type"
 msgstr "Tipe"
@@ -8545,8 +8545,8 @@ msgstr "Unggah file"
 msgid "Upload File"
 msgstr "Unggah File"
 
-#: packages/admin/src/components/MediaLibrary.tsx:471
-#: packages/admin/src/components/MediaLibrary.tsx:495
+#: packages/admin/src/components/MediaLibrary.tsx:472
+#: packages/admin/src/components/MediaLibrary.tsx:496
 msgid "Upload Files"
 msgstr "Unggah File"
 
@@ -8554,7 +8554,7 @@ msgstr "Unggah File"
 msgid "Upload Image"
 msgstr "Unggah Gambar"
 
-#: packages/admin/src/components/MediaLibrary.tsx:468
+#: packages/admin/src/components/MediaLibrary.tsx:469
 msgid "Upload images, videos, and documents to keep reusable assets in one place."
 msgstr "Unggah gambar, video, dan dokumen agar aset yang dapat digunakan kembali tersimpan di satu tempat."
 
@@ -8562,12 +8562,12 @@ msgstr "Unggah gambar, video, dan dokumen agar aset yang dapat digunakan kembali
 msgid "Upload Media"
 msgstr "Unggah Media"
 
-#: packages/admin/src/components/MediaLibrary.tsx:492
+#: packages/admin/src/components/MediaLibrary.tsx:493
 msgid "Upload media to keep reusable assets in one place."
 msgstr "Unggah media agar aset yang dapat digunakan kembali tersimpan di satu tempat."
 
 #. placeholder {0}: activeProviderInfo?.name || t`Library`
-#: packages/admin/src/components/MediaLibrary.tsx:329
+#: packages/admin/src/components/MediaLibrary.tsx:330
 msgid "Upload to {0}"
 msgstr "Unggah ke {0}"
 
@@ -8579,7 +8579,7 @@ msgstr ""
 msgid "Upload WordPress export file"
 msgstr "Unggah file ekspor WordPress"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:289
+#: packages/admin/src/components/MediaDetailPanel.tsx:303
 msgid "Uploaded:"
 msgstr "Diunggah:"
 
@@ -8616,7 +8616,7 @@ msgstr "Pengenal ramah URL"
 msgid "URL-friendly identifier (e.g., \"primary\", \"footer\")"
 msgstr "Pengenal ramah URL (mis., \"utama\", \"footer\")"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:295
+#: packages/admin/src/components/MediaDetailPanel.tsx:309
 msgid "URL:"
 msgstr "URL:"
 
@@ -8644,7 +8644,7 @@ msgstr "Digunakan sebagai pengenal. Hanya huruf kecil, angka, dan garis bawah."
 msgid "Used as the main visual for this post on listing pages and at the top of the post"
 msgstr "Digunakan sebagai visual utama pos ini di halaman daftar dan di atas pos"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:122
+#: packages/admin/src/components/MediaDetailPanel.tsx:124
 msgid "Used by screen readers and when image fails to load"
 msgstr "Digunakan oleh pembaca layar dan saat gambar gagal dimuat"
 
@@ -8742,7 +8742,7 @@ msgid "Version {0}"
 msgstr "Versi {0}"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:67
-#: packages/admin/src/components/MediaLibrary.tsx:398
+#: packages/admin/src/components/MediaLibrary.tsx:399
 msgid "Video"
 msgstr "Video"
 
@@ -8755,7 +8755,7 @@ msgstr "Lihat status penyedia email dan kirim email uji"
 msgid "View in Marketplace"
 msgstr "Lihat di Marketplace"
 
-#: packages/admin/src/components/MediaLibrary.tsx:410
+#: packages/admin/src/components/MediaLibrary.tsx:411
 msgid "View mode"
 msgstr "Mode lihat"
 
@@ -8867,7 +8867,7 @@ msgstr "Tipe konten mana yang dapat menggunakan taksonomi ini"
 msgid "Whole number"
 msgstr "Bilangan bulat"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:121
+#: packages/admin/src/components/MediaDetailPanel.tsx:123
 msgid "Why can't this be changed?"
 msgstr "Mengapa ini tidak dapat diubah?"
 
@@ -8891,7 +8891,7 @@ msgstr "Mengapa ini penting untuk visibilitas pencarian?"
 msgid "Why is this important for social sharing?"
 msgstr "Mengapa ini penting untuk berbagi di media sosial?"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:123
+#: packages/admin/src/components/MediaDetailPanel.tsx:125
 msgid "Why is this important?"
 msgstr "Mengapa ini penting?"
 
@@ -9117,8 +9117,8 @@ msgstr "Nama pengguna Instagram Anda"
 msgid "Your LinkedIn profile username"
 msgstr "Nama pengguna profil LinkedIn Anda"
 
-#: packages/admin/src/components/MediaLibrary.tsx:467
-#: packages/admin/src/components/MediaLibrary.tsx:491
+#: packages/admin/src/components/MediaLibrary.tsx:468
+#: packages/admin/src/components/MediaLibrary.tsx:492
 msgid "Your media library is empty"
 msgstr "Pustaka media Anda kosong"
 
@@ -9144,7 +9144,7 @@ msgstr "Situs Anda mengharuskan rilis berusia minimal {0} sebelum dapat dipasang
 msgid "Your Twitter/X handle (e.g., @username)"
 msgstr "Handle Twitter/X Anda (mis., @namapengguna)"
 
-#: packages/admin/src/components/MediaDetailPanel.tsx:437
+#: packages/admin/src/components/MediaDetailPanel.tsx:451
 msgid "Your unsaved media changes will be lost."
 msgstr "Perubahan media Anda yang belum disimpan akan hilang."
 
