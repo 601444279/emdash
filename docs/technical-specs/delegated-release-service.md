@@ -98,7 +98,7 @@ The service does not hard-code the experimental or future stable NSID. A namespa
 
 The initial support matrix contains:
 
-- Bluesky-hosted PDS; and
+- Bluesky PDS software hosted by npmX (`npmx.social`); and
 - Cirrus.
 
 Disposable accounts are available for both implementations. Credentials and recovery material remain outside the repository. Neither implementation is advertised as supported until its conformance run passes.
@@ -608,7 +608,7 @@ The service is complete only when all of the following hold:
 
 ### Delegation and identity
 
-- A publisher authorizes the exact create-only release grant on Bluesky-hosted PDS and Cirrus.
+- A publisher authorizes the exact create-only release grant on the Bluesky PDS implementation at npmX and on Cirrus.
 - The retained session creates a new release and cannot update it, delete it, edit a profile, or write another collection.
 - Revocation prevents new publication and eventual refresh; emergency service revocation removes retained authority.
 - Cloudflare Access operators cannot reach publisher, approver, or CI-authorized actions.

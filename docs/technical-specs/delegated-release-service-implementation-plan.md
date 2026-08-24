@@ -143,7 +143,7 @@ Dependencies: none.
 | --- | --- |
 | `W0.1` | Reconcile RFC #1870 with the Durable Object architecture, Access operator authentication, existing `emdash-plugin` command, and active experimental NSIDs |
 | `W0.2` | Freeze the first-release profile policy, provenance, workload policy, approval digest, intent state, and error contracts |
-| `W0.3` | Validate the exact create-only grant against the available Bluesky-hosted PDS and Cirrus test accounts |
+| `W0.3` | Validate the exact create-only grant against the available npmX-hosted Bluesky PDS and Cirrus test accounts |
 | `W0.4` | Validate confidential OAuth refresh, DPoP behavior, revocation, and client-key rotation with real authorization servers |
 | `W0.5` | Confirm current Workflow event, retention, retry, and test APIs support approval and recovery; record limits outside the protocol contract |
 | `W0.6` | Define hosted-service Access audience and group-to-role mapping and the self-host configuration contract |
@@ -151,7 +151,7 @@ Dependencies: none.
 ### Acceptance criteria
 
 - Every public contract has one normative shape and owner.
-- The exact scope creates a release and cannot update, delete, edit a profile, or write another collection on Bluesky-hosted PDS and Cirrus.
+- The exact scope creates a release and cannot update, delete, edit a profile, or write another collection on the Bluesky PDS implementation at npmX and on Cirrus.
 - Refresh and revocation observations are recorded with reproducible external steps.
 - An unsupported PDS is excluded from the support matrix instead of receiving a broader scope.
 - The Workflow design has a tested route for approval, rejection, cancellation, timeout, retry, and lost-instance recovery.
@@ -865,7 +865,7 @@ The PR sequence is deliberately finer than the workstreams. Each PR leaves autho
 ### Protocol and authority
 
 - [ ] RFC #1870 is accepted with the final actor, scope, policy, provenance, and approval contracts.
-- [ ] Bluesky-hosted PDS and Cirrus pass exact create-only, refresh, and revocation conformance.
+- [ ] The Bluesky PDS implementation at npmX and Cirrus pass exact create-only, refresh, and revocation conformance.
 - [ ] No broad scope, update, delete, or profile-write path exists in retained service code.
 - [ ] Shared verification is the only implementation used by service and installer.
 
