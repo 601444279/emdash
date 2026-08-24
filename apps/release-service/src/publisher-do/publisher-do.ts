@@ -2,7 +2,11 @@ import { DurableObject } from "cloudflare:workers";
 
 const DID_PATTERN = /^did:[a-z0-9]+:[A-Za-z0-9._:%-]+$/;
 const HASH_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
+const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const MAX_CIPHERTEXT_CHARS = 1_500_000;
+const MAX_REFRESH_LEASE_MS = 5 * 60_000;
+const REFRESH_TOKEN_BYTES = 32;
+const BASE64_PADDING_PATTERN = /=+$/;
 
 export type PublisherStateErrorCode =
 	| "PUBLISHER_DID_INVALID"
@@ -10,7 +14,8 @@ export type PublisherStateErrorCode =
 	| "OAUTH_STATE_INVALID"
 	| "OAUTH_STATE_EXISTS"
 	| "DELEGATION_INVALID"
-	| "DELEGATION_CAS_REQUIRED";
+	| "DELEGATION_CAS_REQUIRED"
+	| "DELEGATION_UNAVAILABLE";
 
 export class PublisherStateError extends Error {
 	readonly code: PublisherStateErrorCode;
@@ -26,6 +31,7 @@ export interface PutOAuthStateInput {
 	publisherDid: string;
 	stateHash: string;
 	encryptedState: string;
+	encryptionKeyVersion: number;
 	clientKeyId: string;
 	redirectTarget: string;
 	expiresAt: number;
@@ -33,6 +39,7 @@ export interface PutOAuthStateInput {
 
 export interface StoredOAuthState {
 	encryptedState: string;
+	encryptionKeyVersion: number;
 	clientKeyId: string;
 	redirectTarget: string;
 	expiresAt: number;
@@ -46,6 +53,10 @@ export interface PutDelegationInput {
 	scope: string;
 	clientKeyId: string;
 	encryptedSession: string;
+	encryptionKeyVersion: number;
+	issuer: string;
+	pdsUrl: string;
+	expiresAt: number | null;
 	refreshBefore: number | null;
 	expectedVersion: number | null;
 }
@@ -55,6 +66,10 @@ export interface StoredDelegation {
 	scope: string;
 	clientKeyId: string;
 	encryptedSession: string;
+	encryptionKeyVersion: number | null;
+	issuer: string | null;
+	pdsUrl: string | null;
+	expiresAt: number | null;
 	refreshBefore: number | null;
 	status: "active" | "revoked" | "reauthorization_required";
 	stateVersion: number;
@@ -68,6 +83,37 @@ export type RevokeDelegationResult =
 	| { ok: true; delegation: StoredDelegation }
 	| { ok: false; code: "DELEGATION_CAS_REQUIRED" };
 
+export interface DelegationRefreshLease {
+	generation: number;
+	token: string;
+	expectedVersion: number;
+	expiresAt: number;
+}
+
+export type BeginDelegationRefreshResult =
+	| { ok: true; lease: DelegationRefreshLease }
+	| { ok: false; code: "DELEGATION_UNAVAILABLE" }
+	| { ok: false; code: "DELEGATION_REFRESH_BUSY"; retryAt: number };
+
+export interface CompleteDelegationRefreshInput {
+	publisherDid: string;
+	generation: number;
+	token: string;
+	expectedVersion: number;
+	clientKeyId: string;
+	encryptedSession: string;
+	encryptionKeyVersion: number;
+	issuer: string;
+	pdsUrl: string;
+	expiresAt: number | null;
+	refreshBefore: number | null;
+	now?: number;
+}
+
+export type CompleteDelegationRefreshResult =
+	| { ok: true; delegation: StoredDelegation }
+	| { ok: false; code: "DELEGATION_CAS_REQUIRED" };
+
 interface PublisherRow {
 	[key: string]: string | number | ArrayBuffer | null;
 	did: string;
@@ -76,6 +122,7 @@ interface PublisherRow {
 interface OAuthStateRow {
 	[key: string]: string | number | ArrayBuffer | null;
 	encrypted_state: string;
+	encryption_key_version: number;
 	client_key_id: string;
 	redirect_target: string;
 	expires_at: number;
@@ -87,13 +134,54 @@ interface DelegationRow {
 	scope: string;
 	client_key_id: string;
 	encrypted_session: string;
+	encryption_key_version: number | null;
+	issuer: string | null;
+	pds_url: string | null;
+	expires_at: number | null;
 	refresh_before: number | null;
 	status: StoredDelegation["status"];
 	state_version: number;
 }
 
+interface OperationRow {
+	[key: string]: string | number | ArrayBuffer | null;
+	generation: number;
+	token_hash: string | null;
+	delegation_version: number | null;
+	expires_at: number | null;
+}
+
 function validBoundedString(value: unknown, maxLength: number): value is string {
 	return typeof value === "string" && value.length > 0 && value.length <= maxLength;
+}
+
+function validPositiveInteger(value: unknown): value is number {
+	return Number.isSafeInteger(value) && Number(value) >= 1;
+}
+
+function validOptionalTimestamp(value: unknown): value is number | null {
+	return value === null || Number.isSafeInteger(value);
+}
+
+function validHttpsOrigin(value: unknown): value is string {
+	if (typeof value !== "string" || value.length === 0 || value.length > 2048) return false;
+	try {
+		const url = new URL(value);
+		return url.protocol === "https:" && url.origin === value;
+	} catch {
+		return false;
+	}
+}
+
+function encodeBase64Url(bytes: Uint8Array): string {
+	let binary = "";
+	for (const byte of bytes) binary += String.fromCharCode(byte);
+	return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(BASE64_PADDING_PATTERN, "");
+}
+
+async function hashRefreshToken(token: string): Promise<string> {
+	const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+	return encodeBase64Url(new Uint8Array(digest));
 }
 
 export class PublisherDurableObject extends DurableObject<Env> {
@@ -232,6 +320,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		if (
 			!HASH_PATTERN.test(input.stateHash) ||
 			!validBoundedString(input.encryptedState, MAX_CIPHERTEXT_CHARS) ||
+			!validPositiveInteger(input.encryptionKeyVersion) ||
 			!validBoundedString(input.clientKeyId, 128) ||
 			!validBoundedString(input.redirectTarget, 2048) ||
 			!Number.isSafeInteger(input.expiresAt) ||
@@ -249,10 +338,12 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			if (existing) return { ok: false, code: "OAUTH_STATE_EXISTS" } as const;
 			this.ctx.storage.sql.exec(
 				`INSERT INTO oauth_states (
-						state_hash, encrypted_state, client_key_id, redirect_target, expires_at, created_at
-					) VALUES (?, ?, ?, ?, ?, ?)`,
+						state_hash, encrypted_state, encryption_key_version, client_key_id,
+						redirect_target, expires_at, created_at
+					) VALUES (?, ?, ?, ?, ?, ?, ?)`,
 				input.stateHash,
 				input.encryptedState,
+				input.encryptionKeyVersion,
 				input.clientKeyId,
 				input.redirectTarget,
 				input.expiresAt,
@@ -281,7 +372,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		return this.ctx.storage.transactionSync(() => {
 			const row = this.ctx.storage.sql
 				.exec<OAuthStateRow>(
-					`SELECT encrypted_state, client_key_id, redirect_target, expires_at
+					`SELECT encrypted_state, encryption_key_version, client_key_id, redirect_target, expires_at
 					 FROM oauth_states WHERE state_hash = ?`,
 					stateHash,
 				)
@@ -302,6 +393,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			this.#appendAudit("oauth-state-consumed", "publisher", publisherDid, stateHash, now);
 			return {
 				encryptedState: row.encrypted_state,
+				encryptionKeyVersion: row.encryption_key_version,
 				clientKeyId: row.client_key_id,
 				redirectTarget: row.redirect_target,
 				expiresAt: row.expires_at,
@@ -316,13 +408,18 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			!validBoundedString(input.scope, 2048) ||
 			!validBoundedString(input.clientKeyId, 128) ||
 			!validBoundedString(input.encryptedSession, MAX_CIPHERTEXT_CHARS) ||
-			(input.refreshBefore !== null && !Number.isSafeInteger(input.refreshBefore)) ||
+			!validPositiveInteger(input.encryptionKeyVersion) ||
+			!validHttpsOrigin(input.issuer) ||
+			!validHttpsOrigin(input.pdsUrl) ||
+			!validOptionalTimestamp(input.expiresAt) ||
+			!validOptionalTimestamp(input.refreshBefore) ||
 			(input.expectedVersion !== null &&
 				(!Number.isSafeInteger(input.expectedVersion) || input.expectedVersion < 1))
 		) {
 			throw new PublisherStateError("DELEGATION_INVALID");
 		}
 		return this.ctx.storage.transactionSync(() => {
+			const now = Date.now();
 			const current = this.#readDelegation();
 			if (
 				(current === null && input.expectedVersion !== null) ||
@@ -334,13 +431,18 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			this.ctx.storage.sql.exec(
 				`INSERT INTO delegation (
 					id, release_nsid, scope, client_key_id, encrypted_session,
-					refresh_before, status, state_version, updated_at
-				) VALUES (1, ?, ?, ?, ?, ?, 'active', ?, ?)
+					encryption_key_version, issuer, pds_url, expires_at, refresh_before,
+					status, state_version, updated_at
+				) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?)
 				ON CONFLICT(id) DO UPDATE SET
 					release_nsid = excluded.release_nsid,
 					scope = excluded.scope,
 					client_key_id = excluded.client_key_id,
 					encrypted_session = excluded.encrypted_session,
+					encryption_key_version = excluded.encryption_key_version,
+					issuer = excluded.issuer,
+					pds_url = excluded.pds_url,
+					expires_at = excluded.expires_at,
 					refresh_before = excluded.refresh_before,
 					status = 'active',
 					state_version = excluded.state_version,
@@ -349,16 +451,21 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				input.scope,
 				input.clientKeyId,
 				input.encryptedSession,
+				input.encryptionKeyVersion,
+				input.issuer,
+				input.pdsUrl,
+				input.expiresAt,
 				input.refreshBefore,
 				stateVersion,
-				Date.now(),
+				now,
 			);
+			this.#clearRefreshOperation(now);
 			this.#appendAudit(
 				"delegation-stored",
 				"publisher",
 				input.publisherDid,
 				input.releaseNsid,
-				Date.now(),
+				now,
 			);
 			return { ok: true, delegation: this.#readDelegation()! } as const;
 		});
@@ -369,26 +476,213 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		return this.#readDelegation();
 	}
 
+	async beginDelegationRefresh(
+		publisherDid: string,
+		leaseDurationMs: number,
+		now = Date.now(),
+	): Promise<BeginDelegationRefreshResult> {
+		this.#assertPublisherDid(publisherDid);
+		if (
+			!Number.isSafeInteger(now) ||
+			!Number.isSafeInteger(leaseDurationMs) ||
+			leaseDurationMs < 1 ||
+			leaseDurationMs > MAX_REFRESH_LEASE_MS
+		) {
+			throw new PublisherStateError("DELEGATION_INVALID");
+		}
+		const tokenBytes = crypto.getRandomValues(new Uint8Array(REFRESH_TOKEN_BYTES));
+		const token = encodeBase64Url(tokenBytes);
+		const tokenHash = await hashRefreshToken(token);
+		return this.ctx.storage.transactionSync(() => {
+			const current = this.#readDelegation();
+			if (!current || current.status !== "active" || current.encryptedSession.length === 0) {
+				return { ok: false, code: "DELEGATION_UNAVAILABLE" } as const;
+			}
+			const operation = this.#readRefreshOperation();
+			if (
+				operation.token_hash !== null &&
+				operation.expires_at !== null &&
+				operation.expires_at > now
+			) {
+				return {
+					ok: false,
+					code: "DELEGATION_REFRESH_BUSY",
+					retryAt: operation.expires_at,
+				} as const;
+			}
+			const generation = operation.generation + 1;
+			const expiresAt = now + leaseDurationMs;
+			this.ctx.storage.sql.exec(
+				`UPDATE delegation_operations SET
+					generation = ?, token_hash = ?, delegation_version = ?, expires_at = ?, updated_at = ?
+				 WHERE kind = 'refresh'`,
+				generation,
+				tokenHash,
+				current.stateVersion,
+				expiresAt,
+				now,
+			);
+			this.#appendAudit(
+				"delegation-refresh-started",
+				"system",
+				"release-service",
+				current.releaseNsid,
+				now,
+			);
+			return {
+				ok: true,
+				lease: {
+					generation,
+					token,
+					expectedVersion: current.stateVersion,
+					expiresAt,
+				},
+			} as const;
+		});
+	}
+
+	async getDelegationForRefresh(
+		publisherDid: string,
+		generation: number,
+		token: string,
+		now = Date.now(),
+	): Promise<StoredDelegation | null> {
+		this.#assertPublisherDid(publisherDid);
+		if (
+			!validPositiveInteger(generation) ||
+			!TOKEN_PATTERN.test(token) ||
+			!Number.isSafeInteger(now)
+		) {
+			throw new PublisherStateError("DELEGATION_INVALID");
+		}
+		const tokenHash = await hashRefreshToken(token);
+		return this.ctx.storage.transactionSync(() => {
+			const operation = this.#readRefreshOperation();
+			const current = this.#readDelegation();
+			if (
+				!current ||
+				operation.generation !== generation ||
+				operation.token_hash !== tokenHash ||
+				operation.delegation_version !== current.stateVersion ||
+				operation.expires_at === null ||
+				operation.expires_at <= now
+			) {
+				return null;
+			}
+			return current;
+		});
+	}
+
+	async completeDelegationRefresh(
+		input: CompleteDelegationRefreshInput,
+	): Promise<CompleteDelegationRefreshResult> {
+		this.#assertPublisherDid(input.publisherDid);
+		const now = input.now ?? Date.now();
+		if (
+			!validPositiveInteger(input.generation) ||
+			!TOKEN_PATTERN.test(input.token) ||
+			!validPositiveInteger(input.expectedVersion) ||
+			!validBoundedString(input.clientKeyId, 128) ||
+			!validBoundedString(input.encryptedSession, MAX_CIPHERTEXT_CHARS) ||
+			!validPositiveInteger(input.encryptionKeyVersion) ||
+			!validHttpsOrigin(input.issuer) ||
+			!validHttpsOrigin(input.pdsUrl) ||
+			!validOptionalTimestamp(input.expiresAt) ||
+			!validOptionalTimestamp(input.refreshBefore) ||
+			!Number.isSafeInteger(now)
+		) {
+			throw new PublisherStateError("DELEGATION_INVALID");
+		}
+		const tokenHash = await hashRefreshToken(input.token);
+		return this.ctx.storage.transactionSync(() => {
+			const operation = this.#readRefreshOperation();
+			const current = this.#readDelegation();
+			if (
+				!current ||
+				current.stateVersion !== input.expectedVersion ||
+				operation.generation !== input.generation ||
+				operation.token_hash !== tokenHash ||
+				operation.delegation_version !== input.expectedVersion ||
+				operation.expires_at === null ||
+				operation.expires_at <= now
+			) {
+				return { ok: false, code: "DELEGATION_CAS_REQUIRED" } as const;
+			}
+			this.ctx.storage.sql.exec(
+				`UPDATE delegation SET
+					client_key_id = ?, encrypted_session = ?, encryption_key_version = ?,
+					issuer = ?, pds_url = ?, expires_at = ?, refresh_before = ?,
+					status = 'active', state_version = state_version + 1, updated_at = ?
+				 WHERE id = 1`,
+				input.clientKeyId,
+				input.encryptedSession,
+				input.encryptionKeyVersion,
+				input.issuer,
+				input.pdsUrl,
+				input.expiresAt,
+				input.refreshBefore,
+				now,
+			);
+			this.#clearRefreshOperation(now);
+			this.#appendAudit(
+				"delegation-refresh-completed",
+				"system",
+				"release-service",
+				current.releaseNsid,
+				now,
+			);
+			return { ok: true, delegation: this.#readDelegation()! } as const;
+		});
+	}
+
+	async releaseDelegationRefresh(
+		publisherDid: string,
+		generation: number,
+		token: string,
+		now = Date.now(),
+	): Promise<boolean> {
+		this.#assertPublisherDid(publisherDid);
+		if (
+			!validPositiveInteger(generation) ||
+			!TOKEN_PATTERN.test(token) ||
+			!Number.isSafeInteger(now)
+		) {
+			throw new PublisherStateError("DELEGATION_INVALID");
+		}
+		const tokenHash = await hashRefreshToken(token);
+		return this.ctx.storage.transactionSync(() => {
+			const operation = this.#readRefreshOperation();
+			if (operation.generation !== generation || operation.token_hash !== tokenHash) return false;
+			this.#clearRefreshOperation(now);
+			this.#appendAudit(
+				"delegation-refresh-released",
+				"system",
+				"release-service",
+				this.#readDelegation()?.releaseNsid ?? "delegation",
+				now,
+			);
+			return true;
+		});
+	}
+
 	revokeDelegation(publisherDid: string, expectedVersion: number): RevokeDelegationResult {
 		this.#assertPublisherDid(publisherDid);
 		return this.ctx.storage.transactionSync(() => {
+			const now = Date.now();
 			const current = this.#readDelegation();
 			if (!current || current.stateVersion !== expectedVersion) {
 				return { ok: false, code: "DELEGATION_CAS_REQUIRED" } as const;
 			}
 			const stateVersion = current.stateVersion + 1;
 			this.ctx.storage.sql.exec(
-				"UPDATE delegation SET status = 'revoked', state_version = ?, updated_at = ? WHERE id = 1",
+				`UPDATE delegation SET
+					status = 'revoked', encrypted_session = '', encryption_key_version = NULL,
+					state_version = ?, updated_at = ? WHERE id = 1`,
 				stateVersion,
-				Date.now(),
+				now,
 			);
-			this.#appendAudit(
-				"delegation-revoked",
-				"publisher",
-				publisherDid,
-				current.releaseNsid,
-				Date.now(),
-			);
+			this.#clearRefreshOperation(now);
+			this.#appendAudit("delegation-revoked", "publisher", publisherDid, current.releaseNsid, now);
 			return { ok: true, delegation: this.#readDelegation()! } as const;
 		});
 	}
@@ -397,6 +691,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		const row = this.ctx.storage.sql
 			.exec<DelegationRow>(
 				`SELECT release_nsid, scope, client_key_id, encrypted_session,
+				        encryption_key_version, issuer, pds_url, expires_at,
 				        refresh_before, status, state_version
 				 FROM delegation WHERE id = 1`,
 			)
@@ -407,10 +702,32 @@ export class PublisherDurableObject extends DurableObject<Env> {
 					scope: row.scope,
 					clientKeyId: row.client_key_id,
 					encryptedSession: row.encrypted_session,
+					encryptionKeyVersion: row.encryption_key_version,
+					issuer: row.issuer,
+					pdsUrl: row.pds_url,
+					expiresAt: row.expires_at,
 					refreshBefore: row.refresh_before,
 					status: row.status,
 					stateVersion: row.state_version,
 				}
 			: null;
+	}
+
+	#readRefreshOperation(): OperationRow {
+		return this.ctx.storage.sql
+			.exec<OperationRow>(
+				`SELECT generation, token_hash, delegation_version, expires_at
+				 FROM delegation_operations WHERE kind = 'refresh'`,
+			)
+			.one();
+	}
+
+	#clearRefreshOperation(now: number): void {
+		this.ctx.storage.sql.exec(
+			`UPDATE delegation_operations SET
+				token_hash = NULL, delegation_version = NULL, expires_at = NULL, updated_at = ?
+			 WHERE kind = 'refresh'`,
+			now,
+		);
 	}
 }

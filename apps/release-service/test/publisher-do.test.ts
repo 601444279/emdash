@@ -5,6 +5,12 @@ import { afterEach, describe, expect, it } from "vitest";
 const DID = "did:plc:publisher";
 const OTHER_DID = "did:plc:other";
 const STATE_HASH = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+const DELEGATION_METADATA = {
+	encryptionKeyVersion: 2,
+	issuer: "https://authorization.example",
+	pdsUrl: "https://pds.example",
+	expiresAt: null,
+} as const;
 
 function publisher() {
 	return env.PUBLISHER_DO.getByName(DID);
@@ -39,6 +45,7 @@ describe("PublisherDurableObject", () => {
 				publisherDid: DID,
 				stateHash: STATE_HASH,
 				encryptedState: "encrypted-oauth-state",
+				encryptionKeyVersion: 2,
 				clientKeyId: "assertion-1",
 				redirectTarget: "/publisher/delegation",
 				expiresAt: Date.now() + 60_000,
@@ -101,6 +108,7 @@ describe("PublisherDurableObject", () => {
 			publisherDid: DID,
 			stateHash,
 			encryptedState: "encrypted",
+			encryptionKeyVersion: 2,
 			clientKeyId: "assertion-1",
 			redirectTarget: "/callback",
 			expiresAt,
@@ -134,6 +142,7 @@ describe("PublisherDurableObject", () => {
 			scope: "atproto repo:com.emdashcms.experimental.package.release?action=create",
 			clientKeyId: "assertion-1",
 			encryptedSession: "ciphertext-v1",
+			...DELEGATION_METADATA,
 			refreshBefore: Date.now() + 60_000,
 			expectedVersion: null,
 		});
@@ -149,6 +158,7 @@ describe("PublisherDurableObject", () => {
 				scope: first.scope,
 				clientKeyId: "assertion-2",
 				encryptedSession: "ciphertext-v2",
+				...DELEGATION_METADATA,
 				refreshBefore: null,
 				expectedVersion: null,
 			}),
@@ -160,6 +170,7 @@ describe("PublisherDurableObject", () => {
 			scope: first.scope,
 			clientKeyId: "assertion-2",
 			encryptedSession: "ciphertext-v2",
+			...DELEGATION_METADATA,
 			refreshBefore: null,
 			expectedVersion: 1,
 		});
@@ -179,6 +190,133 @@ describe("PublisherDurableObject", () => {
 		}
 	});
 
+	it("serializes refresh with generation-bound leases and compare-and-set completion", async () => {
+		const stub = publisher();
+		const now = 1_800_000_000_000;
+		await expect(
+			stub.putDelegation({
+				publisherDid: DID,
+				releaseNsid: "com.emdashcms.experimental.package.release",
+				scope: "atproto repo:com.emdashcms.experimental.package.release?action=create",
+				clientKeyId: "assertion-1",
+				encryptedSession: "ciphertext-v1",
+				...DELEGATION_METADATA,
+				refreshBefore: now + 30_000,
+				expectedVersion: null,
+			}),
+		).resolves.toMatchObject({ ok: true });
+
+		const first = await stub.beginDelegationRefresh(DID, 60_000, now);
+		expect(first.ok).toBe(true);
+		if (!first.ok) return;
+		expect(first.lease).toMatchObject({
+			generation: 1,
+			expectedVersion: 1,
+			expiresAt: now + 60_000,
+		});
+		const busy = await stub.beginDelegationRefresh(DID, 60_000, now + 1);
+		expect(busy).toEqual({
+			ok: false,
+			code: "DELEGATION_REFRESH_BUSY",
+			retryAt: now + 60_000,
+		});
+		await expect(
+			stub.getDelegationForRefresh(DID, first.lease.generation, `${"A".repeat(42)}B`, now + 1),
+		).resolves.toBeNull();
+		await expect(
+			stub.getDelegationForRefresh(DID, first.lease.generation, first.lease.token, now + 1),
+		).resolves.toMatchObject({ encryptedSession: "ciphertext-v1", stateVersion: 1 });
+
+		await expect(
+			stub.completeDelegationRefresh({
+				publisherDid: DID,
+				generation: first.lease.generation,
+				token: first.lease.token,
+				expectedVersion: 2,
+				clientKeyId: "assertion-2",
+				encryptedSession: "ciphertext-v2",
+				...DELEGATION_METADATA,
+				refreshBefore: now + 90_000,
+				now: now + 2,
+			}),
+		).resolves.toEqual({ ok: false, code: "DELEGATION_CAS_REQUIRED" });
+
+		const completed = await stub.completeDelegationRefresh({
+			publisherDid: DID,
+			generation: first.lease.generation,
+			token: first.lease.token,
+			expectedVersion: first.lease.expectedVersion,
+			clientKeyId: "assertion-2",
+			encryptedSession: "ciphertext-v2",
+			...DELEGATION_METADATA,
+			refreshBefore: now + 90_000,
+			now: now + 2,
+		});
+		expect(completed).toMatchObject({
+			ok: true,
+			delegation: { encryptedSession: "ciphertext-v2", stateVersion: 2 },
+		});
+		await expect(
+			stub.getDelegationForRefresh(DID, first.lease.generation, first.lease.token, now + 3),
+		).resolves.toBeNull();
+
+		const persisted = await runInDurableObject(stub, (_instance, state) => ({
+			operation: state.storage.sql
+				.exec<{ token_hash: string | null }>(
+					"SELECT token_hash FROM delegation_operations WHERE kind = 'refresh'",
+				)
+				.one(),
+			audit: state.storage.sql
+				.exec<{ event_type: string; subject: string }>(
+					"SELECT event_type, subject FROM audit_events ORDER BY sequence",
+				)
+				.toArray(),
+		}));
+		expect(persisted.operation.token_hash).toBeNull();
+		expect(JSON.stringify(persisted)).not.toContain(first.lease.token);
+		expect(persisted.audit.map((event) => event.event_type)).toEqual(
+			expect.arrayContaining(["delegation-refresh-started", "delegation-refresh-completed"]),
+		);
+	});
+
+	it("supersedes expired refresh leases and wipes retained authority on revocation", async () => {
+		const stub = publisher();
+		const now = 1_800_000_000_000;
+		await stub.putDelegation({
+			publisherDid: DID,
+			releaseNsid: "com.emdashcms.experimental.package.release",
+			scope: "atproto repo:com.emdashcms.experimental.package.release?action=create",
+			clientKeyId: "assertion-1",
+			encryptedSession: "ciphertext-v1",
+			...DELEGATION_METADATA,
+			refreshBefore: now + 1,
+			expectedVersion: null,
+		});
+		const first = await stub.beginDelegationRefresh(DID, 100, now);
+		expect(first.ok).toBe(true);
+		if (!first.ok) return;
+		const second = await stub.beginDelegationRefresh(DID, 100, now + 101);
+		expect(second.ok).toBe(true);
+		if (!second.ok) return;
+		expect(second.lease.generation).toBe(first.lease.generation + 1);
+		await expect(
+			stub.releaseDelegationRefresh(DID, first.lease.generation, first.lease.token, now + 102),
+		).resolves.toBe(false);
+		await expect(
+			stub.releaseDelegationRefresh(DID, second.lease.generation, second.lease.token, now + 102),
+		).resolves.toBe(true);
+
+		const revoked = await stub.revokeDelegation(DID, 1);
+		expect(revoked).toMatchObject({
+			ok: true,
+			delegation: { status: "revoked", encryptedSession: "", encryptionKeyVersion: null },
+		});
+		await expect(stub.beginDelegationRefresh(DID, 100, now + 103)).resolves.toEqual({
+			ok: false,
+			code: "DELEGATION_UNAVAILABLE",
+		});
+	});
+
 	it("persists canonical state across object restarts", async () => {
 		const stub = publisher();
 		await expect(
@@ -188,6 +326,7 @@ describe("PublisherDurableObject", () => {
 				scope: "atproto repo:com.emdashcms.experimental.package.release?action=create",
 				clientKeyId: "assertion-1",
 				encryptedSession: "persisted-ciphertext",
+				...DELEGATION_METADATA,
 				refreshBefore: null,
 				expectedVersion: null,
 			}),
