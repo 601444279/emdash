@@ -17,7 +17,7 @@ created: 2026-07-08
 
 This RFC supersedes RFC 0001's app-password suggestion and defines the CI publishing path properly. It specifies:
 
-1. A **delegated release service** — a service holding a granular OAuth scope limited to release records (`repo:pm.fair.package.release`, create-only) for authors who delegate to it, which creates release records on their behalf. Anyone can run one. CI authenticates to it with a short-lived workload token (e.g. GitHub Actions OIDC), never a stored account credential.
+1. A **delegated release service** — a service holding a granular OAuth scope limited to creating release records for authors who delegate to it. During the registry experiment this is `atproto repo:com.emdashcms.experimental.package.release?action=create`; implementations derive the active collection and scope from the registry lexicons rather than hard-coding the future stable namespace. Anyone can run a service. CI authenticates with a short-lived workload token (e.g. GitHub Actions OIDC), never a stored account credential.
 2. **Build provenance** — an attestation, carried on the release, binding the published artifact to the source revision and workflow that built it, verifiable independently of the registry and the delegated release service.
 3. **Release policy** — author-signed declarations on the package profile (`requireProvenance`, `confirmation`) that constrain how releases may be published, enforced by the delegated release service and verifiable by the installing site.
 
@@ -83,6 +83,7 @@ This RFC has several actors whose names are easy to conflate. They have differen
 | Aggregator                | Site/operator      | Convenience only                                        | Discovers, indexes, mirrors, and flags records; cannot forge valid releases.                      |
 | Labeller                  | Site/operator      | Site/operator                                           | Issues moderation/trust labels used for discovery and policy presentation.                        |
 | Installing site           | Site owner         | Itself                                                  | Re-verifies release record, artifact, provenance, and policy before install.                      |
+| Service operator          | Service deployment | Delegated release service operations                    | Uses Cloudflare Access to pause, suspend, revoke, reconcile, and recover the reference service.   |
 
 The publisher trusts the delegated release service operationally: it may create release records using a release-scoped OAuth grant, and it may enforce staging policy.
 
@@ -124,8 +125,8 @@ Staged intent, inside the delegated release service only:
 - OIDC claims;
 - approval state;
 - passkey approval evidence;
-- staging ID;
-- notification/audit details.
+- intent ID;
+- approval and audit details.
 
 Sigstore bundle, on the artifact host:
 
@@ -150,11 +151,13 @@ The default EmDash delegated release service is only a hosted delegated writer. 
 
 ## What it is
 
-A delegated release service creates `pm.fair.package.release` records on behalf of authors who delegate to it. Earlier drafts called this a "signing service", but that name makes it sound like an install-time verifier or authority. Its role is narrower: it is a delegated writer for release records.
+A delegated release service creates records in the active package-release collection on behalf of authors who delegate to it. Earlier drafts called this a "signing service", but that name makes it sound like an install-time verifier or authority. Its role is narrower: it is a delegated writer for release records.
 
-It holds, per delegating author, an atproto session authorised with a **granular OAuth scope limited to the release record**: `repo:pm.fair.package.release` with the action restricted to `create` (releases are version-immutable in RFC 0001, so update and delete are not requested). This is the release-only scope RFC 0001 already defines for interactive publishing, used here for the automated path. The scope syntax and semantics are specified in the [atproto Permissions specification](https://atproto.com/specs/permission). The key property is that a session bearing this scope can create release records and do nothing else: it cannot read or write the package profile, the author's identity, their other collections, or account settings.
+It holds, per delegating author, an atproto session authorised with a **granular OAuth scope limited to creating release records**. The reference implementation gets the exact scope from `getDelegatedReleasePermission()` in `@emdash-cms/registry-lexicons`; during the registry experiment it is `atproto repo:com.emdashcms.experimental.package.release?action=create`. Releases are version-immutable, so update and delete are not requested. The scope syntax and semantics are specified in the [atproto Permissions specification](https://atproto.com/specs/permission). A session bearing this scope can create release records and do nothing else: it cannot write the package profile, the author's identity, other collections, or account settings. Public profile and release reads use the DID-resolved PDS without delegated authority.
 
-It authenticates to atproto as a confidential OAuth client (`private_key_jwt`), so its sessions are long-lived but revocable: removing the service's key from its published JWKS invalidates every session it holds.
+It authenticates to atproto as a confidential OAuth client (`private_key_jwt`). Sessions are refreshable and revocable. Removing a client key from the published JWKS prevents sessions bound to that key from refreshing after the authorization server observes the change; an already-issued access token may remain usable until expiry. Emergency revocation therefore calls the authorization server's revocation endpoint and pauses publication before retiring client keys.
+
+The first supported-PDS matrix covers Bluesky-hosted PDS and Cirrus. Dedicated accounts are available for both. Neither is advertised as supported until the exact create-only, refresh, and revocation conformance run passes, and no broader scope is used as a fallback.
 
 It also holds _staged release intents_ pending human approval and runs the passkey ceremonies for approvers the author has authorised; see [Staged releases](#staged-releases).
 
@@ -189,11 +192,10 @@ sequenceDiagram
         DRS->>DRS: Auto-approve
     else Approval required
         DRS-->>CI: Staging ID + approval URL
-        DRS->>Approver: Notify (email / DM / webhook)
         Approver->>DRS: Passkey assertion
         DRS->>Host: Re-verify checksum, declaredAccess, attestation
     end
-    DRS->>PDS: Create pm.fair.package.release (release scope only)
+    DRS->>PDS: Create package-release record (release scope only)
     PDS-->>Agg: Record propagates via firehose
     DRS-->>CI: Release AT URI
 ```
@@ -215,6 +217,21 @@ atproto has no grant for stateless headless writes. A confidential-client sessio
 
 Recent Shai-Hulud variants steal workload tokens from CI memory. A stolen token lets an attacker call the delegated release service as that workflow, but the layers behind it (provenance, `requireProvenance`, the escalation gate) catch what the token alone cannot bypass. See the [Threat model](#threat-model-additions). No single stolen credential is sufficient.
 
+## Reference service architecture
+
+The reference implementation runs on Cloudflare Workers and shards canonical state by DID:
+
+- A SQLite-backed `PublisherDurableObject`, addressed by publisher DID, owns delegated OAuth, workload policy, release intents, package/version reservations, and publisher audit.
+- A SQLite-backed `ApproverDurableObject`, addressed by approver DID, owns passkeys, challenges, decisions, and approver audit.
+- A low-traffic `ServiceControlDurableObject` owns global pause, publisher suspension, and encryption-key-version state.
+- One Cloudflare Workflow orchestrates each release intent, including durable retries and approval waits. Workflow state is not an authorization source.
+- A separate verifier Worker fetches untrusted artifact and provenance URLs without access to publisher credentials or operator authority.
+- D1 MAY provide a rebuildable cross-publisher operator projection. It is never canonical service or authorization state.
+
+Slow network operations do not run inside a Durable Object transaction or a `blockConcurrencyWhile()` section. The publisher object atomically grants a generation-bound refresh or publication operation token, the Workflow performs the external request, and only that token can complete the transition. An alarm expires abandoned operations into reconciliation.
+
+Service operators authenticate through Cloudflare Access. Access roles can pause, suspend, revoke, cancel, retry, and reconcile. They cannot establish publisher delegation, edit signed profile policy, enrol approvers, approve a release, or publish one. Publishers and approvers still use atproto OAuth because Access identity does not prove control of a DID.
+
 # Staged releases
 
 Every automated release passes through staging. CI submits a _release intent_; the PDS record is written only after the intent is approved, either automatically (when policy allows) or by a human approver presenting a passkey.
@@ -228,7 +245,7 @@ On submission, the delegated release service runs the same four-layer check the 
 - the submitting workload's OIDC claims (repository, workflow, ref, run ID);
 - the submission timestamp and an intent ID.
 
-At approval time the delegated release service **re-runs the four-layer check** before signing. This catches an artifact host that has changed bytes between submit and approve, an attestation that has been substituted, or profile records that have moved on (e.g. `repository` changed). Verifying once at submit is for fast rejection; verifying again at approve is what the signature actually rests on.
+At approval time the delegated release service **re-runs the four-layer check** before writing. This catches an artifact host that has changed bytes between submit and approve, an attestation that has been substituted, or profile records that have moved on (e.g. `repository` changed). Verifying once at submit is for fast rejection; verifying again immediately before the PDS write closes the staging window.
 
 ## Auto-approval versus human approval
 
@@ -239,7 +256,7 @@ The delegated release service evaluates the package's `confirmation` policy ([Re
 
 The escalation gate is not configurable. Profile policy can tighten it (require approval for every release) but cannot loosen it. An author with no `confirmation` field and no enrolled approver still has the gate: an escalating intent in that state is held, will not auto-approve, and expires unapproved. The fix is to enrol an approver, not to bypass the gate.
 
-From CI's perspective, the delegated release service's response is either a release AT URI (auto-approved, written) or a staging ID plus approval URL (held).
+Submission is asynchronous. CI receives an intent resource and polls or streams its state. A completed intent carries the release AT URI; a held intent also carries an approval URL.
 
 ## Approver identities
 
@@ -258,7 +275,7 @@ The enrolment ceremony has two parts, in order:
 
 The delegated release service MUST persist enrolment outcomes so revocation, re-enrolment, and listing-versus-enrolled status are queryable by the author. Enrolment does not produce an approval; the approver returns to the approval surface separately. Approval is a deliberate decision on top of an established identity, never a side effect of identity setup.
 
-**Invitations.** The invitation channel is operator policy, not protocol. When the author adds an entry via the CLI or admin UI, they typically pass the new approver's contact channel (e.g. email) to the delegated release service privately, not on the signed profile. The delegated release service then issues an enrolment URL and delivers it. Authors who skip this can direct approvers to the enrolment endpoint manually. The enrolment URL authorises nothing on its own; the OAuth ceremony is what proves DID control.
+**Invitations.** The invitation channel is deployment policy, not protocol. The publisher can copy an enrolment URL from the CLI or publisher UI and deliver it through a channel they choose. The enrolment URL authorises nothing on its own; the OAuth ceremony proves DID control. Automated email or webhook delivery is follow-up product work rather than a requirement of this RFC.
 
 **Re-enrolment.** An approver who loses their authenticator MAY re-enrol by repeating the ceremony. The delegated release service MUST require the OAuth proof again, MUST replace the previous credential (multiple credentials per DID MAY be supported as an explicit "add another authenticator" action), and MUST log the re-enrolment and notify the author. An unexpected re-enrolment is a signal the author needs to see.
 
@@ -268,15 +285,14 @@ The delegated release service MUST persist enrolment outcomes so revocation, re-
 
 ## Approval surface
 
-The delegated release service hosts the approval surface itself: a web view (the approval URL returned to CI) and a CLI command (`emdash plugin approve <stage-id> --signer <url>`), both speaking the same JSON API. Other clients — an EmDash site's admin UI, third-party dashboards — MAY consume that API; the delegated release service MUST implement it. The contract is the API; the UI is conventional. This is the run-anywhere shape applied to approval: anyone can run the delegated release service, anyone can build a client against the API.
+The delegated release service hosts the approval surface itself: a web view and a CLI command (`emdash-plugin approve <intent-id> --service <url>`), both speaking the same versioned JSON API. Other clients MAY consume that API. The contract is the API; the UI is conventional.
 
-The approver's view, before they touch the passkey, shows the submitting workflow's OIDC claims, the artifact `checksum`, the `declaredAccess` (with an explicit diff against the previous release when escalating), and the provenance reference. The WebAuthn assertion is bound to the delegated release service's origin and to a server-issued challenge tied to the staging ID, so an assertion captured from one delegated release service cannot be replayed at another.
+The approver's view, before they touch the passkey, shows the submitting workflow's OIDC claims, the artifact `checksum`, the `declaredAccess` (with an explicit diff against the previous release when escalating), and the provenance reference. The WebAuthn assertion is bound to the delegated release service's origin and to a server-issued challenge tied to the intent ID, so an assertion captured from one delegated release service cannot be replayed at another.
 
 ## Lifecycle
 
 - **TTL.** Staged intents expire after an operator-configured window (recommended 24 hours). An expired intent is discarded; CI resubmits if still wanted.
 - **Cancellation.** The submitting workflow MAY cancel its own staged intent before approval (using the same OIDC identity it submitted under). An approver MAY explicitly reject an intent; rejection is logged and the submitter is notified.
-- **Notification.** When an intent is held for approval, the delegated release service notifies registered approvers via their configured channel (email, atproto DM, webhook — operator choice). The notification carries the staging ID and approval URL only; the substantive details are shown by the approval surface itself after the approver authenticates.
 - **Storage.** Staged intents live in the delegated release service's own storage; they are not records in the author's PDS. The delegated release service is now stateful in a way it was not when it merely held a session — see [Drawbacks](#drawbacks).
 
 ## What this gates and what it does not
@@ -301,7 +317,7 @@ The artifact digest is not duplicated here. The release already carries the arti
 
 ## Provenance and FAIR
 
-Build provenance is not EmDash-specific — every FAIR ecosystem with author-hosted artifacts has the same build-pipeline gap, and the natural home is a FAIR artifact field beside `checksum`, `signature`, and `sbom`. We will propose it upstream. Until or unless FAIR adopts it, the reference is carried under `com.emdashcms.package.releaseExtension` (alongside `declaredAccess`), so this RFC is not blocked on a FAIR decision — the same dual-track approach RFC 0001 takes on the `pm.fair.*` versus `com.emdashcms.package.*` namespace question.
+Build provenance is not EmDash-specific — every FAIR ecosystem with author-hosted artifacts has the same build-pipeline gap, and the natural home is a FAIR artifact field beside `checksum`, `signature`, and `sbom`. The field can be proposed upstream. During the registry experiment the reference is carried under `com.emdashcms.experimental.package.releaseExtension` alongside `declaredAccess`. Stable namespace selection does not block implementation.
 
 ## Author-generated, not registry-generated
 
@@ -311,7 +327,7 @@ The registry never witnesses the build. The attestation is generated by the auth
 
 "The installing site" below means the EmDash site that is installing the plugin — the admin server performing the install, per RFC 0001's install flow.
 
-When a release carries provenance, the installing site verifies four claims, all of which must hold. This is additive to RFC 0001's existing install checks (PDS-direct record fetch, MST signature, artifact `checksum`, `declaredAccess` deep-equal) and runs only when provenance is present (subject to policy, below). The delegated release service performs the same four checks before signing; the installing site repeats them because the delegated release service is not trusted for integrity.
+When a release carries provenance, the installing site verifies four claims, all of which must hold. This is additive to RFC 0001's existing install checks (PDS-direct record fetch, MST signature, artifact `checksum`, `declaredAccess` deep-equal) and runs only when provenance is present (subject to policy, below). The delegated release service performs the same four checks before writing; the installing site repeats them because the delegated release service is not trusted for integrity.
 
 1. **Authentic.** The attestation's Sigstore signature verifies and its signer is a build-platform workload identity. Sigstore verification mechanics are upstream; this RFC requires only that the check passes.
 2. **Describes this artifact.** The attestation's subject digest equals the release artifact's `checksum` (both decoded to raw bytes and compared).
@@ -330,7 +346,7 @@ Layer 4 must accommodate legitimate build repositories that differ from source r
 
 ## The fields
 
-An author can constrain how releases of their package are published, by signing policy into the **package profile** through `com.emdashcms.package.profileExtension`. (RFC 0001's `com.emdashcms.package.releaseExtension` carries per-release fields like `declaredAccess` and the provenance reference; the profile extension introduced here carries package-level policy that applies to every release.) Because it lives on the profile, it is governed by the `repo:pm.fair.package.profile` scope, which the delegated release service does not hold.
+An author can constrain how releases of their package are published by signing policy into the **package profile** through the active profile extension (`com.emdashcms.experimental.package.profileExtension` during the registry experiment). The corresponding release extension carries per-release fields such as `declaredAccess` and provenance. Because policy lives on the profile, it is governed by profile-write authority that the delegated release service never requests.
 
 | Field               | Type    | Default           | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ------------------- | ------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -339,6 +355,8 @@ An author can constrain how releases of their package are published, by signing 
 | `approvers`         | array   | `[]`              | atproto DIDs the delegated release service may accept passkey approvals from for this package. Listed approvers must enrol a passkey at the delegated release service before they can approve; see [Enrolment](#enrolment). An empty list combined with any release that requires approval (every release under `always`, or any escalating release under `escalation-only`) means the release cannot be approved and will expire. Authors who never want to escalate may keep the list empty; everyone else must populate it. |
 
 **Absent means default.** A profile with no policy is `requireProvenance: false`, `confirmation: escalation-only`, `approvers: []`. This must not be inverted: treating absence as strict would retroactively invalidate every existing package. The escalation gate still applies: an existing package whose first signed-policy release escalates is held until an `approvers` entry exists and approves it.
+
+The delegated release path itself always requires supported provenance, regardless of the profile default. `requireProvenance` remains meaningful for interactive and third-party publishing paths and tells installers to reject a provenance-less release from any writer.
 
 `requireProvenance` is the load-bearing control because it is verifiable by the installing site and by aggregators: anyone can check whether a release has valid provenance and whether the profile requires it. `confirmation` is enforced by the delegated release service and is not verifiable after the fact by the installing site (a past release cannot be checked for whether it was human-confirmed, only the policy that asked for it). Client-verifiable confirmation via signed receipts is [Future work](#future-work).
 
@@ -351,7 +369,7 @@ With `requireProvenance: true` signed into the profile, an attacker who has gain
 
 The remaining move is to weaken the policy first (`requireProvenance: true` to `false`), then publish freely. Two mechanisms block this:
 
-- **Scope separation (primary control).** The policy is on the profile, governed by `repo:pm.fair.package.profile`. The delegated release service holds only `repo:pm.fair.package.release` and cannot touch the policy. A compromised delegated release service or a stolen workload token has no reach to the profile. Scope separation, not the delegated release service's tenancy, is what bounds the attack.
+- **Scope separation (primary control).** The policy is on the profile. The delegated release service holds only create authority for the active release collection and cannot touch the policy. A compromised delegated release service or a stolen workload token has no reach to the profile. Scope separation, not the delegated release service's tenancy, is what bounds the attack.
 - **History-based detection (defence in depth).** The policy lives in the author's append-only signed repository, and the firehose carries every profile version in order. A weakening transition is a distinguishable event. A conforming aggregator treats policy as a ratchet, cheap to tighten and conspicuous to loosen: it flags loosening transitions, continues to enforce the stricter prior policy for a cooldown window (operator-configured, e.g. 7–14 days) while the author's security contact is notified. This reuses RFC 0001's existing labeller layer; a policy-downgrade flag is the same kind of signal as `security:yanked`. The downgrade cannot be silent or immediately effective; a legitimate author downgrading waits out the cooldown, which is the right cost for loosening one's own posture.
 
 The strongest further step, refusing to lower a once-asserted floor without an out-of-band signal tied to the account's atproto rotation key, is [Future work](#future-work).
@@ -382,7 +400,7 @@ The delegated release service is bounded by its scope.
 
 A delegated release service **can**:
 
-- Create `pm.fair.package.release` records for authors who delegated the release scope to it.
+- Create records in the active package-release collection for authors who delegated the exact create-only scope to it.
 - Hold staged release intents, run the passkey ceremonies that approve them, and enforce the profile's `confirmation` policy and `approvers` list.
 
 A delegated release service **cannot**:
@@ -400,9 +418,9 @@ Extends RFC 0001's threat model. Stages refer to the Shai-Hulud chain in [Backgr
 | Threat                                                                                                                       | Mitigation                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Harvested CI publishing credential (stages 1–2)                                                                              | The automated path holds no reusable credential in CI — only a short-lived workload token, audience-scoped to the delegated release service. There is no stored account secret to exfiltrate.                                                                                                                                                                                                                                                                                         |
-| Stolen workload token from CI memory (stage 2, recent waves)                                                                 | A stolen token lets the attacker submit a staged intent as that workflow, but cannot produce an attestation that cross-checks against the author's signed source (verification layer 4); under `requireProvenance`, a provenance-less release is invalid; and any escalating release requires a passkey approval the attacker does not hold.                                                                                                                                          |
+| Stolen workload token from CI memory (stage 2, recent waves)                                                                 | A stolen token lets the attacker submit a staged intent as that workflow, but the delegated path always requires an attestation that cross-checks against the author's signed source (verification layer 4), and any escalating release requires a passkey approval the attacker does not hold.                                                                                                                                                                                     |
 | Stolen workload token used to escalate `declaredAccess`                                                                      | The intent is staged and held; escalation requires a passkey approval from a profile-listed approver. The attacker reaches staging and no further.                                                                                                                                                                                                                                                                                                                                    |
-| Approval-link phishing of an approver                                                                                        | The approval URL alone grants nothing. The passkey ceremony binds to the delegated release service's origin and a server-issued challenge tied to the staging ID. The approval surface shows the workload claims, artifact `checksum`, and `declaredAccess` diff before the passkey is touched.                                                                                                                                                                                       |
+| Approval-link phishing of an approver                                                                                        | The approval URL alone grants nothing. The passkey ceremony binds to the delegated release service's origin and a server-issued challenge tied to the intent ID. The approval surface shows the workload claims, artifact `checksum`, and `declaredAccess` diff before the passkey is touched.                                                                                                                                                                                        |
 | Stale-attestation replay through staging (substituted bytes between submit and approve)                                      | The delegated release service re-runs the four-layer check at approval time, not only at submission.                                                                                                                                                                                                                                                                                                                                                                                  |
 | Backdoored artifact published under a genuine identity (stage 3)                                                             | Build provenance binds the artifact to source and workflow; the installing site detects that the bytes were not built from the declared source. RFC 0001's identity-signing alone does not detect this.                                                                                                                                                                                                                                                                               |
 | Self-propagation across the victim's other packages and records (stage 4)                                                    | The delegated release service's session is scoped to release records only; it cannot reach the profile, identity, or other collections. There is no broad publishing right to capture.                                                                                                                                                                                                                                                                                                |
@@ -413,15 +431,15 @@ Extends RFC 0001's threat model. Stages refer to the Shai-Hulud chain in [Backgr
 
 # What this means if you want to publish
 
-**Interactively** — unchanged from RFC 0001: `emdash plugin login`, `init`, build, host the bundle, `publish --url`.
+**Interactively** — unchanged from RFC 0001: `emdash-plugin login`, `init`, build, host the bundle, and `publish --url`.
 
 **Automatically — the path this RFC defines:**
 
 1. Once, set up delegation: register, with a delegated release service you trust, which repository and workflow may publish your package, and grant it the release scope for your account (interactive OAuth, one time). For sole tenancy, run your own delegated release service and delegate to that.
 2. Sign your `approvers` list (atproto DIDs) into your profile and have each approver enrol a passkey at the delegated release service. Enrolment is a one-time OAuth-against-PDS ceremony followed by WebAuthn registration; the delegated release service refuses approvals from listed-but-not-enrolled DIDs. This is required before any release that escalates `declaredAccess` can be approved, and before any release at all if you set `confirmation: always`. Packages that never escalate can technically skip this, but enrolling at least one approver up front is recommended: escalations tend to appear later, and an unenrolled approver means a held-and-expiring intent at the worst moment.
 3. Optionally set further policy on your profile: `requireProvenance: true` to require an attestation on every release; `confirmation: always` to require human approval on every release, not just escalating ones. Policy lives on the profile and is changed only through the profile path, not by your CI and not by the delegated release service.
-4. In CI: build the bundle, generate the attestation, upload both to your artifact host, and submit a release intent to the delegated release service with your workload token. No app password, no account secret in the runner. Non-escalating intents return a release URI directly; escalating intents (or all intents, under `always`) return a staging ID and approval URL.
-5. When approval is required, an authorised (already-enrolled) approver visits the approval URL or runs `emdash plugin approve <stage-id> --signer <url>`, reviews the submission, and presents their passkey. The delegated release service re-verifies and writes the release. New approvers added to a package go through `emdash plugin enrol --signer <url>` (or the equivalent web URL) once before they can approve.
+4. In CI: build the bundle, generate the attestation, upload both to your artifact host, and submit a release intent to the delegated release service with your workload token. No app password or account secret enters the runner. CI receives an intent resource and waits for `published`, `awaiting_approval`, or a terminal failure.
+5. When approval is required, an authorised, already-enrolled approver visits the approval URL or runs `emdash-plugin approve <intent-id> --service <url>`, reviews the submission, and presents their passkey. The delegated release service re-verifies and writes the release. New approvers use `emdash-plugin enrol --service <url>` or the equivalent web flow before they can approve.
 
 Steady state is an ordinary CI release. The credential in the runner is ephemeral; the release-writing capability lives at the service you chose; your policy and approvers live where neither CI nor the delegated release service can rewrite them; and any release that widens `declaredAccess` waits for an approver you authorised.
 
@@ -445,7 +463,7 @@ The pattern is RFC 0001's throughout: independent, run-anywhere components, none
 # Drawbacks
 
 - **The delegated release service holds a session.** It is not stateless; it holds a revocable, release-scoped confidential-client session per delegating author. This is what atproto's current auth allows for headless writes. The gain is scope and revocability, not statelessness.
-- **The delegated release service is stateful in more than one way.** Beyond the held atproto session it stores staged intents, registered approver passkey credentials, notification routing, and the audit trail of approvals and rejections. Operators must provision storage, handle approver passkey loss and recovery, and treat the staging store as security-sensitive (a staged intent reveals workflow claims and an artifact checksum). Self-hosting is correspondingly more work than running a stateless verifier would be.
+- **The delegated release service is stateful in more than one way.** Beyond the held atproto session it stores staged intents, registered approver passkey credentials, workload policy, and the audit trail of approvals and rejections. The reference implementation shards this state into publisher and approver Durable Objects. Operators must handle passkey loss, OAuth revocation, schema migration, encrypted backup, and recovery. Self-hosting is correspondingly more work than running a stateless verifier would be.
 - **Approver onboarding is a separate ceremony from the first approval.** Pre-registration is required: a listed-but-not-enrolled approver is a no-op. Adding a new approver mid-cycle means a one-time OAuth + WebAuthn ceremony before they can act. JIT enrolment-during-approval was considered and rejected; mixing identity setup with consent is the wrong UX for the most security-sensitive action in the system.
 - **Trust shifts rather than disappears.** Provenance trades trust in the publishing credential for trust in the build platform and Sigstore. It is strongest for reputable hosted CI and weakest where the build environment is already suspect (for example self-hosted runners with attacker-influenceable claims).
 - **Aggregators gain a verification cost.** Enforcing `requireProvenance` and flagging downgrades requires an aggregator to run four-layer attestation verification at index time, beyond RFC 0001's structural validation.
@@ -463,6 +481,6 @@ The pattern is RFC 0001's throughout: independent, run-anywhere components, none
 
 # Unresolved Questions
 
-- **`predicateType`: closed or open set?** Closed (SLSA v1 only) is simpler to verify; open requires the explicit "unknown predicate is unverifiable, treated as failed not absent" handling specified above.
+The first release understands only SLSA provenance v1. The record field remains an open string for forwards compatibility, but a supplied unknown predicate is present-but-unverifiable and fails delegated publication.
 - **Multi-author packages and quorum.** The `approvers` list and staged-release model give teams a clean shape: any one approver on the list can approve. Whether the protocol should support _quorum_ approvals (e.g. two-of-three for sensitive packages) is open. The current design admits this as a future per-package field on the profile; no protocol-level support is needed today.
 - **Approver recovery.** When an approver loses their passkey, recovery is the delegated release service operator's concern (the protocol has no opinion). For self-hosted delegated release services this is straightforward; for shared services it needs a defined ceremony that is not itself a downgrade vector. Out of scope for this RFC, in scope for any production deployment.
