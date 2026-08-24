@@ -42,6 +42,12 @@ Evaluates hydrated release-withdrawal labels through the shared moderation polic
 
 Parses release environment requirements and compares them with the host's EmDash and Astro versions.
 
+### PDS conformance (`@emdash-cms/registry-client/conformance`)
+
+`runPdsScopeConformance()` checks an authenticated session's delegated-release authority. It requires release creation and public readback while requiring update, delete, profile-create, and unrelated-collection writes to fail. The caller supplies the authenticated handler, so the same probes work with loopback and confidential OAuth clients.
+
+The runner leaves its successfully created release record in the dedicated conformance account. Use it only with test accounts.
+
 ## Stability
 
 While `0.x`:

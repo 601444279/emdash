@@ -570,6 +570,14 @@ export interface RunInteractiveLoginOptions {
 	 * granting broader permissions than the spec-compliant path would.
 	 */
 	onLegacyScopeFallback?: () => void;
+	/** Override the OAuth scope requested by the loopback client. */
+	scope?: string;
+	/**
+	 * Retry with `transition:generic` when granular scopes are rejected.
+	 * Defaults to `true` for the normal publishing CLI. Conformance callers
+	 * disable this so a broad fallback cannot produce a passing result.
+	 */
+	allowLegacyScopeFallback?: boolean;
 }
 
 export interface RunInteractiveLoginResult {
@@ -593,10 +601,13 @@ async function authorizeWithLegacyFallback(input: {
 	redirectUri: `http://127.0.0.1:${number}/callback`;
 	identifier: ActorIdentifier;
 	onLegacyScopeFallback: (() => void) | undefined;
+	scope: string | undefined;
+	allowLegacyScopeFallback: boolean;
 }): Promise<{ client: OAuthClient; url: URL }> {
 	const granular = createCliOAuthClient({
 		stateDir: input.stateDir,
 		redirectUri: input.redirectUri,
+		...(input.scope ? { scope: input.scope } : {}),
 	});
 	try {
 		const { url } = await granular.authorize({
@@ -604,7 +615,11 @@ async function authorizeWithLegacyFallback(input: {
 		});
 		return { client: granular, url };
 	} catch (error) {
-		if (!(error instanceof OAuthResponseError) || error.error !== "invalid_scope") {
+		if (
+			!(error instanceof OAuthResponseError) ||
+			error.error !== "invalid_scope" ||
+			!input.allowLegacyScopeFallback
+		) {
 			throw error;
 		}
 		input.onLegacyScopeFallback?.();
@@ -640,6 +655,8 @@ export async function runInteractiveLogin(
 			redirectUri: server.redirectUri,
 			identifier,
 			onLegacyScopeFallback: options.onLegacyScopeFallback,
+			scope: options.scope,
+			allowLegacyScopeFallback: options.allowLegacyScopeFallback ?? true,
 		});
 
 		options.onUrl?.(url);
@@ -676,33 +693,84 @@ export async function runInteractiveLogin(
  */
 export async function resumeSession(
 	did: Did,
-	options: { stateDir?: string } = {},
+	options: { stateDir?: string; scope?: string } = {},
 ): Promise<OAuthSession> {
 	const client = createCliOAuthClient({
 		stateDir: options.stateDir,
 		redirectUri: "http://127.0.0.1:0/callback",
+		...(options.scope ? { scope: options.scope } : {}),
 	});
 	return client.restore(did);
 }
 
+export interface StoredSessionMetadata {
+	did: Did;
+	issuer: string;
+	audience: string;
+	scope: string;
+	expiresAt?: number;
+	hasRefreshToken: boolean;
+}
+
+/** Read non-secret metadata from a stored OAuth session. */
+export async function getStoredSessionMetadata(
+	did: Did,
+	options: { stateDir?: string } = {},
+): Promise<StoredSessionMetadata | null> {
+	const sessions = new FileStore<StoredSession>(
+		join(options.stateDir ?? DEFAULT_OAUTH_DIR, "sessions.json"),
+	);
+	const stored = await sessions.get(did);
+	if (!stored) return null;
+	return {
+		did: stored.tokenSet.sub,
+		issuer: stored.tokenSet.iss,
+		audience: stored.tokenSet.aud,
+		scope: stored.tokenSet.scope,
+		...(typeof stored.tokenSet.expires_at === "number"
+			? { expiresAt: stored.tokenSet.expires_at }
+			: {}),
+		hasRefreshToken: typeof stored.tokenSet.refresh_token === "string",
+	};
+}
+
+export interface RevokeSessionOptions {
+	stateDir?: string;
+	scope?: string;
+	/** Surface server-side revocation failure after local cleanup. */
+	strict?: boolean;
+}
+
+export interface RevokeSessionResult {
+	serverRevoked: boolean;
+}
+
 /**
- * Revoke a session and remove its stored state. Best-effort: a network failure
- * during revocation is logged but does not prevent local cleanup, since the
- * user's intent is "stop using this session on this machine".
+ * Revoke a session and remove its stored state. By default, a network failure
+ * does not prevent local cleanup, since the user's intent is "stop using this
+ * session on this machine". Conformance callers use `strict` to require proof
+ * that the server-side revocation request completed.
  */
-export async function revokeSession(did: Did, options: { stateDir?: string } = {}): Promise<void> {
+export async function revokeSession(
+	did: Did,
+	options: RevokeSessionOptions = {},
+): Promise<RevokeSessionResult> {
 	const client = createCliOAuthClient({
 		stateDir: options.stateDir,
 		redirectUri: "http://127.0.0.1:0/callback",
+		...(options.scope ? { scope: options.scope } : {}),
 	});
 	try {
 		await client.revoke(did);
-	} catch {
+		return { serverRevoked: true };
+	} catch (error) {
 		// Local-cleanup-only fallback: drop the session entry directly so
 		// `restore` won't accidentally reuse a server-side-revoked session.
 		const sessions = new FileStore<StoredSession>(
 			join(options.stateDir ?? DEFAULT_OAUTH_DIR, "sessions.json"),
 		);
 		await sessions.delete(did);
+		if (options.strict) throw error;
+		return { serverRevoked: false };
 	}
 }
