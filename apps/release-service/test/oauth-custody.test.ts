@@ -274,6 +274,7 @@ describe("Durable Object OAuth custody", () => {
 			flow,
 		);
 		await initial.stores.sessions.set(DID, session(configuration.oauth.releaseScope));
+		const beforeRetirement = await env.PUBLISHER_DO.getByName(DID).getDelegation(DID);
 
 		const rotatedConfiguration = await loadConfiguration({
 			...TEST_BINDINGS,
@@ -292,11 +293,12 @@ describe("Durable Object OAuth custody", () => {
 			code: "OAUTH_CLIENT_KEY_UNAVAILABLE",
 		});
 		await afterRetirement.stores.sessions.delete(DID);
-		await expect(env.PUBLISHER_DO.getByName(DID).getDelegation(DID)).resolves.toMatchObject({
+		const afterRetirementDelegation = await env.PUBLISHER_DO.getByName(DID).getDelegation(DID);
+		expect(afterRetirementDelegation).toMatchObject({
 			status: "reauthorization_required",
-			encryptedSession: expect.stringMatching(/^\{/),
 			stateVersion: 2,
 		});
+		expect(afterRetirementDelegation?.encryptedSession).toBe(beforeRetirement?.encryptedSession);
 	});
 
 	it("builds a confidential client around the Durable Object stores", async () => {
