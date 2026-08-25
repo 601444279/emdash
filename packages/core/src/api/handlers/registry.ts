@@ -139,6 +139,8 @@ export interface RegistryInstallInput {
 	 */
 	acknowledgedDeclaredAccess?: unknown;
 	acknowledgedMcpTools?: unknown;
+	acknowledgedProfileCid?: string;
+	acknowledgedReleaseCid?: string;
 }
 
 export interface RegistryInstallResult {
@@ -152,7 +154,17 @@ export interface RegistryInstallResult {
 	version: string;
 	/** Capabilities surfaced from the bundle's manifest. */
 	capabilities: string[];
+	declaredAccess: DeclaredAccess;
+	mcpTools: RegistryMcpConsentTool[];
 	verification: RegistryRecordVerificationSummary;
+}
+
+export interface RegistryMcpConsentTool {
+	name: string;
+	description: string;
+	route: string;
+	permission: string;
+	destructive: boolean;
 }
 
 export interface RegistryRecordVerificationSummary {
@@ -211,6 +223,31 @@ function registryRecordError(
 			details: { verificationCode: code },
 		},
 	};
+}
+
+function recordConsentError(
+	input: { profileCid?: string; releaseCid?: string },
+	records: VerifiedAuthoritativeRecords,
+): ApiResult<never> | null {
+	if (!input.profileCid || !input.releaseCid) {
+		return {
+			success: false,
+			error: {
+				code: "RECORD_CONSENT_REQUIRED",
+				message: "Verify the signed package records before confirming this action.",
+			},
+		};
+	}
+	if (input.profileCid !== records.profile.cid || input.releaseCid !== records.release.cid) {
+		return {
+			success: false,
+			error: {
+				code: "RECORD_VERIFICATION_DRIFT",
+				message: "The signed package records changed after review. Verify them again.",
+			},
+		};
+	}
+	return null;
 }
 
 function recordVerificationSummary(
@@ -514,6 +551,7 @@ export async function handleRegistryInstall(
 		hostEnv?: HostEnv;
 		authoritativeRecords?: AuthoritativeRecordReadOptions;
 		readAuthoritativeRecords?: AuthoritativeRecordReader;
+		verifyOnly?: boolean;
 	},
 ): Promise<ApiResult<RegistryInstallResult>> {
 	// Accept either the bare-string shorthand or the full
@@ -714,6 +752,16 @@ export async function handleRegistryInstall(
 		}
 		const records = authoritative.value;
 		const { profile, release } = records.inspection.value;
+		if (!opts?.verifyOnly) {
+			const consentError = recordConsentError(
+				{
+					profileCid: input.acknowledgedProfileCid,
+					releaseCid: input.acknowledgedReleaseCid,
+				},
+				records,
+			);
+			if (consentError) return consentError;
+		}
 
 		const packageYanked =
 			hasCurrentRecordLabel(packageView.labels ?? [], "security:yanked", records.profile) ||
@@ -909,6 +957,7 @@ export async function handleRegistryInstall(
 				recordReport.reasons[0]?.message ?? "The release provenance is invalid.",
 			);
 		}
+		const verification = recordVerificationSummary(records, recordReport);
 
 		// Rewrite the manifest's id to the derived opaque pluginId before
 		// it reaches R2 storage or the sandbox loader. The sandbox uses
@@ -960,7 +1009,7 @@ export async function handleRegistryInstall(
 		// the runtime starts enforcing `declaredAccess` natively, this
 		// comparison switches to that shape.
 		const actualCapabilities = canonicalCapabilitiesForDriftCheck(bundle.manifest.capabilities);
-		if (actualCapabilities.length > 0) {
+		if (!opts?.verifyOnly && actualCapabilities.length > 0) {
 			if (input.acknowledgedDeclaredAccess === undefined) {
 				return {
 					success: false,
@@ -990,18 +1039,30 @@ export async function handleRegistryInstall(
 		const actualMcpTools = (bundle.manifest.mcp?.tools ?? []).map(
 			({ inputSchema: _, outputSchema: __, ...tool }) => tool,
 		);
-		if (actualMcpTools.length > 0) {
+		if (!opts?.verifyOnly && actualMcpTools.length > 0) {
 			if (JSON.stringify(input.acknowledgedMcpTools) !== JSON.stringify(actualMcpTools)) {
 				return {
 					success: false,
 					error: {
 						code: "MCP_TOOL_CONSENT_REQUIRED",
 						message: "Plugin MCP tools require explicit consent",
-						details: { mcpTools: actualMcpTools },
+						details: { mcpTools: actualMcpTools, verification },
 					},
 				};
 			}
 		}
+
+		const result: RegistryInstallResult = {
+			pluginId,
+			publisherDid,
+			slug,
+			version,
+			capabilities: bundle.manifest.capabilities,
+			declaredAccess: recordReport.value.releaseExtension.declaredAccess,
+			mcpTools: actualMcpTools,
+			verification,
+		};
+		if (opts?.verifyOnly) return { success: true, data: result };
 
 		// Step 7: store in R2 under the registry prefix.
 		await storeBundleInR2(storage, pluginId, version, bundle, "registry");
@@ -1071,14 +1132,7 @@ export async function handleRegistryInstall(
 
 		return {
 			success: true,
-			data: {
-				pluginId,
-				publisherDid,
-				slug,
-				version,
-				capabilities: bundle.manifest.capabilities,
-				verification: recordVerificationSummary(records, recordReport),
-			},
+			data: result,
 		};
 	} catch (err) {
 		if (err instanceof ClientValidationError) {
@@ -1241,6 +1295,8 @@ export async function handleRegistryUpdate(
 		confirmCapabilityChanges?: boolean;
 		confirmRouteVisibilityChanges?: boolean;
 		confirmMcpTools?: boolean;
+		acknowledgedProfileCid?: string;
+		acknowledgedReleaseCid?: string;
 		hostEnv?: HostEnv;
 		authoritativeRecords?: AuthoritativeRecordReadOptions;
 		readAuthoritativeRecords?: AuthoritativeRecordReader;
@@ -1398,6 +1454,20 @@ export async function handleRegistryUpdate(
 		}
 		const records = authoritative.value;
 		const { profile, release } = records.inspection.value;
+		if (
+			opts?.confirmCapabilityChanges ||
+			opts?.confirmRouteVisibilityChanges ||
+			opts?.confirmMcpTools
+		) {
+			const consentError = recordConsentError(
+				{
+					profileCid: opts.acknowledgedProfileCid,
+					releaseCid: opts.acknowledgedReleaseCid,
+				},
+				records,
+			);
+			if (consentError) return consentError;
+		}
 
 		const authoritativeReleaseWithdrawal = evaluateRegistryReleaseWithdrawal(
 			{
@@ -1470,6 +1540,7 @@ export async function handleRegistryUpdate(
 				recordReport.reasons[0]?.message ?? "The release provenance is invalid.",
 			);
 		}
+		const verification = recordVerificationSummary(records, recordReport);
 
 		// Rewrite manifest.id to the opaque pluginId so the sandbox loader
 		// and R2 layout stay in sync across install and update.
@@ -1507,7 +1578,7 @@ export async function handleRegistryUpdate(
 				error: {
 					code: "CAPABILITY_ESCALATION",
 					message: "Plugin update requires new capabilities",
-					details: { capabilityChanges },
+					details: { capabilityChanges, verification },
 				},
 			};
 		}
@@ -1520,7 +1591,7 @@ export async function handleRegistryUpdate(
 				error: {
 					code: "ROUTE_VISIBILITY_ESCALATION",
 					message: "Plugin update exposes new public (unauthenticated) routes",
-					details: { routeVisibilityChanges, capabilityChanges },
+					details: { routeVisibilityChanges, capabilityChanges, verification },
 				},
 			};
 		}
@@ -1539,6 +1610,7 @@ export async function handleRegistryUpdate(
 					message: "Plugin update changes its MCP tools",
 					details: {
 						mcpTools: newMcpTools.map(({ inputSchema: _, outputSchema: __, ...tool }) => tool),
+						verification,
 					},
 				},
 			};
@@ -1575,7 +1647,7 @@ export async function handleRegistryUpdate(
 				newVersion,
 				capabilityChanges,
 				routeVisibilityChanges: hasNewPublicRoutes ? routeVisibilityChanges : undefined,
-				verification: recordVerificationSummary(records, recordReport),
+				verification,
 			},
 		};
 	} catch (err) {
