@@ -9,6 +9,7 @@ import { apiFailure, apiSuccess } from "../api/response.js";
 import type { ServiceConfiguration } from "../config.js";
 import { SERVICE_CONTROL_OBJECT_NAME } from "../control-do/service-control-do.js";
 import type { EncryptionContext } from "../crypto/encryption.js";
+import { writeOperationsMetric } from "../observability/metrics.js";
 
 const ARCHIVE_PATH_PATTERN = /^\/admin\/api\/publishers\/([^/]+)\/archive$/;
 const RESTORE_PATH_PATTERN = /^\/admin\/api\/publishers\/([^/]+)\/restore$/;
@@ -351,6 +352,11 @@ export async function handleArchivePublisher(
 			requestId,
 		);
 	} catch (error) {
+		writeOperationsMetric({
+			event: "archive_gap",
+			outcome: error instanceof ApiError ? error.code : "internal",
+			requestId,
+		});
 		if (error instanceof ApiError) return apiFailure(error, requestId);
 		console.error(
 			JSON.stringify({
@@ -527,6 +533,11 @@ export async function handleRestorePublisher(
 			requestId,
 		);
 	} catch (error) {
+		writeOperationsMetric({
+			event: "restore_failure",
+			outcome: error instanceof ApiError ? error.code : "internal",
+			requestId,
+		});
 		if (error instanceof ApiError) return apiFailure(error, requestId);
 		console.error(
 			JSON.stringify({

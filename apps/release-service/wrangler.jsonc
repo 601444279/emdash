@@ -6,6 +6,12 @@
 	// runtime. Request handling uses stable Web Platform APIs.
 	"compatibility_date": "2026-05-14",
 	"compatibility_flags": ["nodejs_compat"],
+	"analytics_engine_datasets": [
+		{
+			"binding": "OPERATIONS_METRICS",
+			"dataset": "emdash_release_service_operations",
+		},
+	],
 	"durable_objects": {
 		"bindings": [
 			{

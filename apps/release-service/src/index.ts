@@ -16,6 +16,7 @@ import {
 	type ConfigurationBindings,
 	type ServiceConfiguration,
 } from "./config.js";
+import { writeOperationsMetric } from "./observability/metrics.js";
 import { ROUTES, type RouteDefinition } from "./routes.js";
 
 export { PublisherDurableObject } from "./publisher-do/publisher-do.js";
@@ -65,6 +66,13 @@ export async function handleUiRequest(
 		try {
 			await authenticateOperatorUi(request, await loadConfiguration(bindings), accessKeyResolver);
 		} catch (error) {
+			if (error instanceof ApiError) {
+				writeOperationsMetric({
+					event: "access_denied",
+					outcome: error.code,
+					requestId: getRequestId(request),
+				});
+			}
 			return apiFailure(error, getRequestId(request));
 		}
 	}
@@ -142,11 +150,28 @@ export async function handleRequest(
 		return apiFailure(new ApiError("NOT_FOUND", 404, "Not found"), requestId);
 	} catch (error) {
 		if (error instanceof ConfigurationError) {
+			writeOperationsMetric({
+				event: "configuration_failure",
+				outcome: "invalid",
+				requestId,
+			});
 			console.error(JSON.stringify({ event: "configuration_error", issues: error.issues }));
 			return apiFailure(
 				new ApiError("CONFIGURATION_ERROR", 503, "Service is not configured"),
 				requestId,
 			);
+		}
+		if (
+			error instanceof ApiError &&
+			(error.code === "ACCESS_AUTH_INVALID" ||
+				error.code === "ACCESS_AUTH_REQUIRED" ||
+				error.code === "ACCESS_DENIED")
+		) {
+			writeOperationsMetric({
+				event: "access_denied",
+				outcome: error.code,
+				requestId,
+			});
 		}
 		console.error(
 			JSON.stringify({

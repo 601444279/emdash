@@ -5,6 +5,7 @@ import { base64url } from "jose";
 import type ReleaseVerifier from "../../../release-verifier/src/index.js";
 import { encodeAwaitingApprovalState, type ApprovalEvidence } from "../approvals/digest.js";
 import { invalidateApprovalChallenges } from "../approvals/invalidation.js";
+import { writeOperationsMetric } from "../observability/metrics.js";
 import type {
 	IntentState,
 	PublisherDurableObject,
@@ -413,6 +414,16 @@ export class ReleaseIntentWorkflow extends WorkflowEntrypoint<
 			const input = prepareVerifierInput(intent, snapshot);
 			if (!input) throw new NonRetryableError("Release intent verifier input is invalid");
 			const report = normalizeVerifierReport(await this.env.RELEASE_VERIFIER.verifyRelease(input));
+			if (!report.success) {
+				writeOperationsMetric(
+					{
+						event: "verifier_failure",
+						outcome: report.error.code,
+						scope: "isolated",
+					},
+					this.env.OPERATIONS_METRICS,
+				);
+			}
 			const resultJson = JSON.stringify(report);
 			const stored = await publisher.putVerificationStep({
 				publisherDid: params.publisherDid,

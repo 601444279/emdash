@@ -7,6 +7,7 @@ import { readJsonObject } from "../api/body.js";
 import { ApiError } from "../api/errors.js";
 import { apiSuccess } from "../api/response.js";
 import type { ServiceConfiguration } from "../config.js";
+import { writeOperationsMetric } from "../observability/metrics.js";
 import {
 	SERVICE_CONTROL_OBJECT_NAME,
 	type PublisherControlStatus,
@@ -125,6 +126,14 @@ export async function handleSetServiceMode(
 		});
 		if (!result.ok) {
 			throw new ApiError("IDEMPOTENCY_CONFLICT", 409, "Idempotency key conflicts with prior use");
+		}
+		if (mode === "publication-paused") {
+			writeOperationsMetric({
+				event: "publication_paused",
+				outcome: reasonCode ?? "unspecified",
+				scope: "service",
+				requestId,
+			});
 		}
 		return apiSuccess({ state: result.value, replayed: result.replayed }, requestId);
 	} catch (error) {

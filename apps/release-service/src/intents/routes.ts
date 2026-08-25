@@ -12,6 +12,7 @@ import { decodeAwaitingApprovalState } from "../approvals/digest.js";
 import { invalidateApprovalChallenges } from "../approvals/invalidation.js";
 import type { ServiceConfiguration } from "../config.js";
 import { SERVICE_CONTROL_OBJECT_NAME } from "../control-do/service-control-do.js";
+import { writeOperationsMetric } from "../observability/metrics.js";
 import type { IntentState, StoredIntent } from "../publisher-do/publisher-do.js";
 import {
 	PublisherSessionError,
@@ -344,6 +345,13 @@ export async function handleSubmitReleaseIntent(
 			now,
 		});
 		if (!rateLimit.ok) {
+			writeOperationsMetric({
+				event: "intent_rate_limited",
+				ownerHash: workloadRateKey,
+				outcome: "denied",
+				scope: rateLimit.scope,
+				requestId,
+			});
 			console.warn(
 				JSON.stringify({
 					event: "release_intent_rate_limited",
