@@ -1,9 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import {
-	collectionSchema,
-	updateCollectionBody,
-} from "../../../src/api/schemas/index.js";
+import { collectionSchema, updateCollectionBody } from "../../../src/api/schemas/index.js";
 
 describe("updateCollectionBody display fields", () => {
 	it("preserves titleField and dateField so the PUT reaches the registry", () => {
