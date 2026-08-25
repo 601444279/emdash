@@ -218,7 +218,15 @@ function validHttpsOrigin(value: unknown): value is string {
 	if (typeof value !== "string" || value.length === 0 || value.length > 2048) return false;
 	try {
 		const url = new URL(value);
-		return url.protocol === "https:" && url.origin === value;
+		return (
+			url.protocol === "https:" &&
+			url.username === "" &&
+			url.password === "" &&
+			url.search === "" &&
+			url.hash === "" &&
+			url.pathname === "/" &&
+			(value === url.origin || value === `${url.origin}/`)
+		);
 	} catch {
 		return false;
 	}

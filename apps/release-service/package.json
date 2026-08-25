@@ -15,6 +15,7 @@
 	},
 	"dependencies": {
 		"@atcute/identity-resolver": "catalog:",
+		"@atcute/lexicons": "catalog:",
 		"@atcute/oauth-node-client": "catalog:",
 		"@emdash-cms/registry-lexicons": "workspace:*",
 		"jose": "^6.1.3"
