@@ -1,10 +1,14 @@
-import { computeMultihash } from "@emdash-cms/registry-verification";
+import {
+	computeMultihash,
+	type ProvenanceVerificationInput,
+	type ProvenanceVerifier,
+} from "@emdash-cms/registry-verification";
 import { exports } from "cloudflare:workers";
 import { packTar, type TarEntry } from "modern-tar";
 import { describe, expect, it, vi } from "vitest";
 
 import { resolvePublicHostname } from "../src/dns.js";
-import { verifyArtifact } from "../src/verify.js";
+import { verifyArtifact, verifyRelease } from "../src/verify.js";
 
 const encoder = new TextEncoder();
 const ARTIFACT_URL = "https://artifact.example.test/plugin.tgz";
@@ -78,6 +82,66 @@ describe("isolated release verifier", () => {
 				},
 			},
 		});
+		expect(JSON.stringify(result)).not.toContain("export default");
+	});
+
+	it("verifies artifact and provenance in one isolated invocation with all digest candidates", async () => {
+		const bytes = await validBundle();
+		const provenanceDocument = encoder.encode('{"sigstore":"bundle"}');
+		let received: ProvenanceVerificationInput | undefined;
+		const provenanceVerifier: ProvenanceVerifier = {
+			async verify(input) {
+				received = input;
+				return {
+					success: true,
+					value: {
+						predicateType: "https://slsa.dev/provenance/v1",
+						artifactDigest: input.artifactDigests?.[1] ?? input.artifactDigest,
+						sourceRepository: "https://github.com/emdash-cms/gallery",
+						builderId:
+							"https://github.com/emdash-cms/gallery/.github/workflows/release.yml@refs/heads/main",
+					},
+				};
+			},
+		};
+		const result = await verifyRelease(
+			{
+				artifact: {
+					url: ARTIFACT_URL,
+					checksum: await checksum(bytes),
+					packageSlug: "gallery",
+					version: "1.2.3",
+				},
+				provenance: {
+					url: "https://provenance.example.test/bundle.json",
+					checksum: await checksum(provenanceDocument),
+					predicateType: "https://slsa.dev/provenance/v1",
+					sourceRepository: "https://github.com/emdash-cms/gallery",
+					builderId:
+						"https://github.com/emdash-cms/gallery/.github/workflows/release.yml@refs/heads/main",
+				},
+				profileRepository: "https://github.com/emdash-cms/gallery",
+			},
+			{
+				fetch: async (url) =>
+					new Response(url.hostname === "artifact.example.test" ? bytes : provenanceDocument),
+				resolveHostname: async () => ["203.0.113.5"],
+				provenanceVerifier,
+			},
+		);
+
+		expect(result).toMatchObject({
+			success: true,
+			value: {
+				artifact: { manifest: { id: "gallery", version: "1.2.3" } },
+				provenance: {
+					documentBytes: provenanceDocument.byteLength,
+					predicateType: "https://slsa.dev/provenance/v1",
+				},
+			},
+		});
+		expect(received?.artifactDigest).toHaveLength(32);
+		expect(received?.artifactDigests?.map((digest) => digest.byteLength)).toEqual([48, 64]);
 		expect(JSON.stringify(result)).not.toContain("export default");
 	});
 
