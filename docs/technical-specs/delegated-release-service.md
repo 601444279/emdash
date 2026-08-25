@@ -160,14 +160,17 @@ interface GitHubWorkloadPolicy {
 	publisherDid: string;
 	packageSlug: string;
 	repository: string;
+	repositoryId: string;
+	repositoryOwnerId: string;
 	workflowRef: string;
 	allowedRefs?: string[];
 	allowedEnvironments?: string[];
 	active: boolean;
+	stateVersion: number;
 }
 ```
 
-This policy narrows who may submit an intent. It cannot weaken the signed package policy or change publisher records.
+Repository and owner IDs preserve the authorization boundary across GitHub renames or name reuse. This policy narrows who may submit an intent. It cannot weaken the signed package policy or change publisher records.
 
 ## Architecture
 
