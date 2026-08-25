@@ -760,7 +760,7 @@ PRs #2649 to #2651 form one merge unit in GitHub stack #2652. The first layer ve
 
 ### Active workload identity stack
 
-PRs #2653, #2654, and #2656 form GitHub stack #2655. They implement normalized GitHub workload identity, publisher-authorized workload policy with immutable repository IDs, package/version reservation, workload idempotency, and the generation-guarded intent state machine. The next layer adds HTTP admission and Workflow start.
+PRs #2653, #2654, #2656, and #2657 form GitHub stack #2655. They implement normalized GitHub workload identity, publisher-authorized workload policy with immutable repository IDs, package/version reservation, workload idempotency, the generation-guarded intent state machine, exact policy evaluation, and domain-separated admission digests. The next layer adds HTTP admission and Workflow start.
 
 ### Planned GitHub stacks
 
