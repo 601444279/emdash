@@ -58,6 +58,7 @@ The replacement implementation is complete through the publisher OAuth callback 
 - envelope encryption, publisher custody, generation-bound refresh operations, publisher application sessions, and identity/delegation callback routes pass real workerd tests; and
 - Cloudflare Access authenticates operators through role-specific audiences; a `ServiceControlDurableObject` owns service mode, publisher suspension, idempotency, audit, and epoch-bound publication permits; and
 - GitHub Actions OIDC verification normalizes repository, workflow, ref, environment, run, actor, and token identity without retaining the raw JWT; and
+- an isolated verifier Worker fetches through bounded DNS/private-range controls, validates artifact checksums and canonical bundles, and returns no file bytes; and
 - the Access/control top passes 139 release-service tests, and the workload/intent top passes 144; package typecheck, type-aware lint, and Worker builds pass on both.
 
 The public-client G0 lifecycle is complete on both providers: exact-scope authorization, forced refresh, and server revocation passed. npmX rejected its access token immediately after revocation. Cirrus retained the already-issued access token for its remaining lifetime while preventing future refresh. G0 still requires the deployed confidential-client run and client-key removal observation before either provider is advertised as supported by the hosted service.
@@ -761,6 +762,10 @@ PRs #2649 to #2651 form one merge unit in GitHub stack #2652. The first layer ve
 ### Active workload identity stack
 
 PRs #2653, #2654, #2656, #2657, and #2658 form GitHub stack #2655. They implement normalized GitHub workload identity, publisher-authorized workload policy with immutable repository IDs, package/version reservation, workload idempotency, the generation-guarded intent state machine, exact policy evaluation, admission digests, generation-bound publication capabilities, and alarm recovery to reconciliation. The next integration layer adds HTTP admission and Workflow start after the Access/control and workload stacks join.
+
+### Active verifier stack
+
+PR #2659 implements W6.1 and the artifact half of W6.2 on `feat/drs-release-verifier`, rooted on `main`. The verifier exposes one typed service-binding RPC method and has no OAuth, Access, Durable Object, service-control, or secret bindings. Provenance verification and the release-service binding are later layers of this independent stack.
 
 ### Planned GitHub stacks
 
