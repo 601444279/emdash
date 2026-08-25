@@ -5,6 +5,8 @@ import { afterEach, describe, expect, it } from "vitest";
 const DID = "did:plc:publisher";
 const OTHER_DID = "did:plc:other";
 const STATE_HASH = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+const SESSION_TOKEN_HASH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefg";
+const SESSION_CSRF_HASH = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
 const DELEGATION_METADATA = {
 	encryptionKeyVersion: 2,
 	issuer: "https://authorization.example",
@@ -21,6 +23,87 @@ afterEach(async () => {
 });
 
 describe("PublisherDurableObject", () => {
+	it("creates, validates, expires, and revokes hashed publisher sessions", async () => {
+		const stub = publisher();
+		const now = 1_800_000_000_000;
+		await expect(
+			stub.createPublisherSession({
+				publisherDid: DID,
+				tokenHash: SESSION_TOKEN_HASH,
+				csrfHash: SESSION_CSRF_HASH,
+				expiresAt: now + 60_000,
+				now,
+			}),
+		).resolves.toMatchObject({
+			ok: true,
+			session: { publisherDid: DID, expiresAt: now + 60_000, sessionEpoch: 1 },
+		});
+		await expect(
+			stub.createPublisherSession({
+				publisherDid: DID,
+				tokenHash: SESSION_TOKEN_HASH,
+				csrfHash: SESSION_CSRF_HASH,
+				expiresAt: now + 60_000,
+				now,
+			}),
+		).resolves.toEqual({ ok: false, code: "PUBLISHER_SESSION_EXISTS" });
+		await expect(
+			stub.validatePublisherSession(DID, SESSION_TOKEN_HASH, null, now + 1),
+		).resolves.toMatchObject({ ok: true, session: { publisherDid: DID } });
+		await expect(
+			stub.validatePublisherSession(DID, SESSION_TOKEN_HASH, SESSION_CSRF_HASH, now + 1),
+		).resolves.toMatchObject({ ok: true });
+		await expect(
+			stub.validatePublisherSession(DID, SESSION_TOKEN_HASH, STATE_HASH, now + 1),
+		).resolves.toEqual({ ok: false, code: "PUBLISHER_SESSION_INVALID" });
+		await expect(
+			stub.validatePublisherSession(DID, SESSION_TOKEN_HASH, null, now + 60_001),
+		).resolves.toEqual({ ok: false, code: "PUBLISHER_SESSION_EXPIRED" });
+		await expect(
+			stub.validatePublisherSession(DID, SESSION_TOKEN_HASH, null, now + 60_002),
+		).resolves.toEqual({ ok: false, code: "PUBLISHER_SESSION_INVALID" });
+
+		const secondHash = `${SESSION_TOKEN_HASH.slice(0, -1)}h`;
+		await stub.createPublisherSession({
+			publisherDid: DID,
+			tokenHash: secondHash,
+			csrfHash: SESSION_CSRF_HASH,
+			expiresAt: now + 120_000,
+			now,
+		});
+		await expect(stub.revokePublisherSession(DID, secondHash)).resolves.toBe(true);
+		await expect(stub.revokePublisherSession(DID, secondHash)).resolves.toBe(false);
+	});
+
+	it("invalidates all publisher sessions by epoch and blocks suspended publishers", async () => {
+		const stub = publisher();
+		const now = 1_800_000_000_000;
+		await stub.createPublisherSession({
+			publisherDid: DID,
+			tokenHash: SESSION_TOKEN_HASH,
+			csrfHash: SESSION_CSRF_HASH,
+			expiresAt: now + 60_000,
+			now,
+		});
+		await expect(stub.revokeAllPublisherSessions(DID)).resolves.toBe(2);
+		await expect(
+			stub.validatePublisherSession(DID, SESSION_TOKEN_HASH, null, now + 1),
+		).resolves.toEqual({ ok: false, code: "PUBLISHER_SESSION_INVALID" });
+
+		await runInDurableObject(stub, (_instance, state) => {
+			state.storage.sql.exec("UPDATE publisher SET status = 'suspended' WHERE id = 1");
+		});
+		await expect(
+			stub.createPublisherSession({
+				publisherDid: DID,
+				tokenHash: SESSION_TOKEN_HASH,
+				csrfHash: SESSION_CSRF_HASH,
+				expiresAt: now + 60_000,
+				now,
+			}),
+		).resolves.toEqual({ ok: false, code: "PUBLISHER_SUSPENDED" });
+	});
+
 	it("routes and binds one object to one publisher DID", async () => {
 		const stub = publisher();
 		await stub.initializePublisher(DID);

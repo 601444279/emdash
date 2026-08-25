@@ -5,6 +5,7 @@ const HASH_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const MAX_CIPHERTEXT_CHARS = 1_500_000;
 const MAX_REFRESH_LEASE_MS = 5 * 60_000;
+const MAX_PUBLISHER_SESSION_MS = 24 * 60 * 60_000;
 const REFRESH_TOKEN_BYTES = 32;
 const BASE64_PADDING_PATTERN = /=+$/;
 
@@ -15,7 +16,8 @@ export type PublisherStateErrorCode =
 	| "OAUTH_STATE_EXISTS"
 	| "DELEGATION_INVALID"
 	| "DELEGATION_CAS_REQUIRED"
-	| "DELEGATION_UNAVAILABLE";
+	| "DELEGATION_UNAVAILABLE"
+	| "PUBLISHER_SESSION_INVALID";
 
 export class PublisherStateError extends Error {
 	readonly code: PublisherStateErrorCode;
@@ -127,6 +129,46 @@ interface PublisherRow {
 	[key: string]: string | number | ArrayBuffer | null;
 	did: string;
 }
+
+interface PublisherSessionOwnerRow {
+	[key: string]: string | number | ArrayBuffer | null;
+	did: string;
+	status: "active" | "suspended";
+	session_epoch: number;
+}
+
+interface PublisherSessionRow {
+	[key: string]: string | number | ArrayBuffer | null;
+	token_hash: string;
+	csrf_hash: string;
+	session_epoch: number;
+	expires_at: number;
+}
+
+export interface CreatePublisherSessionInput {
+	publisherDid: string;
+	tokenHash: string;
+	csrfHash: string;
+	expiresAt: number;
+	now?: number;
+}
+
+export interface StoredPublisherSession {
+	publisherDid: string;
+	expiresAt: number;
+	sessionEpoch: number;
+}
+
+export type CreatePublisherSessionResult =
+	| { ok: true; session: StoredPublisherSession }
+	| { ok: false; code: "PUBLISHER_SESSION_EXISTS" | "PUBLISHER_SUSPENDED" };
+
+export type ValidatePublisherSessionResult =
+	| { ok: true; session: StoredPublisherSession }
+	| {
+			ok: false;
+			code: "PUBLISHER_SESSION_INVALID" | "PUBLISHER_SESSION_EXPIRED" | "PUBLISHER_SUSPENDED";
+	  };
 
 interface OAuthStateRow {
 	[key: string]: string | number | ArrayBuffer | null;
@@ -276,13 +318,17 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		`);
 	}
 
-	#assertPublisherDid(publisherDid: string): void {
+	#assertPublisherObjectName(publisherDid: string): void {
 		if (!DID_PATTERN.test(publisherDid)) {
 			throw new PublisherStateError("PUBLISHER_DID_INVALID");
 		}
 		if (this.#objectName === undefined || this.#objectName !== publisherDid) {
 			throw new PublisherStateError("PUBLISHER_DID_MISMATCH");
 		}
+	}
+
+	#assertPublisherDid(publisherDid: string): void {
+		this.#assertPublisherObjectName(publisherDid);
 		const existing = this.ctx.storage.sql
 			.exec<PublisherRow>("SELECT did FROM publisher WHERE id = 1")
 			.toArray()[0];
@@ -322,6 +368,147 @@ export class PublisherDurableObject extends DurableObject<Env> {
 
 	initializePublisher(publisherDid: string): void {
 		this.#assertPublisherDid(publisherDid);
+	}
+
+	createPublisherSession(input: CreatePublisherSessionInput): CreatePublisherSessionResult {
+		this.#assertPublisherDid(input.publisherDid);
+		const now = input.now ?? Date.now();
+		if (
+			!TOKEN_PATTERN.test(input.tokenHash) ||
+			!TOKEN_PATTERN.test(input.csrfHash) ||
+			!Number.isSafeInteger(now) ||
+			!Number.isSafeInteger(input.expiresAt) ||
+			input.expiresAt <= now ||
+			input.expiresAt - now > MAX_PUBLISHER_SESSION_MS
+		) {
+			throw new PublisherStateError("PUBLISHER_SESSION_INVALID");
+		}
+		return this.ctx.storage.transactionSync(() => {
+			const owner = this.#readPublisherSessionOwner();
+			if (!owner || owner.status === "suspended") {
+				return { ok: false, code: "PUBLISHER_SUSPENDED" } as const;
+			}
+			const existing = this.ctx.storage.sql
+				.exec<{ token_hash: string }>(
+					"SELECT token_hash FROM publisher_sessions WHERE token_hash = ?",
+					input.tokenHash,
+				)
+				.toArray()[0];
+			if (existing) return { ok: false, code: "PUBLISHER_SESSION_EXISTS" } as const;
+			this.ctx.storage.sql.exec("DELETE FROM publisher_sessions WHERE expires_at <= ?", now);
+			this.ctx.storage.sql.exec(
+				`INSERT INTO publisher_sessions (
+					token_hash, csrf_hash, session_epoch, expires_at, created_at, last_seen_at
+				) VALUES (?, ?, ?, ?, ?, ?)`,
+				input.tokenHash,
+				input.csrfHash,
+				owner.session_epoch,
+				input.expiresAt,
+				now,
+				now,
+			);
+			this.#appendAudit(
+				"publisher-session-created",
+				"publisher",
+				input.publisherDid,
+				input.tokenHash,
+				now,
+			);
+			return {
+				ok: true,
+				session: {
+					publisherDid: input.publisherDid,
+					expiresAt: input.expiresAt,
+					sessionEpoch: owner.session_epoch,
+				},
+			} as const;
+		});
+	}
+
+	validatePublisherSession(
+		publisherDid: string,
+		tokenHash: string,
+		csrfHash: string | null,
+		now = Date.now(),
+	): ValidatePublisherSessionResult {
+		this.#assertPublisherObjectName(publisherDid);
+		if (
+			!TOKEN_PATTERN.test(tokenHash) ||
+			(csrfHash !== null && !TOKEN_PATTERN.test(csrfHash)) ||
+			!Number.isSafeInteger(now)
+		) {
+			return { ok: false, code: "PUBLISHER_SESSION_INVALID" };
+		}
+		return this.ctx.storage.transactionSync(() => {
+			const owner = this.#readPublisherSessionOwner();
+			if (!owner) return { ok: false, code: "PUBLISHER_SESSION_INVALID" } as const;
+			if (owner.status === "suspended") {
+				return { ok: false, code: "PUBLISHER_SUSPENDED" } as const;
+			}
+			const session = this.ctx.storage.sql
+				.exec<PublisherSessionRow>(
+					`SELECT token_hash, csrf_hash, session_epoch, expires_at
+					 FROM publisher_sessions WHERE token_hash = ?`,
+					tokenHash,
+				)
+				.toArray()[0];
+			if (!session || session.session_epoch !== owner.session_epoch) {
+				return { ok: false, code: "PUBLISHER_SESSION_INVALID" } as const;
+			}
+			if (session.expires_at <= now) {
+				this.ctx.storage.sql.exec("DELETE FROM publisher_sessions WHERE token_hash = ?", tokenHash);
+				return { ok: false, code: "PUBLISHER_SESSION_EXPIRED" } as const;
+			}
+			if (csrfHash !== null && session.csrf_hash !== csrfHash) {
+				return { ok: false, code: "PUBLISHER_SESSION_INVALID" } as const;
+			}
+			this.ctx.storage.sql.exec(
+				"UPDATE publisher_sessions SET last_seen_at = ? WHERE token_hash = ?",
+				now,
+				tokenHash,
+			);
+			return {
+				ok: true,
+				session: {
+					publisherDid: owner.did,
+					expiresAt: session.expires_at,
+					sessionEpoch: session.session_epoch,
+				},
+			} as const;
+		});
+	}
+
+	revokePublisherSession(publisherDid: string, tokenHash: string): boolean {
+		this.#assertPublisherObjectName(publisherDid);
+		if (!TOKEN_PATTERN.test(tokenHash)) return false;
+		return this.ctx.storage.transactionSync(() => {
+			const deleted = this.ctx.storage.sql
+				.exec("DELETE FROM publisher_sessions WHERE token_hash = ? RETURNING token_hash", tokenHash)
+				.toArray();
+			if (deleted.length === 0) return false;
+			this.#appendAudit(
+				"publisher-session-revoked",
+				"publisher",
+				publisherDid,
+				tokenHash,
+				Date.now(),
+			);
+			return true;
+		});
+	}
+
+	revokeAllPublisherSessions(publisherDid: string): number | null {
+		this.#assertPublisherObjectName(publisherDid);
+		return this.ctx.storage.transactionSync(() => {
+			const owner = this.#readPublisherSessionOwner();
+			if (!owner) return null;
+			const nextEpoch = owner.session_epoch + 1;
+			const now = Date.now();
+			this.ctx.storage.sql.exec("UPDATE publisher SET session_epoch = ? WHERE id = 1", nextEpoch);
+			this.ctx.storage.sql.exec("DELETE FROM publisher_sessions");
+			this.#appendAudit("publisher-sessions-revoked", "publisher", publisherDid, publisherDid, now);
+			return nextEpoch;
+		});
 	}
 
 	putOAuthState(input: PutOAuthStateInput): PutOAuthStateResult {
@@ -766,6 +953,16 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				 FROM delegation_operations WHERE kind = 'refresh'`,
 			)
 			.one();
+	}
+
+	#readPublisherSessionOwner(): PublisherSessionOwnerRow | null {
+		return (
+			this.ctx.storage.sql
+				.exec<PublisherSessionOwnerRow>(
+					"SELECT did, status, session_epoch FROM publisher WHERE id = 1",
+				)
+				.toArray()[0] ?? null
+		);
 	}
 
 	#clearRefreshOperation(now: number): void {
