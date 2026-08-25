@@ -103,24 +103,23 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		super(ctx, env);
 		this.#objectName = ctx.id.name;
 		void ctx.blockConcurrencyWhile(async () => {
-			this.#migrate();
+			this.#initializeSchema();
 		});
 	}
 
-	#migrate(): void {
+	#initializeSchema(): void {
 		this.ctx.storage.sql.exec(`
-			CREATE TABLE IF NOT EXISTS schema_migrations (
-				version INTEGER PRIMARY KEY,
-				applied_at INTEGER NOT NULL
-			);
 			CREATE TABLE IF NOT EXISTS publisher (
 				id INTEGER PRIMARY KEY CHECK (id = 1),
 				did TEXT NOT NULL UNIQUE,
+				status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'suspended')),
+				session_epoch INTEGER NOT NULL DEFAULT 1 CHECK (session_epoch >= 1),
 				created_at INTEGER NOT NULL
 			);
 			CREATE TABLE IF NOT EXISTS oauth_states (
 				state_hash TEXT PRIMARY KEY,
 				encrypted_state TEXT NOT NULL,
+				encryption_key_version INTEGER,
 				client_key_id TEXT NOT NULL,
 				redirect_target TEXT NOT NULL,
 				expires_at INTEGER NOT NULL,
@@ -133,26 +132,51 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				scope TEXT NOT NULL,
 				client_key_id TEXT NOT NULL,
 				encrypted_session TEXT NOT NULL,
+				encryption_key_version INTEGER,
+				issuer TEXT,
+				pds_url TEXT,
+				expires_at INTEGER,
 				refresh_before INTEGER,
 				status TEXT NOT NULL CHECK (status IN ('active', 'revoked', 'reauthorization_required')),
 				state_version INTEGER NOT NULL CHECK (state_version >= 1),
 				updated_at INTEGER NOT NULL
 			);
-				CREATE TABLE IF NOT EXISTS audit_events (
-					sequence INTEGER PRIMARY KEY AUTOINCREMENT,
-					event_type TEXT NOT NULL,
-					actor_realm TEXT NOT NULL CHECK (actor_realm IN ('oidc', 'publisher', 'approver', 'access', 'system')),
-					actor_identity TEXT NOT NULL,
-					subject TEXT NOT NULL,
-					reason_code TEXT,
-					public_payload TEXT NOT NULL,
-					created_at INTEGER NOT NULL
-				);
+			CREATE TABLE IF NOT EXISTS delegation_operations (
+				kind TEXT PRIMARY KEY CHECK (kind = 'refresh'),
+				generation INTEGER NOT NULL CHECK (generation >= 0),
+				token_hash TEXT,
+				delegation_version INTEGER,
+				expires_at INTEGER,
+				updated_at INTEGER NOT NULL,
+				CHECK (
+					(token_hash IS NULL AND delegation_version IS NULL AND expires_at IS NULL)
+					OR (token_hash IS NOT NULL AND delegation_version IS NOT NULL AND expires_at IS NOT NULL)
+				)
+			);
+			INSERT OR IGNORE INTO delegation_operations (
+				kind, generation, token_hash, delegation_version, expires_at, updated_at
+			) VALUES ('refresh', 0, NULL, NULL, NULL, 0);
+			CREATE TABLE IF NOT EXISTS publisher_sessions (
+				token_hash TEXT PRIMARY KEY,
+				csrf_hash TEXT NOT NULL,
+				session_epoch INTEGER NOT NULL CHECK (session_epoch >= 1),
+				expires_at INTEGER NOT NULL,
+				created_at INTEGER NOT NULL,
+				last_seen_at INTEGER NOT NULL
+			);
+			CREATE INDEX IF NOT EXISTS idx_publisher_sessions_expiry
+				ON publisher_sessions(expires_at);
+			CREATE TABLE IF NOT EXISTS audit_events (
+				sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+				event_type TEXT NOT NULL,
+				actor_realm TEXT NOT NULL CHECK (actor_realm IN ('oidc', 'publisher', 'approver', 'access', 'system')),
+				actor_identity TEXT NOT NULL,
+				subject TEXT NOT NULL,
+				reason_code TEXT,
+				public_payload TEXT NOT NULL,
+				created_at INTEGER NOT NULL
+			);
 		`);
-		this.ctx.storage.sql.exec(
-			"INSERT OR IGNORE INTO schema_migrations (version, applied_at) VALUES (1, ?)",
-			Date.now(),
-		);
 	}
 
 	#assertPublisherDid(publisherDid: string): void {
