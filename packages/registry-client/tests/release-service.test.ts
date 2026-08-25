@@ -248,6 +248,37 @@ describe("ReleaseServiceClient", () => {
 });
 
 describe("ReleaseServiceOperatorClient", () => {
+	it("lists one bounded operations-directory shard", async () => {
+		let captured = "";
+		const fetch: typeof globalThis.fetch = async (input) => {
+			captured = input instanceof Request ? input.url : input.toString();
+			return success({
+				items: [
+					{
+						kind: "publisher",
+						did: PUBLISHER_DID,
+						shard: "7f",
+						registeredAt: 1_800_000_000_000,
+						lastSeenAt: 1_800_000_000_001,
+					},
+				],
+				nextCursor: "cursor-next",
+			});
+		};
+		const client = new ReleaseServiceOperatorClient({ serviceUrl: SERVICE, fetch });
+		await expect(
+			client.listDirectory("publisher", { cursor: "cursor-current", limit: 25 }),
+		).resolves.toMatchObject({
+			items: [{ did: PUBLISHER_DID, kind: "publisher", shard: "7f" }],
+			nextCursor: "cursor-next",
+		});
+		const url = new URL(captured);
+		expect(url.pathname).toBe("/admin/api/directory");
+		expect(url.searchParams.get("kind")).toBe("publisher");
+		expect(url.searchParams.get("cursor")).toBe("cursor-current");
+		expect(url.searchParams.get("limit")).toBe("25");
+	});
+
 	it("uses Access cookie credentials and roleless operator paths", async () => {
 		const calls: Array<{ init: RequestInit | undefined; url: string }> = [];
 		const fetch: typeof globalThis.fetch = async (input, init) => {

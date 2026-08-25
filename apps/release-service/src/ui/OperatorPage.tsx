@@ -1,7 +1,9 @@
-import { Badge, Button, Input, Surface } from "@cloudflare/kumo";
+import { Badge, Button, Input, Surface, Table } from "@cloudflare/kumo";
 import {
 	ReleaseServiceOperatorClient,
 	createReleaseIdempotencyKey,
+	type DirectoryIdentityKind,
+	type DirectoryIdentityResource,
 	type EncryptionRotationResult,
 	type OperatorPublisherResource,
 	type PublisherArchivePageResult,
@@ -57,6 +59,9 @@ export function OperatorPage() {
 	const [archivePage, setArchivePage] = useState("0");
 	const [archive, setArchive] = useState<PublisherArchivePageResult | null>(null);
 	const [archiveWorkflow, setArchiveWorkflow] = useState<StartPublisherArchiveResult | null>(null);
+	const [directoryKind, setDirectoryKind] = useState<DirectoryIdentityKind>("publisher");
+	const [directoryCursor, setDirectoryCursor] = useState("");
+	const [directoryItems, setDirectoryItems] = useState<DirectoryIdentityResource[]>([]);
 	const [error, setError] = useState<unknown>(null);
 	const [busy, setBusy] = useState(false);
 
@@ -194,6 +199,29 @@ export function OperatorPage() {
 		}
 	}
 
+	async function listDirectory(kind: DirectoryIdentityKind) {
+		setBusy(true);
+		setError(null);
+		try {
+			let cursor = kind === directoryKind ? directoryCursor || undefined : undefined;
+			for (let shard = 0; shard < 256; shard += 1) {
+				const result = await client.listDirectory(kind, { cursor, limit: 50 });
+				cursor = result.nextCursor;
+				if (result.items.length > 0 || !cursor) {
+					setDirectoryKind(kind);
+					setDirectoryItems(result.items);
+					setDirectoryCursor(cursor ?? "");
+					return;
+				}
+			}
+			throw new Error("Directory traversal did not terminate");
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
 	async function operateIntent(action: "cancel" | "reconcile") {
 		setBusy(true);
 		setError(null);
@@ -247,6 +275,62 @@ export function OperatorPage() {
 						{t("operator.service.pausePublication", "Pause publication")}
 					</Button>
 				</div>
+			</Surface>
+
+			<Surface className="rounded-xl border bg-kumo-base p-6">
+				<div className="flex flex-wrap items-start justify-between gap-4">
+					<div>
+						<h2 className="text-xl font-semibold text-kumo-strong">
+							{t("operator.directory.title", "Operations directory")}
+						</h2>
+						<p className="mt-1 text-sm text-kumo-subtle">
+							{t(
+								"operator.directory.description",
+								"List the next populated identity shard for fleet maintenance. Directory entries do not grant authority.",
+							)}
+						</p>
+					</div>
+					<Badge variant="neutral">
+						{directoryKind === "publisher"
+							? t("operator.directory.publishers", "Publishers")
+							: t("operator.directory.approvers", "Approvers")}
+					</Badge>
+				</div>
+				<div className="mt-4 flex flex-wrap gap-2">
+					<Button loading={busy} onClick={() => listDirectory("publisher")} variant="outline">
+						{t("operator.directory.listPublishers", "List publishers")}
+					</Button>
+					<Button loading={busy} onClick={() => listDirectory("approver")} variant="outline">
+						{t("operator.directory.listApprovers", "List approvers")}
+					</Button>
+				</div>
+				{directoryItems.length > 0 ? (
+					<div className="mt-5 overflow-x-auto">
+						<Table>
+							<Table.Header>
+								<Table.Row>
+									<Table.Head>{t("operator.directory.did", "DID")}</Table.Head>
+									<Table.Head>{t("operator.directory.shard", "Shard")}</Table.Head>
+									<Table.Head>{t("operator.directory.lastSeen", "Last seen")}</Table.Head>
+								</Table.Row>
+							</Table.Header>
+							<Table.Body>
+								{directoryItems.map((item) => (
+									<Table.Row key={`${item.kind}:${item.did}`}>
+										<Table.Cell className="break-all">{item.did}</Table.Cell>
+										<Table.Cell>{item.shard}</Table.Cell>
+										<Table.Cell>
+											{new Intl.DateTimeFormat(document.documentElement.lang, {
+												dateStyle: "medium",
+												timeStyle: "short",
+											}).format(item.lastSeenAt)}
+										</Table.Cell>
+									</Table.Row>
+								))}
+							</Table.Body>
+						</Table>
+					</div>
+				) : null}
 			</Surface>
 
 			<Surface className="rounded-xl border bg-kumo-base p-6">

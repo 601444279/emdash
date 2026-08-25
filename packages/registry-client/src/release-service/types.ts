@@ -157,6 +157,21 @@ export interface OperatorPublisherResource extends PublisherResource {
 	control: PublisherControlResource;
 }
 
+export type DirectoryIdentityKind = "approver" | "publisher";
+
+export interface DirectoryIdentityResource {
+	kind: DirectoryIdentityKind;
+	did: string;
+	shard: string;
+	registeredAt: number;
+	lastSeenAt: number;
+}
+
+export interface DirectoryListOptions {
+	cursor?: string;
+	limit?: number;
+}
+
 export interface EncryptionRotationPageInput {
 	afterCursor: string | null;
 	limit: number;

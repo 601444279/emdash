@@ -32,6 +32,7 @@ import {
 	handleSetPublisherControl,
 	handleSetServiceMode,
 } from "./control-do/routes.js";
+import { handleListDirectory } from "./directory/routes.js";
 import {
 	handleCancelReleaseIntent,
 	handleGetReleaseIntent,
@@ -234,6 +235,12 @@ export const ROUTES = Object.freeze([
 		path: "/admin/api/status",
 		accessRole: "viewer",
 		handler: accessHandler(handleServiceStatus),
+	},
+	{
+		method: "GET",
+		path: "/admin/api/directory",
+		accessRole: "viewer",
+		handler: handleListDirectory,
 	},
 	{
 		method: "POST",

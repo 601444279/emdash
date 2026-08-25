@@ -6,6 +6,7 @@ const EVENTS = new Set<OperationsMetricEvent>([
 	"access_denied",
 	"archive_gap",
 	"configuration_failure",
+	"directory_failure",
 	"intent_rate_limited",
 	"publication_paused",
 	"reconciliation_required",
@@ -18,6 +19,7 @@ export type OperationsMetricEvent =
 	| "access_denied"
 	| "archive_gap"
 	| "configuration_failure"
+	| "directory_failure"
 	| "intent_rate_limited"
 	| "publication_paused"
 	| "reconciliation_required"

@@ -24,6 +24,7 @@ export { ApproverDurableObject } from "./approver-do/approver-do.js";
 export { ReleaseIntentWorkflow } from "./workflows/release-intent.js";
 export { PublisherArchiveWorkflow } from "./workflows/publisher-archive.js";
 export { ServiceControlDurableObject } from "./control-do/service-control-do.js";
+export { IdentityDirectoryDurableObject } from "./directory/identity-directory-do.js";
 
 const DYNAMIC_PATH_PREFIXES = ["/.well-known/", "/admin/api/", "/oauth/", "/v1/"] as const;
 

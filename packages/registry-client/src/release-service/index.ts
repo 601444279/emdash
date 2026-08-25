@@ -4,6 +4,9 @@ import {
 	TERMINAL_RELEASE_INTENT_STATES,
 	type CursorPage,
 	type DelegationResource,
+	type DirectoryIdentityKind,
+	type DirectoryIdentityResource,
+	type DirectoryListOptions,
 	type EncryptionRotationPageInput,
 	type EncryptionRotationResult,
 	type MutationResult,
@@ -31,6 +34,9 @@ import {
 export type {
 	CursorPage,
 	DelegationResource,
+	DirectoryIdentityKind,
+	DirectoryIdentityResource,
+	DirectoryListOptions,
 	EncryptionRotationPageInput,
 	EncryptionRotationResult,
 	MutationResult,
@@ -66,6 +72,7 @@ const IDEMPOTENCY_PREFIX_PATTERN = /[^A-Za-z0-9._:-]/g;
 const DIGITS_PATTERN = /^[0-9]+$/;
 const CSRF_TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const ARCHIVE_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{15,63}$/;
+const DIRECTORY_SHARD_PATTERN = /^[0-9a-f]{2}$/;
 const API_ERROR_CODES: Readonly<Record<ReleaseServiceApiErrorCode, true>> = {
 	ACCESS_DENIED: true,
 	ACCESS_AUTH_INVALID: true,
@@ -831,6 +838,28 @@ function parsePage<T>(value: unknown, parseItem: (item: unknown) => T): CursorPa
 	};
 }
 
+function parseDirectoryIdentity(value: unknown): DirectoryIdentityResource {
+	if (!isRecord(value)) throw invalidResponse();
+	const did = stringValue(value, "did");
+	const shard = stringValue(value, "shard");
+	const registeredAt = safeInteger(value, "registeredAt");
+	const lastSeenAt = safeInteger(value, "lastSeenAt");
+	if (
+		(value["kind"] !== "approver" && value["kind"] !== "publisher") ||
+		!did ||
+		!DID_PATTERN.test(did) ||
+		!shard ||
+		!DIRECTORY_SHARD_PATTERN.test(shard) ||
+		registeredAt === null ||
+		registeredAt < 0 ||
+		lastSeenAt === null ||
+		lastSeenAt < registeredAt
+	) {
+		throw invalidResponse();
+	}
+	return { kind: value["kind"], did, shard, registeredAt, lastSeenAt };
+}
+
 function rotationPageInput(value: EncryptionRotationPageInput): EncryptionRotationPageInput {
 	if (
 		(value.afterCursor !== null &&
@@ -1035,6 +1064,32 @@ export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 				if (!isRecord(value)) throw invalidResponse();
 				return parseServiceState(value["state"]);
 			},
+		);
+	}
+
+	async listDirectory(
+		kind: DirectoryIdentityKind,
+		options: DirectoryListOptions & RequestOptions = {},
+	): Promise<CursorPage<DirectoryIdentityResource>> {
+		if (
+			(kind !== "approver" && kind !== "publisher") ||
+			(options.cursor !== undefined && options.cursor.length === 0) ||
+			(options.limit !== undefined &&
+				(!Number.isSafeInteger(options.limit) || options.limit < 1 || options.limit > 100))
+		) {
+			throw new ReleaseServiceError({
+				code: "CLIENT_RESPONSE_INVALID",
+				message: "Directory list request is invalid",
+			});
+		}
+		const url = new URL("/admin/api/directory", this.serviceUrl);
+		url.searchParams.set("kind", kind);
+		if (options.cursor !== undefined) url.searchParams.set("cursor", options.cursor);
+		if (options.limit !== undefined) url.searchParams.set("limit", String(options.limit));
+		return await this.call(
+			`${url.pathname}${url.search}`,
+			{ method: "GET", credentials: "include", signal: options.signal },
+			(value) => parsePage(value, parseDirectoryIdentity),
 		);
 	}
 
