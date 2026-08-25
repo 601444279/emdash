@@ -1,6 +1,16 @@
 import { DurableObject } from "cloudflare:workers";
 
 import {
+	initializeIntentStateSchema,
+	IntentStateStore,
+	type CreateIntentInput,
+	type CreateIntentResult,
+	type IntentTransition,
+	type StoredIntent,
+	type TransitionIntentInput,
+	type TransitionIntentResult,
+} from "./intent-state.js";
+import {
 	initializeWorkloadPolicySchema,
 	WorkloadPolicyStore,
 	type PutWorkloadPolicyInput,
@@ -13,6 +23,15 @@ export type {
 	PutWorkloadPolicyResult,
 	StoredWorkloadPolicy,
 } from "./workload-policy.js";
+export type {
+	CreateIntentInput,
+	CreateIntentResult,
+	IntentState,
+	IntentTransition,
+	StoredIntent,
+	TransitionIntentInput,
+	TransitionIntentResult,
+} from "./intent-state.js";
 
 const DID_PATTERN = /^did:[a-z0-9]+:[A-Za-z0-9._:%-]+$/;
 const HASH_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
@@ -260,11 +279,13 @@ async function hashRefreshToken(token: string): Promise<string> {
 export class PublisherDurableObject extends DurableObject<Env> {
 	readonly #objectName: string | undefined;
 	readonly #workloadPolicies: WorkloadPolicyStore;
+	readonly #intents: IntentStateStore;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
 		this.#objectName = ctx.id.name;
 		this.#workloadPolicies = new WorkloadPolicyStore(ctx.storage);
+		this.#intents = new IntentStateStore(ctx.storage);
 		void ctx.blockConcurrencyWhile(async () => {
 			this.#initializeSchema();
 		});
@@ -341,6 +362,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			);
 		`);
 		initializeWorkloadPolicySchema(this.ctx.storage);
+		initializeIntentStateSchema(this.ctx.storage);
 	}
 
 	#assertPublisherObjectName(publisherDid: string): void {
@@ -412,6 +434,26 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	): readonly StoredWorkloadPolicy[] {
 		this.#assertPublisherDid(publisherDid);
 		return this.#workloadPolicies.list(afterPackageSlug, limit);
+	}
+
+	createIntent(input: CreateIntentInput): CreateIntentResult {
+		this.#assertPublisherDid(input.publisherDid);
+		return this.#intents.create(input);
+	}
+
+	transitionIntent(input: TransitionIntentInput): TransitionIntentResult {
+		this.#assertPublisherDid(input.publisherDid);
+		return this.#intents.transition(input);
+	}
+
+	getIntent(publisherDid: string, intentId: string): StoredIntent | null {
+		this.#assertPublisherDid(publisherDid);
+		return this.#intents.get(intentId);
+	}
+
+	listIntentTransitions(publisherDid: string, intentId: string): readonly IntentTransition[] {
+		this.#assertPublisherDid(publisherDid);
+		return this.#intents.listTransitions(intentId);
 	}
 
 	createPublisherSession(input: CreatePublisherSessionInput): CreatePublisherSessionResult {
