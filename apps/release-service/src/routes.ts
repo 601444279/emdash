@@ -15,6 +15,13 @@ import {
 	matchApproverCredentialPath,
 } from "./approvals/routes.js";
 import type { ServiceConfiguration } from "./config.js";
+import {
+	handleControlAudit,
+	handleGetPublisherControl,
+	handleServiceStatus,
+	handleSetPublisherControl,
+	handleSetServiceMode,
+} from "./control-do/routes.js";
 import { getClientMetadata, getPublicJwks, publicOAuthJson } from "./oauth/metadata.js";
 import {
 	handleApproverIdentityAuthorize,
@@ -113,5 +120,35 @@ export const ROUTES = Object.freeze([
 		method: "GET",
 		path: "/health",
 		handler: (_request, requestId) => apiSuccess({ status: "ok" }, requestId),
+	},
+	{
+		method: "GET",
+		path: "/admin/api/viewer/status",
+		accessRole: "viewer",
+		handler: handleServiceStatus,
+	},
+	{
+		method: "GET",
+		path: "/admin/api/viewer/publisher-control",
+		accessRole: "viewer",
+		handler: handleGetPublisherControl,
+	},
+	{
+		method: "GET",
+		path: "/admin/api/viewer/audit",
+		accessRole: "viewer",
+		handler: handleControlAudit,
+	},
+	{
+		method: "POST",
+		path: "/admin/api/admin/service-mode",
+		accessRole: "admin",
+		handler: handleSetServiceMode,
+	},
+	{
+		method: "POST",
+		path: "/admin/api/admin/publisher-control",
+		accessRole: "admin",
+		handler: handleSetPublisherControl,
 	},
 ] as const satisfies readonly RouteDefinition[]);

@@ -1,6 +1,7 @@
 import { isDid, isHandle } from "@atcute/lexicons/syntax";
 import { env } from "cloudflare:workers";
 
+import { readJsonObject } from "../api/body.js";
 import { ApiError } from "../api/errors.js";
 import { apiFailure } from "../api/response.js";
 import { createApproverApplicationSession } from "../approver-session/session.js";
@@ -27,7 +28,7 @@ export async function handleApproverIdentityAuthorize(
 ): Promise<Response> {
 	try {
 		requireSameOriginRequest(request, configuration.publicOrigin);
-		const body = await readJsonBody(request);
+		const body = await readJsonObject(request);
 		if (
 			Object.keys(body).length !== 2 ||
 			typeof body["identifier"] !== "string" ||
@@ -80,12 +81,6 @@ export async function handleApproverIdentityAuthorize(
 	}
 }
 
-const MAX_JSON_BODY_BYTES = 4096;
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
 function oauthError(
 	code: "OAUTH_AUTHORIZATION_FAILED" | "OAUTH_CALLBACK_INVALID",
 	status: number,
@@ -98,51 +93,6 @@ function oauthError(
 	const headers = new Headers(response.headers);
 	headers.append("set-cookie", clearOAuthRouteCookie());
 	return new Response(response.body, { status: response.status, headers });
-}
-
-async function readJsonBody(request: Request): Promise<Record<string, unknown>> {
-	const mediaType = request.headers.get("content-type")?.split(";", 1)[0]?.trim().toLowerCase();
-	if (mediaType !== "application/json") {
-		throw new ApiError("INVALID_REQUEST", 415, "Expected an application/json request body");
-	}
-	const declaredLength = Number(request.headers.get("content-length"));
-	if (Number.isFinite(declaredLength) && declaredLength > MAX_JSON_BODY_BYTES) {
-		throw new ApiError("INVALID_REQUEST", 413, "Request body is too large");
-	}
-	if (!request.body) throw new ApiError("INVALID_REQUEST", 400, "Request body is required");
-	const reader = request.body.getReader();
-	const chunks: Uint8Array[] = [];
-	let length = 0;
-	try {
-		while (true) {
-			const { done, value } = await reader.read();
-			if (done) break;
-			length += value.byteLength;
-			if (length > MAX_JSON_BODY_BYTES) {
-				await reader.cancel();
-				throw new ApiError("INVALID_REQUEST", 413, "Request body is too large");
-			}
-			chunks.push(value);
-		}
-	} finally {
-		reader.releaseLock();
-	}
-	const bytes = new Uint8Array(length);
-	let offset = 0;
-	for (const chunk of chunks) {
-		bytes.set(chunk, offset);
-		offset += chunk.byteLength;
-	}
-	let parsed: unknown;
-	try {
-		parsed = JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(bytes));
-	} catch {
-		throw new ApiError("INVALID_REQUEST", 400, "Request body is not valid JSON");
-	}
-	if (!isRecord(parsed)) {
-		throw new ApiError("INVALID_REQUEST", 400, "Request body must be an object");
-	}
-	return parsed;
 }
 
 function requireSameOriginRequest(request: Request, publicOrigin: string): void {
@@ -172,7 +122,7 @@ export async function handlePublisherIdentityAuthorize(
 ): Promise<Response> {
 	try {
 		requireSameOriginRequest(request, configuration.publicOrigin);
-		const body = await readJsonBody(request);
+		const body = await readJsonObject(request);
 		if (
 			Object.keys(body).length !== 2 ||
 			typeof body["identifier"] !== "string" ||
@@ -237,7 +187,7 @@ export async function handlePublisherDelegationAuthorize(
 			configuration.publicOrigin,
 			{ requireCsrf: true },
 		);
-		const body = await readJsonBody(request);
+		const body = await readJsonObject(request);
 		if (Object.keys(body).length !== 1 || typeof body["redirectTarget"] !== "string") {
 			throw new ApiError("INVALID_REQUEST", 400, "Invalid delegation authorization request");
 		}
