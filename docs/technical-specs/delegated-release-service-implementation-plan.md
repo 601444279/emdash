@@ -51,12 +51,13 @@ The new implementation does not retain:
 
 ### Current execution state
 
-The replacement implementation is rebased on current `main` and complete through the publisher OAuth callback vertical slice:
+The replacement implementation is complete through the publisher OAuth callback and service-control vertical slices:
 
 - the G0 harness requests only the active create-only release scope and has successful authorization/prohibition evidence for the Bluesky PDS implementation hosted by npmX and for Cirrus;
 - the Worker serves confidential client metadata and overlapping JWKS, fails closed on invalid configuration, and keeps canonical publisher authority in SQLite-backed Durable Objects;
 - envelope encryption, publisher custody, generation-bound refresh operations, publisher application sessions, and identity/delegation callback routes pass real workerd tests; and
-- repository package typecheck, type-aware lint, and package tests pass on the top branch. One transient fixed-port collision in the sandbox-workerd suite passed on immediate isolated rerun.
+- Cloudflare Access authenticates operators through role-specific audiences; a `ServiceControlDurableObject` owns service mode, publisher suspension, idempotency, audit, and epoch-bound publication permits; and
+- repository package typecheck, type-aware lint, 137 release-service tests, Worker build, and startup profiling pass on the top branch.
 
 The public-client G0 lifecycle is complete on both providers: exact-scope authorization, forced refresh, and server revocation passed. npmX rejected its access token immediately after revocation. Cirrus retained the already-issued access token for its remaining lifetime while preventing future refresh. G0 still requires the deployed confidential-client run and client-key removal observation before either provider is advertised as supported by the hosted service.
 
@@ -742,6 +743,19 @@ main
 Each branch is one template-compliant draft PR. Create the PRs with their explicit parent bases before calling `gh stack link`; this prevents `gh-stack` from generating non-template PR bodies.
 
 The eight branches form one merge unit. The service has no supported intermediate deployment between them. The envelope-encryption branch defines the first persisted JOSE profile, and the publisher-object branch defines the complete initial schema used by every later branch. Do not add compatibility code for earlier branches in this stack.
+
+### Active Access and control stack
+
+The next three-PR stack is based on the completed foundation stack:
+
+```text
+feat/drs-confidential-oauth-callback
+└── feat/drs-access-auth
+    └── feat/drs-service-control-do
+        └── feat/drs-service-control-api
+```
+
+PRs #2649 to #2651 form one merge unit in GitHub stack #2652. The first layer verifies Access role audiences and request protections. The second owns the complete initial control schema and state transitions. The third exposes the role-specific operator API.
 
 ### Planned GitHub stacks
 
