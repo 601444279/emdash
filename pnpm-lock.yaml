@@ -1994,6 +1994,9 @@ importers:
       '@emdash-cms/blocks':
         specifier: workspace:*
         version: link:../blocks
+      '@emdash-cms/registry-verification':
+        specifier: workspace:*
+        version: link:../registry-verification
       '@types/better-sqlite3':
         specifier: ^7.6.12
         version: 7.6.13

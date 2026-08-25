@@ -298,6 +298,7 @@
     "@arethetypeswrong/cli": "catalog:",
     "@cloudflare/vitest-pool-workers": "catalog:",
     "@emdash-cms/blocks": "workspace:*",
+    "@emdash-cms/registry-verification": "workspace:*",
     "@types/better-sqlite3": "^7.6.12",
     "@types/pg": "^8.16.0",
     "@types/react": "catalog:",
