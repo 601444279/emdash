@@ -24,6 +24,13 @@ export interface AccessActor {
 	role: AccessRole;
 }
 
+export function accessRoleForOperatorPath(pathname: string): AccessRole | null {
+	for (const role of ["viewer", "reviewer", "admin"] as const) {
+		if (pathname.startsWith(`/admin/api/${role}/`)) return role;
+	}
+	return null;
+}
+
 function getAccessJwksCache(): Map<string, JWTVerifyGetKey> {
 	const target = globalThis as typeof globalThis & {
 		[ACCESS_JWKS_CACHE_SYMBOL]?: Map<string, JWTVerifyGetKey>;

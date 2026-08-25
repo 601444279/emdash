@@ -63,10 +63,17 @@ async function createAccessToken(options: TokenOptions = {}): Promise<string> {
 		.sign(privateKey);
 }
 
-function authenticatedRequest(token: string, init?: RequestInit): Request {
+function authenticatedRequest(
+	token: string,
+	role: AccessRole = "viewer",
+	init?: RequestInit,
+): Request {
 	const headers = new Headers(init?.headers);
 	headers.set("cf-access-jwt-assertion", token);
-	return new Request("https://release.example.invalid/v1/operator/test", { ...init, headers });
+	return new Request(`https://release.example.invalid/admin/api/${role}/test`, {
+		...init,
+		headers,
+	});
 }
 
 describe("Cloudflare Access authentication", () => {
@@ -92,7 +99,7 @@ describe("Cloudflare Access authentication", () => {
 	);
 
 	it("requires the Access assertion header and does not trust the browser cookie", async () => {
-		const request = new Request("https://release.example.invalid/v1/operator/test", {
+		const request = new Request("https://release.example.invalid/admin/api/viewer/test", {
 			headers: { cookie: "CF_Authorization=unverified" },
 		});
 
@@ -171,13 +178,13 @@ describe("Cloudflare Access authentication", () => {
 describe("Access route enforcement", () => {
 	const getRoute: RouteDefinition = {
 		method: "GET",
-		path: "/v1/operator/test",
+		path: "/admin/api/viewer/test",
 		accessRole: "viewer",
 		handler: (_request, requestId, _configuration, actor) => apiSuccess({ actor }, requestId),
 	};
 	const postRoute: RouteDefinition = {
 		method: "POST",
-		path: "/v1/operator/test",
+		path: "/admin/api/admin/test",
 		accessRole: "admin",
 		handler: (_request, requestId, _configuration, actor) => apiSuccess({ actor }, requestId),
 	};
@@ -207,15 +214,38 @@ describe("Access route enforcement", () => {
 	it("fails closed when an operator route omits its Access role", async () => {
 		const unguardedRoute: RouteDefinition = {
 			method: "GET",
-			path: "/v1/operator/test",
+			path: "/admin/api/viewer/test",
 			handler: () => apiSuccess({ reached: true }, "unguarded"),
 		};
 		const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
 		try {
 			const response = await handleRequest(
-				new Request("https://release.example.invalid/v1/operator/test"),
+				new Request("https://release.example.invalid/admin/api/viewer/test"),
 				TEST_BINDINGS,
 				[unguardedRoute],
+				keyResolver,
+			);
+
+			expect(response.status).toBe(500);
+			expect(await response.json()).toMatchObject({ error: { code: "INTERNAL_ERROR" } });
+		} finally {
+			errorLog.mockRestore();
+		}
+	});
+
+	it("fails closed when the declared role does not match the route family", async () => {
+		const mismatchedRoute: RouteDefinition = {
+			method: "GET",
+			path: "/admin/api/admin/test",
+			accessRole: "viewer",
+			handler: () => apiSuccess({ reached: true }, "mismatched"),
+		};
+		const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+		try {
+			const response = await handleRequest(
+				new Request("https://release.example.invalid/admin/api/admin/test"),
+				TEST_BINDINGS,
+				[mismatchedRoute],
 				keyResolver,
 			);
 
@@ -229,7 +259,7 @@ describe("Access route enforcement", () => {
 	it("requires origin, custom-header, and idempotency checks for mutations", async () => {
 		const token = await createAccessToken({ role: "admin" });
 		const missingCsrf = await handleRequest(
-			authenticatedRequest(token, { method: "POST" }),
+			authenticatedRequest(token, "admin", { method: "POST" }),
 			TEST_BINDINGS,
 			[postRoute],
 			keyResolver,
@@ -238,7 +268,7 @@ describe("Access route enforcement", () => {
 		expect(await missingCsrf.json()).toMatchObject({ error: { code: "CSRF_INVALID" } });
 
 		const invalidIdempotency = await handleRequest(
-			authenticatedRequest(token, {
+			authenticatedRequest(token, "admin", {
 				method: "POST",
 				headers: {
 					origin: TEST_BINDINGS.PUBLIC_ORIGIN,
@@ -256,7 +286,7 @@ describe("Access route enforcement", () => {
 		});
 
 		const accepted = await handleRequest(
-			authenticatedRequest(token, {
+			authenticatedRequest(token, "admin", {
 				method: "POST",
 				headers: {
 					origin: TEST_BINDINGS.PUBLIC_ORIGIN,
@@ -274,7 +304,7 @@ describe("Access route enforcement", () => {
 
 describe("Access mutation validation", () => {
 	it("rejects a cross-origin request even with the custom header", () => {
-		const request = new Request("https://release.example.invalid/v1/operator/test", {
+		const request = new Request("https://release.example.invalid/admin/api/admin/test", {
 			method: "POST",
 			headers: {
 				origin: "https://attacker.example",

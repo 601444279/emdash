@@ -1,6 +1,7 @@
 import type { JWTVerifyGetKey } from "jose";
 
 import {
+	accessRoleForOperatorPath,
 	authenticateAccessRequest,
 	validateAccessMutation,
 	type AccessActor,
@@ -36,8 +37,13 @@ export async function handleRequest(
 		const route = matches.find(({ candidate }) => candidate.method === request.method);
 		if (route) {
 			let accessActor: AccessActor | null = null;
-			if (url.pathname.startsWith("/v1/operator/") && !route.candidate.accessRole) {
-				throw new Error("Operator route is missing an Access role");
+			const operatorRole = accessRoleForOperatorPath(url.pathname);
+			if (
+				(url.pathname.startsWith("/admin/api/") && route.candidate.accessRole === undefined) ||
+				(operatorRole !== null && operatorRole !== route.candidate.accessRole) ||
+				(!url.pathname.startsWith("/admin/api/") && route.candidate.accessRole !== undefined)
+			) {
+				throw new Error("Operator route has an invalid Access role boundary");
 			}
 			if (route.candidate.accessRole) {
 				accessActor = await authenticateAccessRequest(
