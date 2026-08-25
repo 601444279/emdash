@@ -62,7 +62,13 @@ function base64url(bytes: Uint8Array): string {
 }
 
 function createValidAssertion(
-	opts: { rpId?: string; origin?: string; userVerified?: boolean; challenge?: string } = {},
+	opts: {
+		rpId?: string;
+		origin?: string;
+		userVerified?: boolean;
+		challenge?: string;
+		signatureCounter?: number;
+	} = {},
 ) {
 	const rpId = opts.rpId ?? config.rpId;
 	const origin = opts.origin ?? config.origins[0];
@@ -88,7 +94,7 @@ function createValidAssertion(
 	);
 	const rpIdHash = createHash("sha256").update(rpId).digest();
 	const signatureCounter = Buffer.alloc(4);
-	signatureCounter.writeUInt32BE(1);
+	signatureCounter.writeUInt32BE(opts.signatureCounter ?? 1);
 	const flags = opts.userVerified ? 0x05 : 0x01;
 	const authenticatorData = Buffer.concat([rpIdHash, Buffer.from([flags]), signatureCounter]);
 	const signatureMessage = createAssertionSignatureMessage(authenticatorData, clientDataJSON);
@@ -234,6 +240,23 @@ describe("authenticateWithPasskey", () => {
 				challengeStore,
 			),
 		).resolves.toMatchObject({ credentialId: validCredential.id });
+	});
+
+	it("rejects a zero counter after a credential has reported a nonzero counter", async () => {
+		const {
+			credential: validCredential,
+			response,
+			challengeStore,
+		} = createValidAssertion({ signatureCounter: 0 });
+
+		await expect(
+			verifyAuthenticationResponse(
+				config,
+				response,
+				{ ...validCredential, counter: 1 },
+				challengeStore,
+			),
+		).rejects.toMatchObject({ code: "invalid_signature_counter" });
 	});
 
 	it("returns typed context after atomic challenge consumption", async () => {

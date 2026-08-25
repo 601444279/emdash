@@ -48,7 +48,7 @@ export type { PasskeyConfig };
 export async function generateRegistrationOptions<Type extends string, Context>(
 	config: PasskeyConfig,
 	user: Pick<User, "id" | "email" | "name">,
-	existingCredentials: Credential[],
+	existingCredentials: Array<Pick<Credential, "id" | "transports">>,
 	challengeStore: ChallengeStore,
 	challengeContext?: ChallengeContextBinding<Type, Context>,
 ): Promise<RegistrationOptions> {

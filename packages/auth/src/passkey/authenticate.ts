@@ -112,7 +112,7 @@ function decodeAssertionSignature(signature: Uint8Array) {
  */
 export async function generateAuthenticationOptions<Type extends string, Context>(
 	config: PasskeyConfig,
-	credentials: Credential[],
+	credentials: Array<Pick<Credential, "id" | "transports">>,
 	challengeStore: ChallengeStore,
 	challengeContext?: ChallengeContextBinding<Type, Context>,
 ): Promise<AuthenticationOptions> {
@@ -153,20 +153,20 @@ export async function generateAuthenticationOptions<Type extends string, Context
 export function verifyAuthenticationResponse<Type extends string, Context>(
 	config: PasskeyConfig,
 	response: AuthenticationResponse,
-	credential: Credential,
+	credential: Pick<Credential, "id" | "publicKey" | "algorithm" | "counter">,
 	challengeStore: AtomicChallengeStore,
 	challengeContext: ChallengeContextCodec<Type, Context>,
 ): Promise<VerifiedAuthenticationWithContext<Context>>;
 export function verifyAuthenticationResponse(
 	config: PasskeyConfig,
 	response: AuthenticationResponse,
-	credential: Credential,
+	credential: Pick<Credential, "id" | "publicKey" | "algorithm" | "counter">,
 	challengeStore: ChallengeStore,
 ): Promise<VerifiedAuthentication>;
 export async function verifyAuthenticationResponse<Type extends string, Context>(
 	config: PasskeyConfig,
 	response: AuthenticationResponse,
-	credential: Credential,
+	credential: Pick<Credential, "id" | "publicKey" | "algorithm" | "counter">,
 	challengeStore: ChallengeStore,
 	challengeContext?: ChallengeContextCodec<Type, Context>,
 ): Promise<VerifiedAuthentication | VerifiedAuthenticationWithContext<Context>> {
@@ -254,7 +254,10 @@ export async function verifyAuthenticationResponse<Type extends string, Context>
 	}
 
 	// Verify counter (prevent replay attacks)
-	if (authData.signatureCounter !== 0 && authData.signatureCounter <= credential.counter) {
+	if (
+		(authData.signatureCounter !== 0 || credential.counter !== 0) &&
+		authData.signatureCounter <= credential.counter
+	) {
 		throw new PasskeyAuthenticationError(
 			"invalid_signature_counter",
 			"Invalid signature counter - possible cloned authenticator",
