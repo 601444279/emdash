@@ -173,7 +173,15 @@ export class VerificationStepStore {
 			.exec<StepRow>(
 				`SELECT step_name, input_digest, result_json, created_at
 				 FROM intent_verification_steps WHERE intent_id = ?
-				 ORDER BY created_at, step_name`,
+				 ORDER BY CASE step_name
+					WHEN 'authoritative-profile' THEN 1
+					WHEN 'release-absence' THEN 2
+					WHEN 'access-baseline' THEN 3
+					WHEN 'artifact-provenance' THEN 4
+					WHEN 'policy-decision' THEN 5
+					WHEN 'final-verification' THEN 6
+					ELSE 7
+				 END`,
 				intentId,
 			)
 			.toArray()
