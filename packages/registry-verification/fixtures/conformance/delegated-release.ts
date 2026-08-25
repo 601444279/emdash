@@ -61,7 +61,6 @@ interface ConformanceProvenanceStatement {
 	sourceRepository: string;
 	builderId: string;
 }
-
 export async function createDelegatedReleaseConformanceFixture(
 	options: DelegatedReleaseFixtureOptions = {},
 ): Promise<DelegatedReleaseConformanceFixture> {
@@ -250,7 +249,6 @@ function isConformanceStatement(value: unknown): value is ConformanceProvenanceS
 		typeof Reflect.get(subject, "sha256") === "string"
 	);
 }
-
 function unverifiable() {
 	return {
 		success: false as const,
