@@ -11,7 +11,7 @@ import { dirname, join, resolve } from "node:path";
 
 import { isDid } from "@atcute/lexicons/syntax";
 import type { OAuthSession } from "@atcute/oauth-node-client";
-import { runPdsScopeConformance } from "@emdash-cms/registry-client/conformance";
+import { runPdsScopeConformance } from "@emdash-cms/registry-client/internal/conformance";
 import { getDelegatedReleasePermission } from "@emdash-cms/registry-lexicons";
 import { defineCommand } from "citty";
 import { consola } from "consola";
@@ -105,6 +105,7 @@ export const pdsConformanceCommand = defineCommand({
 	meta: {
 		name: "pds-conformance",
 		description: "Run G0 create-only release-scope probes against a PDS",
+		hidden: true,
 	},
 	args: {
 		identifier: {

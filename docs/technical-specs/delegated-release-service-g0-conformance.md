@@ -34,7 +34,7 @@ Use only dedicated conformance accounts. A successful create-only test intention
 
 ## Harness surfaces
 
-`@emdash-cms/registry-client/conformance` exports `runPdsScopeConformance()`. The caller supplies an authenticated AT Protocol handler. The same probe runner is used by:
+The internal `@emdash-cms/registry-client/internal/conformance` surface exports `runPdsScopeConformance()`. The caller supplies an authenticated AT Protocol handler. The same probe runner is used by:
 
 - the loopback public-client preflight in `emdash-plugin pds-conformance`; and
 - the release service's confidential-client conformance route when that client is deployed.

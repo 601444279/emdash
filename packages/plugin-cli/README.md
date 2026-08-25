@@ -32,7 +32,6 @@ emdash-plugin whoami                         Show stored sessions
 emdash-plugin switch <did>                   Switch the active publisher session
 emdash-plugin search <query>                 Free-text search
 emdash-plugin info <handle-or-did> <slug>    Show package details
-emdash-plugin pds-conformance <identifier>   Run delegated-release scope probes (engineering use)
 ```
 
 The non-interactive output commands (`whoami`, `validate`, `search`, `info`, `login`, `publish`) accept `--json` for machine-readable output. Discovery commands (`search`, `info`) accept `--registry-url <url>` (or `EMDASH_REGISTRY_URL`).
