@@ -131,6 +131,9 @@ describe("publisher publication operations", () => {
 			stateGeneration: 6,
 			replayed: true,
 		});
+		await expect(
+			stub.completePublicationOperation({ ...completion, resultCid: "bafyother" }),
+		).resolves.toEqual({ ok: false, code: "PUBLICATION_CAS_REQUIRED" });
 		await expect(stub.getIntent(DID, INTENT_ID)).resolves.toMatchObject({
 			state: "published",
 			stateGeneration: 6,
@@ -176,6 +179,48 @@ describe("publisher publication operations", () => {
 			}),
 		).resolves.toMatchObject({ ok: true, state: "reconciling", stateGeneration: 6 });
 	});
+
+	it.each([
+		["blocked", "ready", "PUBLICATION_PAUSED"],
+		["failed", "failed", "OAUTH_DELEGATION_UNAVAILABLE"],
+	] as const)(
+		"closes an expired pre-write lease as %s without entering ambiguous reconciliation",
+		async (outcome, state, reasonCode) => {
+			const stub = await preparePublishing();
+			const started = await stub.beginPublicationOperation(DID, INTENT_ID, 5, 1, NOW + 10);
+			expect(started.ok).toBe(true);
+			if (!started.ok) return;
+
+			const completion = {
+				publisherDid: DID,
+				intentId: INTENT_ID,
+				generation: started.lease.generation,
+				token: started.lease.token,
+				expectedIntentGeneration: 5,
+				completionDigest: "X".repeat(43),
+				outcome,
+				reasonCode,
+				resultUri: null,
+				resultCid: null,
+				now: NOW + 12,
+			} as const;
+			await expect(stub.completePublicationOperation(completion)).resolves.toEqual({
+				ok: true,
+				state,
+				stateGeneration: 6,
+				replayed: false,
+			});
+			await expect(
+				stub.completePublicationOperation({ ...completion, reasonCode: "DIFFERENT_REASON" }),
+			).resolves.toEqual({ ok: false, code: "PUBLICATION_CAS_REQUIRED" });
+			await expect(stub.getIntent(DID, INTENT_ID)).resolves.toMatchObject({
+				state,
+				stateGeneration: 6,
+			});
+			const transitions = await stub.listIntentTransitions(DID, INTENT_ID);
+			expect(transitions.at(-1)).toMatchObject({ reasonCode, toState: state });
+		},
+	);
 
 	it("requires reconciliation instead of superseding an expired write lease", async () => {
 		const stub = await preparePublishing();

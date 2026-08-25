@@ -11,6 +11,7 @@ import type {
 	StoredIntent,
 	TransitionIntentInput,
 } from "../publisher-do/publisher-do.js";
+import { publishVerifiedIntent } from "../publishing/workflow.js";
 import {
 	evaluateVerifiedRelease,
 	normalizeVerifierReport,
@@ -30,7 +31,7 @@ export interface ReleaseIntentWorkflowParams {
 
 export interface ReleaseIntentWorkflowOutput {
 	intentId: string;
-	state: "expired" | "invalid" | "ready" | "rejected";
+	state: "conflict" | "expired" | "failed" | "invalid" | "published" | "ready" | "rejected";
 	reasonCode: string | null;
 }
 
@@ -333,7 +334,13 @@ export class ReleaseIntentWorkflow extends WorkflowEntrypoint<
 				}),
 			);
 			if (!ready.ok) throw new NonRetryableError(ready.code);
-			return { intentId: params.intentId, state: "ready", reasonCode: null };
+			return await publishVerifiedIntent(
+				this.env,
+				step,
+				params.publisherDid,
+				intent,
+				decision.approvalEvidence,
+			);
 		}
 		const awaiting = await step.do<TransitionSummary>("await-approval", async () =>
 			transitionIntent(publisher, {
@@ -400,7 +407,13 @@ export class ReleaseIntentWorkflow extends WorkflowEntrypoint<
 			currentIntent(publisher, params.publisherDid, params.intentId),
 		);
 		if (completed?.state === "ready") {
-			return { intentId: params.intentId, state: "ready", reasonCode: null };
+			return await publishVerifiedIntent(
+				this.env,
+				step,
+				params.publisherDid,
+				intent,
+				decision.approvalEvidence,
+			);
 		}
 		if (completed?.state === "rejected") {
 			return { intentId: params.intentId, state: "rejected", reasonCode: "REJECTED" };

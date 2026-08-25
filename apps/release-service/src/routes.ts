@@ -44,6 +44,18 @@ export interface RouteDefinition {
 	): Response | Promise<Response>;
 }
 
+function accessHandler(
+	handler: (
+		request: Request,
+		requestId: string,
+		configuration: ServiceConfiguration,
+		accessActor: AccessActor | null,
+	) => Response | Promise<Response>,
+): RouteDefinition["handler"] {
+	return (request, requestId, configuration, _params, accessActor) =>
+		handler(request, requestId, configuration, accessActor);
+}
+
 export const ROUTES = Object.freeze([
 	{
 		method: "GET",
@@ -125,30 +137,30 @@ export const ROUTES = Object.freeze([
 		method: "GET",
 		path: "/admin/api/viewer/status",
 		accessRole: "viewer",
-		handler: handleServiceStatus,
+		handler: accessHandler(handleServiceStatus),
 	},
 	{
 		method: "GET",
 		path: "/admin/api/viewer/publisher-control",
 		accessRole: "viewer",
-		handler: handleGetPublisherControl,
+		handler: accessHandler(handleGetPublisherControl),
 	},
 	{
 		method: "GET",
 		path: "/admin/api/viewer/audit",
 		accessRole: "viewer",
-		handler: handleControlAudit,
+		handler: accessHandler(handleControlAudit),
 	},
 	{
 		method: "POST",
 		path: "/admin/api/admin/service-mode",
 		accessRole: "admin",
-		handler: handleSetServiceMode,
+		handler: accessHandler(handleSetServiceMode),
 	},
 	{
 		method: "POST",
 		path: "/admin/api/admin/publisher-control",
 		accessRole: "admin",
-		handler: handleSetPublisherControl,
+		handler: accessHandler(handleSetPublisherControl),
 	},
 ] as const satisfies readonly RouteDefinition[]);

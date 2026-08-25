@@ -10,7 +10,7 @@ import { createApproverApplicationSession } from "../src/approver-session/sessio
 import { handleRequest } from "../src/index.js";
 import { TEST_BINDINGS } from "./fixtures/oauth.js";
 
-const ORIGIN = "https://release.example.invalid";
+const ORIGIN = "https://release.example.com";
 const PUBLISHER_DID = "did:web:publisher.example.com";
 const APPROVER_DID = "did:plc:approver";
 const INTENT_ID = "01JABCDEFGHJKMNPQRSTVWXYZ0";
@@ -203,7 +203,7 @@ function assertion(
 	const clientDataJSON = Buffer.from(
 		JSON.stringify({ type: "webauthn.get", challenge, origin: ORIGIN }),
 	);
-	const rpIdHash = createHash("sha256").update("release.example.invalid").digest();
+	const rpIdHash = createHash("sha256").update("release.example.com").digest();
 	const counter = Buffer.alloc(4);
 	counter.writeUInt32BE(1);
 	const authenticatorData = Buffer.concat([
