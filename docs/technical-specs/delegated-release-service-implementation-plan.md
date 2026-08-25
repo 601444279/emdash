@@ -241,7 +241,7 @@ Dependencies: G0 architecture and Access decisions.
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `W2.1` | Scaffold the Worker, static assets, test configuration, bindings, Wrangler Durable Object class migration, Workflow binding, verifier binding, and generated types |
 | `W2.2` | Add versioned JSON envelopes, request IDs, body limits, security headers, CORS policy, error handling, and route composition                         |
-| `W2.3` | Implement Access JWT verification, group-to-role mapping, CSRF, and operator mutation idempotency                                                    |
+| `W2.3` | Implement Access JWT verification, role-specific audience boundaries, CSRF, and operator mutation idempotency                                       |
 | `W2.4` | Implement `ServiceControlDurableObject`, service modes, publication permits, publisher controls, audit, and alarm-backed cleanup                     |
 | `W2.5` | Add health and readiness behavior that distinguishes configuration, binding, and dependency failure without exposing tenant state                    |
 | `W2.6` | Add CI lanes for Node tests, workerd tests, Worker build, binding generation, and packed-output checks                                               |
@@ -249,7 +249,7 @@ Dependencies: G0 architecture and Access decisions.
 ### Acceptance criteria
 
 - Production routes start only with complete required bindings and fail with public-safe configuration errors.
-- Access operator routes reject missing, wrong-audience, expired, malformed, and insufficient-group JWTs.
+- Access operator routes reject missing, wrong-audience, expired, malformed, non-human, and wrong-role JWTs.
 - Operator role boundaries prevent viewers and reviewers from executing admin-only actions.
 - CSRF and idempotency checks apply to every cookie-authenticated mutation.
 - Service mode transitions are atomic and append audit before returning success.

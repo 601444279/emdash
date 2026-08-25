@@ -47,15 +47,15 @@ The service has four independent authentication realms. Credentials and sessions
 | Approver         | AT Protocol OAuth plus an enrolled passkey | Approve or reject one exact release intent                                 |
 | Service operator | Cloudflare Access                          | Observe, pause, suspend, revoke, retry, and recover the service            |
 
-Cloudflare Access protects `/admin/*` and the operator API. The Worker verifies the Access JWT's issuer, audience, expiry, and group claims. Access-injected identity headers are not sufficient by themselves. Operator mutations retain CSRF and idempotency protection.
+Cloudflare Access protects `/admin/*` and the operator API. The Worker verifies the `Cf-Access-Jwt-Assertion` signature, team issuer, role-specific audience, time claims, token type, and human identity. Access-injected identity headers and the browser cookie are not sufficient by themselves. Operator mutations retain CSRF and idempotency protection.
 
-Deployments map Access groups to three service roles:
+Deployments use separate Access policy and audience boundaries for three service roles:
 
 - `viewer` reads health, publisher state, intent state, and sanitized audit data;
 - `reviewer` cancels unpublished intents and triggers bounded reconciliation; and
 - `admin` changes service mode, suspends publishers, revokes retained authority, and operates key or recovery controls.
 
-Role names are stable application contracts. Each deployment configures the Access group identifiers that grant them. No Access role can establish publisher delegation, authorize workload policy, enrol an approver, approve an intent, or publish a release.
+Role names and audience bindings are stable application contracts. Each deployment assigns its operator groups to the appropriate Access policies; Access evaluates membership before forwarding the request. The Worker does not authorize from optional group claims because Access may trim custom claims to fit its cookie limit. No Access role can establish publisher delegation, authorize workload policy, enrol an approver, approve an intent, or publish a release.
 
 Publisher and approver OAuth proves control of a DID. After a successful identity-only OAuth flow, the service may issue a short-lived application session. That session cannot write to the PDS. The separately authorized release delegation is encrypted and stored in the publisher's Durable Object.
 
