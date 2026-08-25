@@ -83,6 +83,15 @@ export type RevokeDelegationResult =
 	| { ok: true; delegation: StoredDelegation }
 	| { ok: false; code: "DELEGATION_CAS_REQUIRED" };
 
+export type RequireDelegationReauthorizationResult =
+	| { ok: true; delegation: StoredDelegation }
+	| { ok: false; code: "DELEGATION_CAS_REQUIRED" };
+
+export type DelegationReauthorizationReason =
+	| "OAUTH_CLIENT_KEY_UNAVAILABLE"
+	| "OAUTH_SESSION_INVALID"
+	| "ENCRYPTION_KEY_UNAVAILABLE";
+
 export interface DelegationRefreshLease {
 	generation: number;
 	token: string;
@@ -662,6 +671,43 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				now,
 			);
 			return true;
+		});
+	}
+
+	requireDelegationReauthorization(
+		publisherDid: string,
+		expectedVersion: number,
+		reasonCode: DelegationReauthorizationReason,
+	): RequireDelegationReauthorizationResult {
+		this.#assertPublisherDid(publisherDid);
+		if (!validPositiveInteger(expectedVersion)) {
+			throw new PublisherStateError("DELEGATION_INVALID");
+		}
+		return this.ctx.storage.transactionSync(() => {
+			const current = this.#readDelegation();
+			if (!current || current.stateVersion !== expectedVersion || current.status === "revoked") {
+				return { ok: false, code: "DELEGATION_CAS_REQUIRED" } as const;
+			}
+			if (current.status === "reauthorization_required") {
+				return { ok: true, delegation: current } as const;
+			}
+			const now = Date.now();
+			this.ctx.storage.sql.exec(
+				`UPDATE delegation SET
+					status = 'reauthorization_required', state_version = state_version + 1, updated_at = ?
+				 WHERE id = 1`,
+				now,
+			);
+			this.#clearRefreshOperation(now);
+			this.#appendAudit(
+				"delegation-reauthorization-required",
+				"system",
+				"release-service",
+				current.releaseNsid,
+				now,
+				reasonCode,
+			);
+			return { ok: true, delegation: this.#readDelegation()! } as const;
 		});
 	}
 
