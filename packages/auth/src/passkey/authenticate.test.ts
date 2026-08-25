@@ -275,7 +275,7 @@ describe("authenticateWithPasskey", () => {
 			challenge: generated.challenge,
 		});
 		const atomicStore = {
-			...initial.challengeStore,
+			set: initial.challengeStore.set,
 			consume: vi.fn(async () => stored),
 		} satisfies AtomicChallengeStore;
 
@@ -344,7 +344,7 @@ describe("authenticateWithPasskey", () => {
 			challenge: generated.challenge,
 		});
 		const atomicStore = {
-			...initial.challengeStore,
+			set: initial.challengeStore.set,
 			consume: vi.fn(async () => ({
 				...stored,
 				context: encodeChallengeContext(approvalContext, { intentId: "intent_2" }),

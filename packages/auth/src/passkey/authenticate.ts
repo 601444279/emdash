@@ -113,7 +113,7 @@ function decodeAssertionSignature(signature: Uint8Array) {
 export async function generateAuthenticationOptions<Type extends string, Context>(
 	config: PasskeyConfig,
 	credentials: Array<Pick<Credential, "id" | "transports">>,
-	challengeStore: ChallengeStore,
+	challengeStore: Pick<ChallengeStore, "set">,
 	challengeContext?: ChallengeContextBinding<Type, Context>,
 ): Promise<AuthenticationOptions> {
 	const serializedContext = challengeContext
@@ -167,7 +167,7 @@ export async function verifyAuthenticationResponse<Type extends string, Context>
 	config: PasskeyConfig,
 	response: AuthenticationResponse,
 	credential: Pick<Credential, "id" | "publicKey" | "algorithm" | "counter">,
-	challengeStore: ChallengeStore,
+	challengeStore: ChallengeStore | AtomicChallengeStore,
 	challengeContext?: ChallengeContextCodec<Type, Context>,
 ): Promise<VerifiedAuthentication | VerifiedAuthenticationWithContext<Context>> {
 	const { clientDataJSON, authenticatorData, signature, clientData } =
@@ -180,8 +180,7 @@ export async function verifyAuthenticationResponse<Type extends string, Context>
 
 	// Verify challenge - convert Uint8Array back to base64url string (no padding, matching stored format)
 	const challengeString = encodeBase64urlNoPadding(clientData.challenge);
-	const consume = "consume" in challengeStore ? challengeStore.consume : undefined;
-	const consumesAtomically = typeof consume === "function";
+	const consumesAtomically = isAtomicChallengeStore(challengeStore);
 	if (challengeContext && !consumesAtomically) {
 		throw new PasskeyAuthenticationError(
 			"invalid_response",
@@ -189,7 +188,7 @@ export async function verifyAuthenticationResponse<Type extends string, Context>
 		);
 	}
 	const challengeData = consumesAtomically
-		? await consume.call(challengeStore, challengeString)
+		? await challengeStore.consume(challengeString)
 		: await challengeStore.get(challengeString);
 	if (!challengeData) {
 		throw new PasskeyAuthenticationError("challenge_not_found", "Challenge not found or expired");
@@ -307,6 +306,12 @@ export async function verifyAuthenticationResponse<Type extends string, Context>
 		newCounter: authData.signatureCounter,
 	};
 	return !contextResult.present ? verified : { ...verified, challengeContext: contextResult.value };
+}
+
+function isAtomicChallengeStore(
+	store: ChallengeStore | AtomicChallengeStore,
+): store is AtomicChallengeStore {
+	return "consume" in store && typeof store.consume === "function";
 }
 
 /**

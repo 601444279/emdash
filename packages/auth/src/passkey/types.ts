@@ -113,7 +113,8 @@ export interface ChallengeStore {
 }
 
 /** A store that removes and returns a challenge in one atomic operation. */
-export interface AtomicChallengeStore extends ChallengeStore {
+export interface AtomicChallengeStore {
+	set(challenge: string, data: ChallengeData): Promise<void>;
 	consume(challenge: string): Promise<ChallengeData | null>;
 }
 

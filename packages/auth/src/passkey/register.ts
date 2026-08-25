@@ -49,7 +49,7 @@ export async function generateRegistrationOptions<Type extends string, Context>(
 	config: PasskeyConfig,
 	user: Pick<User, "id" | "email" | "name">,
 	existingCredentials: Array<Pick<Credential, "id" | "transports">>,
-	challengeStore: ChallengeStore,
+	challengeStore: Pick<ChallengeStore, "set">,
 	challengeContext?: ChallengeContextBinding<Type, Context>,
 ): Promise<RegistrationOptions> {
 	const serializedContext = challengeContext
@@ -118,7 +118,7 @@ export function verifyRegistrationResponse(
 export async function verifyRegistrationResponse<Type extends string, Context>(
 	config: PasskeyConfig,
 	response: RegistrationResponse,
-	challengeStore: ChallengeStore,
+	challengeStore: ChallengeStore | AtomicChallengeStore,
 	challengeContext?: ChallengeContextCodec<Type, Context>,
 ): Promise<VerifiedRegistration | VerifiedRegistrationWithContext<Context>> {
 	// Decode the response
@@ -135,13 +135,12 @@ export async function verifyRegistrationResponse<Type extends string, Context>(
 
 	// Verify challenge - convert Uint8Array back to base64url string (no padding, matching stored format)
 	const challengeString = encodeBase64urlNoPadding(clientData.challenge);
-	const consume = "consume" in challengeStore ? challengeStore.consume : undefined;
-	const consumesAtomically = typeof consume === "function";
+	const consumesAtomically = isAtomicChallengeStore(challengeStore);
 	if (challengeContext && !consumesAtomically) {
 		throw new Error("Typed challenge context requires an atomic challenge store");
 	}
 	const challengeData = consumesAtomically
-		? await consume.call(challengeStore, challengeString)
+		? await challengeStore.consume(challengeString)
 		: await challengeStore.get(challengeString);
 	if (!challengeData) {
 		throw new Error("Challenge not found or expired");
@@ -254,6 +253,12 @@ export async function verifyRegistrationResponse<Type extends string, Context>(
 		transports: response.response.transports ?? [],
 	};
 	return !contextResult.present ? verified : { ...verified, challengeContext: contextResult.value };
+}
+
+function isAtomicChallengeStore(
+	store: ChallengeStore | AtomicChallengeStore,
+): store is AtomicChallengeStore {
+	return "consume" in store && typeof store.consume === "function";
 }
 
 /**
