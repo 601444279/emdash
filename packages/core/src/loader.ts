@@ -825,6 +825,28 @@ export interface TaxonomyPivotQueryOptions {
 }
 
 /**
+ * Options for {@link buildBylinePivotQuery}.
+ */
+export interface BylinePivotQueryOptions {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any Kysely instance
+	db: Kysely<any>;
+	/** Collection slug (pivot `collection_slug` value). */
+	collection: string;
+	/** Content table name (`ec_<collection>`). */
+	tableName: string;
+	/** Byline translation_groups to match (OR'd). */
+	bylineGroups: string[];
+	orderBy: OrderBySpec | undefined;
+	cursor: string | undefined;
+	locale: string | undefined;
+	status: string | undefined;
+	/** `true` → `deleted_at IS NULL` (live); `false` → `IS NOT NULL` (trash). */
+	deletedIsNull: boolean;
+	fetchLimit: number | undefined;
+	offset: number | undefined;
+}
+
+/**
  * Build the pivot-driven taxonomy listing query (#1834).
  *
  * Drives from the term pivot and joins content translations through their
@@ -968,6 +990,117 @@ export function buildTaxonomyPivotQuery(
 				${localeR}
 				${residual}
 				${bylineCt}
+		)
+		SELECT r.*, ${termsSelect}, ${bylinesSelect}, ${bylinesExistSelect}
+		FROM picked JOIN ${sql.ref(tableName)} AS r ON r.id = picked.entry_id
+		WHERE ${deletedR} ${statusR} ${localeR}
+			${cursorCond}
+		${orderByClause}
+		${limitClause}
+	`;
+}
+
+/**
+ * Build the pivot-driven byline listing query.
+ *
+ * Mirrors the taxonomy pivot fast path for the byline-only case.
+ * `_emdash_content_bylines.content_id` references a locale-specific content
+ * row, so the join is a direct `r.id = cb.content_id` — no translation_group
+ * indirection. A byline filter matches any of the requested translation groups
+ * (OR), and an entry matching several groups is deduped with `GROUP BY` or
+ * `DISTINCT`. Content columns remain authoritative for locale, visibility,
+ * sorting, and cursor predicates.
+ */
+export function buildBylinePivotQuery(
+	opts: BylinePivotQueryOptions,
+): ReturnType<typeof sql<Record<string, unknown>>> {
+	const {
+		db,
+		collection,
+		tableName,
+		bylineGroups,
+		orderBy,
+		cursor,
+		locale,
+		status,
+		deletedIsNull,
+		fetchLimit,
+		offset,
+	} = opts;
+
+	const primary = getPrimarySort(orderBy);
+	const validSortKeys = orderBy
+		? Object.keys(orderBy).filter((k) => FIELD_NAME_PATTERN.test(k))
+		: [];
+	const singleSort = validSortKeys.length <= 1;
+	const isIndexedSort =
+		singleSort && (primary.field === "published_at" || primary.field === "created_at");
+	const dir = primary.direction === "asc" ? sql`ASC` : sql`DESC`;
+	const cmp = primary.direction === "asc" ? sql.raw(">") : sql.raw("<");
+
+	const bylineCond =
+		bylineGroups.length === 1
+			? sql`cb.byline_id = ${bylineGroups[0]}`
+			: sql`cb.byline_id IN (${sql.join(bylineGroups.map((g) => sql`${g}`))})`;
+
+	const {
+		terms: termsSelect,
+		bylines: bylinesSelect,
+		bylinesExist: bylinesExistSelect,
+	} = foldedHydrationSelects(db, collection, "r");
+
+	const deletedR = deletedIsNull ? sql`r.deleted_at IS NULL` : sql`r.deleted_at IS NOT NULL`;
+	const statusR = status !== undefined ? sql`AND ${buildStatusCondition(db, status, "r")}` : sql``;
+	const localeR = locale ? sql`AND r.locale = ${locale}` : sql``;
+	const limitClause = buildPivotLimitOffset(db, fetchLimit, offset);
+
+	if (isIndexedSort) {
+		const sortField = primary.field; // raw field name without table prefix
+		const sortRef = sql.ref(`r.${sortField}`);
+		const sortval = sql`MAX(${sortRef})`;
+
+		let havingClause = sql``;
+		if (cursor) {
+			const { orderValue, id } = decodeCursor(cursor);
+			const cond = sql`(${sortval} ${cmp} ${orderValue} OR (${sortval} = ${orderValue} AND r.id ${cmp} ${id}))`;
+			havingClause = sql`HAVING ${cond}`;
+		}
+
+		return sql<Record<string, unknown>>`
+			WITH picked AS (
+				SELECT r.id AS entry_id, ${sortval} AS sortval
+				FROM ${sql.ref("_emdash_content_bylines")} AS cb
+				JOIN ${sql.ref(tableName)} AS r ON r.id = cb.content_id
+				WHERE cb.collection_slug = ${collection}
+					AND ${bylineCond}
+					AND ${deletedR}
+					${statusR}
+					${localeR}
+				GROUP BY r.id
+				${havingClause}
+				ORDER BY sortval ${dir}, r.id ${dir}
+				${limitClause}
+			)
+			SELECT r.*, ${termsSelect}, ${bylinesSelect}, ${bylinesExistSelect}
+			FROM picked JOIN ${sql.ref(tableName)} AS r ON r.id = picked.entry_id
+			WHERE ${deletedR} ${statusR} ${localeR}
+			ORDER BY picked.sortval ${dir}, picked.entry_id ${dir}
+		`;
+	}
+
+	// Temp-sort path: collect candidates from the byline pivot, sort on the content row.
+	const orderByClause = buildOrderByClause(orderBy, "r");
+	const cursorCond = cursor ? sql`AND ${buildCursorCondition(cursor, orderBy, "r")}` : sql``;
+	return sql<Record<string, unknown>>`
+		WITH picked AS (
+			SELECT DISTINCT r.id AS entry_id
+			FROM ${sql.ref("_emdash_content_bylines")} AS cb
+			JOIN ${sql.ref(tableName)} AS r ON r.id = cb.content_id
+			WHERE cb.collection_slug = ${collection}
+				AND ${bylineCond}
+				AND ${deletedR}
+				${statusR}
+				${localeR}
 		)
 		SELECT r.*, ${termsSelect}, ${bylinesSelect}, ${bylinesExistSelect}
 		FROM picked JOIN ${sql.ref(tableName)} AS r ON r.id = picked.entry_id
@@ -1275,6 +1408,25 @@ export function emdashLoader(): LiveLoader<EntryData, EntryFilter, CollectionFil
 						// Public listings only ever want live content.
 						deletedIsNull: true,
 						bylineGroups: bylineFilter ? bylineFilter.groups : null,
+						fetchLimit,
+						offset,
+					}).execute(db);
+				} else if (bylineFilter && Object.keys(fieldFilters).length === 0) {
+					// Pivot-drive fast path for a byline-only filter: seek matching
+					// credits on `_emdash_content_bylines` instead of scanning the
+					// whole collection and probing a byline EXISTS per row. Combined
+					// byline + field or byline + taxonomy filters fall through to the
+					// single-table shape below.
+					result = await buildBylinePivotQuery({
+						db,
+						collection: type,
+						tableName,
+						bylineGroups: bylineFilter.groups,
+						orderBy,
+						cursor,
+						locale,
+						status,
+						deletedIsNull: true,
 						fetchLimit,
 						offset,
 					}).execute(db);
