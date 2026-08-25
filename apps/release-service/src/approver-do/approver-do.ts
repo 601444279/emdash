@@ -8,6 +8,7 @@ import {
 	type ApproverCredential,
 	type ApprovalReceipt,
 	type CleanupResult,
+	type CommitVerifiedDecisionInput,
 	type CommitCredentialUseResult,
 	type ConsumeChallengeResult,
 	type CreateApproverSessionInput,
@@ -15,11 +16,12 @@ import {
 	type CreateChallengeInput,
 	type CreateChallengeResult,
 	type CredentialVerificationMaterial,
+	type DecisionIdentity,
 	type EnrolCredentialInput,
 	type EnrolCredentialResult,
+	type FindDecisionResult,
 	type PutIdentityTransactionInput,
 	type PutIdentityTransactionResult,
-	type RecordDecisionInput,
 	type RecordDecisionResult,
 	type RevokeCredentialResult,
 	type StoredIdentityTransaction,
@@ -32,6 +34,7 @@ export type {
 	ApprovalDecision,
 	ApprovalReceipt,
 	CleanupResult,
+	CommitVerifiedDecisionInput,
 	CommitCredentialUseResult,
 	ConsumedChallenge,
 	ConsumeChallengeResult,
@@ -40,11 +43,12 @@ export type {
 	CreateChallengeInput,
 	CreateChallengeResult,
 	CredentialVerificationMaterial,
+	DecisionIdentity,
 	EnrolCredentialInput,
 	EnrolCredentialResult,
+	FindDecisionResult,
 	PutIdentityTransactionInput,
 	PutIdentityTransactionResult,
-	RecordDecisionInput,
 	RecordDecisionResult,
 	RevokeCredentialResult,
 	StoredApproverSession,
@@ -216,12 +220,17 @@ export class ApproverDurableObject extends DurableObject<Env> {
 		return result;
 	}
 
-	async recordDecision(
+	findDecision(approverDid: string, input: DecisionIdentity): FindDecisionResult {
+		this.#assertApproverDid(approverDid);
+		return this.#store.findDecision(approverDid, input);
+	}
+
+	async commitVerifiedDecision(
 		approverDid: string,
-		input: RecordDecisionInput,
+		input: CommitVerifiedDecisionInput,
 	): Promise<RecordDecisionResult> {
 		this.#assertApproverDid(approverDid);
-		const result = this.#store.recordDecision(approverDid, input);
+		const result = this.#store.commitVerifiedDecision(approverDid, input);
 		if (result.ok && !result.replayed) await this.#scheduleNextAlarm(input.verifiedAt);
 		return result;
 	}

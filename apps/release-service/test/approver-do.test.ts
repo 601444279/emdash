@@ -294,9 +294,11 @@ describe("ApproverDurableObject", () => {
 			decision: "approve" as const,
 			credentialId: CREDENTIAL_ID,
 			verifiedAt: now + 1,
+			expectedCounter: 0,
+			newCounter: 1,
 		};
 
-		const recorded = await stub.recordDecision(APPROVER_DID, input);
+		const recorded = await stub.commitVerifiedDecision(APPROVER_DID, input);
 		expect(recorded).toEqual({
 			ok: true,
 			replayed: false,
@@ -311,17 +313,17 @@ describe("ApproverDurableObject", () => {
 			},
 		});
 		await expect(
-			stub.recordDecision(APPROVER_DID, { ...input, verifiedAt: now + 10 }),
+			stub.commitVerifiedDecision(APPROVER_DID, { ...input, verifiedAt: now + 10 }),
 		).resolves.toMatchObject({
 			ok: true,
 			replayed: true,
 			receipt: { verifiedAt: now + 1 },
 		});
 		await expect(
-			stub.recordDecision(APPROVER_DID, { ...input, decision: "reject" }),
+			stub.commitVerifiedDecision(APPROVER_DID, { ...input, decision: "reject" }),
 		).resolves.toEqual({ ok: false, code: "DECISION_IDEMPOTENCY_CONFLICT" });
 		await expect(
-			stub.recordDecision(APPROVER_DID, {
+			stub.commitVerifiedDecision(APPROVER_DID, {
 				...input,
 				idempotencyKey: "decision-idempotency-0002",
 				decision: "reject",

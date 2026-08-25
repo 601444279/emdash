@@ -170,14 +170,22 @@ export interface ApprovalReceipt {
 	verifiedAt: number;
 }
 
-export interface RecordDecisionInput {
+export interface DecisionIdentity {
 	idempotencyKey: string;
 	intentId: string;
 	publisherDid: string;
 	approvalDigest: string;
 	decision: ApprovalDecision;
 	credentialId: string;
+}
+
+export interface RecordDecisionInput extends DecisionIdentity {
 	verifiedAt: number;
+}
+
+export interface CommitVerifiedDecisionInput extends RecordDecisionInput {
+	expectedCounter: number;
+	newCounter: number;
 }
 
 export type RecordDecisionResult =
@@ -187,9 +195,16 @@ export type RecordDecisionResult =
 			code:
 				| "CREDENTIAL_NOT_FOUND"
 				| "CREDENTIAL_REVOKED"
+				| "CREDENTIAL_STATE_CHANGED"
+				| "COUNTER_REGRESSION"
 				| "DECISION_CONFLICT"
 				| "DECISION_IDEMPOTENCY_CONFLICT";
 	  };
+
+export type FindDecisionResult =
+	| { ok: true; receipt: ApprovalReceipt }
+	| { ok: false; code: "DECISION_IDEMPOTENCY_CONFLICT" }
+	| null;
 
 export interface ApproverAuditEvent {
 	sequence: number;
@@ -930,68 +945,61 @@ export class ApproverStore {
 		);
 	}
 
-	recordDecision(approverDid: string, input: RecordDecisionInput): RecordDecisionResult {
+	findDecision(approverDid: string, input: DecisionIdentity): FindDecisionResult {
 		this.#assertOwner(approverDid);
-		if (!this.#validDecision(input)) {
+		if (!this.#validDecisionIdentity(input)) {
+			throw new ApproverStoreError("APPROVER_INPUT_INVALID");
+		}
+		return this.#findDecision(input, approverDid);
+	}
+
+	commitVerifiedDecision(
+		approverDid: string,
+		input: CommitVerifiedDecisionInput,
+	): RecordDecisionResult {
+		this.#assertOwner(approverDid);
+		if (
+			!this.#validDecision(input) ||
+			!validInteger(input.expectedCounter) ||
+			input.expectedCounter < 0 ||
+			!validInteger(input.newCounter) ||
+			input.newCounter < 0
+		) {
 			throw new ApproverStoreError("APPROVER_INPUT_INVALID");
 		}
 		return this.storage.transactionSync(() => {
-			const existingKey = this.#readDecisionByKey(input.idempotencyKey);
-			if (existingKey) {
-				if (
-					existingKey.intent_id !== input.intentId ||
-					existingKey.publisher_did !== input.publisherDid ||
-					existingKey.approval_digest !== input.approvalDigest ||
-					existingKey.decision !== input.decision ||
-					existingKey.credential_id !== input.credentialId
-				) {
-					return { ok: false, code: "DECISION_IDEMPOTENCY_CONFLICT" } as const;
-				}
-				return {
-					ok: true,
-					receipt: decisionReceipt(existingKey, approverDid),
-					replayed: true,
-				} as const;
+			const replay = this.#findDecision(input, approverDid);
+			if (replay) {
+				if (!replay.ok) return replay;
+				return { ok: true, receipt: replay.receipt, replayed: true } as const;
 			}
-			const existingDecision = this.#readDecision(input.intentId, input.approvalDigest);
-			if (existingDecision) return { ok: false, code: "DECISION_CONFLICT" } as const;
+			if (this.#readDecision(input.intentId, input.approvalDigest)) {
+				return { ok: false, code: "DECISION_CONFLICT" } as const;
+			}
 			const credential = this.#readCredential(input.credentialId);
 			if (!credential) return { ok: false, code: "CREDENTIAL_NOT_FOUND" } as const;
 			if (credential.revoked_at !== null) {
 				return { ok: false, code: "CREDENTIAL_REVOKED" } as const;
 			}
-			const receipt: ApprovalReceipt = {
-				approverDid,
-				publisherDid: input.publisherDid,
-				intentId: input.intentId,
-				approvalDigest: input.approvalDigest,
-				decision: input.decision,
-				credentialId: input.credentialId,
-				verifiedAt: input.verifiedAt,
-			};
+			if (credential.signature_counter !== input.expectedCounter) {
+				return { ok: false, code: "CREDENTIAL_STATE_CHANGED" } as const;
+			}
+			if (
+				(input.newCounter > 0 || input.expectedCounter > 0) &&
+				input.newCounter <= input.expectedCounter
+			) {
+				return { ok: false, code: "COUNTER_REGRESSION" } as const;
+			}
 			this.storage.sql.exec(
-				`INSERT INTO decisions (
-					idempotency_key, intent_id, publisher_did, approval_digest,
-					decision, credential_id, verified_at, receipt_json
-				) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-				input.idempotencyKey,
-				input.intentId,
-				input.publisherDid,
-				input.approvalDigest,
-				input.decision,
+				`UPDATE credentials SET signature_counter = ?, last_used_at = ?
+				 WHERE credential_id = ? AND signature_counter = ? AND revoked_at IS NULL`,
+				input.newCounter,
+				input.verifiedAt,
 				input.credentialId,
-				input.verifiedAt,
-				JSON.stringify(receipt),
+				input.expectedCounter,
 			);
-			this.#invalidateIntentChallenges(input.intentId, input.verifiedAt, "DECISION_RECORDED");
-			this.#appendAudit(
-				"approval-decision-recorded",
-				approverDid,
-				input.intentId,
-				input.verifiedAt,
-				input.decision === "approve" ? "APPROVED" : "REJECTED",
-			);
-			return { ok: true, receipt, replayed: false } as const;
+			this.#appendAudit("credential-used", approverDid, input.credentialId, input.verifiedAt);
+			return this.#insertDecision(approverDid, input);
 		});
 	}
 
@@ -1151,15 +1159,71 @@ export class ApproverStore {
 	}
 
 	#validDecision(input: RecordDecisionInput): boolean {
+		return this.#validDecisionIdentity(input) && validPositiveInteger(input.verifiedAt);
+	}
+
+	#validDecisionIdentity(input: DecisionIdentity): boolean {
 		return (
 			IDEMPOTENCY_KEY_PATTERN.test(input.idempotencyKey) &&
 			ULID_PATTERN.test(input.intentId) &&
 			validDid(input.publisherDid) &&
 			validHash(input.approvalDigest) &&
 			(input.decision === "approve" || input.decision === "reject") &&
-			validCredentialId(input.credentialId) &&
-			validPositiveInteger(input.verifiedAt)
+			validCredentialId(input.credentialId)
 		);
+	}
+
+	#findDecision(input: DecisionIdentity, approverDid: string): FindDecisionResult {
+		const existing = this.#readDecisionByKey(input.idempotencyKey);
+		if (!existing) return null;
+		if (
+			existing.intent_id !== input.intentId ||
+			existing.publisher_did !== input.publisherDid ||
+			existing.approval_digest !== input.approvalDigest ||
+			existing.decision !== input.decision ||
+			existing.credential_id !== input.credentialId
+		) {
+			return { ok: false, code: "DECISION_IDEMPOTENCY_CONFLICT" };
+		}
+		return { ok: true, receipt: decisionReceipt(existing, approverDid) };
+	}
+
+	#insertDecision(
+		approverDid: string,
+		input: RecordDecisionInput,
+	): Extract<RecordDecisionResult, { ok: true }> {
+		const receipt: ApprovalReceipt = {
+			approverDid,
+			publisherDid: input.publisherDid,
+			intentId: input.intentId,
+			approvalDigest: input.approvalDigest,
+			decision: input.decision,
+			credentialId: input.credentialId,
+			verifiedAt: input.verifiedAt,
+		};
+		this.storage.sql.exec(
+			`INSERT INTO decisions (
+				idempotency_key, intent_id, publisher_did, approval_digest,
+				decision, credential_id, verified_at, receipt_json
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+			input.idempotencyKey,
+			input.intentId,
+			input.publisherDid,
+			input.approvalDigest,
+			input.decision,
+			input.credentialId,
+			input.verifiedAt,
+			JSON.stringify(receipt),
+		);
+		this.#invalidateIntentChallenges(input.intentId, input.verifiedAt, "DECISION_RECORDED");
+		this.#appendAudit(
+			"approval-decision-recorded",
+			approverDid,
+			input.intentId,
+			input.verifiedAt,
+			input.decision === "approve" ? "APPROVED" : "REJECTED",
+		);
+		return { ok: true, receipt, replayed: false };
 	}
 
 	#putDeadline(kind: "challenge" | "session" | "identity", subjectId: string, at: number): void {
