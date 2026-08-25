@@ -765,7 +765,7 @@ PRs #2653, #2654, #2656, #2657, and #2658 form GitHub stack #2655. They implemen
 
 ### Active verifier stack
 
-PR #2659 implements W6.1 and the artifact half of W6.2 on `feat/drs-release-verifier`, rooted on `main`. The verifier exposes one typed service-binding RPC method and has no OAuth, Access, Durable Object, service-control, or secret bindings. Provenance verification and the release-service binding are later layers of this independent stack.
+PRs #2659 and #2660 form GitHub stack #2661, rooted on `main`. They implement W6.1 and W6.2: a typed service-binding RPC Worker with no OAuth, Access, Durable Object, service-control, or secret bindings; bounded DNS and artifact fetching; checksum and canonical bundle verification; SHA-256/384/512 artifact digest candidates; and signed Sigstore/SLSA provenance verification in the same isolated invocation. The release-service binding and Workflow orchestration are later integration layers.
 
 ### Planned GitHub stacks
 
