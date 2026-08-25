@@ -57,7 +57,8 @@ The replacement implementation is complete through the publisher OAuth callback 
 - the Worker serves confidential client metadata and overlapping JWKS, fails closed on invalid configuration, and keeps canonical publisher authority in SQLite-backed Durable Objects;
 - envelope encryption, publisher custody, generation-bound refresh operations, publisher application sessions, and identity/delegation callback routes pass real workerd tests; and
 - Cloudflare Access authenticates operators through role-specific audiences; a `ServiceControlDurableObject` owns service mode, publisher suspension, idempotency, audit, and epoch-bound publication permits; and
-- repository package typecheck, type-aware lint, 139 release-service tests, Worker build, and startup profiling pass on the top branch.
+- GitHub Actions OIDC verification normalizes repository, workflow, ref, environment, run, actor, and token identity without retaining the raw JWT; and
+- the Access/control top passes 139 release-service tests, and the workload-verifier branch passes 119; package typecheck, type-aware lint, and Worker builds pass on both.
 
 The public-client G0 lifecycle is complete on both providers: exact-scope authorization, forced refresh, and server revocation passed. npmX rejected its access token immediately after revocation. Cirrus retained the already-issued access token for its remaining lifetime while preventing future refresh. G0 still requires the deployed confidential-client run and client-key removal observation before either provider is advertised as supported by the hosted service.
 
@@ -756,6 +757,10 @@ feat/drs-confidential-oauth-callback
 ```
 
 PRs #2649 to #2651 form one merge unit in GitHub stack #2652. The first layer verifies Access role audiences and request protections. The second owns the complete initial control schema and state transitions. The third exposes the role-specific operator API.
+
+### Active workload identity stack
+
+PR #2653 implements W5.1 and W5.2 on `feat/drs-github-oidc-verifier`, based on the completed foundation stack. It freezes the normalized workload identity consumed by publisher policy and intent-admission work. Later branches in this merge unit add workload-policy storage and intent admission.
 
 ### Planned GitHub stacks
 
