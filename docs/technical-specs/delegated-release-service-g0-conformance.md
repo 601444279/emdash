@@ -119,7 +119,7 @@ This result passes the public-client exact-scope column. Refresh, explicit revoc
 
 ## Phase 2: refresh observation
 
-Wait until the `oauth.after.expiresAt` value from the authorization report has passed. Run the resume phase with the DID, not the handle:
+Run the resume phase with the DID, not the handle:
 
 ```sh
 node packages/plugin-cli/dist/index.mjs pds-conformance \
@@ -130,9 +130,7 @@ node packages/plugin-cli/dist/index.mjs pds-conformance \
 	--output <private-evidence-dir>/<provider>-refresh.json
 ```
 
-The command restores the stored exact-scope session, performs a new release create and denial matrix, then reads the non-secret stored-session metadata again. When the previous access token was expired, `oauth.refreshDue` and `oauth.refreshObserved` must both be `true`.
-
-If `refreshDue` is `false`, the run proves session restoration but not refresh. Repeat after the reported expiry.
+The command forces a refresh through the stored exact-scope session, performs a new release create and denial matrix, then reads the non-secret stored-session metadata again. `oauth.refreshForced` and `oauth.refreshObserved` must both be `true`. `oauth.refreshDue` records whether the access token had already reached its reported expiry; it does not control whether refresh runs.
 
 ## Phase 3: explicit revocation observation
 
@@ -159,7 +157,7 @@ G0 does not close on loopback-client evidence. The release service must repeat t
 2. Configure `private_key_jwt` with an active assertion key and one overlapping previous public key.
 3. Complete delegation through the service callback using the exact scope.
 4. Call `runPdsScopeConformance()` with the restored confidential session handler.
-5. Wait for access-token expiry and prove refresh through the retained session.
+5. Force refresh through the retained session and record the new expiry.
 6. Call the authorization server's revocation endpoint and record immediate and post-expiry behavior.
 7. Reauthorize using the previous assertion key, rotate the active key, retain the previous public key, and prove refresh still works.
 8. Remove the previous public key and prove the bound session can no longer refresh after its current access token expires.

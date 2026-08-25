@@ -753,7 +753,7 @@ export async function runInteractiveLogin(
  */
 export async function resumeSession(
 	did: Did,
-	options: { stateDir?: string; scope?: string } = {},
+	options: { stateDir?: string; scope?: string; refresh?: boolean | "auto" } = {},
 ): Promise<OAuthSession> {
 	const registration = await getClientRegistration(did, options.stateDir);
 	if (options.scope && options.scope !== registration.scope) {
@@ -764,7 +764,7 @@ export async function resumeSession(
 		redirectUri: registration.redirectUri,
 		scope: registration.scope,
 	});
-	return client.restore(did);
+	return client.restore(did, { refresh: options.refresh ?? "auto" });
 }
 
 export interface StoredSessionMetadata {

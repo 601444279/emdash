@@ -35,6 +35,7 @@ interface OAuthEvidence {
 	after: StoredSessionMetadata | null;
 	scopeMatches: boolean;
 	refreshDue: boolean;
+	refreshForced: boolean;
 	refreshObserved: boolean;
 	serverRevoked?: boolean;
 }
@@ -95,6 +96,7 @@ async function resolveSession(input: {
 		session: await resumeSession(input.identifier, {
 			stateDir: input.stateDir,
 			scope: input.scope,
+			refresh: input.phase === "resume",
 		}),
 	};
 }
@@ -168,8 +170,9 @@ export const pdsConformanceCommand = defineCommand({
 			phase === "resume" &&
 			typeof metadataBefore?.expiresAt === "number" &&
 			metadataBefore.expiresAt <= Date.now();
+		const refreshForced = phase === "resume";
 		const refreshObserved =
-			refreshDue &&
+			refreshForced &&
 			typeof metadataAfter?.expiresAt === "number" &&
 			metadataAfter.expiresAt > (metadataBefore?.expiresAt ?? 0);
 		const oauth: OAuthEvidence = {
@@ -178,6 +181,7 @@ export const pdsConformanceCommand = defineCommand({
 			after: metadataAfter,
 			scopeMatches: (metadataAfter ?? metadataBefore)?.scope === permission.scope,
 			refreshDue,
+			refreshForced,
 			refreshObserved,
 			...(serverRevoked !== undefined ? { serverRevoked } : {}),
 		};
@@ -196,6 +200,6 @@ export const pdsConformanceCommand = defineCommand({
 		await writeReport(args.output, report);
 
 		if (phase !== "revoke" && (!probes.passed || !oauth.scopeMatches)) process.exit(1);
-		if (phase === "resume" && refreshDue && !refreshObserved) process.exit(1);
+		if (phase === "resume" && !refreshObserved) process.exit(1);
 	},
 });
