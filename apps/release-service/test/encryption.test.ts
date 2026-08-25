@@ -1,3 +1,4 @@
+import { base64url, decodeProtectedHeader } from "jose";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -42,6 +43,25 @@ function mutateBase64Url(value: string): string {
 	return `${value.startsWith("A") ? "B" : "A"}${value.slice(1)}`;
 }
 
+function mutateCompactSegment(envelope: string, index: number): string {
+	const segments = envelope.split(".");
+	const segment = segments[index];
+	if (!segment) throw new Error("Expected a populated compact JWE segment");
+	segments[index] = mutateBase64Url(segment);
+	return segments.join(".");
+}
+
+function replaceProtectedHeader(
+	envelope: string,
+	mutate: (header: Record<string, unknown>) => void,
+): string {
+	const segments = envelope.split(".");
+	const header: Record<string, unknown> = { ...decodeProtectedHeader(envelope) };
+	mutate(header);
+	segments[0] = base64url.encode(JSON.stringify(header));
+	return segments.join(".");
+}
+
 describe("envelope encryption", () => {
 	it.each(["", "plain text", "こんにちは世界", JSON.stringify({ token: "secret" })])(
 		"round trips UTF-8 plaintext",
@@ -55,39 +75,36 @@ describe("envelope encryption", () => {
 		},
 	);
 
-	it("writes an explicit algorithm and associated-data version", async () => {
+	it("writes the required compact JWE profile and a wrapped content key", async () => {
 		const encryption = createTestEncryption();
 		const encrypted = await encryption.encrypt(encoder.encode("secret"), CONTEXT);
+		const segments = encrypted.envelope.split(".");
 
-		expect(JSON.parse(encrypted.envelope)).toMatchObject({
-			v: 2,
-			a: "A256GCM",
-			d: 1,
-			k: 2,
+		expect(segments).toHaveLength(5);
+		expect(segments[1]).not.toBe("");
+		expect(decodeProtectedHeader(encrypted.envelope)).toMatchObject({
+			alg: "A256GCMKW",
+			enc: "A256GCM",
+			kid: "2",
+			crit: ["emdash_v", "emdash_ctx"],
+			emdash_v: 1,
+			emdash_ctx: expect.stringMatching(/^[A-Za-z0-9_-]{43}$/),
+			iv: expect.stringMatching(/^[A-Za-z0-9_-]{16}$/),
+			tag: expect.stringMatching(/^[A-Za-z0-9_-]{22}$/),
 		});
 	});
 
-	it("decrypts the persisted version 1 compatibility vector", async () => {
-		const encryption = createTestEncryption();
-		const envelope =
-			'{"v":1,"k":1,"n":"AAECAwQFBgcICQoL","c":"HdFw4nM5jJCXNGp4JXOQJEGstFPca4NiixkzLzDR2RA"}';
-
-		expect(decoder.decode(await encryption.decrypt(envelope, CONTEXT))).toBe("persisted secret");
-		expect(encryption.needsRotation(envelope)).toBe(true);
-		const rotated = await encryption.rotate(envelope, CONTEXT);
-		expect(JSON.parse(rotated.envelope)).toMatchObject({ v: 2, a: "A256GCM", d: 1, k: 2 });
-		expect(decoder.decode(await encryption.decrypt(rotated.envelope, CONTEXT))).toBe(
-			"persisted secret",
-		);
-	});
-
-	it("uses a fresh nonce for every encryption", async () => {
+	it("uses a fresh content key and nonce for every encryption", async () => {
 		const encryption = createTestEncryption();
 		const plaintext = encoder.encode("same secret");
 		const first = await encryption.encrypt(plaintext, CONTEXT);
 		const second = await encryption.encrypt(plaintext, CONTEXT);
+		const firstSegments = first.envelope.split(".");
+		const secondSegments = second.envelope.split(".");
 
 		expect(first.envelope).not.toBe(second.envelope);
+		expect(firstSegments[1]).not.toBe(secondSegments[1]);
+		expect(firstSegments[2]).not.toBe(secondSegments[2]);
 	});
 
 	it("round trips arbitrary binary data", async () => {
@@ -201,79 +218,80 @@ describe("envelope encryption", () => {
 		);
 	});
 
-	it.each([
-		["malformed JSON", "not-json", "ENCRYPTED_VALUE_INVALID"],
-		[
-			"additional property",
-			'{"v":1,"k":2,"n":"AAAAAAAAAAAAAAAA","c":"AAAAAAAAAAAAAAAAAAAAAA","x":1}',
-			"ENCRYPTED_VALUE_INVALID",
-		],
-		[
-			"unsupported envelope version",
-			'{"v":3,"k":2,"n":"AAAAAAAAAAAAAAAA","c":"AAAAAAAAAAAAAAAAAAAAAA"}',
-			"ENCRYPTED_VALUE_UNSUPPORTED",
-		],
-		[
-			"padded nonce",
-			'{"v":1,"k":2,"n":"AAAAAAAAAAAAAAAA=","c":"AAAAAAAAAAAAAAAAAAAAAA"}',
-			"ENCRYPTED_VALUE_INVALID",
-		],
-		[
-			"short nonce",
-			'{"v":1,"k":2,"n":"AAAA","c":"AAAAAAAAAAAAAAAAAAAAAA"}',
-			"ENCRYPTED_VALUE_INVALID",
-		],
-		[
-			"short ciphertext",
-			'{"v":1,"k":2,"n":"AAAAAAAAAAAAAAAA","c":"AAAA"}',
-			"ENCRYPTED_VALUE_INVALID",
-		],
-		[
-			"non-canonical serialization",
-			'{ "v":1,"k":2,"n":"AAAAAAAAAAAAAAAA","c":"AAAAAAAAAAAAAAAAAAAAAA"}',
-			"ENCRYPTED_VALUE_INVALID",
-		],
-		[
-			"duplicate property",
-			'{"v":1,"v":1,"k":2,"n":"AAAAAAAAAAAAAAAA","c":"AAAAAAAAAAAAAAAAAAAAAA"}',
-			"ENCRYPTED_VALUE_INVALID",
-		],
-		[
-			"unsupported algorithm",
-			'{"v":2,"a":"A128GCM","d":1,"k":2,"n":"AAAAAAAAAAAAAAAA","c":"AAAAAAAAAAAAAAAAAAAAAA"}',
-			"ENCRYPTED_VALUE_UNSUPPORTED",
-		],
-		[
-			"unsupported associated-data version",
-			'{"v":2,"a":"A256GCM","d":2,"k":2,"n":"AAAAAAAAAAAAAAAA","c":"AAAAAAAAAAAAAAAAAAAAAA"}',
-			"ENCRYPTED_VALUE_UNSUPPORTED",
-		],
-	])("rejects a %s", async (_name, envelope, code) => {
-		const encryption = createTestEncryption();
+	it.each(["not-jwe", "a.b.c.d.e.f", "a.b.c.d.="])(
+		"rejects malformed compact input %j",
+		async (envelope) => {
+			const encryption = createTestEncryption();
 
-		await expect(encryption.decrypt(envelope, CONTEXT)).rejects.toSatisfy(
-			expectEncryptionError(code),
-		);
-	});
+			await expect(encryption.decrypt(envelope, CONTEXT)).rejects.toSatisfy(
+				expectEncryptionError("ENCRYPTED_VALUE_INVALID"),
+			);
+		},
+	);
+
+	it.each([
+		["key management algorithm", (header) => (header["alg"] = "dir")],
+		["content encryption algorithm", (header) => (header["enc"] = "A128GCM")],
+		["profile version", (header) => (header["emdash_v"] = 2)],
+		["critical header contract", (header) => (header["crit"] = ["emdash_v"])],
+	] satisfies ReadonlyArray<readonly [string, (header: Record<string, unknown>) => void]>)(
+		"rejects an unsupported %s",
+		async (_name, mutateHeader) => {
+			const encryption = createTestEncryption();
+			const encrypted = await encryption.encrypt(encoder.encode("secret"), CONTEXT);
+			const unsupported = replaceProtectedHeader(encrypted.envelope, mutateHeader);
+
+			await expect(encryption.decrypt(unsupported, CONTEXT)).rejects.toSatisfy(
+				expectEncryptionError("ENCRYPTED_VALUE_UNSUPPORTED"),
+			);
+		},
+	);
+
+	it.each([
+		["additional protected field", (header) => (header["extra"] = true)],
+		["non-canonical key ID", (header) => (header["kid"] = "02")],
+	] satisfies ReadonlyArray<readonly [string, (header: Record<string, unknown>) => void]>)(
+		"rejects an invalid %s",
+		async (_name, mutateHeader) => {
+			const encryption = createTestEncryption();
+			const encrypted = await encryption.encrypt(encoder.encode("secret"), CONTEXT);
+			const invalid = replaceProtectedHeader(encrypted.envelope, mutateHeader);
+
+			await expect(encryption.decrypt(invalid, CONTEXT)).rejects.toSatisfy(
+				expectEncryptionError("ENCRYPTED_VALUE_INVALID"),
+			);
+		},
+	);
 
 	it("rejects ciphertext modification without leaking the crypto exception", async () => {
 		const encryption = createTestEncryption();
 		const encrypted = await encryption.encrypt(encoder.encode("secret marker"), CONTEXT);
-		const parsed = JSON.parse(encrypted.envelope) as { c: string };
-		parsed.c = mutateBase64Url(parsed.c);
+		const modified = mutateCompactSegment(encrypted.envelope, 3);
 
-		await expect(encryption.decrypt(JSON.stringify(parsed), CONTEXT)).rejects.toSatisfy(
+		await expect(encryption.decrypt(modified, CONTEXT)).rejects.toSatisfy(
 			expectEncryptionError("DECRYPTION_FAILED"),
 		);
 	});
 
-	it("rejects nonce modification", async () => {
+	it("rejects content nonce modification", async () => {
 		const encryption = createTestEncryption();
 		const encrypted = await encryption.encrypt(encoder.encode("secret"), CONTEXT);
-		const parsed = JSON.parse(encrypted.envelope) as { n: string };
-		parsed.n = mutateBase64Url(parsed.n);
+		const modified = mutateCompactSegment(encrypted.envelope, 2);
 
-		await expect(encryption.decrypt(JSON.stringify(parsed), CONTEXT)).rejects.toSatisfy(
+		await expect(encryption.decrypt(modified, CONTEXT)).rejects.toSatisfy(
+			expectEncryptionError("DECRYPTION_FAILED"),
+		);
+	});
+
+	it("rejects wrapped-key metadata modification", async () => {
+		const encryption = createTestEncryption();
+		const encrypted = await encryption.encrypt(encoder.encode("secret"), CONTEXT);
+		const modified = replaceProtectedHeader(encrypted.envelope, (header) => {
+			if (typeof header["iv"] !== "string") throw new Error("Expected a key-wrap IV");
+			header["iv"] = mutateBase64Url(header["iv"]);
+		});
+
+		await expect(encryption.decrypt(modified, CONTEXT)).rejects.toSatisfy(
 			expectEncryptionError("DECRYPTION_FAILED"),
 		);
 	});
@@ -290,6 +308,8 @@ describe("envelope encryption", () => {
 
 		const rotated = await encryption.rotate(oldValue.envelope, CONTEXT);
 		expect(rotated.keyVersion).toBe(2);
+		expect(decodeProtectedHeader(oldValue.envelope)["kid"]).toBe("1");
+		expect(decodeProtectedHeader(rotated.envelope)["kid"]).toBe("2");
 		expect(rotated.envelope).not.toBe(oldValue.envelope);
 		expect(decoder.decode(await encryption.decrypt(rotated.envelope, CONTEXT))).toBe("rotate me");
 		expect(encryption.needsRotation(rotated.envelope)).toBe(false);
@@ -299,10 +319,9 @@ describe("envelope encryption", () => {
 	it("authenticates a current-version envelope before treating rotation as complete", async () => {
 		const encryption = createTestEncryption();
 		const encrypted = await encryption.encrypt(encoder.encode("secret"), CONTEXT);
-		const parsed = JSON.parse(encrypted.envelope) as { c: string };
-		parsed.c = mutateBase64Url(parsed.c);
+		const modified = mutateCompactSegment(encrypted.envelope, 3);
 
-		await expect(encryption.rotate(JSON.stringify(parsed), CONTEXT)).rejects.toSatisfy(
+		await expect(encryption.rotate(modified, CONTEXT)).rejects.toSatisfy(
 			expectEncryptionError("DECRYPTION_FAILED"),
 		);
 	});
