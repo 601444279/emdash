@@ -340,4 +340,66 @@ describe("ReleaseServiceOperatorClient", () => {
 			},
 		]);
 	});
+
+	it("resumes encrypted publisher archive pages through Access", async () => {
+		let captured: { init: RequestInit | undefined; url: string } | null = null;
+		const fetch: typeof globalThis.fetch = async (input, init) => {
+			captured = { url: input instanceof Request ? input.url : input.toString(), init };
+			return success({
+				archiveId: "publisher-archive-0001",
+				ownerHash: "A".repeat(43),
+				page: 2,
+				kind: "intents",
+				nextCursor: "audit:0",
+				nextPage: 3,
+				replayed: false,
+				complete: false,
+				manifestWritten: false,
+			});
+		};
+		const client = new ReleaseServiceOperatorClient({ serviceUrl: SERVICE, fetch });
+		await expect(
+			client.archivePublisher(
+				PUBLISHER_DID,
+				{ archiveId: "publisher-archive-0001", cursor: "intents:", page: 2 },
+				{ idempotencyKey: "operator-publisher-archive-0001" },
+			),
+		).resolves.toMatchObject({ kind: "intents", nextCursor: "audit:0", nextPage: 3 });
+		expect(new URL(captured!.url).pathname).toBe(
+			`/admin/api/publishers/${encodeURIComponent(PUBLISHER_DID)}/archive`,
+		);
+		expect(captured!.init?.body).toBe(
+			'{"archiveId":"publisher-archive-0001","cursor":"intents:","page":2}',
+		);
+	});
+
+	it("applies suspended publisher restore pages through Access", async () => {
+		let captured: { init: RequestInit | undefined; url: string } | null = null;
+		const fetch: typeof globalThis.fetch = async (input, init) => {
+			captured = { url: input instanceof Request ? input.url : input.toString(), init };
+			return success({
+				archiveId: "publisher-archive-0001",
+				ownerHash: "A".repeat(43),
+				page: 3,
+				kind: "audit-events",
+				nextPage: 4,
+				totalPages: 4,
+				replayed: false,
+				complete: true,
+				authorityStatus: "reauthorization_required",
+			});
+		};
+		const client = new ReleaseServiceOperatorClient({ serviceUrl: SERVICE, fetch });
+		await expect(
+			client.restorePublisher(
+				PUBLISHER_DID,
+				{ archiveId: "publisher-archive-0001", page: 3 },
+				{ idempotencyKey: "operator-publisher-restore-0001" },
+			),
+		).resolves.toMatchObject({ complete: true, authorityStatus: "reauthorization_required" });
+		expect(new URL(captured!.url).pathname).toBe(
+			`/admin/api/publishers/${encodeURIComponent(PUBLISHER_DID)}/restore`,
+		);
+		expect(captured!.init?.body).toBe('{"archiveId":"publisher-archive-0001","page":3}');
+	});
 });

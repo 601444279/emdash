@@ -8,8 +8,13 @@ import {
 	type EncryptionRotationResult,
 	type MutationResult,
 	type OperatorPublisherResource,
+	type PublisherArchiveKind,
+	type PublisherArchivePageInput,
+	type PublisherArchivePageResult,
 	type PublisherControlResource,
 	type PublisherResource,
+	type PublisherRestorePageInput,
+	type PublisherRestorePageResult,
 	type PutWorkloadPolicyInput,
 	type ReleaseIntentResource,
 	type ReleaseIntentResult,
@@ -29,8 +34,13 @@ export type {
 	EncryptionRotationResult,
 	MutationResult,
 	OperatorPublisherResource,
+	PublisherArchiveKind,
+	PublisherArchivePageInput,
+	PublisherArchivePageResult,
 	PublisherControlResource,
 	PublisherResource,
+	PublisherRestorePageInput,
+	PublisherRestorePageResult,
 	PutWorkloadPolicyInput,
 	ReleaseIntentResource,
 	ReleaseIntentResult,
@@ -53,6 +63,7 @@ const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$/;
 const IDEMPOTENCY_PREFIX_PATTERN = /[^A-Za-z0-9._:-]/g;
 const DIGITS_PATTERN = /^[0-9]+$/;
 const CSRF_TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
+const ARCHIVE_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{15,63}$/;
 const API_ERROR_CODES: Readonly<Record<ReleaseServiceApiErrorCode, true>> = {
 	ACCESS_DENIED: true,
 	ACCESS_AUTH_INVALID: true,
@@ -60,6 +71,7 @@ const API_ERROR_CODES: Readonly<Record<ReleaseServiceApiErrorCode, true>> = {
 	APPROVAL_INVALID: true,
 	APPROVER_SESSION_INVALID: true,
 	APPROVER_SUSPENDED: true,
+	ARCHIVE_OPERATION_FAILED: true,
 	AUTH_INVALID: true,
 	CONFIGURATION_ERROR: true,
 	CREDENTIAL_LIMIT_REACHED: true,
@@ -83,6 +95,7 @@ const API_ERROR_CODES: Readonly<Record<ReleaseServiceApiErrorCode, true>> = {
 	PUBLISHER_SESSION_INVALID: true,
 	PUBLISHER_SUSPENDED: true,
 	RELEASE_EXISTS: true,
+	RESTORE_OPERATION_FAILED: true,
 	SERVICE_PAUSED: true,
 	SERVICE_UNAVAILABLE: true,
 	VERSION_RESERVED: true,
@@ -866,6 +879,125 @@ function parseEncryptionRotation(value: unknown): EncryptionRotationResult {
 	};
 }
 
+function archivePageInput(value: PublisherArchivePageInput): PublisherArchivePageInput {
+	if (
+		!ARCHIVE_ID_PATTERN.test(value.archiveId) ||
+		(value.cursor !== null && (typeof value.cursor !== "string" || value.cursor.length === 0)) ||
+		!Number.isSafeInteger(value.page) ||
+		value.page < 0 ||
+		value.page > 999_999
+	) {
+		throw new ReleaseServiceError({
+			code: "CLIENT_RESPONSE_INVALID",
+			message: "Publisher archive page is invalid",
+		});
+	}
+	return value;
+}
+
+function isPublisherArchiveKind(value: unknown): value is PublisherArchiveKind {
+	return (
+		value === "audit-events" ||
+		value === "intents" ||
+		value === "metadata" ||
+		value === "workload-policies"
+	);
+}
+
+function parsePublisherArchivePage(value: unknown): PublisherArchivePageResult {
+	if (!isRecord(value)) throw invalidResponse();
+	const archiveId = stringValue(value, "archiveId");
+	const ownerHash = stringValue(value, "ownerHash");
+	const page = safeInteger(value, "page");
+	const nextPage = safeInteger(value, "nextPage");
+	const nextCursor = value["nextCursor"];
+	if (
+		!archiveId ||
+		!ARCHIVE_ID_PATTERN.test(archiveId) ||
+		!ownerHash ||
+		!CSRF_TOKEN_PATTERN.test(ownerHash) ||
+		page === null ||
+		page < 0 ||
+		nextPage === null ||
+		nextPage !== page + 1 ||
+		!isPublisherArchiveKind(value["kind"]) ||
+		(nextCursor !== null && typeof nextCursor !== "string") ||
+		typeof value["replayed"] !== "boolean" ||
+		typeof value["complete"] !== "boolean" ||
+		typeof value["manifestWritten"] !== "boolean" ||
+		value["complete"] !== (nextCursor === null) ||
+		(value["manifestWritten"] && !value["complete"])
+	) {
+		throw invalidResponse();
+	}
+	return {
+		archiveId,
+		ownerHash,
+		page,
+		kind: value["kind"],
+		nextCursor,
+		nextPage,
+		replayed: value["replayed"],
+		complete: value["complete"],
+		manifestWritten: value["manifestWritten"],
+	};
+}
+
+function restorePageInput(value: PublisherRestorePageInput): PublisherRestorePageInput {
+	if (
+		!ARCHIVE_ID_PATTERN.test(value.archiveId) ||
+		!Number.isSafeInteger(value.page) ||
+		value.page < 0 ||
+		value.page > 999_999
+	) {
+		throw new ReleaseServiceError({
+			code: "CLIENT_RESPONSE_INVALID",
+			message: "Publisher restore page is invalid",
+		});
+	}
+	return value;
+}
+
+function parsePublisherRestorePage(value: unknown): PublisherRestorePageResult {
+	if (!isRecord(value)) throw invalidResponse();
+	const archiveId = stringValue(value, "archiveId");
+	const ownerHash = stringValue(value, "ownerHash");
+	const page = safeInteger(value, "page");
+	const nextPage = safeInteger(value, "nextPage");
+	const totalPages = safeInteger(value, "totalPages");
+	if (
+		!archiveId ||
+		!ARCHIVE_ID_PATTERN.test(archiveId) ||
+		!ownerHash ||
+		!CSRF_TOKEN_PATTERN.test(ownerHash) ||
+		page === null ||
+		page < 0 ||
+		nextPage === null ||
+		nextPage < page + 1 ||
+		totalPages === null ||
+		totalPages < 1 ||
+		nextPage > totalPages ||
+		!isPublisherArchiveKind(value["kind"]) ||
+		typeof value["replayed"] !== "boolean" ||
+		typeof value["complete"] !== "boolean" ||
+		value["authorityStatus"] !== "reauthorization_required" ||
+		value["complete"] !== (nextPage === totalPages)
+	) {
+		throw invalidResponse();
+	}
+	return {
+		archiveId,
+		ownerHash,
+		page,
+		kind: value["kind"],
+		nextPage,
+		totalPages,
+		replayed: value["replayed"],
+		complete: value["complete"],
+		authorityStatus: "reauthorization_required",
+	};
+}
+
 export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 	#mutationHeaders(idempotencyKey: string): Headers {
 		return new Headers({
@@ -963,6 +1095,42 @@ export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 				if (!isRecord(value)) throw invalidResponse();
 				return parsePublisher(value["publisher"]);
 			},
+		);
+	}
+
+	async archivePublisher(
+		publisherDid: string,
+		page: PublisherArchivePageInput,
+		options: MutationOptions,
+	): Promise<PublisherArchivePageResult> {
+		return await this.call(
+			`/admin/api/publishers/${encodeURIComponent(publisherDid)}/archive`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: this.#mutationHeaders(options.idempotencyKey),
+				body: JSON.stringify(archivePageInput(page)),
+				signal: options.signal,
+			},
+			parsePublisherArchivePage,
+		);
+	}
+
+	async restorePublisher(
+		publisherDid: string,
+		page: PublisherRestorePageInput,
+		options: MutationOptions,
+	): Promise<PublisherRestorePageResult> {
+		return await this.call(
+			`/admin/api/publishers/${encodeURIComponent(publisherDid)}/restore`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: this.#mutationHeaders(options.idempotencyKey),
+				body: JSON.stringify(restorePageInput(page)),
+				signal: options.signal,
+			},
+			parsePublisherRestorePage,
 		);
 	}
 

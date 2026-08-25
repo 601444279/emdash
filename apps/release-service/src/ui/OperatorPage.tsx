@@ -4,6 +4,7 @@ import {
 	createReleaseIdempotencyKey,
 	type EncryptionRotationResult,
 	type OperatorPublisherResource,
+	type PublisherArchivePageResult,
 	type ServiceControlState,
 } from "@emdash-cms/registry-client/release-service";
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -25,6 +26,17 @@ function operatorStatus(t: ReturnType<typeof useT>, status: string): string {
 	return t("operator.status.unknown", "Unknown");
 }
 
+function archiveKindLabel(
+	t: ReturnType<typeof useT>,
+	kind: PublisherArchivePageResult["kind"],
+): string {
+	if (kind === "metadata") return t("operator.archive.kind.metadata", "metadata");
+	if (kind === "workload-policies")
+		return t("operator.archive.kind.workloads", "workload policies");
+	if (kind === "intents") return t("operator.archive.kind.intents", "release intents");
+	return t("operator.archive.kind.audit", "audit events");
+}
+
 export function OperatorPage() {
 	const t = useT();
 	const client = useMemo(
@@ -39,6 +51,10 @@ export function OperatorPage() {
 	const [publisherRotationCursor, setPublisherRotationCursor] = useState("");
 	const [approverRotationCursor, setApproverRotationCursor] = useState("");
 	const [rotation, setRotation] = useState<EncryptionRotationResult | null>(null);
+	const [archiveId, setArchiveId] = useState(() => `archive-${crypto.randomUUID()}`);
+	const [archiveCursor, setArchiveCursor] = useState("");
+	const [archivePage, setArchivePage] = useState("0");
+	const [archive, setArchive] = useState<PublisherArchivePageResult | null>(null);
 	const [error, setError] = useState<unknown>(null);
 	const [busy, setBusy] = useState(false);
 
@@ -141,6 +157,25 @@ export function OperatorPage() {
 		}
 	}
 
+	async function archivePublisher() {
+		setBusy(true);
+		setError(null);
+		try {
+			const result = await client.archivePublisher(
+				publisherDid,
+				{ archiveId, cursor: archiveCursor || null, page: Number(archivePage) },
+				{ idempotencyKey: createReleaseIdempotencyKey("web-publisher-archive") },
+			);
+			setArchive(result);
+			setArchiveCursor(result.nextCursor ?? "");
+			setArchivePage(String(result.nextPage));
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
 	async function operateIntent(action: "cancel" | "reconcile") {
 		setBusy(true);
 		setError(null);
@@ -193,6 +228,70 @@ export function OperatorPage() {
 					<Button loading={busy} onClick={() => setMode("publication-paused")} variant="outline">
 						{t("operator.service.pausePublication", "Pause publication")}
 					</Button>
+				</div>
+			</Surface>
+
+			<Surface className="rounded-xl border bg-kumo-base p-6">
+				<div className="flex flex-wrap items-start justify-between gap-4">
+					<div>
+						<h2 className="text-xl font-semibold text-kumo-strong">
+							{t("operator.archive.title", "Publisher archive")}
+						</h2>
+						<p className="mt-1 text-sm text-kumo-subtle">
+							{t(
+								"operator.archive.description",
+								"Write one encrypted snapshot page and resume until the completion manifest is stored.",
+							)}
+						</p>
+					</div>
+					{archive ? (
+						<Badge variant={archive.complete ? "success" : "warning"}>
+							{archive.complete
+								? t("operator.archive.complete", "Archive complete")
+								: t("operator.archive.incomplete", "Resume required")}
+						</Badge>
+					) : null}
+				</div>
+				<div className="mt-5 grid gap-4 md:grid-cols-2">
+					<Input
+						label={t("operator.archive.publisherDid", "Publisher DID")}
+						value={publisherDid}
+						onChange={(event) => setPublisherDid(event.currentTarget.value)}
+					/>
+					<Input
+						label={t("operator.archive.id", "Archive ID")}
+						value={archiveId}
+						onChange={(event) => setArchiveId(event.currentTarget.value)}
+					/>
+					<Input
+						label={t("operator.archive.cursor", "Resume cursor")}
+						value={archiveCursor}
+						onChange={(event) => setArchiveCursor(event.currentTarget.value)}
+					/>
+					<Input
+						label={t("operator.archive.page", "Page number")}
+						type="number"
+						value={archivePage}
+						onChange={(event) => setArchivePage(event.currentTarget.value)}
+					/>
+				</div>
+				<div className="mt-4 flex flex-wrap items-center gap-3">
+					<Button
+						disabled={!publisherDid || !archiveId || !Number.isSafeInteger(Number(archivePage))}
+						loading={busy}
+						onClick={archivePublisher}
+						variant="outline"
+					>
+						{t("operator.archive.write", "Write archive page")}
+					</Button>
+					{archive ? (
+						<p className="text-sm text-kumo-subtle">
+							{t("operator.archive.result", "Stored {kind} page {page}.", {
+								kind: archiveKindLabel(t, archive.kind),
+								page: archive.page,
+							})}
+						</p>
+					) : null}
 				</div>
 			</Surface>
 

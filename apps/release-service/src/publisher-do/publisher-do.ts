@@ -17,6 +17,12 @@ import {
 	type TransitionIntentResult,
 } from "./intent-state.js";
 import {
+	initializeOperationsRestoreSchema,
+	OperationsRestoreStore,
+	type ApplyPublisherRestorePageInput,
+	type ApplyPublisherRestorePageResult,
+} from "./operations-restore.js";
+import {
 	initializePublicationOperationSchema,
 	PublicationOperationStore,
 	type BeginPublicationOperationResult,
@@ -67,6 +73,11 @@ export type {
 	StoredVerificationStep,
 	VerificationStepName,
 } from "./verification-step.js";
+export type {
+	ApplyPublisherRestorePageInput,
+	ApplyPublisherRestorePageResult,
+	PublisherRestoreKind,
+} from "./operations-restore.js";
 
 const DID_PATTERN = /^did:[a-z0-9]+:[A-Za-z0-9._:%-]+$/;
 const HASH_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
@@ -92,7 +103,9 @@ export type PublisherStateErrorCode =
 	| "DELEGATION_CAS_REQUIRED"
 	| "DELEGATION_UNAVAILABLE"
 	| "ENCRYPTION_OPERATION_INVALID"
-	| "PUBLISHER_SESSION_INVALID";
+	| "OPERATIONS_EXPORT_INVALID"
+	| "PUBLISHER_SESSION_INVALID"
+	| "PUBLISHER_STATE_CORRUPT";
 
 export class PublisherStateError extends Error {
 	readonly code: PublisherStateErrorCode;
@@ -153,6 +166,29 @@ export interface StoredDelegation {
 	stateVersion: number;
 }
 
+export interface PublisherOperationsMetadata {
+	publisher: {
+		did: string;
+		status: "active" | "suspended";
+		createdAt: number;
+	};
+	delegation: Omit<
+		StoredDelegation,
+		"clientKeyId" | "encryptedSession" | "encryptionKeyVersion"
+	> | null;
+}
+
+export interface PublisherAuditEvent {
+	sequence: number;
+	eventType: string;
+	actorRealm: "access" | "approver" | "oidc" | "publisher" | "system";
+	actorIdentity: string;
+	subject: string;
+	reasonCode: string | null;
+	publicPayloadJson: string;
+	createdAt: number;
+}
+
 export type PutDelegationResult =
 	| { ok: true; delegation: StoredDelegation }
 	| { ok: false; code: "DELEGATION_CAS_REQUIRED" };
@@ -211,6 +247,13 @@ interface PublisherSessionOwnerRow {
 	did: string;
 	status: "active" | "suspended";
 	session_epoch: number;
+}
+
+interface PublisherOperationsMetadataRow {
+	[key: string]: string | number | ArrayBuffer | null;
+	did: string;
+	status: "active" | "suspended";
+	created_at: number;
 }
 
 interface PublisherSessionRow {
@@ -286,6 +329,18 @@ interface EncryptionRecordRow {
 	purpose: "oauth-session" | PublisherOAuthEncryptionPurpose;
 }
 
+interface AuditRow {
+	[key: string]: string | number | ArrayBuffer | null;
+	sequence: number;
+	event_type: string;
+	actor_realm: PublisherAuditEvent["actorRealm"];
+	actor_identity: string;
+	subject: string;
+	reason_code: string | null;
+	public_payload: string;
+	created_at: number;
+}
+
 function validBoundedString(value: unknown, maxLength: number): value is string {
 	return typeof value === "string" && value.length > 0 && value.length <= maxLength;
 }
@@ -339,6 +394,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	readonly #intents: IntentStateStore;
 	readonly #publicationOperations: PublicationOperationStore;
 	readonly #verificationSteps: VerificationStepStore;
+	readonly #operationsRestore: OperationsRestoreStore;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
@@ -347,6 +403,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		this.#intents = new IntentStateStore(ctx.storage);
 		this.#publicationOperations = new PublicationOperationStore(ctx.storage);
 		this.#verificationSteps = new VerificationStepStore(ctx.storage);
+		this.#operationsRestore = new OperationsRestoreStore(ctx.storage);
 		void ctx.blockConcurrencyWhile(async () => {
 			this.#initializeSchema();
 		});
@@ -429,6 +486,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		initializeIntentStateSchema(this.ctx.storage);
 		initializePublicationOperationSchema(this.ctx.storage);
 		initializeVerificationStepSchema(this.ctx.storage);
+		initializeOperationsRestoreSchema(this.ctx.storage);
 	}
 
 	#assertPublisherObjectName(publisherDid: string): void {
@@ -940,6 +998,94 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	getDelegation(publisherDid: string): StoredDelegation | null {
 		this.#assertPublisherDid(publisherDid);
 		return this.#readDelegation();
+	}
+
+	getOperationsMetadata(publisherDid: string): PublisherOperationsMetadata {
+		this.#assertPublisherDid(publisherDid);
+		const publisher = this.ctx.storage.sql
+			.exec<PublisherOperationsMetadataRow>(
+				"SELECT did, status, created_at FROM publisher WHERE id = 1",
+			)
+			.one();
+		const delegation = this.#readDelegation();
+		return {
+			publisher: {
+				did: publisher.did,
+				status: publisher.status,
+				createdAt: publisher.created_at,
+			},
+			delegation: delegation
+				? {
+						releaseNsid: delegation.releaseNsid,
+						scope: delegation.scope,
+						issuer: delegation.issuer,
+						pdsUrl: delegation.pdsUrl,
+						expiresAt: delegation.expiresAt,
+						refreshBefore: delegation.refreshBefore,
+						status: delegation.status,
+						stateVersion: delegation.stateVersion,
+					}
+				: null,
+		};
+	}
+
+	applyOperationsRestorePage(
+		input: ApplyPublisherRestorePageInput,
+	): ApplyPublisherRestorePageResult {
+		this.#assertPublisherDid(input.publisherDid);
+		return this.#operationsRestore.apply(input);
+	}
+
+	listAuditEvents(
+		publisherDid: string,
+		afterSequence: number,
+		limit: number,
+	): readonly PublisherAuditEvent[] {
+		this.#assertPublisherDid(publisherDid);
+		if (
+			!Number.isSafeInteger(afterSequence) ||
+			afterSequence < 0 ||
+			!Number.isSafeInteger(limit) ||
+			limit < 1 ||
+			limit > 100
+		) {
+			throw new PublisherStateError("OPERATIONS_EXPORT_INVALID");
+		}
+		return this.ctx.storage.sql
+			.exec<AuditRow>(
+				`SELECT sequence, event_type, actor_realm, actor_identity,
+				        subject, reason_code, public_payload, created_at
+				 FROM audit_events WHERE sequence > ? ORDER BY sequence LIMIT ?`,
+				afterSequence,
+				limit,
+			)
+			.toArray()
+			.map((row) => {
+				let payload: unknown;
+				try {
+					payload = JSON.parse(row.public_payload);
+				} catch {
+					throw new PublisherStateError("PUBLISHER_STATE_CORRUPT");
+				}
+				if (
+					payload === null ||
+					typeof payload !== "object" ||
+					Array.isArray(payload) ||
+					JSON.stringify(payload) !== row.public_payload
+				) {
+					throw new PublisherStateError("PUBLISHER_STATE_CORRUPT");
+				}
+				return {
+					sequence: row.sequence,
+					eventType: row.event_type,
+					actorRealm: row.actor_realm,
+					actorIdentity: row.actor_identity,
+					subject: row.subject,
+					reasonCode: row.reason_code,
+					publicPayloadJson: row.public_payload,
+					createdAt: row.created_at,
+				};
+			});
 	}
 
 	listEncryptionRecords(

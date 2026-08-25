@@ -23,6 +23,7 @@ export type ReleaseServiceApiErrorCode =
 	| "APPROVAL_INVALID"
 	| "APPROVER_SESSION_INVALID"
 	| "APPROVER_SUSPENDED"
+	| "ARCHIVE_OPERATION_FAILED"
 	| "AUTH_INVALID"
 	| "CONFIGURATION_ERROR"
 	| "CREDENTIAL_LIMIT_REACHED"
@@ -46,6 +47,7 @@ export type ReleaseServiceApiErrorCode =
 	| "PUBLISHER_SESSION_INVALID"
 	| "PUBLISHER_SUSPENDED"
 	| "RELEASE_EXISTS"
+	| "RESTORE_OPERATION_FAILED"
 	| "SERVICE_PAUSED"
 	| "SERVICE_UNAVAILABLE"
 	| "VERSION_RESERVED"
@@ -167,6 +169,43 @@ export interface EncryptionRotationResult {
 	raced: number;
 	nextCursor: string | null;
 	complete: boolean;
+}
+
+export type PublisherArchiveKind = "audit-events" | "intents" | "metadata" | "workload-policies";
+
+export interface PublisherArchivePageInput {
+	archiveId: string;
+	cursor: string | null;
+	page: number;
+}
+
+export interface PublisherArchivePageResult {
+	archiveId: string;
+	ownerHash: string;
+	page: number;
+	kind: PublisherArchiveKind;
+	nextCursor: string | null;
+	nextPage: number;
+	replayed: boolean;
+	complete: boolean;
+	manifestWritten: boolean;
+}
+
+export interface PublisherRestorePageInput {
+	archiveId: string;
+	page: number;
+}
+
+export interface PublisherRestorePageResult {
+	archiveId: string;
+	ownerHash: string;
+	page: number;
+	kind: PublisherArchiveKind;
+	nextPage: number;
+	totalPages: number;
+	replayed: boolean;
+	complete: boolean;
+	authorityStatus: "reauthorization_required";
 }
 
 export interface CursorPage<T> {

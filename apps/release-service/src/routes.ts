@@ -13,6 +13,12 @@ import {
 	handleRevokeApproverCredential,
 	matchApproverCredentialPath,
 } from "./approvals/routes.js";
+import {
+	handleArchivePublisher,
+	handleRestorePublisher,
+	matchPublisherArchivePath,
+	matchPublisherRestorePath,
+} from "./backup/routes.js";
 import type { ServiceConfiguration } from "./config.js";
 import {
 	handleControlAudit,
@@ -258,6 +264,20 @@ export const ROUTES = Object.freeze([
 		match: matchPublisherEncryptionRotationPath,
 		accessRole: "admin",
 		handler: handleRotatePublisherEncryption,
+	},
+	{
+		method: "POST",
+		path: "/admin/api/publishers/{publisherDid}/archive",
+		match: matchPublisherArchivePath,
+		accessRole: "admin",
+		handler: handleArchivePublisher,
+	},
+	{
+		method: "POST",
+		path: "/admin/api/publishers/{publisherDid}/restore",
+		match: matchPublisherRestorePath,
+		accessRole: "admin",
+		handler: handleRestorePublisher,
 	},
 	{
 		method: "POST",

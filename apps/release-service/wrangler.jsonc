@@ -38,6 +38,12 @@
 			"service": "emdash-release-verifier",
 		},
 	],
+	"r2_buckets": [
+		{
+			"binding": "OPERATIONS_ARCHIVE",
+			"bucket_name": "emdash-release-service-operations",
+		},
+	],
 	"workflows": [
 		{
 			"binding": "RELEASE_INTENT_WORKFLOW",
