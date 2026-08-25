@@ -15,6 +15,7 @@ import { ROUTES, type RouteDefinition } from "./routes.js";
 export { PublisherDurableObject } from "./publisher-do/publisher-do.js";
 export { ApproverDurableObject } from "./approver-do/approver-do.js";
 export { ReleaseIntentWorkflow } from "./workflows/release-intent.js";
+export { ServiceControlDurableObject } from "./control-do/service-control-do.js";
 
 export async function handleRequest(
 	request: Request,

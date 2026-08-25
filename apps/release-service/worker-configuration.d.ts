@@ -12,6 +12,7 @@ interface __BaseEnv_Env {
 	OAUTH_ASSERTION_KEYSET: string;
 	ENCRYPTION_KEYRING: string;
 	APPROVER_DO: DurableObjectNamespace<import("./src/index").ApproverDurableObject>;
+	SERVICE_CONTROL_DO: DurableObjectNamespace<import("./src/index").ServiceControlDurableObject>;
 	PUBLISHER_DO: DurableObjectNamespace<import("./src/index").PublisherDurableObject>;
 	RELEASE_VERIFIER: Fetcher /* emdash-release-verifier */;
 	RELEASE_INTENT_WORKFLOW: Workflow<Parameters<import("./src/index").ReleaseIntentWorkflow['run']>[0]['payload']>;
@@ -19,7 +20,10 @@ interface __BaseEnv_Env {
 declare namespace Cloudflare {
 	interface GlobalProps {
 		mainModule: typeof import("./src/index");
-		durableNamespaces: "ApproverDurableObject" | "PublisherDurableObject";
+		durableNamespaces:
+			| "ApproverDurableObject"
+			| "PublisherDurableObject"
+			| "ServiceControlDurableObject";
 	}
 	interface Env extends __BaseEnv_Env {}
 }
