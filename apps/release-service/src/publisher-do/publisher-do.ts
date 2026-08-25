@@ -18,6 +18,14 @@ import {
 	type CompletePublicationOperationResult,
 } from "./publication-operation.js";
 import {
+	initializeVerificationStepSchema,
+	VerificationStepStore,
+	type PutVerificationStepInput,
+	type PutVerificationStepResult,
+	type StoredVerificationStep,
+	type VerificationStepName,
+} from "./verification-step.js";
+import {
 	initializeWorkloadPolicySchema,
 	WorkloadPolicyStore,
 	type PutWorkloadPolicyInput,
@@ -46,6 +54,12 @@ export type {
 	PublicationOperationLease,
 	PublicationOutcome,
 } from "./publication-operation.js";
+export type {
+	PutVerificationStepInput,
+	PutVerificationStepResult,
+	StoredVerificationStep,
+	VerificationStepName,
+} from "./verification-step.js";
 
 const DID_PATTERN = /^did:[a-z0-9]+:[A-Za-z0-9._:%-]+$/;
 const HASH_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
@@ -295,6 +309,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	readonly #workloadPolicies: WorkloadPolicyStore;
 	readonly #intents: IntentStateStore;
 	readonly #publicationOperations: PublicationOperationStore;
+	readonly #verificationSteps: VerificationStepStore;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
@@ -302,6 +317,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		this.#workloadPolicies = new WorkloadPolicyStore(ctx.storage);
 		this.#intents = new IntentStateStore(ctx.storage);
 		this.#publicationOperations = new PublicationOperationStore(ctx.storage);
+		this.#verificationSteps = new VerificationStepStore(ctx.storage);
 		void ctx.blockConcurrencyWhile(async () => {
 			this.#initializeSchema();
 		});
@@ -380,6 +396,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		initializeWorkloadPolicySchema(this.ctx.storage);
 		initializeIntentStateSchema(this.ctx.storage);
 		initializePublicationOperationSchema(this.ctx.storage);
+		initializeVerificationStepSchema(this.ctx.storage);
 	}
 
 	#assertPublisherObjectName(publisherDid: string): void {
@@ -471,6 +488,25 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	listIntentTransitions(publisherDid: string, intentId: string): readonly IntentTransition[] {
 		this.#assertPublisherDid(publisherDid);
 		return this.#intents.listTransitions(intentId);
+	}
+
+	putVerificationStep(input: PutVerificationStepInput): PutVerificationStepResult {
+		this.#assertPublisherDid(input.publisherDid);
+		return this.#verificationSteps.put(input);
+	}
+
+	getVerificationStep(
+		publisherDid: string,
+		intentId: string,
+		name: VerificationStepName,
+	): StoredVerificationStep | null {
+		this.#assertPublisherDid(publisherDid);
+		return this.#verificationSteps.get(intentId, name);
+	}
+
+	listVerificationSteps(publisherDid: string, intentId: string): readonly StoredVerificationStep[] {
+		this.#assertPublisherDid(publisherDid);
+		return this.#verificationSteps.list(intentId);
 	}
 
 	async beginPublicationOperation(
