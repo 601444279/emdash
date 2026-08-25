@@ -56,6 +56,11 @@
 			"name": "emdash-release-intent",
 			"class_name": "ReleaseIntentWorkflow",
 		},
+		{
+			"binding": "PUBLISHER_ARCHIVE_WORKFLOW",
+			"name": "emdash-publisher-archive",
+			"class_name": "PublisherArchiveWorkflow",
+		},
 	],
 	"assets": {
 		"directory": "./dist/client",

@@ -373,6 +373,31 @@ describe("ReleaseServiceOperatorClient", () => {
 		);
 	});
 
+	it("starts a durable publisher archive Workflow through Access", async () => {
+		let captured: { init: RequestInit | undefined; url: string } | null = null;
+		const fetch: typeof globalThis.fetch = async (input, init) => {
+			captured = { url: input instanceof Request ? input.url : input.toString(), init };
+			return success(
+				{
+					archiveId: "publisher-archive-0001",
+					workflowId: "W".repeat(43),
+					created: true,
+				},
+				202,
+			);
+		};
+		const client = new ReleaseServiceOperatorClient({ serviceUrl: SERVICE, fetch });
+		await expect(
+			client.startPublisherArchive(PUBLISHER_DID, "publisher-archive-0001", {
+				idempotencyKey: "operator-publisher-archive-start-0001",
+			}),
+		).resolves.toMatchObject({ workflowId: "W".repeat(43), created: true });
+		expect(new URL(captured!.url).pathname).toBe(
+			`/admin/api/publishers/${encodeURIComponent(PUBLISHER_DID)}/archive/start`,
+		);
+		expect(captured!.init?.body).toBe('{"archiveId":"publisher-archive-0001"}');
+	});
+
 	it("applies suspended publisher restore pages through Access", async () => {
 		let captured: { init: RequestInit | undefined; url: string } | null = null;
 		const fetch: typeof globalThis.fetch = async (input, init) => {

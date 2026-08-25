@@ -6,6 +6,7 @@ import {
 	type OperatorPublisherResource,
 	type PublisherArchivePageResult,
 	type ServiceControlState,
+	type StartPublisherArchiveResult,
 } from "@emdash-cms/registry-client/release-service";
 import { type FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -55,6 +56,7 @@ export function OperatorPage() {
 	const [archiveCursor, setArchiveCursor] = useState("");
 	const [archivePage, setArchivePage] = useState("0");
 	const [archive, setArchive] = useState<PublisherArchivePageResult | null>(null);
+	const [archiveWorkflow, setArchiveWorkflow] = useState<StartPublisherArchiveResult | null>(null);
 	const [error, setError] = useState<unknown>(null);
 	const [busy, setBusy] = useState(false);
 
@@ -176,6 +178,22 @@ export function OperatorPage() {
 		}
 	}
 
+	async function startPublisherArchive() {
+		setBusy(true);
+		setError(null);
+		try {
+			setArchiveWorkflow(
+				await client.startPublisherArchive(publisherDid, archiveId, {
+					idempotencyKey: createReleaseIdempotencyKey("web-publisher-archive-start"),
+				}),
+			);
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
 	async function operateIntent(action: "cancel" | "reconcile") {
 		setBusy(true);
 		setError(null);
@@ -277,6 +295,14 @@ export function OperatorPage() {
 				</div>
 				<div className="mt-4 flex flex-wrap items-center gap-3">
 					<Button
+						disabled={!publisherDid || !archiveId}
+						loading={busy}
+						onClick={startPublisherArchive}
+						variant="primary"
+					>
+						{t("operator.archive.start", "Start archive workflow")}
+					</Button>
+					<Button
 						disabled={!publisherDid || !archiveId || !Number.isSafeInteger(Number(archivePage))}
 						loading={busy}
 						onClick={archivePublisher}
@@ -284,6 +310,13 @@ export function OperatorPage() {
 					>
 						{t("operator.archive.write", "Write archive page")}
 					</Button>
+					{archiveWorkflow ? (
+						<p className="break-all text-sm text-kumo-subtle">
+							{t("operator.archive.workflow", "Workflow: {workflowId}", {
+								workflowId: archiveWorkflow.workflowId,
+							})}
+						</p>
+					) : null}
 					{archive ? (
 						<p className="text-sm text-kumo-subtle">
 							{t("operator.archive.result", "Stored {kind} page {page}.", {

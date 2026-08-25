@@ -22,6 +22,7 @@ import { ROUTES, type RouteDefinition } from "./routes.js";
 export { PublisherDurableObject } from "./publisher-do/publisher-do.js";
 export { ApproverDurableObject } from "./approver-do/approver-do.js";
 export { ReleaseIntentWorkflow } from "./workflows/release-intent.js";
+export { PublisherArchiveWorkflow } from "./workflows/publisher-archive.js";
 export { ServiceControlDurableObject } from "./control-do/service-control-do.js";
 
 const DYNAMIC_PATH_PREFIXES = ["/.well-known/", "/admin/api/", "/oauth/", "/v1/"] as const;

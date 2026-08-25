@@ -192,6 +192,12 @@ export interface PublisherArchivePageResult {
 	manifestWritten: boolean;
 }
 
+export interface StartPublisherArchiveResult {
+	archiveId: string;
+	workflowId: string;
+	created: boolean;
+}
+
 export interface PublisherRestorePageInput {
 	archiveId: string;
 	page: number;

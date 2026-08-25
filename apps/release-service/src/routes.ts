@@ -19,6 +19,10 @@ import {
 	matchPublisherArchivePath,
 	matchPublisherRestorePath,
 } from "./backup/routes.js";
+import {
+	handleStartPublisherArchive,
+	matchPublisherArchiveStartPath,
+} from "./backup/workflow-route.js";
 import type { ServiceConfiguration } from "./config.js";
 import {
 	handleControlAudit,
@@ -271,6 +275,13 @@ export const ROUTES = Object.freeze([
 		match: matchPublisherArchivePath,
 		accessRole: "admin",
 		handler: handleArchivePublisher,
+	},
+	{
+		method: "POST",
+		path: "/admin/api/publishers/{publisherDid}/archive/start",
+		match: matchPublisherArchiveStartPath,
+		accessRole: "admin",
+		handler: handleStartPublisherArchive,
 	},
 	{
 		method: "POST",

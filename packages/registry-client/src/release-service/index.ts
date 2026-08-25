@@ -22,6 +22,7 @@ import {
 	type ReleaseServiceApiErrorCode,
 	type ReleaseServiceClientErrorCode,
 	type ServiceControlState,
+	type StartPublisherArchiveResult,
 	type SubmitReleaseIntentInput,
 	type SubmitReleaseIntentResult,
 	type WorkloadPolicyResource,
@@ -48,6 +49,7 @@ export type {
 	ReleaseServiceApiErrorCode,
 	ReleaseServiceClientErrorCode,
 	ServiceControlState,
+	StartPublisherArchiveResult,
 	SubmitReleaseIntentInput,
 	SubmitReleaseIntentResult,
 	WorkloadPolicyResource,
@@ -945,6 +947,22 @@ function parsePublisherArchivePage(value: unknown): PublisherArchivePageResult {
 	};
 }
 
+function parseStartedPublisherArchive(value: unknown): StartPublisherArchiveResult {
+	if (!isRecord(value)) throw invalidResponse();
+	const archiveId = stringValue(value, "archiveId");
+	const workflowId = stringValue(value, "workflowId");
+	if (
+		!archiveId ||
+		!ARCHIVE_ID_PATTERN.test(archiveId) ||
+		!workflowId ||
+		!CSRF_TOKEN_PATTERN.test(workflowId) ||
+		typeof value["created"] !== "boolean"
+	) {
+		throw invalidResponse();
+	}
+	return { archiveId, workflowId, created: value["created"] };
+}
+
 function restorePageInput(value: PublisherRestorePageInput): PublisherRestorePageInput {
 	if (
 		!ARCHIVE_ID_PATTERN.test(value.archiveId) ||
@@ -1115,6 +1133,30 @@ export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 				signal: options.signal,
 			},
 			parsePublisherArchivePage,
+		);
+	}
+
+	async startPublisherArchive(
+		publisherDid: string,
+		archiveId: string,
+		options: MutationOptions,
+	): Promise<StartPublisherArchiveResult> {
+		if (!ARCHIVE_ID_PATTERN.test(archiveId)) {
+			throw new ReleaseServiceError({
+				code: "CLIENT_RESPONSE_INVALID",
+				message: "Publisher archive ID is invalid",
+			});
+		}
+		return await this.call(
+			`/admin/api/publishers/${encodeURIComponent(publisherDid)}/archive/start`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: this.#mutationHeaders(options.idempotencyKey),
+				body: JSON.stringify({ archiveId }),
+				signal: options.signal,
+			},
+			parseStartedPublisherArchive,
 		);
 	}
 
