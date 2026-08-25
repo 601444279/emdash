@@ -34,7 +34,8 @@ export type ApiErrorCode =
 	| "SERVICE_UNAVAILABLE"
 	| "VERSION_RESERVED"
 	| "WORKFLOW_UNAVAILABLE"
-	| "WORKLOAD_NOT_ALLOWED";
+	| "WORKLOAD_NOT_ALLOWED"
+	| "WORKLOAD_RATE_LIMITED";
 
 export interface SerializedApiError {
 	code: ApiErrorCode;

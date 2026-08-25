@@ -30,6 +30,12 @@ import {
 	type CompletePublicationOperationResult,
 } from "./publication-operation.js";
 import {
+	initializeIntentRateLimitSchema,
+	IntentRateLimitStore,
+	type ConsumeIntentRateLimitInput,
+	type ConsumeIntentRateLimitResult,
+} from "./rate-limit.js";
+import {
 	initializeVerificationStepSchema,
 	VerificationStepStore,
 	type PutVerificationStepInput,
@@ -78,6 +84,7 @@ export type {
 	ApplyPublisherRestorePageResult,
 	PublisherRestoreKind,
 } from "./operations-restore.js";
+export type { ConsumeIntentRateLimitInput, ConsumeIntentRateLimitResult } from "./rate-limit.js";
 
 const DID_PATTERN = /^did:[a-z0-9]+:[A-Za-z0-9._:%-]+$/;
 const HASH_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
@@ -395,6 +402,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	readonly #publicationOperations: PublicationOperationStore;
 	readonly #verificationSteps: VerificationStepStore;
 	readonly #operationsRestore: OperationsRestoreStore;
+	readonly #intentRateLimits: IntentRateLimitStore;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
@@ -404,6 +412,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		this.#publicationOperations = new PublicationOperationStore(ctx.storage);
 		this.#verificationSteps = new VerificationStepStore(ctx.storage);
 		this.#operationsRestore = new OperationsRestoreStore(ctx.storage);
+		this.#intentRateLimits = new IntentRateLimitStore(ctx.storage);
 		void ctx.blockConcurrencyWhile(async () => {
 			this.#initializeSchema();
 		});
@@ -487,6 +496,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		initializePublicationOperationSchema(this.ctx.storage);
 		initializeVerificationStepSchema(this.ctx.storage);
 		initializeOperationsRestoreSchema(this.ctx.storage);
+		initializeIntentRateLimitSchema(this.ctx.storage);
 	}
 
 	#assertPublisherObjectName(publisherDid: string): void {
@@ -604,6 +614,11 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	createIntent(input: CreateIntentInput): CreateIntentResult {
 		this.#assertPublisherDid(input.publisherDid);
 		return this.#intents.create(input);
+	}
+
+	consumeIntentRateLimit(input: ConsumeIntentRateLimitInput): ConsumeIntentRateLimitResult {
+		this.#assertPublisherDid(input.publisherDid);
+		return this.#intentRateLimits.consume(input);
 	}
 
 	findIdempotentIntent(

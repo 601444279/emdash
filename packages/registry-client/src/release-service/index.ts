@@ -101,6 +101,7 @@ const API_ERROR_CODES: Readonly<Record<ReleaseServiceApiErrorCode, true>> = {
 	VERSION_RESERVED: true,
 	WORKFLOW_UNAVAILABLE: true,
 	WORKLOAD_NOT_ALLOWED: true,
+	WORKLOAD_RATE_LIMITED: true,
 };
 const RETRYABLE_ERROR_CODES: ReadonlySet<ReleaseServiceClientErrorCode> = new Set([
 	"CONFIGURATION_ERROR",
@@ -111,6 +112,7 @@ const RETRYABLE_ERROR_CODES: ReadonlySet<ReleaseServiceClientErrorCode> = new Se
 	"SERVICE_PAUSED",
 	"SERVICE_UNAVAILABLE",
 	"WORKFLOW_UNAVAILABLE",
+	"WORKLOAD_RATE_LIMITED",
 ]);
 const INTENT_STATES: Readonly<Record<ReleaseIntentState, true>> = {
 	received: true,

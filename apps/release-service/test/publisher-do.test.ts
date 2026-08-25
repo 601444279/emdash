@@ -104,6 +104,114 @@ describe("PublisherDurableObject", () => {
 		).resolves.toEqual({ ok: false, code: "PUBLISHER_SUSPENDED" });
 	});
 
+	it("isolates publisher, repository, and workload admission budgets", async () => {
+		const stub = publisher();
+		const now = 1_800_000_000_000;
+		const workloadKey = "W".repeat(43);
+		for (let index = 0; index < 30; index += 1) {
+			await expect(
+				stub.consumeIntentRateLimit({
+					publisherDid: DID,
+					repositoryId: "123",
+					workloadKey,
+					idempotencyKey: `rate-workload-a-${String(index).padStart(4, "0")}`,
+					expiresAt: now + 24 * 60 * 60_000,
+					now,
+				}),
+			).resolves.toMatchObject({ ok: true, replayed: false });
+		}
+		await expect(
+			stub.consumeIntentRateLimit({
+				publisherDid: DID,
+				repositoryId: "123",
+				workloadKey,
+				idempotencyKey: "rate-workload-a-over-limit",
+				expiresAt: now + 24 * 60 * 60_000,
+				now,
+			}),
+		).resolves.toMatchObject({ ok: false, code: "RATE_LIMITED", scope: "workload" });
+		await expect(
+			stub.consumeIntentRateLimit({
+				publisherDid: DID,
+				repositoryId: "123",
+				workloadKey,
+				idempotencyKey: "rate-workload-a-0000",
+				expiresAt: now + 24 * 60 * 60_000,
+				now,
+			}),
+		).resolves.toMatchObject({ ok: true, replayed: true });
+		await expect(
+			stub.consumeIntentRateLimit({
+				publisherDid: DID,
+				repositoryId: "123",
+				workloadKey: "X".repeat(43),
+				idempotencyKey: "rate-workload-b-0000",
+				expiresAt: now + 24 * 60 * 60_000,
+				now,
+			}),
+		).resolves.toMatchObject({ ok: true });
+		for (let index = 1; index <= 29; index += 1) {
+			await stub.consumeIntentRateLimit({
+				publisherDid: DID,
+				repositoryId: "123",
+				workloadKey: `Y${String(index).padStart(42, "0")}`,
+				idempotencyKey: `rate-repository-${String(index).padStart(4, "0")}`,
+				expiresAt: now + 24 * 60 * 60_000,
+				now,
+			});
+		}
+		await expect(
+			stub.consumeIntentRateLimit({
+				publisherDid: DID,
+				repositoryId: "123",
+				workloadKey: "Q".repeat(43),
+				idempotencyKey: "rate-repository-over-limit",
+				expiresAt: now + 24 * 60 * 60_000,
+				now,
+			}),
+		).resolves.toMatchObject({ ok: false, code: "RATE_LIMITED", scope: "repository" });
+		for (let index = 0; index < 60; index += 1) {
+			await stub.consumeIntentRateLimit({
+				publisherDid: DID,
+				repositoryId: "456",
+				workloadKey: `P${String(index).padStart(42, "0")}`,
+				idempotencyKey: `rate-publisher-${String(index).padStart(4, "0")}`,
+				expiresAt: now + 24 * 60 * 60_000,
+				now,
+			});
+		}
+		await expect(
+			stub.consumeIntentRateLimit({
+				publisherDid: DID,
+				repositoryId: "789",
+				workloadKey: "V".repeat(43),
+				idempotencyKey: "rate-publisher-over-limit",
+				expiresAt: now + 24 * 60 * 60_000,
+				now,
+			}),
+		).resolves.toMatchObject({ ok: false, code: "RATE_LIMITED", scope: "publisher" });
+		await expect(
+			env.PUBLISHER_DO.getByName(OTHER_DID).consumeIntentRateLimit({
+				publisherDid: OTHER_DID,
+				repositoryId: "123",
+				workloadKey,
+				idempotencyKey: "rate-other-publisher-0000",
+				expiresAt: now + 24 * 60 * 60_000,
+				now,
+			}),
+		).resolves.toMatchObject({ ok: true });
+		await expect(
+			stub.consumeIntentRateLimit({
+				publisherDid: DID,
+				repositoryId: "123",
+				workloadKey,
+				idempotencyKey: "rate-next-window-0000",
+				expiresAt: now + 24 * 60 * 60_000,
+				now: now + 60_000,
+			}),
+		).resolves.toMatchObject({ ok: true, replayed: false });
+	});
+
 	it("routes and binds one object to one publisher DID", async () => {
 		const stub = publisher();
 		await stub.initializePublisher(DID);
