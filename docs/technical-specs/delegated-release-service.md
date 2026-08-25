@@ -596,13 +596,14 @@ Recovery prefers removal of authority. If encrypted session state cannot be prov
 
 ## Compatibility and rollout
 
+- The first deployment uses one complete initial Durable Object schema and one initial encryption profile. Implementation PR boundaries do not create schema versions or legacy ciphertext formats.
 - Protocol additions remain optional while the registry is experimental.
 - Interactive publisher-owned CLI publication continues to work.
 - Existing releases without provenance remain installable unless signed package policy requires provenance.
 - The delegated service itself always requires provenance for its releases.
 - A stable release-collection namespace requires a fresh delegation grant.
 - Old application versions tolerate the optional profile and release extension fields.
-- A rolling service deployment must tolerate shards at the previous application schema version until their forward migration completes.
+- After the first deployment, a rolling service update must tolerate shards at the previous application schema version until their forward migration completes.
 
 ## System acceptance criteria
 
@@ -647,7 +648,7 @@ The service is complete only when all of the following hold:
 
 ### Platform and operations
 
-- Durable Object migrations preserve existing delegation, intent, credential, and audit data.
+- After the first deployment, Durable Object migrations preserve existing delegation, intent, credential, and audit data.
 - Encryption-key rotation completes without losing authority or leaving values unreadable.
 - Encrypted snapshots and audit exports restore into a fresh deployment without automatically reviving expired or revoked authority.
 - Hosted and self-hosted deployments pass the same protocol and service conformance suite.

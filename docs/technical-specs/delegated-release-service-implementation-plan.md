@@ -73,6 +73,9 @@ Closed PR #1908 remains donor history and is not a merge target. Its D1 custody 
 - Keep incomplete authority paths unreachable. A feature flag or undocumented route is not a sufficient boundary.
 - Put package and root-workspace changes in a designated integration worktree. Parallel worktrees do not all edit `pnpm-lock.yaml`, root `package.json`, CI, or generated binding types.
 - Represent every dependent PR lane as a GitHub stack managed with `gh-stack`. Independent workstreams use separate stacks rooted on `main`.
+- Treat each GitHub stack as one merge unit. Its branches are review boundaries, not deployable service versions. A partial stack merge requires an explicit integration gate that is independently usable.
+- Before the first service deployment, define the complete initial schema and persisted formats on their owning lowest branches. Do not add migrations or legacy readers solely for intermediate branches in an unmerged stack. After the first deployment, every persisted-state change uses a forward-only migration and preserves deployed data.
+- Merging an implementation stack does not authorize a deployment. The first hosted or self-hosted release waits for the complete service and its G7 production gate.
 - New public records and fields remain additive while experimental.
 - User-facing application strings use Lingui and RTL-safe layouts. The Access operator console follows the same UI quality rules even though its deployment audience is small.
 - Each published-package change includes a reviewed changeset.
@@ -137,7 +140,7 @@ W3 -> W8 -> W10 -> W12
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | **G0 Design**                   | RFC decisions reconciled; exact create-only scope proved on every claimed PDS; no broad fallback                                         | Authority-bearing implementation                   |
 | **G1 Contracts**                | Lexicons, direct-PDS reads, shared record/bundle/provenance reports, and fixtures pass in Node and workerd                               | Service Workflow and installer work                |
-| **G2 Durable state**            | Service shell, Access auth, control object, publisher object, migrations, state machine, idempotency, and alarms pass real workerd tests | OAuth, OIDC, Workflow integration                  |
+| **G2 Durable state**            | Service shell, Access auth, control object, publisher object, initial schema, state machine, idempotency, and alarms pass real workerd tests | OAuth, OIDC, Workflow integration                  |
 | **G3 Automatic vertical slice** | Controlled GitHub workflow publishes one valid non-escalating release and converges under retries                                        | Independent enforcement and private service trials |
 | **G4 Independent enforcement**  | A clean EmDash site accepts valid output and rejects every invalid service-output fixture                                                | Hosted limited beta                                |
 | **G5 Approval**                 | `always` and escalation releases require a valid current approver and passkey; every invalidation path re-approves                       | Broader publisher beta                             |
@@ -236,7 +239,7 @@ Dependencies: G0 architecture and Access decisions.
 
 | Task   | Work                                                                                                                                                 |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `W2.1` | Scaffold the Worker, static assets, test configuration, bindings, Durable Object migrations, Workflow binding, verifier binding, and generated types |
+| `W2.1` | Scaffold the Worker, static assets, test configuration, bindings, Wrangler Durable Object class migration, Workflow binding, verifier binding, and generated types |
 | `W2.2` | Add versioned JSON envelopes, request IDs, body limits, security headers, CORS policy, error handling, and route composition                         |
 | `W2.3` | Implement Access JWT verification, group-to-role mapping, CSRF, and operator mutation idempotency                                                    |
 | `W2.4` | Implement `ServiceControlDurableObject`, service modes, publication permits, publisher controls, audit, and alarm-backed cleanup                     |
@@ -262,7 +265,7 @@ Dependencies: G0 architecture and Access decisions.
 Owner surface:
 
 - `apps/release-service/src/publisher-do/`
-- publisher-shard migrations and test fixtures
+- publisher-shard schema and test fixtures
 - publisher RPC types exported from one package-local entry point
 
 Dependencies: W2.1 and shared state/error contracts.
@@ -271,7 +274,7 @@ Dependencies: W2.1 and shared state/error contracts.
 
 | Task   | Work                                                                                                                                                                                     |
 | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `W3.1` | Implement forward-only object schema migration with `publisher`, `delegations`, `workload_policies`, `intents`, reservations, transitions, operations, audit, idempotency, and deadlines |
+| `W3.1` | Implement the complete initial object schema with `publisher`, `delegations`, `workload_policies`, `intents`, reservations, transitions, operations, audit, idempotency, and deadlines |
 | `W3.2` | Implement the complete intent state machine with expected-state and generation guards                                                                                                    |
 | `W3.3` | Implement package/version reservation and OIDC/request idempotency semantics                                                                                                             |
 | `W3.4` | Implement generation-bound refresh and publication operation tokens without external I/O inside transactions                                                                             |
@@ -282,7 +285,7 @@ Dependencies: W2.1 and shared state/error contracts.
 ### Acceptance criteria
 
 - `getByName(canonicalPublisherDid)` routes every package for one publisher to the same object.
-- Schema migration can restart after interruption and preserves existing rows.
+- Schema initialization is idempotent across object restarts.
 - Illegal state transitions and stale generations cannot change state.
 - Concurrent package/version reservations yield one owner and deterministic results for every loser.
 - Exact idempotent replay returns the stored intent; conflicting replay returns `IDEMPOTENCY_CONFLICT`.
@@ -453,7 +456,7 @@ Dependencies: W3 RPC conventions, W4 identity OAuth, W6 approval digest/event co
 | Task   | Work                                                                                                                              |
 | ------ | --------------------------------------------------------------------------------------------------------------------------------- |
 | `W8.1` | Port and review required-user-verification registration/authentication primitives in `@emdash-cms/auth`                           |
-| `W8.2` | Implement approver object schema, migrations, identity transactions, credentials, challenges, decisions, audit, and cleanup alarm |
+| `W8.2` | Implement the complete initial approver-object schema, identity transactions, credentials, challenges, decisions, audit, and cleanup alarm |
 | `W8.3` | Implement approver DID proof and short-lived approver sessions                                                                    |
 | `W8.4` | Implement multiple named passkeys, counter handling, revocation, and credential-safe serializers                                  |
 | `W8.5` | Define and compute the canonical approval digest and create single-use challenges                                                 |
@@ -602,7 +605,7 @@ Dependencies: begins at G1 and expands after every gate.
 | Task    | Work                                                                                                                                              |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `W12.1` | Maintain one fixture corpus for records, bundles, provenance, workload claims, policy, approvals, and public/private errors                       |
-| `W12.2` | Build real workerd Durable Object and Workflow integration tests, including alarms, hibernation/restart, retries, and migrations                  |
+| `W12.2` | Build real workerd Durable Object and Workflow integration tests, including schema initialization, alarms, hibernation/restart, and retries       |
 | `W12.3` | Build browser OAuth, Access, WebAuthn, CSRF, isolation, localization, and RTL tests                                                               |
 | `W12.4` | Build controlled real-PDS and GitHub-OIDC end-to-end tests for hosted and self-host deployments                                                   |
 | `W12.5` | Add adversarial and fault-injection tests for replay, concurrency, substitution, SSRF, token leakage, ambiguous writes, pause races, and key loss |
@@ -613,7 +616,7 @@ Dependencies: begins at G1 and expands after every gate.
 
 - Every security invariant has at least one test that fails when its enforcement is removed.
 - Node and workerd share protocol fixtures but exercise their real runtime integrations.
-- Migration tests upgrade retained prior Durable Object schemas rather than asserting current SQL text.
+- After the first deployment, each Durable Object schema change adds an upgrade test from retained deployed state.
 - Fault injection at every external side-effect boundary converges to an allowed state.
 - Browser tests prove authentication-realm and publisher isolation, not only successful navigation.
 - Hosted and self-hosted end-to-end tests publish and independently install the same release.
@@ -622,6 +625,8 @@ Dependencies: begins at G1 and expands after every gate.
 ## Worktree and task strategy
 
 Use one worktree per PR-sized task. Independent lanes branch from current `main`; dependent lanes form short linear stacks. Do not put every workstream in one stack.
+
+Each linear stack merges as a unit. Splitting a change into dependent PRs improves review but does not create intermediate deployment support. Start another stack when the lower work has an independently usable integration gate; otherwise keep the dependency chain together.
 
 ### Worktree names and ownership
 
@@ -646,7 +651,7 @@ These names describe logical slots, not permission to keep all worktrees active.
 
 ### Dependency lanes
 
-Use separate `gh-stack` stacks for work that can merge independently:
+Use separate `gh-stack` stacks only for work that can merge independently:
 
 ```text
 Contract stack:
@@ -714,7 +719,7 @@ After every PR in a stack is ready and satisfies its gate, merge through `gh-sta
 gh stack merge <stack-number> --yes --squash
 ```
 
-Use the repository's selected merge method if it differs from squash. Stack merge is all-or-nothing unless the repository's merge queue processes the PRs separately. Scope a partial merge to a PR number only when the plan explicitly defines that PR as an integration gate.
+Use the repository's selected merge method if it differs from squash. Stack merge is all-or-nothing unless the repository's merge queue processes the PRs separately. Review completion, PR size, or an intermediate branch passing CI does not justify a partial merge. Scope a partial merge to a PR number only when the plan defines that PR as an independently usable integration gate.
 
 Do not add one branch to multiple stacks. When an independent stack needs a merged contract, rebase it onto updated `main`; do not share the contract branch between stacks.
 
@@ -735,6 +740,8 @@ main
 ```
 
 Each branch is one template-compliant draft PR. Create the PRs with their explicit parent bases before calling `gh stack link`; this prevents `gh-stack` from generating non-template PR bodies.
+
+The eight branches form one merge unit. The service has no supported intermediate deployment between them. The envelope-encryption branch defines the first persisted JOSE profile, and the publisher-object branch defines the complete initial schema used by every later branch. Do not add compatibility code for earlier branches in this stack.
 
 ### Planned GitHub stacks
 
@@ -860,7 +867,7 @@ The PR sequence is deliberately finer than the workstreams. Each PR leaves autho
 2. **Delegated release contracts** — profile/release types, exact scope, fixtures.
 3. **Shared record and provenance verification** — no service app behavior.
 4. **Release-service platform** — app, bindings, API foundation, Access auth, disabled control object.
-5. **Publisher object foundation** — schema, migration, state machine, audit, no OAuth or PDS calls.
+5. **Publisher object foundation** — complete initial schema, state machine, audit, no OAuth or PDS calls.
 6. **Publisher reservations and operations** — idempotency, deadlines, tokens, alarms.
 7. **Envelope encryption** — package-local crypto and fixtures.
 8. **Publisher OAuth identity and delegation** — authority stored but publication route absent.
@@ -880,7 +887,7 @@ The PR sequence is deliberately finer than the workstreams. Each PR leaves autho
 ## Definition of done for every implementation task
 
 - Behavior and failure behavior both have tests that would fail if enforcement were removed.
-- Durable Object storage changes use forward-only, restartable application schema migration.
+- After the first deployment, Durable Object storage changes use forward-only, restartable application schema migrations.
 - External effects have idempotency and reconciliation before connection to real authority.
 - Public errors use stable codes and contain no provider payload, secret, assertion, stack trace, or private evidence.
 - Authentication and authorization are tested independently.
@@ -903,7 +910,7 @@ The PR sequence is deliberately finer than the workstreams. Each PR leaves autho
 ### Durable state
 
 - [ ] Publisher and approver state route deterministically by canonical DID.
-- [ ] State-machine, reservation, idempotency, operation-token, alarm, migration, and audit tests pass in workerd.
+- [ ] State-machine, reservation, idempotency, operation-token, alarm, schema-initialization, and audit tests pass in workerd.
 - [ ] Workflows and optional D1 projections can be lost without losing canonical authorization or terminal release state.
 - [ ] No Durable Object critical section spans external I/O.
 
