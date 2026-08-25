@@ -323,7 +323,7 @@ msgid "{0}{1}"
 msgstr "{0}{1}"
 
 #. placeholder {0}: draft.description.length
-#: packages/admin/src/components/SeoPanel.tsx:206
+#: packages/admin/src/components/SeoPanel.tsx:215
 msgid "{0}/160 characters"
 msgstr "{0}/160 अक्षर"
 
@@ -770,7 +770,7 @@ msgstr "नया जोड़ो"
 msgid "Add new {0}"
 msgstr "नया जोड़ें {0}"
 
-#: packages/admin/src/components/SeoPanel.tsx:239
+#: packages/admin/src/components/SeoPanel.tsx:240
 msgid "Add noindex meta tag"
 msgstr "नोइंडेक्स मेटा टैग जोड़ें"
 
@@ -962,7 +962,7 @@ msgid "Also match the byline linked to an entry's author when it has none assign
 msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:376
-#: packages/admin/src/components/editor/ImageNode.tsx:231
+#: packages/admin/src/components/editor/ImageNode.tsx:244
 #: packages/admin/src/components/MediaLibrary.tsx:553
 msgid "Alt text"
 msgstr "वैकल्पिक पाठ"
@@ -1466,8 +1466,8 @@ msgstr "सामग्री देख सकते हैं"
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
-#: packages/admin/src/components/editor/ImageNode.tsx:252
-#: packages/admin/src/components/editor/ImageNode.tsx:253
+#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:266
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:406
 #: packages/admin/src/components/FieldEditor.tsx:678
 #: packages/admin/src/components/MediaDetailPanel.tsx:430
@@ -1517,8 +1517,8 @@ msgstr "थीम अनुभागों को हटाया नहीं �
 msgid "Cannot determine MIME type from URL. Use a URL ending in a recognized image extension (e.g. .jpg, .png, .webp)."
 msgstr "URL से MIME प्रकार निर्धारित नहीं किया जा सकता. किसी मान्यता प्राप्त छवि एक्सटेंशन (जैसे .jpg, .png, .webp) पर समाप्त होने वाले URL का उपयोग करें।"
 
-#: packages/admin/src/components/SeoPanel.tsx:224
-#: packages/admin/src/components/SeoPanel.tsx:228
+#: packages/admin/src/components/SeoPanel.tsx:225
+#: packages/admin/src/components/SeoPanel.tsx:229
 msgid "Canonical URL"
 msgstr "कैनोनिकल URL"
 
@@ -2471,8 +2471,8 @@ msgstr "गैलरी हटाएँ"
 msgid "Delete HTML block"
 msgstr "HTML ब्लॉक हटाएँ"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:220
-#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:233
+#: packages/admin/src/components/editor/ImageNode.tsx:234
 msgid "Delete image"
 msgstr "छवि हटाएँ"
 
@@ -2577,7 +2577,7 @@ msgid "Deny"
 msgstr "अस्वीकार करना"
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:379
-#: packages/admin/src/components/editor/ImageNode.tsx:238
+#: packages/admin/src/components/editor/ImageNode.tsx:251
 msgid "Describe the image..."
 msgstr "छवि का वर्णन करें..."
 
@@ -4153,8 +4153,8 @@ msgstr "हीरो बैनर"
 msgid "hero, banner, cta"
 msgstr "हीरो, बैनर, सीटीए"
 
-#: packages/admin/src/components/SeoPanel.tsx:242
-#: packages/admin/src/components/SeoPanel.tsx:245
+#: packages/admin/src/components/SeoPanel.tsx:243
+#: packages/admin/src/components/SeoPanel.tsx:246
 msgid "Hide from search engines"
 msgstr "खोज इंजनों से छिपाएँ"
 
@@ -4249,8 +4249,8 @@ msgstr "मीडिया लाइब्रेरी से छवि"
 msgid "Image not found"
 msgstr "छवि नहीं मिली"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:208
-#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:222
 msgid "Image settings"
 msgstr "छवि सेटिंग्स"
 
@@ -6213,7 +6213,7 @@ msgstr "प्लग-इन"
 msgid "Point-in-Time Restore"
 msgstr "प्वाइंट-इन-टाइम पुनर्स्थापना"
 
-#: packages/admin/src/components/SeoPanel.tsx:220
+#: packages/admin/src/components/SeoPanel.tsx:221
 msgid "Points search engines to the original version of this page, if it's duplicated from another URL"
 msgstr "यदि यह किसी अन्य URL से डुप्लिकेट किया गया है, तो खोज इंजन को इस पृष्ठ के मूल संस्करण की ओर इंगित करता है"
 
@@ -6339,8 +6339,8 @@ msgstr ""
 msgid "Quick create byline"
 msgstr "त्वरित बायलाइन बनाएं"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:196
-#: packages/admin/src/components/editor/ImageNode.tsx:197
+#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:210
 msgid "Quick edit alt text"
 msgstr "त्वरित वैकल्पिक पाठ संपादित करें"
 
@@ -6837,7 +6837,7 @@ msgstr "वही खिड़की"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1191
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
-#: packages/admin/src/components/editor/ImageNode.tsx:264
+#: packages/admin/src/components/editor/ImageNode.tsx:277
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:417
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6852,7 +6852,7 @@ msgstr "बचाना"
 msgid "Save (Enter)"
 msgstr "सहेजें (दर्ज करें)"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:278
 msgid "Save alt text"
 msgstr "वैकल्पिक पाठ सहेजें"
 
@@ -8871,7 +8871,7 @@ msgstr "पूरा नंबर"
 msgid "Why can't this be changed?"
 msgstr "इसे बदला क्यों नहीं जा सकता?"
 
-#: packages/admin/src/components/SeoPanel.tsx:221
+#: packages/admin/src/components/SeoPanel.tsx:222
 msgid "Why is this important for duplicate pages?"
 msgstr "डुप्लिकेट पेजों के लिए यह क्यों महत्वपूर्ण है?"
 
@@ -8883,7 +8883,7 @@ msgstr "खोज परिणाम सारांशों के लिए �
 msgid "Why is this important for search result titles?"
 msgstr "खोज परिणाम शीर्षकों के लिए यह क्यों महत्वपूर्ण है?"
 
-#: packages/admin/src/components/SeoPanel.tsx:240
+#: packages/admin/src/components/SeoPanel.tsx:241
 msgid "Why is this important for search visibility?"
 msgstr "खोज दृश्यता के लिए यह क्यों महत्वपूर्ण है?"
 

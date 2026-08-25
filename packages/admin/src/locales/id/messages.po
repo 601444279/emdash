@@ -323,7 +323,7 @@ msgid "{0}{1}"
 msgstr "{0}{1}"
 
 #. placeholder {0}: draft.description.length
-#: packages/admin/src/components/SeoPanel.tsx:206
+#: packages/admin/src/components/SeoPanel.tsx:215
 msgid "{0}/160 characters"
 msgstr "{0}/160 karakter"
 
@@ -770,7 +770,7 @@ msgstr "Tambah Baru"
 msgid "Add new {0}"
 msgstr "Tambah {0} baru"
 
-#: packages/admin/src/components/SeoPanel.tsx:239
+#: packages/admin/src/components/SeoPanel.tsx:240
 msgid "Add noindex meta tag"
 msgstr "Tambah tag meta noindex"
 
@@ -962,7 +962,7 @@ msgid "Also match the byline linked to an entry's author when it has none assign
 msgstr "Cocokkan juga byline yang tertaut ke penulis entri saat entri belum memiliki byline."
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:376
-#: packages/admin/src/components/editor/ImageNode.tsx:231
+#: packages/admin/src/components/editor/ImageNode.tsx:244
 #: packages/admin/src/components/MediaLibrary.tsx:553
 msgid "Alt text"
 msgstr "Teks alternatif"
@@ -1466,8 +1466,8 @@ msgstr "Dapat melihat konten"
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
-#: packages/admin/src/components/editor/ImageNode.tsx:252
-#: packages/admin/src/components/editor/ImageNode.tsx:253
+#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:266
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:406
 #: packages/admin/src/components/FieldEditor.tsx:678
 #: packages/admin/src/components/MediaDetailPanel.tsx:430
@@ -1517,8 +1517,8 @@ msgstr "Tidak dapat menghapus bagian tema"
 msgid "Cannot determine MIME type from URL. Use a URL ending in a recognized image extension (e.g. .jpg, .png, .webp)."
 msgstr "Tidak dapat menentukan tipe MIME dari URL. Gunakan URL yang diakhiri ekstensi gambar yang dikenal (mis. .jpg, .png, .webp)."
 
-#: packages/admin/src/components/SeoPanel.tsx:224
-#: packages/admin/src/components/SeoPanel.tsx:228
+#: packages/admin/src/components/SeoPanel.tsx:225
+#: packages/admin/src/components/SeoPanel.tsx:229
 msgid "Canonical URL"
 msgstr "URL Kanonis"
 
@@ -2471,8 +2471,8 @@ msgstr "Hapus galeri"
 msgid "Delete HTML block"
 msgstr "Hapus blok HTML"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:220
-#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:233
+#: packages/admin/src/components/editor/ImageNode.tsx:234
 msgid "Delete image"
 msgstr "Hapus gambar"
 
@@ -2577,7 +2577,7 @@ msgid "Deny"
 msgstr "Tolak"
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:379
-#: packages/admin/src/components/editor/ImageNode.tsx:238
+#: packages/admin/src/components/editor/ImageNode.tsx:251
 msgid "Describe the image..."
 msgstr "Deskripsikan gambar..."
 
@@ -4153,8 +4153,8 @@ msgstr "Spanduk Hero"
 msgid "hero, banner, cta"
 msgstr "hero, spanduk, cta"
 
-#: packages/admin/src/components/SeoPanel.tsx:242
-#: packages/admin/src/components/SeoPanel.tsx:245
+#: packages/admin/src/components/SeoPanel.tsx:243
+#: packages/admin/src/components/SeoPanel.tsx:246
 msgid "Hide from search engines"
 msgstr "Sembunyikan dari mesin pencari"
 
@@ -4249,8 +4249,8 @@ msgstr "Gambar dari pustaka media"
 msgid "Image not found"
 msgstr "Gambar tidak ditemukan"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:208
-#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:222
 msgid "Image settings"
 msgstr "Pengaturan gambar"
 
@@ -6213,7 +6213,7 @@ msgstr "Plugin"
 msgid "Point-in-Time Restore"
 msgstr "Pemulihan Titik Waktu"
 
-#: packages/admin/src/components/SeoPanel.tsx:220
+#: packages/admin/src/components/SeoPanel.tsx:221
 msgid "Points search engines to the original version of this page, if it's duplicated from another URL"
 msgstr "Arahkan mesin pencari ke versi asli halaman ini, jika diduplikasi dari URL lain"
 
@@ -6339,8 +6339,8 @@ msgstr ""
 msgid "Quick create byline"
 msgstr "Buat kredit penulis cepat"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:196
-#: packages/admin/src/components/editor/ImageNode.tsx:197
+#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:210
 msgid "Quick edit alt text"
 msgstr "Edit cepat teks alternatif"
 
@@ -6837,7 +6837,7 @@ msgstr "Jendela sama"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1191
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
-#: packages/admin/src/components/editor/ImageNode.tsx:264
+#: packages/admin/src/components/editor/ImageNode.tsx:277
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:417
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6852,7 +6852,7 @@ msgstr "Simpan"
 msgid "Save (Enter)"
 msgstr "Simpan (Enter)"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:278
 msgid "Save alt text"
 msgstr "Simpan teks alternatif"
 
@@ -8871,7 +8871,7 @@ msgstr "Bilangan bulat"
 msgid "Why can't this be changed?"
 msgstr "Mengapa ini tidak dapat diubah?"
 
-#: packages/admin/src/components/SeoPanel.tsx:221
+#: packages/admin/src/components/SeoPanel.tsx:222
 msgid "Why is this important for duplicate pages?"
 msgstr "Mengapa ini penting untuk halaman duplikat?"
 
@@ -8883,7 +8883,7 @@ msgstr "Mengapa ini penting untuk ringkasan hasil pencarian?"
 msgid "Why is this important for search result titles?"
 msgstr "Mengapa ini penting untuk judul hasil pencarian?"
 
-#: packages/admin/src/components/SeoPanel.tsx:240
+#: packages/admin/src/components/SeoPanel.tsx:241
 msgid "Why is this important for search visibility?"
 msgstr "Mengapa ini penting untuk visibilitas pencarian?"
 

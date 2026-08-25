@@ -323,7 +323,7 @@ msgid "{0}{1}"
 msgstr "{0}{1}"
 
 #. placeholder {0}: draft.description.length
-#: packages/admin/src/components/SeoPanel.tsx:206
+#: packages/admin/src/components/SeoPanel.tsx:215
 msgid "{0}/160 characters"
 msgstr "{0}/160 Zeichen"
 
@@ -770,7 +770,7 @@ msgstr "Neu hinzufügen"
 msgid "Add new {0}"
 msgstr "{0} hinzufügen"
 
-#: packages/admin/src/components/SeoPanel.tsx:239
+#: packages/admin/src/components/SeoPanel.tsx:240
 msgid "Add noindex meta tag"
 msgstr "noindex-Meta-Tag hinzufügen"
 
@@ -962,7 +962,7 @@ msgid "Also match the byline linked to an entry's author when it has none assign
 msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:376
-#: packages/admin/src/components/editor/ImageNode.tsx:231
+#: packages/admin/src/components/editor/ImageNode.tsx:244
 #: packages/admin/src/components/MediaLibrary.tsx:553
 msgid "Alt text"
 msgstr "Alt-Text"
@@ -1466,8 +1466,8 @@ msgstr "Kann Inhalte ansehen"
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
-#: packages/admin/src/components/editor/ImageNode.tsx:252
-#: packages/admin/src/components/editor/ImageNode.tsx:253
+#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:266
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:406
 #: packages/admin/src/components/FieldEditor.tsx:678
 #: packages/admin/src/components/MediaDetailPanel.tsx:430
@@ -1517,8 +1517,8 @@ msgstr "Vom Design bereitgestellte Abschnitte können nicht gelöscht werden"
 msgid "Cannot determine MIME type from URL. Use a URL ending in a recognized image extension (e.g. .jpg, .png, .webp)."
 msgstr "Der MIME-Typ kann basierend auf der URL nicht ermittelt werden. Verwende eine URL, die mit einer bekannten Bilddateiendung endet (z. B. .jpg, .png, .webp)."
 
-#: packages/admin/src/components/SeoPanel.tsx:224
-#: packages/admin/src/components/SeoPanel.tsx:228
+#: packages/admin/src/components/SeoPanel.tsx:225
+#: packages/admin/src/components/SeoPanel.tsx:229
 msgid "Canonical URL"
 msgstr "Kanonische URL"
 
@@ -2471,8 +2471,8 @@ msgstr "Galerie löschen"
 msgid "Delete HTML block"
 msgstr "HTML-Block löschen"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:220
-#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:233
+#: packages/admin/src/components/editor/ImageNode.tsx:234
 msgid "Delete image"
 msgstr "Bild entfernen"
 
@@ -2577,7 +2577,7 @@ msgid "Deny"
 msgstr "Verweigern"
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:379
-#: packages/admin/src/components/editor/ImageNode.tsx:238
+#: packages/admin/src/components/editor/ImageNode.tsx:251
 msgid "Describe the image..."
 msgstr "Beschreibe das Bild..."
 
@@ -4153,8 +4153,8 @@ msgstr "Hero-Banner"
 msgid "hero, banner, cta"
 msgstr "hero, banner, cta"
 
-#: packages/admin/src/components/SeoPanel.tsx:242
-#: packages/admin/src/components/SeoPanel.tsx:245
+#: packages/admin/src/components/SeoPanel.tsx:243
+#: packages/admin/src/components/SeoPanel.tsx:246
 msgid "Hide from search engines"
 msgstr "Vor Suchmaschinen verbergen"
 
@@ -4249,8 +4249,8 @@ msgstr "Bild aus Medienbibliothek"
 msgid "Image not found"
 msgstr "Bild nicht gefunden"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:208
-#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:222
 msgid "Image settings"
 msgstr "Bildeinstellungen"
 
@@ -6213,7 +6213,7 @@ msgstr "Erweiterungen"
 msgid "Point-in-Time Restore"
 msgstr "Point-in-Time Restore"
 
-#: packages/admin/src/components/SeoPanel.tsx:220
+#: packages/admin/src/components/SeoPanel.tsx:221
 msgid "Points search engines to the original version of this page, if it's duplicated from another URL"
 msgstr "Leitet Suchmaschinen auf die Originalversion dieser Seite weiter, falls sie von einer anderen URL dupliziert wurde"
 
@@ -6339,8 +6339,8 @@ msgstr ""
 msgid "Quick create byline"
 msgstr "Neue Autorenzeile erstellen"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:196
-#: packages/admin/src/components/editor/ImageNode.tsx:197
+#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:210
 msgid "Quick edit alt text"
 msgstr "Alt-Text direkt bearbeiten"
 
@@ -6837,7 +6837,7 @@ msgstr "Aktueller Tab"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1191
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
-#: packages/admin/src/components/editor/ImageNode.tsx:264
+#: packages/admin/src/components/editor/ImageNode.tsx:277
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:417
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6852,7 +6852,7 @@ msgstr "Speichern"
 msgid "Save (Enter)"
 msgstr "Speichern (Enter)"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:278
 msgid "Save alt text"
 msgstr "Alt-Text speichern"
 
@@ -8871,7 +8871,7 @@ msgstr "Ganze Zahl"
 msgid "Why can't this be changed?"
 msgstr "Warum kann das nicht geändert werden?"
 
-#: packages/admin/src/components/SeoPanel.tsx:221
+#: packages/admin/src/components/SeoPanel.tsx:222
 msgid "Why is this important for duplicate pages?"
 msgstr "Warum ist das für doppelte Seiten wichtig?"
 
@@ -8883,7 +8883,7 @@ msgstr "Warum ist das für Zusammenfassungen in Suchergebnissen wichtig?"
 msgid "Why is this important for search result titles?"
 msgstr "Warum ist das für Titel in Suchergebnissen wichtig?"
 
-#: packages/admin/src/components/SeoPanel.tsx:240
+#: packages/admin/src/components/SeoPanel.tsx:241
 msgid "Why is this important for search visibility?"
 msgstr "Warum ist das für die Sichtbarkeit in Suchmaschinen wichtig?"
 

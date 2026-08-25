@@ -323,7 +323,7 @@ msgid "{0}{1}"
 msgstr "{0}{1}"
 
 #. placeholder {0}: draft.description.length
-#: packages/admin/src/components/SeoPanel.tsx:206
+#: packages/admin/src/components/SeoPanel.tsx:215
 msgid "{0}/160 characters"
 msgstr "{0}/160 个字符"
 
@@ -770,7 +770,7 @@ msgstr "添加新内容"
 msgid "Add new {0}"
 msgstr "添加新{0}"
 
-#: packages/admin/src/components/SeoPanel.tsx:239
+#: packages/admin/src/components/SeoPanel.tsx:240
 msgid "Add noindex meta tag"
 msgstr "添加 noindex 元标签"
 
@@ -962,7 +962,7 @@ msgid "Also match the byline linked to an entry's author when it has none assign
 msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:376
-#: packages/admin/src/components/editor/ImageNode.tsx:231
+#: packages/admin/src/components/editor/ImageNode.tsx:244
 #: packages/admin/src/components/MediaLibrary.tsx:553
 msgid "Alt text"
 msgstr "替代文本"
@@ -1466,8 +1466,8 @@ msgstr "可以查看内容"
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
-#: packages/admin/src/components/editor/ImageNode.tsx:252
-#: packages/admin/src/components/editor/ImageNode.tsx:253
+#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:266
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:406
 #: packages/admin/src/components/FieldEditor.tsx:678
 #: packages/admin/src/components/MediaDetailPanel.tsx:430
@@ -1517,8 +1517,8 @@ msgstr "无法删除主题区块"
 msgid "Cannot determine MIME type from URL. Use a URL ending in a recognized image extension (e.g. .jpg, .png, .webp)."
 msgstr "无法从 URL 确定 MIME 类型。请使用以可识别的图片扩展名结尾的 URL（例如 .jpg、.png、.webp）。"
 
-#: packages/admin/src/components/SeoPanel.tsx:224
-#: packages/admin/src/components/SeoPanel.tsx:228
+#: packages/admin/src/components/SeoPanel.tsx:225
+#: packages/admin/src/components/SeoPanel.tsx:229
 msgid "Canonical URL"
 msgstr "规范 URL"
 
@@ -2471,8 +2471,8 @@ msgstr ""
 msgid "Delete HTML block"
 msgstr "删除 HTML 块"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:220
-#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:233
+#: packages/admin/src/components/editor/ImageNode.tsx:234
 msgid "Delete image"
 msgstr "删除图片"
 
@@ -2577,7 +2577,7 @@ msgid "Deny"
 msgstr "拒绝"
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:379
-#: packages/admin/src/components/editor/ImageNode.tsx:238
+#: packages/admin/src/components/editor/ImageNode.tsx:251
 msgid "Describe the image..."
 msgstr "描述图片..."
 
@@ -4153,8 +4153,8 @@ msgstr "主视觉横幅"
 msgid "hero, banner, cta"
 msgstr "主视觉, 横幅, CTA 按钮"
 
-#: packages/admin/src/components/SeoPanel.tsx:242
-#: packages/admin/src/components/SeoPanel.tsx:245
+#: packages/admin/src/components/SeoPanel.tsx:243
+#: packages/admin/src/components/SeoPanel.tsx:246
 msgid "Hide from search engines"
 msgstr "对搜索引擎隐藏"
 
@@ -4249,8 +4249,8 @@ msgstr "来自媒体库的图片"
 msgid "Image not found"
 msgstr "未找到图片"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:208
-#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:222
 msgid "Image settings"
 msgstr "图片设置"
 
@@ -6213,7 +6213,7 @@ msgstr "插件"
 msgid "Point-in-Time Restore"
 msgstr ""
 
-#: packages/admin/src/components/SeoPanel.tsx:220
+#: packages/admin/src/components/SeoPanel.tsx:221
 msgid "Points search engines to the original version of this page, if it's duplicated from another URL"
 msgstr "如果此页面是从另一个 URL 复制的，则引导搜索引擎到原始版本"
 
@@ -6339,8 +6339,8 @@ msgstr ""
 msgid "Quick create byline"
 msgstr "快速创建署名"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:196
-#: packages/admin/src/components/editor/ImageNode.tsx:197
+#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:210
 msgid "Quick edit alt text"
 msgstr "快速编辑替代文本"
 
@@ -6837,7 +6837,7 @@ msgstr "同一窗口"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1191
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
-#: packages/admin/src/components/editor/ImageNode.tsx:264
+#: packages/admin/src/components/editor/ImageNode.tsx:277
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:417
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6852,7 +6852,7 @@ msgstr "保存"
 msgid "Save (Enter)"
 msgstr "保存 (Enter)"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:278
 msgid "Save alt text"
 msgstr "保存替代文本"
 
@@ -8871,7 +8871,7 @@ msgstr "整数"
 msgid "Why can't this be changed?"
 msgstr ""
 
-#: packages/admin/src/components/SeoPanel.tsx:221
+#: packages/admin/src/components/SeoPanel.tsx:222
 msgid "Why is this important for duplicate pages?"
 msgstr ""
 
@@ -8883,7 +8883,7 @@ msgstr ""
 msgid "Why is this important for search result titles?"
 msgstr ""
 
-#: packages/admin/src/components/SeoPanel.tsx:240
+#: packages/admin/src/components/SeoPanel.tsx:241
 msgid "Why is this important for search visibility?"
 msgstr ""
 

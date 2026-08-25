@@ -323,7 +323,7 @@ msgid "{0}{1}"
 msgstr "{0}{1}"
 
 #. placeholder {0}: draft.description.length
-#: packages/admin/src/components/SeoPanel.tsx:206
+#: packages/admin/src/components/SeoPanel.tsx:215
 msgid "{0}/160 characters"
 msgstr "{0}/160 karaktera"
 
@@ -770,7 +770,7 @@ msgstr "Dodaj novo"
 msgid "Add new {0}"
 msgstr "Dodaj novi {0}"
 
-#: packages/admin/src/components/SeoPanel.tsx:239
+#: packages/admin/src/components/SeoPanel.tsx:240
 msgid "Add noindex meta tag"
 msgstr "Dodaj noindex meta tag"
 
@@ -962,7 +962,7 @@ msgid "Also match the byline linked to an entry's author when it has none assign
 msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:376
-#: packages/admin/src/components/editor/ImageNode.tsx:231
+#: packages/admin/src/components/editor/ImageNode.tsx:244
 #: packages/admin/src/components/MediaLibrary.tsx:553
 msgid "Alt text"
 msgstr "Alt tekst"
@@ -1466,8 +1466,8 @@ msgstr "Može pregledati sadržaj"
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
-#: packages/admin/src/components/editor/ImageNode.tsx:252
-#: packages/admin/src/components/editor/ImageNode.tsx:253
+#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:266
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:406
 #: packages/admin/src/components/FieldEditor.tsx:678
 #: packages/admin/src/components/MediaDetailPanel.tsx:430
@@ -1517,8 +1517,8 @@ msgstr "Nije moguće obrisati sekcije teme"
 msgid "Cannot determine MIME type from URL. Use a URL ending in a recognized image extension (e.g. .jpg, .png, .webp)."
 msgstr "Nije moguće odrediti MIME tip iz URL-a. Koristite URL koji se završava prepoznatljivom ekstenzijom slike (npr. .jpg, .png, .webp)."
 
-#: packages/admin/src/components/SeoPanel.tsx:224
-#: packages/admin/src/components/SeoPanel.tsx:228
+#: packages/admin/src/components/SeoPanel.tsx:225
+#: packages/admin/src/components/SeoPanel.tsx:229
 msgid "Canonical URL"
 msgstr "Kanonijski URL"
 
@@ -2471,8 +2471,8 @@ msgstr ""
 msgid "Delete HTML block"
 msgstr "Obriši HTML blok"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:220
-#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:233
+#: packages/admin/src/components/editor/ImageNode.tsx:234
 msgid "Delete image"
 msgstr "Obriši sliku"
 
@@ -2577,7 +2577,7 @@ msgid "Deny"
 msgstr "Odbij"
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:379
-#: packages/admin/src/components/editor/ImageNode.tsx:238
+#: packages/admin/src/components/editor/ImageNode.tsx:251
 msgid "Describe the image..."
 msgstr "Opišite sliku..."
 
@@ -4153,8 +4153,8 @@ msgstr "Hero baner"
 msgid "hero, banner, cta"
 msgstr "hero, baner, cta"
 
-#: packages/admin/src/components/SeoPanel.tsx:242
-#: packages/admin/src/components/SeoPanel.tsx:245
+#: packages/admin/src/components/SeoPanel.tsx:243
+#: packages/admin/src/components/SeoPanel.tsx:246
 msgid "Hide from search engines"
 msgstr "Sakrij od pretraživača"
 
@@ -4249,8 +4249,8 @@ msgstr "Slika iz biblioteke medija"
 msgid "Image not found"
 msgstr "Slika nije pronađena"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:208
-#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:222
 msgid "Image settings"
 msgstr "Podešavanja slike"
 
@@ -6213,7 +6213,7 @@ msgstr "Dodaci"
 msgid "Point-in-Time Restore"
 msgstr "Vraćanje u određeni trenutak"
 
-#: packages/admin/src/components/SeoPanel.tsx:220
+#: packages/admin/src/components/SeoPanel.tsx:221
 msgid "Points search engines to the original version of this page, if it's duplicated from another URL"
 msgstr "Usmerava pretraživače na originalnu verziju ove stranice, ako je duplirana sa drugog URL-a"
 
@@ -6339,8 +6339,8 @@ msgstr ""
 msgid "Quick create byline"
 msgstr "Brzo kreiraj potpis autora"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:196
-#: packages/admin/src/components/editor/ImageNode.tsx:197
+#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:210
 msgid "Quick edit alt text"
 msgstr "Brzo uredi alt tekst"
 
@@ -6837,7 +6837,7 @@ msgstr "Isti prozor"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1191
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
-#: packages/admin/src/components/editor/ImageNode.tsx:264
+#: packages/admin/src/components/editor/ImageNode.tsx:277
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:417
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6852,7 +6852,7 @@ msgstr "Sačuvaj"
 msgid "Save (Enter)"
 msgstr "Sačuvaj (Enter)"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:278
 msgid "Save alt text"
 msgstr "Sačuvaj alt tekst"
 
@@ -8871,7 +8871,7 @@ msgstr "Ceo broj"
 msgid "Why can't this be changed?"
 msgstr "Zašto se ovo ne može promeniti?"
 
-#: packages/admin/src/components/SeoPanel.tsx:221
+#: packages/admin/src/components/SeoPanel.tsx:222
 msgid "Why is this important for duplicate pages?"
 msgstr "Zašto je ovo važno za duplirane stranice?"
 
@@ -8883,7 +8883,7 @@ msgstr "Zašto je ovo važno za sažetke u rezultatima pretrage?"
 msgid "Why is this important for search result titles?"
 msgstr "Zašto je ovo važno za naslove u rezultatima pretrage?"
 
-#: packages/admin/src/components/SeoPanel.tsx:240
+#: packages/admin/src/components/SeoPanel.tsx:241
 msgid "Why is this important for search visibility?"
 msgstr "Zašto je ovo važno za vidljivost u pretrazi?"
 

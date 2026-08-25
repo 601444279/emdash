@@ -323,7 +323,7 @@ msgid "{0}{1}"
 msgstr "{0}{1}"
 
 #. placeholder {0}: draft.description.length
-#: packages/admin/src/components/SeoPanel.tsx:206
+#: packages/admin/src/components/SeoPanel.tsx:215
 msgid "{0}/160 characters"
 msgstr "{0}/160文字"
 
@@ -770,7 +770,7 @@ msgstr "新規追加"
 msgid "Add new {0}"
 msgstr "新しい{0}を追加"
 
-#: packages/admin/src/components/SeoPanel.tsx:239
+#: packages/admin/src/components/SeoPanel.tsx:240
 msgid "Add noindex meta tag"
 msgstr "noindexメタタグを追加"
 
@@ -962,7 +962,7 @@ msgid "Also match the byline linked to an entry's author when it has none assign
 msgstr "執筆者が未設定の場合、コンテンツの著者に紐づく執筆者も対象にします。"
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:376
-#: packages/admin/src/components/editor/ImageNode.tsx:231
+#: packages/admin/src/components/editor/ImageNode.tsx:244
 #: packages/admin/src/components/MediaLibrary.tsx:553
 msgid "Alt text"
 msgstr "代替テキスト"
@@ -1466,8 +1466,8 @@ msgstr "コンテンツを閲覧可能"
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
-#: packages/admin/src/components/editor/ImageNode.tsx:252
-#: packages/admin/src/components/editor/ImageNode.tsx:253
+#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:266
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:406
 #: packages/admin/src/components/FieldEditor.tsx:678
 #: packages/admin/src/components/MediaDetailPanel.tsx:430
@@ -1517,8 +1517,8 @@ msgstr "テーマセクションは削除できません"
 msgid "Cannot determine MIME type from URL. Use a URL ending in a recognized image extension (e.g. .jpg, .png, .webp)."
 msgstr "URLからMIMEタイプを判別できません。認識可能な画像拡張子（例：.jpg、.png、.webp）で終わるURLを使用してください。"
 
-#: packages/admin/src/components/SeoPanel.tsx:224
-#: packages/admin/src/components/SeoPanel.tsx:228
+#: packages/admin/src/components/SeoPanel.tsx:225
+#: packages/admin/src/components/SeoPanel.tsx:229
 msgid "Canonical URL"
 msgstr "正規URL"
 
@@ -2471,8 +2471,8 @@ msgstr "ギャラリーを削除"
 msgid "Delete HTML block"
 msgstr "HTMLブロックを削除"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:220
-#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:233
+#: packages/admin/src/components/editor/ImageNode.tsx:234
 msgid "Delete image"
 msgstr "画像を削除"
 
@@ -2577,7 +2577,7 @@ msgid "Deny"
 msgstr "拒否"
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:379
-#: packages/admin/src/components/editor/ImageNode.tsx:238
+#: packages/admin/src/components/editor/ImageNode.tsx:251
 msgid "Describe the image..."
 msgstr "画像の説明を入力..."
 
@@ -4150,8 +4150,8 @@ msgstr "ヒーローバナー"
 msgid "hero, banner, cta"
 msgstr "ヒーロー、バナー、CTA"
 
-#: packages/admin/src/components/SeoPanel.tsx:242
-#: packages/admin/src/components/SeoPanel.tsx:245
+#: packages/admin/src/components/SeoPanel.tsx:243
+#: packages/admin/src/components/SeoPanel.tsx:246
 msgid "Hide from search engines"
 msgstr "検索エンジンから非表示"
 
@@ -4246,8 +4246,8 @@ msgstr "メディアライブラリから画像"
 msgid "Image not found"
 msgstr "画像が見つかりません"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:208
-#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:221
+#: packages/admin/src/components/editor/ImageNode.tsx:222
 msgid "Image settings"
 msgstr "画像設定"
 
@@ -6207,7 +6207,7 @@ msgstr "プラグイン"
 msgid "Point-in-Time Restore"
 msgstr "ポイントインタイムリストア"
 
-#: packages/admin/src/components/SeoPanel.tsx:220
+#: packages/admin/src/components/SeoPanel.tsx:221
 msgid "Points search engines to the original version of this page, if it's duplicated from another URL"
 msgstr "このページが別のURLの複製の場合、検索エンジンにオリジナルのバージョンを示します"
 
@@ -6333,8 +6333,8 @@ msgstr "待機中"
 msgid "Quick create byline"
 msgstr "執筆者をすぐに作成"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:196
-#: packages/admin/src/components/editor/ImageNode.tsx:197
+#: packages/admin/src/components/editor/ImageNode.tsx:209
+#: packages/admin/src/components/editor/ImageNode.tsx:210
 msgid "Quick edit alt text"
 msgstr "代替テキストをクイック編集"
 
@@ -6831,7 +6831,7 @@ msgstr "同じウィンドウ"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1191
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
-#: packages/admin/src/components/editor/ImageNode.tsx:264
+#: packages/admin/src/components/editor/ImageNode.tsx:277
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:417
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6846,7 +6846,7 @@ msgstr "保存"
 msgid "Save (Enter)"
 msgstr "保存（Enter）"
 
-#: packages/admin/src/components/editor/ImageNode.tsx:265
+#: packages/admin/src/components/editor/ImageNode.tsx:278
 msgid "Save alt text"
 msgstr "代替テキストを保存"
 
@@ -8865,7 +8865,7 @@ msgstr "整数"
 msgid "Why can't this be changed?"
 msgstr "変更できない理由"
 
-#: packages/admin/src/components/SeoPanel.tsx:221
+#: packages/admin/src/components/SeoPanel.tsx:222
 msgid "Why is this important for duplicate pages?"
 msgstr "重複ページにとって重要な理由"
 
@@ -8877,7 +8877,7 @@ msgstr "検索結果の概要にとって重要な理由"
 msgid "Why is this important for search result titles?"
 msgstr "検索結果のタイトルにとって重要な理由"
 
-#: packages/admin/src/components/SeoPanel.tsx:240
+#: packages/admin/src/components/SeoPanel.tsx:241
 msgid "Why is this important for search visibility?"
 msgstr "検索での表示にとって重要な理由"
 
