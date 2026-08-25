@@ -7,6 +7,7 @@ import { exports } from "cloudflare:workers";
 import { packTar, type TarEntry } from "modern-tar";
 import { describe, expect, it, vi } from "vitest";
 
+import { createDelegatedReleaseConformanceFixture } from "../../../packages/registry-verification/fixtures/conformance/delegated-release.js";
 import { resolvePublicHostname } from "../src/dns.js";
 import { verifyArtifact, verifyRelease } from "../src/verify.js";
 
@@ -143,6 +144,36 @@ describe("isolated release verifier", () => {
 		expect(received?.artifactDigest).toHaveLength(32);
 		expect(received?.artifactDigests?.map((digest) => digest.byteLength)).toEqual([48, 64]);
 		expect(JSON.stringify(result)).not.toContain("export default");
+	});
+
+	it("matches the shared delegated-release service output contract", async () => {
+		const fixture = await createDelegatedReleaseConformanceFixture();
+		const result = await verifyRelease(fixture.serviceInput, {
+			fetch: async (url) =>
+				new Response(
+					url.toString() === fixture.artifactUrl
+						? fixture.artifactBytes
+						: fixture.provenanceDocument,
+				),
+			resolveHostname: async () => ["203.0.113.5"],
+			provenanceVerifier: fixture.provenanceVerifier,
+		});
+
+		expect(result).toMatchObject({
+			success: true,
+			value: {
+				artifact: {
+					checksum: fixture.artifactChecksum,
+					manifest: { id: fixture.packageSlug, version: fixture.version },
+				},
+				provenance: {
+					checksum: fixture.provenanceChecksum,
+					predicateType: fixture.expected.predicateType,
+					sourceRepository: fixture.expected.repository,
+					builderId: fixture.expected.builderId,
+				},
+			},
+		});
 	});
 
 	it("rejects checksum and bundle identity mismatches with stable reports", async () => {

@@ -32,7 +32,7 @@ const SUPPORTED_SUBJECT_DIGESTS = new Map([
 	["sha384", 48],
 	["sha512", 64],
 ]);
-const decoder = new TextDecoder("utf-8", { fatal: true });
+const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: false });
 const trustedRoot = TrustedRoot.fromJSON(trustedRootJson);
 const verifier = new Verifier(toTrustMaterial(trustedRoot), {
 	tlogThreshold: 1,
