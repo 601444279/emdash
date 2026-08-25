@@ -55,6 +55,13 @@ export interface DelegatedReleaseConformanceFixture {
 	};
 }
 
+interface ConformanceProvenanceStatement {
+	predicateType: string;
+	subject: { sha256: string };
+	sourceRepository: string;
+	builderId: string;
+}
+
 export async function createDelegatedReleaseConformanceFixture(
 	options: DelegatedReleaseFixtureOptions = {},
 ): Promise<DelegatedReleaseConformanceFixture> {
@@ -89,7 +96,7 @@ export async function createDelegatedReleaseConformanceFixture(
 		file("admin.js", "export default {};"),
 	]);
 	const artifact = await checksumAndDigest(artifactBytes);
-	const statement = {
+	const statement: ConformanceProvenanceStatement = {
 		predicateType,
 		subject: { sha256: toHex(artifact.digest) },
 		sourceRepository: repository,
@@ -141,12 +148,14 @@ export async function createDelegatedReleaseConformanceFixture(
 	};
 	const provenanceVerifier: ProvenanceVerifier = {
 		async verify(input) {
-			let parsed: typeof statement;
+			let value: unknown;
 			try {
-				parsed = JSON.parse(decoder.decode(input.document)) as typeof statement;
+				value = JSON.parse(decoder.decode(input.document));
 			} catch {
 				return unverifiable();
 			}
+			if (!isConformanceStatement(value)) return unverifiable();
+			const parsed = value;
 			if (
 				input.reference.predicateType !== predicateType ||
 				input.reference.url !== provenanceUrl ||
@@ -227,6 +236,19 @@ async function checksumAndDigest(
 
 function toHex(bytes: Uint8Array): string {
 	return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function isConformanceStatement(value: unknown): value is ConformanceProvenanceStatement {
+	if (!value || typeof value !== "object") return false;
+	const subject = Reflect.get(value, "subject");
+	return (
+		typeof Reflect.get(value, "predicateType") === "string" &&
+		typeof Reflect.get(value, "sourceRepository") === "string" &&
+		typeof Reflect.get(value, "builderId") === "string" &&
+		typeof subject === "object" &&
+		subject !== null &&
+		typeof Reflect.get(subject, "sha256") === "string"
+	);
 }
 
 function unverifiable() {
