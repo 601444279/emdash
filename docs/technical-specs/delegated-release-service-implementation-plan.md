@@ -29,7 +29,7 @@ The old branch contains reviewed or tested implementations for:
 
 - required-user-verification WebAuthn primitives;
 - confidential OAuth metadata and storage experiments;
-- versioned envelope encryption;
+- compact JOSE envelope encryption;
 - GitHub Actions OIDC verification;
 - service API response and request-security foundations;
 - an isolated verifier Worker; and
@@ -315,7 +315,7 @@ Dependencies: W1 exact permission, W2 API, W3 delegation and operation RPCs.
 | `W4.1` | Implement confidential-client metadata, versioned JWKS, PKCE/state/nonce transactions, and callback validation |
 | `W4.2` | Implement identity-only publisher login and short-lived publisher application sessions                         |
 | `W4.3` | Implement exact-scope delegation authorization and returned-grant validation                                   |
-| `W4.4` | Port and review versioned envelope encryption with publisher/field-associated data                             |
+| `W4.4` | Implement and review compact JWE with `jose`, wrapped per-value content keys, and publisher/field context binding |
 | `W4.5` | Persist encrypted sessions in the publisher object and implement serialized refresh using operation tokens     |
 | `W4.6` | Implement publisher and operator revocation, client-key rotation, reauthorization, and failure classification  |
 

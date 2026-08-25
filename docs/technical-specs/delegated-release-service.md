@@ -543,15 +543,18 @@ Provider payloads, tokens, secrets, raw assertions, private evidence, and stack 
 
 ## Encryption and key management
 
-Envelope encryption uses a versioned master key from Secrets Store or an equivalent Worker secret binding. The key is read inside request or RPC scope and is never logged or persisted. Each encrypted value includes:
+Envelope encryption uses compact JSON Web Encryption (JWE) through `jose`. A versioned 256-bit master key from Secrets Store or an equivalent Worker secret binding acts as an `A256GCMKW` key-encryption key. Each value receives a fresh content-encryption key, and `A256GCM` encrypts the payload. Master keys are read inside request or RPC scope and are never logged or persisted.
 
-- algorithm and envelope version;
-- master-key version;
-- nonce;
-- ciphertext and authentication tag; and
-- associated-data version.
+Each compact JWE includes:
 
-Associated data binds the deployment, publisher DID, object class, table, row identity, and field purpose. Swapping ciphertext between publishers or fields fails authentication.
+- the key-management and content-encryption algorithms;
+- the master-key version and initial profile version;
+- a wrapped content-encryption key;
+- key-wrap and content-encryption nonces and authentication tags;
+- ciphertext; and
+- a critical SHA-256 context digest.
+
+The protected header is authenticated as JWE associated data. Its context digest binds the deployment, publisher DID, object class, table, row identity, field purpose, and master-key version. Swapping ciphertext between publishers or fields fails authentication.
 
 Routine rotation introduces a new active version, retains old versions for decryption, re-encrypts in bounded publisher-shard batches, verifies completion through audit/export data, and only then retires the old version. Emergency rotation pauses publication first. Missing key material fails closed and requires operator recovery; it never silently discards or recreates delegation.
 
