@@ -96,6 +96,8 @@ const permission = getDelegatedReleasePermission();
 
 The service does not hard-code the experimental or future stable NSID. A namespace migration requires a new publisher grant because AT Protocol repository scope is collection-specific.
 
+The first release requests this granular permission directly rather than wrapping it in an AT Protocol permission set. Permission sets are useful when an application needs many permissions under one Lexicon namespace; this service needs one create-only repository permission. Direct scope keeps the effective authority visible in client metadata, stored delegation state, audit output, and conformance evidence. A future permission-set alias is acceptable only if every supported PDS resolves it to the identical collection and `create` action and the full authorization, refresh, and revocation matrix is repeated.
+
 The initial support matrix contains:
 
 - Bluesky PDS software hosted by npmX (`npmx.social`); and
