@@ -96,6 +96,7 @@ const MAX_PUBLISHER_SESSION_MS = 24 * 60 * 60_000;
 const REFRESH_TOKEN_BYTES = 32;
 const BASE64_PADDING_PATTERN = /=+$/;
 const ENCRYPTION_CURSOR_PATTERN = /^(?:delegation:1|oauth-state:[A-Za-z0-9_-]{32,128})$/;
+const ARCHIVE_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{15,63}$/;
 
 export type PublisherOAuthEncryptionPurpose =
 	| "oauth-console-transaction"
@@ -195,6 +196,10 @@ export interface PublisherAuditEvent {
 	publicPayloadJson: string;
 	createdAt: number;
 }
+
+export type PreparePublisherRestoreResult =
+	| { ok: true; deletedIntents: number; deletedWorkloads: number }
+	| { ok: false; code: "PUBLISHER_NOT_SUSPENDED" };
 
 export type PutDelegationResult =
 	| { ok: true; delegation: StoredDelegation }
@@ -1049,6 +1054,71 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	): ApplyPublisherRestorePageResult {
 		this.#assertPublisherDid(input.publisherDid);
 		return this.#operationsRestore.apply(input);
+	}
+
+	prepareOperationsRestore(
+		publisherDid: string,
+		archiveId: string,
+		actorIdentity: string,
+		now = Date.now(),
+	): PreparePublisherRestoreResult {
+		this.#assertPublisherDid(publisherDid);
+		if (
+			!ARCHIVE_ID_PATTERN.test(archiveId) ||
+			!ACTOR_IDENTITY_PATTERN.test(actorIdentity) ||
+			!Number.isSafeInteger(now) ||
+			now < 0
+		) {
+			throw new PublisherStateError("OPERATIONS_EXPORT_INVALID");
+		}
+		return this.ctx.storage.transactionSync(() => {
+			const publisher = this.ctx.storage.sql
+				.exec<{ status: string }>("SELECT status FROM publisher WHERE id = 1")
+				.one();
+			if (publisher.status !== "suspended") {
+				return { ok: false, code: "PUBLISHER_NOT_SUSPENDED" } as const;
+			}
+			const deletedIntents = this.ctx.storage.sql
+				.exec<{ count: number }>("SELECT COUNT(*) AS count FROM intents")
+				.one().count;
+			const deletedWorkloads = this.ctx.storage.sql
+				.exec<{ count: number }>("SELECT COUNT(*) AS count FROM workload_policies")
+				.one().count;
+			this.ctx.storage.sql.exec("DELETE FROM intent_verification_steps");
+			this.ctx.storage.sql.exec("DELETE FROM intent_transitions");
+			this.ctx.storage.sql.exec("DELETE FROM release_reservations");
+			this.ctx.storage.sql.exec("DELETE FROM intent_idempotency");
+			this.ctx.storage.sql.exec("DELETE FROM publication_operations");
+			this.ctx.storage.sql.exec("DELETE FROM deadlines");
+			this.ctx.storage.sql.exec("DELETE FROM intents");
+			this.ctx.storage.sql.exec("DELETE FROM workload_policies");
+			this.ctx.storage.sql.exec("DELETE FROM publisher_sessions");
+			this.ctx.storage.sql.exec("DELETE FROM oauth_states");
+			this.ctx.storage.sql.exec("DELETE FROM delegation");
+			this.ctx.storage.sql.exec("DELETE FROM intent_rate_windows");
+			this.ctx.storage.sql.exec("DELETE FROM intent_rate_idempotency");
+			this.ctx.storage.sql.exec("DELETE FROM operations_restore_pages");
+			this.ctx.storage.sql.exec("DELETE FROM operations_restore");
+			this.ctx.storage.sql.exec("DELETE FROM audit_events");
+			this.ctx.storage.sql.exec(
+				`UPDATE delegation_operations SET generation = generation + 1,
+				 token_hash = NULL, delegation_version = NULL, expires_at = NULL, updated_at = ?
+				 WHERE kind = 'refresh'`,
+				now,
+			);
+			this.ctx.storage.sql.exec(
+				"UPDATE publisher SET session_epoch = session_epoch + 1 WHERE id = 1",
+			);
+			this.#appendAudit(
+				"publisher-restore-prepared",
+				"access",
+				actorIdentity,
+				archiveId,
+				now,
+				"PUBLISHER_SUSPENDED",
+			);
+			return { ok: true, deletedIntents, deletedWorkloads } as const;
+		});
 	}
 
 	listAuditEvents(

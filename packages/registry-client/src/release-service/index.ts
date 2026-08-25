@@ -11,6 +11,7 @@ import {
 	type EncryptionRotationResult,
 	type MutationResult,
 	type OperatorPublisherResource,
+	type PreparePublisherRestoreResult,
 	type PublisherArchiveKind,
 	type PublisherArchivePageInput,
 	type PublisherArchivePageResult,
@@ -41,6 +42,7 @@ export type {
 	EncryptionRotationResult,
 	MutationResult,
 	OperatorPublisherResource,
+	PreparePublisherRestoreResult,
 	PublisherArchiveKind,
 	PublisherArchivePageInput,
 	PublisherArchivePageResult,
@@ -1047,6 +1049,28 @@ function parsePublisherRestorePage(value: unknown): PublisherRestorePageResult {
 	};
 }
 
+function parsePreparedPublisherRestore(value: unknown): PreparePublisherRestoreResult {
+	if (!isRecord(value)) throw invalidResponse();
+	const archiveId = stringValue(value, "archiveId");
+	const publisherDid = stringValue(value, "publisherDid");
+	const deletedIntents = safeInteger(value, "deletedIntents");
+	const deletedWorkloads = safeInteger(value, "deletedWorkloads");
+	if (
+		!archiveId ||
+		!ARCHIVE_ID_PATTERN.test(archiveId) ||
+		!publisherDid ||
+		!DID_PATTERN.test(publisherDid) ||
+		value["prepared"] !== true ||
+		deletedIntents === null ||
+		deletedIntents < 0 ||
+		deletedWorkloads === null ||
+		deletedWorkloads < 0
+	) {
+		throw invalidResponse();
+	}
+	return { archiveId, publisherDid, prepared: true, deletedIntents, deletedWorkloads };
+}
+
 export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 	#mutationHeaders(idempotencyKey: string): Headers {
 		return new Headers({
@@ -1230,6 +1254,30 @@ export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 				signal: options.signal,
 			},
 			parsePublisherRestorePage,
+		);
+	}
+
+	async preparePublisherRestore(
+		publisherDid: string,
+		archiveId: string,
+		options: MutationOptions,
+	): Promise<PreparePublisherRestoreResult> {
+		if (!ARCHIVE_ID_PATTERN.test(archiveId)) {
+			throw new ReleaseServiceError({
+				code: "CLIENT_RESPONSE_INVALID",
+				message: "Publisher archive ID is invalid",
+			});
+		}
+		return await this.call(
+			`/admin/api/publishers/${encodeURIComponent(publisherDid)}/restore/prepare`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: this.#mutationHeaders(options.idempotencyKey),
+				body: JSON.stringify({ archiveId, confirmPublisherDid: publisherDid }),
+				signal: options.signal,
+			},
+			parsePreparedPublisherRestore,
 		);
 	}
 

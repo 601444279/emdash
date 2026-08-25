@@ -13,6 +13,7 @@ import { writeOperationsMetric } from "../observability/metrics.js";
 
 const ARCHIVE_PATH_PATTERN = /^\/admin\/api\/publishers\/([^/]+)\/archive$/;
 const RESTORE_PATH_PATTERN = /^\/admin\/api\/publishers\/([^/]+)\/restore$/;
+const RESTORE_PREPARE_PATH_PATTERN = /^\/admin\/api\/publishers\/([^/]+)\/restore\/prepare$/;
 const ARCHIVE_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{15,63}$/;
 const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$/;
 const CURSOR_PATTERN =
@@ -257,6 +258,20 @@ export function matchPublisherRestorePath(
 	pathname: string,
 ): Readonly<Record<string, string>> | null {
 	const match = RESTORE_PATH_PATTERN.exec(pathname);
+	if (!match?.[1]) return null;
+	let publisherDid: string;
+	try {
+		publisherDid = decodeURIComponent(match[1]);
+	} catch {
+		return null;
+	}
+	return isDid(publisherDid) ? { publisherDid } : null;
+}
+
+export function matchPublisherRestorePreparePath(
+	pathname: string,
+): Readonly<Record<string, string>> | null {
+	const match = RESTORE_PREPARE_PATH_PATTERN.exec(pathname);
 	if (!match?.[1]) return null;
 	let publisherDid: string;
 	try {
@@ -548,6 +563,80 @@ export async function handleRestorePublisher(
 		);
 		return apiFailure(
 			new ApiError("RESTORE_OPERATION_FAILED", 503, "Publisher restore failed"),
+			requestId,
+		);
+	}
+}
+
+export async function handlePreparePublisherRestore(
+	request: Request,
+	requestId: string,
+	configuration: ServiceConfiguration,
+	params: Readonly<Record<string, string>>,
+	accessActor: AccessActor | null,
+): Promise<Response> {
+	try {
+		const actor = requireActor(accessActor);
+		requireIdempotencyKey(request);
+		const publisherDid = params["publisherDid"];
+		if (!publisherDid || !isDid(publisherDid)) {
+			throw new ApiError("NOT_FOUND", 404, "Publisher not found");
+		}
+		const body = await readJsonObject(request);
+		if (
+			!hasExactKeys(body, ["archiveId", "confirmPublisherDid"]) ||
+			typeof body["archiveId"] !== "string" ||
+			!ARCHIVE_ID_PATTERN.test(body["archiveId"]) ||
+			body["confirmPublisherDid"] !== publisherDid
+		) {
+			throw new ApiError("INVALID_REQUEST", 400, "Publisher restore confirmation is invalid");
+		}
+		const control = await env.SERVICE_CONTROL_DO.getByName(
+			SERVICE_CONTROL_OBJECT_NAME,
+		).readPublisherControl(actor, publisherDid);
+		if (control.status !== "suspended") {
+			throw new ApiError(
+				"RESTORE_OPERATION_FAILED",
+				409,
+				"Suspend the publisher before preparing a restore",
+			);
+		}
+		const ownerHash = await hashOwner(publisherDid);
+		const manifestPlaintext = await readEncryptedObject(
+			`snapshots/${ownerHash}/${body["archiveId"]}/manifest.json.jwe`,
+			snapshotContext(publisherDid, body["archiveId"], "manifest"),
+			configuration,
+		);
+		parseManifest(manifestPlaintext, publisherDid, body["archiveId"]);
+		const publisher = env.PUBLISHER_DO.getByName(publisherDid);
+		await publisher.setPublisherSuspended(publisherDid, true, actor.identity);
+		const result = await publisher.prepareOperationsRestore(
+			publisherDid,
+			body["archiveId"],
+			actor.identity,
+		);
+		if (!result.ok) {
+			throw new ApiError("RESTORE_OPERATION_FAILED", 409, "Publisher is not suspended");
+		}
+		return apiSuccess(
+			{
+				archiveId: body["archiveId"],
+				publisherDid,
+				prepared: true,
+				deletedIntents: result.deletedIntents,
+				deletedWorkloads: result.deletedWorkloads,
+			},
+			requestId,
+		);
+	} catch (error) {
+		writeOperationsMetric({
+			event: "restore_failure",
+			outcome: error instanceof ApiError ? error.code : "internal",
+			requestId,
+		});
+		if (error instanceof ApiError) return apiFailure(error, requestId);
+		return apiFailure(
+			new ApiError("RESTORE_OPERATION_FAILED", 503, "Publisher restore preparation failed"),
 			requestId,
 		);
 	}

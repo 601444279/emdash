@@ -230,6 +230,14 @@ export interface PublisherRestorePageResult {
 	authorityStatus: "reauthorization_required";
 }
 
+export interface PreparePublisherRestoreResult {
+	archiveId: string;
+	publisherDid: string;
+	prepared: true;
+	deletedIntents: number;
+	deletedWorkloads: number;
+}
+
 export interface CursorPage<T> {
 	items: T[];
 	nextCursor?: string;

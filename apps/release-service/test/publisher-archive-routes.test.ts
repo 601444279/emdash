@@ -1,9 +1,13 @@
-import { abortAllDurableObjects, reset, runInDurableObject } from "cloudflare:test";
+import { abortAllDurableObjects, reset } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { afterEach, describe, expect, it } from "vitest";
 
 import type { AccessActor } from "../src/access/auth.js";
-import { handleArchivePublisher, handleRestorePublisher } from "../src/backup/routes.js";
+import {
+	handleArchivePublisher,
+	handlePreparePublisherRestore,
+	handleRestorePublisher,
+} from "../src/backup/routes.js";
 import { loadConfiguration } from "../src/config.js";
 import { SERVICE_CONTROL_OBJECT_NAME } from "../src/control-do/service-control-do.js";
 import { TEST_BINDINGS } from "./fixtures/oauth.js";
@@ -38,6 +42,17 @@ function restoreRequest(page: number): Request {
 			"idempotency-key": `publisher-restore-page-${page}`,
 		},
 		body: JSON.stringify({ archiveId: ARCHIVE_ID, page }),
+	});
+}
+
+function prepareRestoreRequest(): Request {
+	return new Request(`${TEST_BINDINGS.PUBLIC_ORIGIN}/admin/api/publishers/restore/prepare`, {
+		method: "POST",
+		headers: {
+			"content-type": "application/json",
+			"idempotency-key": "publisher-restore-prepare-0001",
+		},
+		body: JSON.stringify({ archiveId: ARCHIVE_ID, confirmPublisherDid: PUBLISHER_DID }),
 	});
 }
 
@@ -182,8 +197,16 @@ describe("publisher operations archive", () => {
 			reasonCode: "SHARD_RESTORE",
 			now: NOW + 2,
 		});
-		await runInDurableObject(publisher, async (_instance, state) => {
-			await state.storage.deleteAll();
+		const prepared = await handlePreparePublisherRestore(
+			prepareRestoreRequest(),
+			"restore-prepare",
+			configuration,
+			{ publisherDid: PUBLISHER_DID },
+			ADMIN,
+		);
+		expect(prepared.status).toBe(200);
+		await expect(prepared.json()).resolves.toMatchObject({
+			data: { archiveId: ARCHIVE_ID, publisherDid: PUBLISHER_DID, prepared: true },
 		});
 		await abortAllDurableObjects();
 

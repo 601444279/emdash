@@ -15,8 +15,10 @@ import {
 } from "./approvals/routes.js";
 import {
 	handleArchivePublisher,
+	handlePreparePublisherRestore,
 	handleRestorePublisher,
 	matchPublisherArchivePath,
+	matchPublisherRestorePreparePath,
 	matchPublisherRestorePath,
 } from "./backup/routes.js";
 import {
@@ -296,6 +298,13 @@ export const ROUTES = Object.freeze([
 		match: matchPublisherRestorePath,
 		accessRole: "admin",
 		handler: handleRestorePublisher,
+	},
+	{
+		method: "POST",
+		path: "/admin/api/publishers/{publisherDid}/restore/prepare",
+		match: matchPublisherRestorePreparePath,
+		accessRole: "admin",
+		handler: handlePreparePublisherRestore,
 	},
 	{
 		method: "POST",
