@@ -28,6 +28,14 @@ describe("release-service OAuth configuration", () => {
 			ASSERTION_KEY_1.kid,
 		]);
 		expect(JSON.stringify(getPublicJwks(configuration.oauth))).not.toContain('"d"');
+		expect(configuration.access).toEqual({
+			teamDomain: TEST_BINDINGS.ACCESS_TEAM_DOMAIN,
+			audiences: {
+				viewer: TEST_BINDINGS.ACCESS_VIEWER_AUD,
+				reviewer: TEST_BINDINGS.ACCESS_REVIEWER_AUD,
+				admin: TEST_BINDINGS.ACCESS_ADMIN_AUD,
+			},
+		});
 	});
 
 	it.each([
@@ -42,6 +50,16 @@ describe("release-service OAuth configuration", () => {
 		["empty redirects", { ...TEST_BINDINGS, OAUTH_REDIRECT_URIS: "[]" }],
 		["malformed keyset", { ...TEST_BINDINGS, OAUTH_ASSERTION_KEYSET: "not-json" }],
 		["malformed encryption keyring", { ...TEST_BINDINGS, ENCRYPTION_KEYRING: "not-json" }],
+		["non-Access team domain", { ...TEST_BINDINGS, ACCESS_TEAM_DOMAIN: "https://example.com" }],
+		[
+			"Access team domain with a port",
+			{ ...TEST_BINDINGS, ACCESS_TEAM_DOMAIN: "https://emdash-test.cloudflareaccess.com:8443" },
+		],
+		["malformed Access audience", { ...TEST_BINDINGS, ACCESS_ADMIN_AUD: "not-an-aud" }],
+		[
+			"duplicate Access audiences",
+			{ ...TEST_BINDINGS, ACCESS_ADMIN_AUD: TEST_BINDINGS.ACCESS_REVIEWER_AUD },
+		],
 		[
 			"missing active key",
 			{

@@ -1,3 +1,4 @@
+import type { AccessActor, AccessRole } from "./access/auth.js";
 import { apiSuccess } from "./api/response.js";
 import {
 	handleBeginApprovalDecision,
@@ -23,14 +24,16 @@ import {
 } from "./oauth/routes.js";
 
 export interface RouteDefinition {
-	method: "DELETE" | "GET" | "POST";
+	method: "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
 	path: string;
 	match?(pathname: string): Readonly<Record<string, string>> | null;
+	accessRole?: AccessRole;
 	handler(
 		request: Request,
 		requestId: string,
 		configuration: ServiceConfiguration,
 		params: Readonly<Record<string, string>>,
+		accessActor: AccessActor | null,
 	): Response | Promise<Response>;
 }
 

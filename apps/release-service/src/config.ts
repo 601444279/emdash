@@ -5,6 +5,7 @@ import {
 } from "@atcute/oauth-node-client";
 import { getDelegatedReleasePermission } from "@emdash-cms/registry-lexicons";
 
+import type { AccessConfiguration } from "./access/auth.js";
 import { createEnvelopeEncryption, type EnvelopeEncryption } from "./crypto/encryption.js";
 
 export type ConfigurationBindings = Record<
@@ -15,10 +16,15 @@ export type ConfigurationBindings = Record<
 		| "OAUTH_REDIRECT_URIS"
 		| "OAUTH_ASSERTION_KEYSET"
 		| "ENCRYPTION_KEYRING"
+		| "ACCESS_TEAM_DOMAIN"
+		| "ACCESS_VIEWER_AUD"
+		| "ACCESS_REVIEWER_AUD"
+		| "ACCESS_ADMIN_AUD"
 	>,
 	string
 >;
 
+const ACCESS_AUDIENCE_PATTERN = /^[a-f0-9]{64}$/;
 const BASE64URL_PATTERN = /^[A-Za-z0-9_-]+$/;
 const DEPLOYMENT_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$/;
 const MAX_ASSERTION_KEYSET_CHARS = 64 * 1024;
@@ -29,6 +35,10 @@ const CONFIGURATION_BINDING_KEYS = [
 	"DEPLOYMENT_ID",
 	"OAUTH_REDIRECT_URIS",
 	"OAUTH_ASSERTION_KEYSET",
+	"ACCESS_TEAM_DOMAIN",
+	"ACCESS_VIEWER_AUD",
+	"ACCESS_REVIEWER_AUD",
+	"ACCESS_ADMIN_AUD",
 ] as const satisfies readonly (keyof ConfigurationBindings)[];
 
 interface ConfigurationCacheEntry {
@@ -39,6 +49,7 @@ interface ConfigurationCacheEntry {
 export interface ServiceConfiguration {
 	publicOrigin: string;
 	deploymentId: string;
+	access: AccessConfiguration;
 	oauth: OAuthConfiguration;
 	encryption: EnvelopeEncryption;
 }
@@ -84,6 +95,28 @@ function parseOrigin(value: unknown): string | null {
 	} catch {
 		return null;
 	}
+}
+
+function parseAccessTeamDomain(value: unknown): string | null {
+	const origin = parseOrigin(value);
+	if (!origin) return null;
+	const url = new URL(origin);
+	return url.port === "" && url.hostname.endsWith(".cloudflareaccess.com") ? origin : null;
+}
+
+function parseAccessAudiences(
+	bindings: ConfigurationBindings,
+): AccessConfiguration["audiences"] | null {
+	const audiences = {
+		viewer: bindings.ACCESS_VIEWER_AUD,
+		reviewer: bindings.ACCESS_REVIEWER_AUD,
+		admin: bindings.ACCESS_ADMIN_AUD,
+	};
+	const values = Object.values(audiences);
+	return values.every((audience) => ACCESS_AUDIENCE_PATTERN.test(audience)) &&
+		new Set(values).size === values.length
+		? audiences
+		: null;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -226,7 +259,19 @@ async function parseConfiguration(
 	if (!redirectUris) issues.push("OAUTH_REDIRECT_URIS_INVALID");
 	const assertionKeyset = await parseAssertionKeyset(bindings.OAUTH_ASSERTION_KEYSET);
 	if (!assertionKeyset) issues.push("OAUTH_ASSERTION_KEYSET_INVALID");
-	if (!publicOrigin || !deploymentId || !redirectUris || !assertionKeyset || issues.length > 0) {
+	const accessTeamDomain = parseAccessTeamDomain(bindings.ACCESS_TEAM_DOMAIN);
+	if (!accessTeamDomain) issues.push("ACCESS_TEAM_DOMAIN_INVALID");
+	const accessAudiences = parseAccessAudiences(bindings);
+	if (!accessAudiences) issues.push("ACCESS_AUDIENCES_INVALID");
+	if (
+		!publicOrigin ||
+		!deploymentId ||
+		!redirectUris ||
+		!assertionKeyset ||
+		!accessTeamDomain ||
+		!accessAudiences ||
+		issues.length > 0
+	) {
 		throw new ConfigurationError(issues);
 	}
 	const permission = getDelegatedReleasePermission();
@@ -247,6 +292,7 @@ async function parseConfiguration(
 	return {
 		publicOrigin,
 		deploymentId,
+		access: { teamDomain: accessTeamDomain, audiences: accessAudiences },
 		oauth: {
 			clientMetadata,
 			releaseNsid: permission.collection,

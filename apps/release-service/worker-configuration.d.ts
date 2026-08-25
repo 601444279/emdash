@@ -4,6 +4,10 @@
 interface __BaseEnv_Env {
 	PUBLIC_ORIGIN: "";
 	DEPLOYMENT_ID: "";
+	ACCESS_TEAM_DOMAIN: "";
+	ACCESS_VIEWER_AUD: "";
+	ACCESS_REVIEWER_AUD: "";
+	ACCESS_ADMIN_AUD: "";
 	OAUTH_REDIRECT_URIS: "[]";
 	OAUTH_ASSERTION_KEYSET: string;
 	ENCRYPTION_KEYRING: string;
@@ -24,7 +28,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "PUBLIC_ORIGIN" | "DEPLOYMENT_ID" | "OAUTH_REDIRECT_URIS" | "OAUTH_ASSERTION_KEYSET" | "ENCRYPTION_KEYRING">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "PUBLIC_ORIGIN" | "DEPLOYMENT_ID" | "ACCESS_TEAM_DOMAIN" | "ACCESS_VIEWER_AUD" | "ACCESS_REVIEWER_AUD" | "ACCESS_ADMIN_AUD" | "OAUTH_REDIRECT_URIS" | "OAUTH_ASSERTION_KEYSET" | "ENCRYPTION_KEYRING">> {}
 }
 
 // Begin runtime types

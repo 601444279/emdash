@@ -1,3 +1,10 @@
+import type { JWTVerifyGetKey } from "jose";
+
+import {
+	authenticateAccessRequest,
+	validateAccessMutation,
+	type AccessActor,
+} from "./access/auth.js";
 import { ApiError } from "./api/errors.js";
 import { getRequestId } from "./api/request-id.js";
 import { apiFailure } from "./api/response.js";
@@ -12,6 +19,7 @@ export async function handleRequest(
 	request: Request,
 	bindings: ConfigurationBindings,
 	routes: readonly RouteDefinition[] = ROUTES,
+	accessKeyResolver?: JWTVerifyGetKey,
 ): Promise<Response> {
 	const requestId = getRequestId(request);
 	try {
@@ -27,7 +35,28 @@ export async function handleRequest(
 		});
 		const route = matches.find(({ candidate }) => candidate.method === request.method);
 		if (route) {
-			return await route.candidate.handler(request, requestId, configuration, route.params);
+			let accessActor: AccessActor | null = null;
+			if (url.pathname.startsWith("/v1/operator/") && !route.candidate.accessRole) {
+				throw new Error("Operator route is missing an Access role");
+			}
+			if (route.candidate.accessRole) {
+				accessActor = await authenticateAccessRequest(
+					request,
+					route.candidate.accessRole,
+					configuration.access,
+					accessKeyResolver,
+				);
+				if (route.candidate.method !== "GET") {
+					validateAccessMutation(request, configuration.publicOrigin);
+				}
+			}
+			return await route.candidate.handler(
+				request,
+				requestId,
+				configuration,
+				route.params,
+				accessActor,
+			);
 		}
 		if (matches.length > 0) {
 			return apiFailure(new ApiError("METHOD_NOT_ALLOWED", 405, "Method not allowed"), requestId);

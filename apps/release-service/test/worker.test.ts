@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { ConfigurationBindings } from "../src/config.js";
 import { handleRequest } from "../src/index.js";
 import type { RouteDefinition } from "../src/routes.js";
-import { TEST_ASSERTION_KEYSET } from "./fixtures/oauth.js";
+import { TEST_BINDINGS } from "./fixtures/oauth.js";
 
 describe("release-service Worker", () => {
 	it("serves health with a stable JSON envelope and request ID", async () => {
@@ -41,12 +41,9 @@ describe("release-service Worker", () => {
 
 	it("fails configuration closed without exposing binding names", async () => {
 		const bindings = {
+			...TEST_BINDINGS,
 			PUBLIC_ORIGIN: "",
-			DEPLOYMENT_ID: "test-release-service",
 			OAUTH_REDIRECT_URIS: "[]",
-			OAUTH_ASSERTION_KEYSET: TEST_ASSERTION_KEYSET,
-			ENCRYPTION_KEYRING:
-				'{"current":1,"keys":[{"version":1,"key":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8"}]}',
 		} satisfies ConfigurationBindings;
 		const response = await handleRequest(new Request("https://test/health"), bindings);
 		expect(response.status).toBe(503);
@@ -74,14 +71,7 @@ describe("release-service Worker", () => {
 		try {
 			const response = await handleRequest(
 				new Request("https://release.example.invalid/__test/failure"),
-				{
-					PUBLIC_ORIGIN: "https://release.example.invalid",
-					DEPLOYMENT_ID: "test-release-service",
-					OAUTH_REDIRECT_URIS: '["https://release.example.invalid/oauth/callback"]',
-					OAUTH_ASSERTION_KEYSET: TEST_ASSERTION_KEYSET,
-					ENCRYPTION_KEYRING:
-						'{"current":1,"keys":[{"version":1,"key":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8"}]}',
-				},
+				TEST_BINDINGS,
 				[route],
 			);
 			expect(response.status).toBe(500);

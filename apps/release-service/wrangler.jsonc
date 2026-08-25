@@ -40,6 +40,10 @@
 	"vars": {
 		"PUBLIC_ORIGIN": "",
 		"DEPLOYMENT_ID": "",
+		"ACCESS_TEAM_DOMAIN": "",
+		"ACCESS_VIEWER_AUD": "",
+		"ACCESS_REVIEWER_AUD": "",
+		"ACCESS_ADMIN_AUD": "",
 		"OAUTH_REDIRECT_URIS": "[]",
 	},
 	"secrets": {
