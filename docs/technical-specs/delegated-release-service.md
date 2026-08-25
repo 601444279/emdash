@@ -501,14 +501,14 @@ The public service API is versioned under `/v1`.
 
 | Method and path                            | Purpose                                          |
 | ------------------------------------------ | ------------------------------------------------ |
-| `GET /admin/api/status`                    | Read service mode and component health           |
-| `POST /admin/api/pause`                    | Change admission or publication mode             |
-| `GET /admin/api/publishers/{did}`          | Read authoritative sanitized publisher state     |
-| `POST /admin/api/publishers/{did}/suspend` | Suspend or restore publisher admission           |
-| `POST /admin/api/publishers/{did}/revoke`  | Revoke retained service authority                |
-| `POST /admin/api/intents/{id}/cancel`      | Stop an unpublished intent                       |
-| `POST /admin/api/intents/{id}/reconcile`   | Trigger bounded reconciliation                   |
-| `GET /admin/api/audit`                     | Query global or projected operational audit data |
+| `GET /admin/api/viewer/status`                             | Read service mode and component health           |
+| `GET /admin/api/viewer/publisher-control?did={did}`         | Read authoritative publisher control state       |
+| `GET /admin/api/viewer/audit`                              | Query global or projected operational audit data |
+| `POST /admin/api/reviewer/intents/{id}/cancel`             | Stop an unpublished intent                       |
+| `POST /admin/api/reviewer/intents/{id}/reconcile`          | Trigger bounded reconciliation                   |
+| `POST /admin/api/admin/service-mode`                       | Change admission or publication mode             |
+| `POST /admin/api/admin/publisher-control`                  | Suspend or restore publisher admission           |
+| `POST /admin/api/admin/publishers/{did}/revoke-authority`  | Revoke retained service authority                |
 
 State-changing requests require content-type validation, CSRF where cookies are used, and idempotency keys. API errors expose stable codes and public-safe messages.
 
