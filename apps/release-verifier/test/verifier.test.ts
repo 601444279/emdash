@@ -163,10 +163,11 @@ describe("isolated release verifier", () => {
 	});
 });
 
-	describe("Cloudflare DNS resolver", () => {
+describe("Cloudflare DNS resolver", () => {
 	it("combines bounded A and AAAA answers", async () => {
 		const fetchImplementation = vi.fn(async (input: RequestInfo | URL) => {
-			const url = input instanceof URL ? input : new URL(typeof input === "string" ? input : input.url);
+			const url =
+				input instanceof URL ? input : new URL(typeof input === "string" ? input : input.url);
 			const type = url.searchParams.get("type");
 			return Response.json({
 				Status: 0,
