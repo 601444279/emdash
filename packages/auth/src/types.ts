@@ -316,6 +316,8 @@ export interface EmailMessage {
 	subject: string;
 	text: string;
 	html?: string;
+	/** Optional Reply-To address for the outgoing message */
+	replyTo?: string;
 }
 
 export interface EmailAdapter {

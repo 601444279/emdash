@@ -425,6 +425,31 @@ describe("EmailPipeline", () => {
 		expect(order).toContain("afterSend");
 	});
 
+	it("passes replyTo through the pipeline to the deliver handler", async () => {
+		let receivedMessage: EmailMessage | undefined;
+
+		const deliverHandler: EmailDeliverHandler = async (event) => {
+			receivedMessage = event.message;
+		};
+
+		const providerPlugin = createTestPlugin({
+			id: "provider",
+			capabilities: ["hooks.email-transport:register"],
+			hooks: {
+				"email:deliver": createTestHook("provider", deliverHandler, { exclusive: true }),
+			},
+		});
+
+		const hookPipeline = new HookPipeline([providerPlugin], { db });
+		hookPipeline.setExclusiveSelection("email:deliver", "provider");
+
+		const emailPipeline = new EmailPipeline(hookPipeline);
+		await emailPipeline.send(createTestMessage({ replyTo: "visitor@example.com" }), "forms-plugin");
+
+		expect(receivedMessage).toBeDefined();
+		expect(receivedMessage!.replyTo).toBe("visitor@example.com");
+	});
+
 	it("cancellation in beforeSend prevents delivery", async () => {
 		const deliverHandler = vi.fn() as unknown as EmailDeliverHandler;
 		const afterSendHandler = vi.fn() as unknown as EmailAfterSendHandler;
@@ -551,6 +576,23 @@ describe("Dev Console Email Provider", () => {
 		expect(emails[0]!.message.subject).toBe("Dev Test");
 		expect(emails[0]!.source).toBe("system");
 		expect(emails[0]!.sentAt).toBeDefined();
+	});
+
+	it("preserves replyTo in stored email", async () => {
+		const event = {
+			message: createTestMessage({
+				to: "staff@example.com",
+				subject: "Visitor message",
+				replyTo: "visitor@example.com",
+			}),
+			source: "forms-plugin",
+		};
+
+		await devConsoleEmailDeliver(event, {} as PluginContext);
+
+		const emails = getDevEmails();
+		expect(emails).toHaveLength(1);
+		expect(emails[0]!.message.replyTo).toBe("visitor@example.com");
 	});
 
 	it("returns emails in most-recent-first order", async () => {

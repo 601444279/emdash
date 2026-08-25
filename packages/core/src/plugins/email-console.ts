@@ -65,10 +65,13 @@ export async function devConsoleEmailDeliver(
 ): Promise<void> {
 	const { message, source } = event;
 
+	const replyToLine = message.replyTo ? `   Reply-To: ${message.replyTo}\n` : "";
+
 	console.log(
 		`\n📧 [dev-email] Email sent\n` +
 			`   From: ${source}\n` +
 			`   To: ${message.to}\n` +
+			replyToLine +
 			`   Subject: ${message.subject}\n` +
 			`   Text: ${message.text.slice(0, 200)}${message.text.length > 200 ? "..." : ""}\n`,
 	);
