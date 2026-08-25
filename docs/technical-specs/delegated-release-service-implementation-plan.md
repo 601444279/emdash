@@ -58,9 +58,9 @@ The replacement implementation is rebased on current `main` and complete through
 - envelope encryption, publisher custody, generation-bound refresh operations, publisher application sessions, and identity/delegation callback routes pass real workerd tests; and
 - repository package typecheck, type-aware lint, and package tests pass on the top branch. One transient fixed-port collision in the sandbox-workerd suite passed on immediate isolated rerun.
 
-G0 remains open for external refresh and revocation proof. The first test authorizations predated persistence of the loopback client's redirect URI and scope. npmX rejected refresh under a reconstructed client ID; the corrected harness now refuses that unsafe reconstruction before network access. Both providers require one browser reauthorization before noninteractive refresh and revocation can be repeated.
+The public-client G0 lifecycle is complete on both providers: exact-scope authorization, forced refresh, and server revocation passed. npmX rejected its access token immediately after revocation. Cirrus retained the already-issued access token for its remaining lifetime while preventing future refresh. G0 still requires the deployed confidential-client run and client-key removal observation before either provider is advertised as supported by the hosted service.
 
-Draft PR #1908 remains donor history and is not a merge target. Its D1 custody and coordination model does not satisfy this plan. Draft PR #1909 is the independent metadata-labeling service and does not join the delegated-release service stack.
+Closed PR #1908 remains donor history and is not a merge target. Its D1 custody and coordination model does not satisfy this plan. Draft PR #1909 is the independent metadata-labeling service and does not join the delegated-release service stack.
 
 ## Execution rules
 
