@@ -12,6 +12,8 @@ interface CapturedInput {
 	height?: number;
 	blurhash?: string;
 	dominantColor?: string;
+	alt?: string;
+	caption?: string;
 }
 
 function buildContext(opts: {
@@ -20,11 +22,15 @@ function buildContext(opts: {
 	captured: { value?: CapturedInput };
 	width?: number;
 	height?: number;
+	alt?: string;
+	caption?: string;
 }): APIContext {
 	const formData = new FormData();
 	formData.append("file", opts.file);
 	if (opts.width != null) formData.append("width", String(opts.width));
 	if (opts.height != null) formData.append("height", String(opts.height));
+	if (opts.alt != null) formData.append("alt", opts.alt);
+	if (opts.caption != null) formData.append("caption", opts.caption);
 	const request = new Request("http://localhost/_emdash/api/media", {
 		method: "POST",
 		headers: { "X-EmDash-Request": "1" },
@@ -109,5 +115,24 @@ describe("POST /media — server-side placeholder + dimensions", () => {
 		expect(captured.value?.height).toBe(999);
 		// A blurhash is still generated from the uploaded bytes.
 		expect(captured.value?.blurhash).toBeTruthy();
+	});
+
+	it("preserves alt text and caption from the multipart form", async () => {
+		const captured: { value?: CapturedInput } = {};
+		const file = new File([JPEG_4x4], "photo.jpg", { type: "image/jpeg" });
+
+		const res = await postMedia(
+			buildContext({
+				db,
+				file,
+				captured,
+				alt: "Descriptive alternative text",
+				caption: "Example caption",
+			}),
+		);
+
+		expect(res.status).toBe(201);
+		expect(captured.value?.alt).toBe("Descriptive alternative text");
+		expect(captured.value?.caption).toBe("Example caption");
 	});
 });

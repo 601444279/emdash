@@ -194,6 +194,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				: undefined,
 		});
 
+		// Read optional metadata fields sent by clients (CLI, admin UI direct upload).
+		const altEntry = formData.get("alt");
+		const alt = typeof altEntry === "string" ? altEntry : undefined;
+		const captionEntry = formData.get("caption");
+		const caption = typeof captionEntry === "string" ? captionEntry : undefined;
+
 		// Create media record
 		const result = await emdash.handleMediaCreate({
 			filename: file.name,
@@ -208,6 +214,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			contentHash,
 			blurhash: enriched.blurhash,
 			dominantColor: enriched.dominantColor,
+			alt,
+			caption,
 			authorId: user?.id,
 		});
 

@@ -111,6 +111,7 @@ export async function handleMediaCreate(
 		width?: number;
 		height?: number;
 		alt?: string;
+		caption?: string;
 		storageKey: string;
 		contentHash?: string;
 		blurhash?: string;
