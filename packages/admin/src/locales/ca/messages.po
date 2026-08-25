@@ -657,7 +657,7 @@ msgid "Active"
 msgstr "Actiu"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1012
 #: packages/admin/src/components/MenuEditor.tsx:441
 #: packages/admin/src/components/TaxonomySidebar.tsx:619
 msgid "Add"
@@ -1176,7 +1176,7 @@ msgstr "L'autenticació s'ha cancel·lat o ha excedit el temps d'espera. Torna-h
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1213
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1222
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1416,8 +1416,8 @@ msgid "Byline Schema"
 msgstr "Esquema de signatures"
 
 #: packages/admin/src/components/BylineFilter.tsx:135
-#: packages/admin/src/components/ContentSettingsPanel.tsx:661
-#: packages/admin/src/components/ContentSettingsPanel.tsx:664
+#: packages/admin/src/components/ContentSettingsPanel.tsx:670
+#: packages/admin/src/components/ContentSettingsPanel.tsx:673
 #: packages/admin/src/components/Sidebar.tsx:285
 #: packages/admin/src/routes/bylines.tsx:375
 msgid "Bylines"
@@ -1459,10 +1459,10 @@ msgstr "Pot veure el contingut"
 #: packages/admin/src/components/ContentList.tsx:1419
 #: packages/admin/src/components/ContentPickerModal.tsx:240
 #: packages/admin/src/components/ContentSettingsPanel.tsx:99
-#: packages/admin/src/components/ContentSettingsPanel.tsx:582
-#: packages/admin/src/components/ContentSettingsPanel.tsx:814
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1117
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1170
+#: packages/admin/src/components/ContentSettingsPanel.tsx:591
+#: packages/admin/src/components/ContentSettingsPanel.tsx:823
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1126
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1179
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1906,12 +1906,8 @@ msgstr "El contingut ja és en línia"
 msgid "content items"
 msgstr "elements de contingut"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:499
+#: packages/admin/src/components/ContentSettingsPanel.tsx:498
 msgid "Content locale"
-msgstr ""
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:510
-msgid "Content locale defaults to English"
 msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
@@ -2035,7 +2031,7 @@ msgstr "No s'han pogut carregar els camps personalitzats."
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "No s'ha pogut associar «{draft}» a cap tipus MIME. Escriu el MIME directament."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1009
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1018
 msgid "Couldn't search bylines. Please try again."
 msgstr "No s'han pogut cercar les signatures. Torna-ho a provar."
 
@@ -2048,7 +2044,7 @@ msgstr "No s'ha pogut verificar quants valors fan referència a «{0}». En elim
 msgid "Count"
 msgstr "Recompte"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1150
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -2089,7 +2085,7 @@ msgstr "Crea un compte"
 msgid "Create an account"
 msgstr "Crea un compte"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1089
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1098
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "Crea una signatura"
@@ -2210,7 +2206,7 @@ msgid "Create, update, delete content"
 msgstr "Crea, actualitza i elimina contingut"
 
 #: packages/admin/src/components/ContentList.tsx:841
-#: packages/admin/src/components/ContentSettingsPanel.tsx:633
+#: packages/admin/src/components/ContentSettingsPanel.tsx:642
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
@@ -2239,7 +2235,7 @@ msgstr "Data de creació"
 msgid "Creating collections and fields..."
 msgstr "S'estan creant les col·leccions i els camps..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1150
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
@@ -2738,8 +2734,8 @@ msgstr "Mostra un menú de navegació"
 msgid "Display category list"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1092
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1154
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1101
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1163
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "Nom visible"
@@ -2805,7 +2801,7 @@ msgstr "No tens cap compte? <0>Registra't</0>"
 msgid "Done"
 msgstr "Fet"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1035
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1044
 msgid "Down"
 msgstr "Avall"
 
@@ -2933,7 +2929,7 @@ msgstr "p. ex. canalització CI/CD"
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "p. ex. MacBook Pro, iPhone"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1044
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1053
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2969,7 +2965,7 @@ msgstr ""
 msgid "Edit {title}"
 msgstr "Edita {title}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1151
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1160
 msgid "Edit byline"
 msgstr "Edita la signatura"
 
@@ -3135,6 +3131,10 @@ msgstr "Activa la redirecció"
 #: packages/admin/src/components/Redirects.tsx:426
 msgid "Enabled"
 msgstr "Activat"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:504
+msgid "English is used because no content locale is configured. Content locale is stored with the entry and is separate from your admin language."
+msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:423
 #: packages/admin/src/components/MenuEditor.tsx:601
@@ -3307,7 +3307,7 @@ msgstr "No s'ha pogut crear l'administrador"
 msgid "Failed to create backup"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1144
 msgid "Failed to create byline"
 msgstr "No s'ha pogut crear la signatura"
 
@@ -3802,7 +3802,7 @@ msgstr "No s'ha pogut actualitzar {0}"
 msgid "Failed to update backup settings"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1194
 msgid "Failed to update byline"
 msgstr "No s'ha pogut actualitzar la signatura"
 
@@ -4616,7 +4616,7 @@ msgstr ""
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1014
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1023
 msgid "Keep typing to narrow down more bylines."
 msgstr "Continua escrivint per acotar més les signatures."
 
@@ -4957,7 +4957,7 @@ msgstr "Gestiona"
 msgid "Manage {0} for {1}"
 msgstr "Gestiona {0} per a {1}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:976
+#: packages/admin/src/components/ContentSettingsPanel.tsx:985
 msgid "Manage bylines in {entryLocale}"
 msgstr "Gestiona les signatures en {entryLocale}"
 
@@ -5271,14 +5271,14 @@ msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:536
 #: packages/admin/src/components/ContentList.tsx:1258
-#: packages/admin/src/components/ContentSettingsPanel.tsx:801
-#: packages/admin/src/components/ContentSettingsPanel.tsx:821
+#: packages/admin/src/components/ContentSettingsPanel.tsx:810
+#: packages/admin/src/components/ContentSettingsPanel.tsx:830
 msgid "Move to Trash"
 msgstr "Mou a la paperera"
 
 #: packages/admin/src/components/ContentList.tsx:514
 #: packages/admin/src/components/ContentList.tsx:1243
-#: packages/admin/src/components/ContentSettingsPanel.tsx:806
+#: packages/admin/src/components/ContentSettingsPanel.tsx:815
 msgid "Move to Trash?"
 msgstr "Vols moure-ho a la paperera?"
 
@@ -5481,7 +5481,7 @@ msgstr ""
 msgid "No byline fields yet."
 msgstr "Encara no hi ha cap camp de signatura."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:968
+#: packages/admin/src/components/ContentSettingsPanel.tsx:977
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "No hi ha cap signatura disponible en {entryLocale}. Crea una variant des de la pàgina de signatures abans d'atribuir-ne una en aquesta entrada."
 
@@ -5490,7 +5490,7 @@ msgstr "No hi ha cap signatura disponible en {entryLocale}. Crea una variant des
 msgid "No bylines found"
 msgstr "No s'ha trobat cap signatura"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1076
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1085
 msgid "No bylines selected."
 msgstr "No s'ha seleccionat cap signatura."
 
@@ -5517,10 +5517,6 @@ msgstr "No s'ha trobat cap contingut"
 #: packages/admin/src/components/ContentPickerModal.tsx:177
 msgid "No content in this collection"
 msgstr "No hi ha contingut en aquesta col·lecció"
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:511
-msgid "No content locale is configured, so EmDash stores new content as English (en). Changing the admin language does not change this value."
-msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:204
 msgid "No content types yet."
@@ -5596,7 +5592,7 @@ msgstr "Cap usuari enllaçat"
 msgid "No matches"
 msgstr "Cap coincidència"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1011
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1020
 msgid "No matching bylines."
 msgstr "Cap signatura coincident."
 
@@ -5905,7 +5901,7 @@ msgstr "S'ha desat l'ordre"
 msgid "Original:"
 msgstr "Original:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:768
+#: packages/admin/src/components/ContentSettingsPanel.tsx:777
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "Esquema"
@@ -5914,8 +5910,8 @@ msgstr "Esquema"
 msgid "Overrides the page title in search engine results"
 msgstr "Substitueix el títol de la pàgina als resultats dels motors de cerca"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/ContentSettingsPanel.tsx:649
+#: packages/admin/src/components/ContentSettingsPanel.tsx:655
+#: packages/admin/src/components/ContentSettingsPanel.tsx:658
 msgid "Ownership"
 msgstr "Propietat"
 
@@ -6298,7 +6294,7 @@ msgstr "Proveïdor:"
 msgid "Publish"
 msgstr "Publica"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:603
+#: packages/admin/src/components/ContentSettingsPanel.tsx:612
 msgid "Publish date"
 msgstr ""
 
@@ -6335,7 +6331,7 @@ msgstr ""
 msgid "Queued"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1084
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1093
 msgid "Quick create byline"
 msgstr "Crea ràpidament una signatura"
 
@@ -6475,7 +6471,7 @@ msgstr "La versió és massa nova per instal·lar-la"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1053
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1062
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4233
@@ -6742,7 +6738,7 @@ msgstr "Revisa els permisos nous"
 msgid "Revision restored"
 msgstr "S'ha restaurat la revisió"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:776
+#: packages/admin/src/components/ContentSettingsPanel.tsx:785
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6804,7 +6800,7 @@ msgstr "Rol"
 msgid "Role {role}"
 msgstr "Rol {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1058
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1067
 msgid "Role label"
 msgstr "Etiqueta del rol"
 
@@ -6834,7 +6830,7 @@ msgstr ""
 msgid "Same window"
 msgstr "Mateixa finestra"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1200
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:277
@@ -6886,7 +6882,7 @@ msgstr "Desat"
 msgid "Saved \"{0}\"."
 msgstr "S'ha desat «{0}»."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1200
 #: packages/admin/src/components/FieldEditor.tsx:689
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6914,15 +6910,15 @@ msgstr ""
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:571
+#: packages/admin/src/components/ContentSettingsPanel.tsx:580
 msgid "Schedule"
 msgstr "Programa"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:557
+#: packages/admin/src/components/ContentSettingsPanel.tsx:566
 msgid "Schedule for"
 msgstr "Programa per a"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:594
+#: packages/admin/src/components/ContentSettingsPanel.tsx:603
 msgid "Schedule for later"
 msgstr "Programa per a més tard"
 
@@ -6933,7 +6929,7 @@ msgid "Scheduled"
 msgstr "Programat"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:545
+#: packages/admin/src/components/ContentSettingsPanel.tsx:554
 msgid "Scheduled for: {0}"
 msgstr "Programat per a: {0}"
 
@@ -7022,12 +7018,12 @@ msgid "Search by name or email..."
 msgstr "Cerca per nom o correu electrònic..."
 
 #: packages/admin/src/components/BylineFilter.tsx:121
-#: packages/admin/src/components/ContentSettingsPanel.tsx:985
+#: packages/admin/src/components/ContentSettingsPanel.tsx:994
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr "Cerca signatures"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:984
+#: packages/admin/src/components/ContentSettingsPanel.tsx:993
 msgid "Search bylines to add..."
 msgstr "Cerca signatures per afegir..."
 
@@ -7114,7 +7110,7 @@ msgstr "Cerca..."
 msgid "Searchable"
 msgstr "Cercable"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:989
+#: packages/admin/src/components/ContentSettingsPanel.tsx:998
 msgid "Searching..."
 msgstr "S'està cercant..."
 
@@ -7363,8 +7359,8 @@ msgstr "Envia un correu de prova"
 msgid "Sending..."
 msgstr "S'està enviant..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:719
-#: packages/admin/src/components/ContentSettingsPanel.tsx:722
+#: packages/admin/src/components/ContentSettingsPanel.tsx:728
+#: packages/admin/src/components/ContentSettingsPanel.tsx:731
 #: packages/admin/src/components/ContentTypeEditor.tsx:487
 #: packages/admin/src/components/Settings.tsx:60
 msgid "SEO"
@@ -7605,8 +7601,8 @@ msgstr "Omès"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
 #: packages/admin/src/components/ContentSettingsPanel.tsx:491
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1100
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1109
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1171
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:403
 #: packages/admin/src/components/ContentTypeList.tsx:181
@@ -7722,7 +7718,7 @@ msgid "Start writing, or type '/' for commands"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:592
-#: packages/admin/src/components/ContentSettingsPanel.tsx:517
+#: packages/admin/src/components/ContentSettingsPanel.tsx:526
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
@@ -7839,7 +7835,7 @@ msgstr "Destinació"
 msgid "Target locale"
 msgstr "Idioma de destinació"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:706
+#: packages/admin/src/components/ContentSettingsPanel.tsx:715
 #: packages/admin/src/components/TaxonomySidebar.tsx:683
 msgid "Taxonomies"
 msgstr "Taxonomies"
@@ -8012,10 +8008,6 @@ msgstr "Aquesta és una secció personalitzada."
 msgid "This is a WordPress site."
 msgstr "Aquest és un lloc de WordPress."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:503
-msgid "This is stored with the entry and is separate from your admin language."
-msgstr ""
-
 #: packages/admin/src/components/users/InviteUserModal.tsx:112
 msgid "This link expires in 7 days and can only be used once."
 msgstr "Aquest enllaç caduca al cap de 7 dies i només es pot utilitzar una vegada."
@@ -8082,7 +8074,7 @@ msgstr "Això eliminarà l'àrea de ginys i tots els seus ginys. Aquesta acció 
 msgid "This will grant CLI access with your permissions."
 msgstr "Això concedirà accés per CLI amb els teus permisos."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:808
+#: packages/admin/src/components/ContentSettingsPanel.tsx:817
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "Això mourà l'element a la paperera. El podràs restaurar més tard des de la paperera."
 
@@ -8220,7 +8212,7 @@ msgstr "S'està traduint..."
 msgid "Translation created"
 msgstr "S'ha creat la traducció"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:684
+#: packages/admin/src/components/ContentSettingsPanel.tsx:693
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "Traduccions"
@@ -8329,8 +8321,8 @@ msgstr ""
 msgid "Unable to reach marketplace"
 msgstr "No s'ha pogut arribar al mercat"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1205
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1222
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1214
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1231
 msgid "Unassigned"
 msgstr "Sense assignar"
 
@@ -8407,7 +8399,7 @@ msgstr "S'han trobat taules de contingut no registrades"
 msgid "Unresolved assignment"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:547
+#: packages/admin/src/components/ContentSettingsPanel.tsx:556
 msgid "Unschedule"
 msgstr "Anul·la la programació"
 
@@ -8437,7 +8429,7 @@ msgstr "Giny sense títol"
 msgid "Unverified publisher"
 msgstr "Editor no verificat"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1032
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "Amunt"
 
@@ -8453,7 +8445,7 @@ msgstr "Actualitza"
 msgid "Update Field"
 msgstr "Actualitza el camp"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:621
+#: packages/admin/src/components/ContentSettingsPanel.tsx:630
 msgid "Update publish date"
 msgstr ""
 
@@ -8481,7 +8473,7 @@ msgid "Update to v{0}"
 msgstr "Actualitza a la v{0}"
 
 #: packages/admin/src/components/ContentList.tsx:842
-#: packages/admin/src/components/ContentSettingsPanel.tsx:637
+#: packages/admin/src/components/ContentSettingsPanel.tsx:646
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
 msgstr "Actualitzat"
@@ -8870,6 +8862,10 @@ msgstr "Nombre enter"
 #: packages/admin/src/components/MediaDetailPanel.tsx:123
 msgid "Why can't this be changed?"
 msgstr "Per què no es pot canviar això?"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:517
+msgid "Why English is used"
+msgstr ""
 
 #: packages/admin/src/components/SeoPanel.tsx:222
 msgid "Why is this important for duplicate pages?"

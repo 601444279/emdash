@@ -661,7 +661,7 @@ msgid "Active"
 msgstr "نشط"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1012
 #: packages/admin/src/components/MenuEditor.tsx:441
 #: packages/admin/src/components/TaxonomySidebar.tsx:619
 msgid "Add"
@@ -1180,7 +1180,7 @@ msgstr "تم إلغاء المصادقة أو انتهت مهلتها. يرجى 
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1213
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1222
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1420,8 +1420,8 @@ msgid "Byline Schema"
 msgstr ""
 
 #: packages/admin/src/components/BylineFilter.tsx:135
-#: packages/admin/src/components/ContentSettingsPanel.tsx:661
-#: packages/admin/src/components/ContentSettingsPanel.tsx:664
+#: packages/admin/src/components/ContentSettingsPanel.tsx:670
+#: packages/admin/src/components/ContentSettingsPanel.tsx:673
 #: packages/admin/src/components/Sidebar.tsx:285
 #: packages/admin/src/routes/bylines.tsx:375
 msgid "Bylines"
@@ -1463,10 +1463,10 @@ msgstr "يمكنه عرض المحتوى"
 #: packages/admin/src/components/ContentList.tsx:1419
 #: packages/admin/src/components/ContentPickerModal.tsx:240
 #: packages/admin/src/components/ContentSettingsPanel.tsx:99
-#: packages/admin/src/components/ContentSettingsPanel.tsx:582
-#: packages/admin/src/components/ContentSettingsPanel.tsx:814
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1117
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1170
+#: packages/admin/src/components/ContentSettingsPanel.tsx:591
+#: packages/admin/src/components/ContentSettingsPanel.tsx:823
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1126
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1179
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1910,12 +1910,8 @@ msgstr "المحتوى منشور الآن"
 msgid "content items"
 msgstr "عناصر المحتوى"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:499
+#: packages/admin/src/components/ContentSettingsPanel.tsx:498
 msgid "Content locale"
-msgstr ""
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:510
-msgid "Content locale defaults to English"
 msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
@@ -2039,7 +2035,7 @@ msgstr ""
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "تعذّر تعيين \"{draft}\" إلى نوع MIME. اكتب نوع MIME مباشرةً."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1009
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1018
 msgid "Couldn't search bylines. Please try again."
 msgstr ""
 
@@ -2052,7 +2048,7 @@ msgstr ""
 msgid "Count"
 msgstr "العدد"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1150
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -2093,7 +2089,7 @@ msgstr "إنشاء حساب"
 msgid "Create an account"
 msgstr "إنشاء حساب"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1089
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1098
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "إنشاء كاتب"
@@ -2214,7 +2210,7 @@ msgid "Create, update, delete content"
 msgstr "إنشاء، تحديث، حذف المحتوى"
 
 #: packages/admin/src/components/ContentList.tsx:841
-#: packages/admin/src/components/ContentSettingsPanel.tsx:633
+#: packages/admin/src/components/ContentSettingsPanel.tsx:642
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
@@ -2243,7 +2239,7 @@ msgstr "تم الإنشاء في"
 msgid "Creating collections and fields..."
 msgstr "جاري إنشاء المجموعات والحقول..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1150
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
@@ -2742,8 +2738,8 @@ msgstr "عرض قائمة تنقل"
 msgid "Display category list"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1092
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1154
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1101
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1163
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "اسم العرض"
@@ -2809,7 +2805,7 @@ msgstr "أليس لديك حساب؟ قم ب<0>التسجيل</0>"
 msgid "Done"
 msgstr "تم"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1035
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1044
 msgid "Down"
 msgstr "أسفل"
 
@@ -2937,7 +2933,7 @@ msgstr "على سبيل المثال، خط CI/CD"
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "مثال: MacBook Pro, iPhone"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1044
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1053
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2973,7 +2969,7 @@ msgstr ""
 msgid "Edit {title}"
 msgstr "تعديل {title}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1151
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1160
 msgid "Edit byline"
 msgstr "تعديل الكاتب"
 
@@ -3136,6 +3132,10 @@ msgstr "تفعيل إعادة التوجيه"
 #: packages/admin/src/components/Redirects.tsx:426
 msgid "Enabled"
 msgstr "مُفعَّل"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:504
+msgid "English is used because no content locale is configured. Content locale is stored with the entry and is separate from your admin language."
+msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:423
 #: packages/admin/src/components/MenuEditor.tsx:601
@@ -3308,7 +3308,7 @@ msgstr "فشل إنشاء حساب المسؤول"
 msgid "Failed to create backup"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1144
 msgid "Failed to create byline"
 msgstr "فشل إنشاء الكاتب"
 
@@ -3803,7 +3803,7 @@ msgstr "فشل تحديث {0}"
 msgid "Failed to update backup settings"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1194
 msgid "Failed to update byline"
 msgstr "فشل تحديث الكاتب"
 
@@ -4617,7 +4617,7 @@ msgstr ""
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1014
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1023
 msgid "Keep typing to narrow down more bylines."
 msgstr ""
 
@@ -4958,7 +4958,7 @@ msgstr "إدارة"
 msgid "Manage {0} for {1}"
 msgstr "إدارة {0} لـ {1}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:976
+#: packages/admin/src/components/ContentSettingsPanel.tsx:985
 msgid "Manage bylines in {entryLocale}"
 msgstr "إدارة الكُتّاب في {entryLocale}"
 
@@ -5272,14 +5272,14 @@ msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:536
 #: packages/admin/src/components/ContentList.tsx:1258
-#: packages/admin/src/components/ContentSettingsPanel.tsx:801
-#: packages/admin/src/components/ContentSettingsPanel.tsx:821
+#: packages/admin/src/components/ContentSettingsPanel.tsx:810
+#: packages/admin/src/components/ContentSettingsPanel.tsx:830
 msgid "Move to Trash"
 msgstr "نقل إلى سلة المحذوفات"
 
 #: packages/admin/src/components/ContentList.tsx:514
 #: packages/admin/src/components/ContentList.tsx:1243
-#: packages/admin/src/components/ContentSettingsPanel.tsx:806
+#: packages/admin/src/components/ContentSettingsPanel.tsx:815
 msgid "Move to Trash?"
 msgstr "نقل إلى سلة المحذوفات؟"
 
@@ -5482,7 +5482,7 @@ msgstr ""
 msgid "No byline fields yet."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:968
+#: packages/admin/src/components/ContentSettingsPanel.tsx:977
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "لا يوجد كُتّاب متاحون في {entryLocale}. أنشئ نسخة من صفحة الكُتّاب قبل إسناد كاتب لهذا المدخل."
 
@@ -5491,7 +5491,7 @@ msgstr "لا يوجد كُتّاب متاحون في {entryLocale}. أنشئ ن�
 msgid "No bylines found"
 msgstr "لم يُعثر على كُتّاب"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1076
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1085
 msgid "No bylines selected."
 msgstr "لم يتم اختيار أي كاتب."
 
@@ -5518,10 +5518,6 @@ msgstr "لم يتم العثور على محتوى"
 #: packages/admin/src/components/ContentPickerModal.tsx:177
 msgid "No content in this collection"
 msgstr "لا يوجد محتوى في هذه المجموعة"
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:511
-msgid "No content locale is configured, so EmDash stores new content as English (en). Changing the admin language does not change this value."
-msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:204
 msgid "No content types yet."
@@ -5597,7 +5593,7 @@ msgstr "لا يوجد مستخدم مرتبط"
 msgid "No matches"
 msgstr "لا توجد نتائج"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1011
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1020
 msgid "No matching bylines."
 msgstr ""
 
@@ -5906,7 +5902,7 @@ msgstr "تم حفظ الترتيب"
 msgid "Original:"
 msgstr "الأصلي:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:768
+#: packages/admin/src/components/ContentSettingsPanel.tsx:777
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "مخطط المستند"
@@ -5915,8 +5911,8 @@ msgstr "مخطط المستند"
 msgid "Overrides the page title in search engine results"
 msgstr "يَحل محل عنوان الصفحة في نتائج محركات البحث"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/ContentSettingsPanel.tsx:649
+#: packages/admin/src/components/ContentSettingsPanel.tsx:655
+#: packages/admin/src/components/ContentSettingsPanel.tsx:658
 msgid "Ownership"
 msgstr "الملكية"
 
@@ -6299,7 +6295,7 @@ msgstr "المزود:"
 msgid "Publish"
 msgstr "نشر"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:603
+#: packages/admin/src/components/ContentSettingsPanel.tsx:612
 msgid "Publish date"
 msgstr ""
 
@@ -6336,7 +6332,7 @@ msgstr ""
 msgid "Queued"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1084
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1093
 msgid "Quick create byline"
 msgstr "إنشاء كاتب بشكل سريع"
 
@@ -6476,7 +6472,7 @@ msgstr "الإصدار حديث جدًا للتثبيت"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1053
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1062
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4233
@@ -6743,7 +6739,7 @@ msgstr "مراجعة الصلاحيات الجديدة"
 msgid "Revision restored"
 msgstr "تم استعادة المراجعة"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:776
+#: packages/admin/src/components/ContentSettingsPanel.tsx:785
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6805,7 +6801,7 @@ msgstr "الدور"
 msgid "Role {role}"
 msgstr "الدور {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1058
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1067
 msgid "Role label"
 msgstr "تسمية الدور"
 
@@ -6835,7 +6831,7 @@ msgstr ""
 msgid "Same window"
 msgstr "نفس النافذة"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1200
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:277
@@ -6887,7 +6883,7 @@ msgstr "تم الحفظ"
 msgid "Saved \"{0}\"."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1200
 #: packages/admin/src/components/FieldEditor.tsx:689
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6915,15 +6911,15 @@ msgstr ""
 msgid "SBOM · {0}"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:571
+#: packages/admin/src/components/ContentSettingsPanel.tsx:580
 msgid "Schedule"
 msgstr "جدولة"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:557
+#: packages/admin/src/components/ContentSettingsPanel.tsx:566
 msgid "Schedule for"
 msgstr "جدولة لـ"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:594
+#: packages/admin/src/components/ContentSettingsPanel.tsx:603
 msgid "Schedule for later"
 msgstr "جدولة لوقت لاحق"
 
@@ -6934,7 +6930,7 @@ msgid "Scheduled"
 msgstr "مجدول"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:545
+#: packages/admin/src/components/ContentSettingsPanel.tsx:554
 msgid "Scheduled for: {0}"
 msgstr "مجدول لـ: {0}"
 
@@ -7023,12 +7019,12 @@ msgid "Search by name or email..."
 msgstr "ابحث بالاسم أو البريد الإلكتروني..."
 
 #: packages/admin/src/components/BylineFilter.tsx:121
-#: packages/admin/src/components/ContentSettingsPanel.tsx:985
+#: packages/admin/src/components/ContentSettingsPanel.tsx:994
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr "البحث في الكُتّاب"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:984
+#: packages/admin/src/components/ContentSettingsPanel.tsx:993
 msgid "Search bylines to add..."
 msgstr ""
 
@@ -7115,7 +7111,7 @@ msgstr "بحث..."
 msgid "Searchable"
 msgstr "قابل للبحث"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:989
+#: packages/admin/src/components/ContentSettingsPanel.tsx:998
 msgid "Searching..."
 msgstr ""
 
@@ -7364,8 +7360,8 @@ msgstr "إرسال بريد إلكتروني تجريبي"
 msgid "Sending..."
 msgstr "جاري الإرسال..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:719
-#: packages/admin/src/components/ContentSettingsPanel.tsx:722
+#: packages/admin/src/components/ContentSettingsPanel.tsx:728
+#: packages/admin/src/components/ContentSettingsPanel.tsx:731
 #: packages/admin/src/components/ContentTypeEditor.tsx:487
 #: packages/admin/src/components/Settings.tsx:60
 msgid "SEO"
@@ -7606,8 +7602,8 @@ msgstr "تم التخطي"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
 #: packages/admin/src/components/ContentSettingsPanel.tsx:491
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1100
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1109
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1171
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:403
 #: packages/admin/src/components/ContentTypeList.tsx:181
@@ -7723,7 +7719,7 @@ msgid "Start writing, or type '/' for commands"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:592
-#: packages/admin/src/components/ContentSettingsPanel.tsx:517
+#: packages/admin/src/components/ContentSettingsPanel.tsx:526
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
@@ -7840,7 +7836,7 @@ msgstr "الهدف"
 msgid "Target locale"
 msgstr "اللغة المستهدفة"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:706
+#: packages/admin/src/components/ContentSettingsPanel.tsx:715
 #: packages/admin/src/components/TaxonomySidebar.tsx:683
 msgid "Taxonomies"
 msgstr "التصنيفات"
@@ -8013,10 +8009,6 @@ msgstr "هذا قسم مخصص."
 msgid "This is a WordPress site."
 msgstr "هذا موقع WordPress."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:503
-msgid "This is stored with the entry and is separate from your admin language."
-msgstr ""
-
 #: packages/admin/src/components/users/InviteUserModal.tsx:112
 msgid "This link expires in 7 days and can only be used once."
 msgstr "ينتهي هذا الرابط بعد 7 أيام ويمكن استخدامه مرة واحدة فقط."
@@ -8083,7 +8075,7 @@ msgstr "سيُحذف هذا منطقة عناصر الواجهة وجميع عن
 msgid "This will grant CLI access with your permissions."
 msgstr "سيمنح هذا وصول CLI بنفس صلاحياتك."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:808
+#: packages/admin/src/components/ContentSettingsPanel.tsx:817
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "سيؤدي هذا إلى نقل العنصر إلى سلة المحذوفات. يمكنك استعادته لاحقًا من سلة المحذوفات."
 
@@ -8221,7 +8213,7 @@ msgstr "جارٍ الترجمة..."
 msgid "Translation created"
 msgstr "تم إنشاء الترجمة"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:684
+#: packages/admin/src/components/ContentSettingsPanel.tsx:693
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "الترجمات"
@@ -8330,8 +8322,8 @@ msgstr ""
 msgid "Unable to reach marketplace"
 msgstr "تعذّر الوصول إلى السوق"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1205
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1222
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1214
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1231
 msgid "Unassigned"
 msgstr "لم يتم التعيين"
 
@@ -8408,7 +8400,7 @@ msgstr "تم العثور على جداول محتوى غير مسجلة"
 msgid "Unresolved assignment"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:547
+#: packages/admin/src/components/ContentSettingsPanel.tsx:556
 msgid "Unschedule"
 msgstr "إلغاء الجدولة"
 
@@ -8438,7 +8430,7 @@ msgstr "عنصر واجهة بلا عنوان"
 msgid "Unverified publisher"
 msgstr "ناشر غير موثَّق"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1032
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "أعلى"
 
@@ -8454,7 +8446,7 @@ msgstr "تحديث"
 msgid "Update Field"
 msgstr "تحديث الحقل"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:621
+#: packages/admin/src/components/ContentSettingsPanel.tsx:630
 msgid "Update publish date"
 msgstr ""
 
@@ -8482,7 +8474,7 @@ msgid "Update to v{0}"
 msgstr "التحديث إلى الإصدار {0}"
 
 #: packages/admin/src/components/ContentList.tsx:842
-#: packages/admin/src/components/ContentSettingsPanel.tsx:637
+#: packages/admin/src/components/ContentSettingsPanel.tsx:646
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
 msgstr ""
@@ -8870,6 +8862,10 @@ msgstr "عدد صحيح"
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:123
 msgid "Why can't this be changed?"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:517
+msgid "Why English is used"
 msgstr ""
 
 #: packages/admin/src/components/SeoPanel.tsx:222

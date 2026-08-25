@@ -657,7 +657,7 @@ msgid "Active"
 msgstr "ใช้งานอยู่"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1012
 #: packages/admin/src/components/MenuEditor.tsx:441
 #: packages/admin/src/components/TaxonomySidebar.tsx:619
 msgid "Add"
@@ -1176,7 +1176,7 @@ msgstr "การยืนยันตัวตนถูกยกเลิกห
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1213
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1222
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1416,8 +1416,8 @@ msgid "Byline Schema"
 msgstr ""
 
 #: packages/admin/src/components/BylineFilter.tsx:135
-#: packages/admin/src/components/ContentSettingsPanel.tsx:661
-#: packages/admin/src/components/ContentSettingsPanel.tsx:664
+#: packages/admin/src/components/ContentSettingsPanel.tsx:670
+#: packages/admin/src/components/ContentSettingsPanel.tsx:673
 #: packages/admin/src/components/Sidebar.tsx:285
 #: packages/admin/src/routes/bylines.tsx:375
 msgid "Bylines"
@@ -1459,10 +1459,10 @@ msgstr "สามารถดูเนื้อหาได้"
 #: packages/admin/src/components/ContentList.tsx:1419
 #: packages/admin/src/components/ContentPickerModal.tsx:240
 #: packages/admin/src/components/ContentSettingsPanel.tsx:99
-#: packages/admin/src/components/ContentSettingsPanel.tsx:582
-#: packages/admin/src/components/ContentSettingsPanel.tsx:814
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1117
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1170
+#: packages/admin/src/components/ContentSettingsPanel.tsx:591
+#: packages/admin/src/components/ContentSettingsPanel.tsx:823
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1126
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1179
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1906,12 +1906,8 @@ msgstr "เนื้อหาเผยแพร่แล้ว"
 msgid "content items"
 msgstr "รายการเนื้อหา"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:499
+#: packages/admin/src/components/ContentSettingsPanel.tsx:498
 msgid "Content locale"
-msgstr ""
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:510
-msgid "Content locale defaults to English"
 msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
@@ -2035,7 +2031,7 @@ msgstr ""
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "ไม่สามารถจับคู่ \"{draft}\" กับประเภท MIME ได้ พิมพ์ MIME โดยตรง"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1009
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1018
 msgid "Couldn't search bylines. Please try again."
 msgstr "ค้นหาผู้เขียนไม่สำเร็จ กรุณาลองอีกครั้ง"
 
@@ -2048,7 +2044,7 @@ msgstr ""
 msgid "Count"
 msgstr "จำนวน"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1150
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -2089,7 +2085,7 @@ msgstr "สร้างบัญชี"
 msgid "Create an account"
 msgstr "สร้างบัญชี"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1089
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1098
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "สร้างชื่อผู้เขียน"
@@ -2210,7 +2206,7 @@ msgid "Create, update, delete content"
 msgstr "สร้าง อัปเดต ลบเนื้อหา"
 
 #: packages/admin/src/components/ContentList.tsx:841
-#: packages/admin/src/components/ContentSettingsPanel.tsx:633
+#: packages/admin/src/components/ContentSettingsPanel.tsx:642
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
@@ -2239,7 +2235,7 @@ msgstr "สร้างเมื่อ"
 msgid "Creating collections and fields..."
 msgstr "กำลังสร้างคอลเลกชันและฟิลด์..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1150
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
@@ -2738,8 +2734,8 @@ msgstr "แสดงเมนูนำทาง"
 msgid "Display category list"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1092
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1154
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1101
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1163
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "ชื่อที่แสดง"
@@ -2805,7 +2801,7 @@ msgstr "ยังไม่มีบัญชี? <0>สมัครใช้ง�
 msgid "Done"
 msgstr "เสร็จสิ้น"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1035
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1044
 msgid "Down"
 msgstr "ลง"
 
@@ -2933,7 +2929,7 @@ msgstr "เช่น CI/CD Pipeline"
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "เช่น MacBook Pro, iPhone"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1044
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1053
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2969,7 +2965,7 @@ msgstr ""
 msgid "Edit {title}"
 msgstr "แก้ไข {title}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1151
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1160
 msgid "Edit byline"
 msgstr "แก้ไขชื่อผู้เขียน"
 
@@ -3132,6 +3128,10 @@ msgstr "เปิดใช้งานการเปลี่ยนเส้น
 #: packages/admin/src/components/Redirects.tsx:426
 msgid "Enabled"
 msgstr "เปิดใช้งาน"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:504
+msgid "English is used because no content locale is configured. Content locale is stored with the entry and is separate from your admin language."
+msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:423
 #: packages/admin/src/components/MenuEditor.tsx:601
@@ -3304,7 +3304,7 @@ msgstr "สร้างผู้ดูแลระบบไม่สำเร็
 msgid "Failed to create backup"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1144
 msgid "Failed to create byline"
 msgstr "สร้างชื่อผู้เขียนไม่สำเร็จ"
 
@@ -3799,7 +3799,7 @@ msgstr "อัปเดต {0} ไม่สำเร็จ"
 msgid "Failed to update backup settings"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1194
 msgid "Failed to update byline"
 msgstr "อัปเดตชื่อผู้เขียนไม่สำเร็จ"
 
@@ -4613,7 +4613,7 @@ msgstr ""
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1014
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1023
 msgid "Keep typing to narrow down more bylines."
 msgstr "พิมพ์ต่อเพื่อค้นหาผู้เขียนให้แคบลง"
 
@@ -4954,7 +4954,7 @@ msgstr "จัดการ"
 msgid "Manage {0} for {1}"
 msgstr "จัดการ {0} สำหรับ {1}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:976
+#: packages/admin/src/components/ContentSettingsPanel.tsx:985
 msgid "Manage bylines in {entryLocale}"
 msgstr "จัดการชื่อผู้เขียนใน {entryLocale}"
 
@@ -5268,14 +5268,14 @@ msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:536
 #: packages/admin/src/components/ContentList.tsx:1258
-#: packages/admin/src/components/ContentSettingsPanel.tsx:801
-#: packages/admin/src/components/ContentSettingsPanel.tsx:821
+#: packages/admin/src/components/ContentSettingsPanel.tsx:810
+#: packages/admin/src/components/ContentSettingsPanel.tsx:830
 msgid "Move to Trash"
 msgstr "ย้ายไปยังถังขยะ"
 
 #: packages/admin/src/components/ContentList.tsx:514
 #: packages/admin/src/components/ContentList.tsx:1243
-#: packages/admin/src/components/ContentSettingsPanel.tsx:806
+#: packages/admin/src/components/ContentSettingsPanel.tsx:815
 msgid "Move to Trash?"
 msgstr "ย้ายไปยังถังขยะ?"
 
@@ -5478,7 +5478,7 @@ msgstr ""
 msgid "No byline fields yet."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:968
+#: packages/admin/src/components/ContentSettingsPanel.tsx:977
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "ไม่มีชื่อผู้เขียนให้ใช้งานใน {entryLocale} สร้างรูปแบบจากหน้าชื่อผู้เขียนก่อนที่จะระบุเครดิตในรายการนี้"
 
@@ -5487,7 +5487,7 @@ msgstr "ไม่มีชื่อผู้เขียนให้ใช้ง
 msgid "No bylines found"
 msgstr "ไม่พบชื่อผู้เขียน"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1076
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1085
 msgid "No bylines selected."
 msgstr "ยังไม่ได้เลือกชื่อผู้เขียน"
 
@@ -5514,10 +5514,6 @@ msgstr "ไม่พบเนื้อหา"
 #: packages/admin/src/components/ContentPickerModal.tsx:177
 msgid "No content in this collection"
 msgstr "ไม่มีเนื้อหาในคอลเลกชันนี้"
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:511
-msgid "No content locale is configured, so EmDash stores new content as English (en). Changing the admin language does not change this value."
-msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:204
 msgid "No content types yet."
@@ -5593,7 +5589,7 @@ msgstr "ไม่มีผู้ใช้ที่เชื่อมโยง"
 msgid "No matches"
 msgstr "ไม่พบรายการที่ตรงกัน"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1011
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1020
 msgid "No matching bylines."
 msgstr "ไม่พบผู้เขียนที่ตรงกัน"
 
@@ -5902,7 +5898,7 @@ msgstr "บันทึกลำดับแล้ว"
 msgid "Original:"
 msgstr "ต้นฉบับ:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:768
+#: packages/admin/src/components/ContentSettingsPanel.tsx:777
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "โครงร่าง"
@@ -5911,8 +5907,8 @@ msgstr "โครงร่าง"
 msgid "Overrides the page title in search engine results"
 msgstr "แทนที่ชื่อหน้าในผลการค้นหาของเครื่องมือค้นหา"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/ContentSettingsPanel.tsx:649
+#: packages/admin/src/components/ContentSettingsPanel.tsx:655
+#: packages/admin/src/components/ContentSettingsPanel.tsx:658
 msgid "Ownership"
 msgstr "ความเป็นเจ้าของ"
 
@@ -6295,7 +6291,7 @@ msgstr "ผู้ให้บริการ:"
 msgid "Publish"
 msgstr "เผยแพร่"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:603
+#: packages/admin/src/components/ContentSettingsPanel.tsx:612
 msgid "Publish date"
 msgstr ""
 
@@ -6332,7 +6328,7 @@ msgstr ""
 msgid "Queued"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1084
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1093
 msgid "Quick create byline"
 msgstr "สร้างชื่อผู้เขียนแบบด่วน"
 
@@ -6472,7 +6468,7 @@ msgstr "รุ่นนี้ใหม่เกินกว่าจะติด
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1053
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1062
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4233
@@ -6739,7 +6735,7 @@ msgstr "ตรวจสอบสิทธิ์ใหม่"
 msgid "Revision restored"
 msgstr "กู้คืนรุ่นแก้ไขแล้ว"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:776
+#: packages/admin/src/components/ContentSettingsPanel.tsx:785
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6801,7 +6797,7 @@ msgstr "บทบาท"
 msgid "Role {role}"
 msgstr "บทบาท {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1058
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1067
 msgid "Role label"
 msgstr "ป้ายกำกับบทบาท"
 
@@ -6831,7 +6827,7 @@ msgstr ""
 msgid "Same window"
 msgstr "หน้าต่างเดียวกัน"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1200
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:277
@@ -6883,7 +6879,7 @@ msgstr "บันทึกแล้ว"
 msgid "Saved \"{0}\"."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1200
 #: packages/admin/src/components/FieldEditor.tsx:689
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6911,15 +6907,15 @@ msgstr "SBOM"
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:571
+#: packages/admin/src/components/ContentSettingsPanel.tsx:580
 msgid "Schedule"
 msgstr "กำหนดเวลา"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:557
+#: packages/admin/src/components/ContentSettingsPanel.tsx:566
 msgid "Schedule for"
 msgstr "กำหนดเวลาสำหรับ"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:594
+#: packages/admin/src/components/ContentSettingsPanel.tsx:603
 msgid "Schedule for later"
 msgstr "กำหนดเวลาสำหรับภายหลัง"
 
@@ -6930,7 +6926,7 @@ msgid "Scheduled"
 msgstr "กำหนดเวลา"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:545
+#: packages/admin/src/components/ContentSettingsPanel.tsx:554
 msgid "Scheduled for: {0}"
 msgstr "กำหนดเวลาสำหรับ: {0}"
 
@@ -7019,12 +7015,12 @@ msgid "Search by name or email..."
 msgstr "ค้นหาตามชื่อหรืออีเมล..."
 
 #: packages/admin/src/components/BylineFilter.tsx:121
-#: packages/admin/src/components/ContentSettingsPanel.tsx:985
+#: packages/admin/src/components/ContentSettingsPanel.tsx:994
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr "ค้นหาชื่อผู้เขียน"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:984
+#: packages/admin/src/components/ContentSettingsPanel.tsx:993
 msgid "Search bylines to add..."
 msgstr "ค้นหาผู้เขียนเพื่อเพิ่ม..."
 
@@ -7111,7 +7107,7 @@ msgstr "ค้นหา..."
 msgid "Searchable"
 msgstr "ค้นหาได้"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:989
+#: packages/admin/src/components/ContentSettingsPanel.tsx:998
 msgid "Searching..."
 msgstr "กำลังค้นหา..."
 
@@ -7360,8 +7356,8 @@ msgstr "ส่งอีเมลทดสอบ"
 msgid "Sending..."
 msgstr "กำลังส่ง..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:719
-#: packages/admin/src/components/ContentSettingsPanel.tsx:722
+#: packages/admin/src/components/ContentSettingsPanel.tsx:728
+#: packages/admin/src/components/ContentSettingsPanel.tsx:731
 #: packages/admin/src/components/ContentTypeEditor.tsx:487
 #: packages/admin/src/components/Settings.tsx:60
 msgid "SEO"
@@ -7602,8 +7598,8 @@ msgstr "ข้ามแล้ว"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
 #: packages/admin/src/components/ContentSettingsPanel.tsx:491
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1100
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1109
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1171
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:403
 #: packages/admin/src/components/ContentTypeList.tsx:181
@@ -7719,7 +7715,7 @@ msgid "Start writing, or type '/' for commands"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:592
-#: packages/admin/src/components/ContentSettingsPanel.tsx:517
+#: packages/admin/src/components/ContentSettingsPanel.tsx:526
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
@@ -7836,7 +7832,7 @@ msgstr "เป้าหมาย"
 msgid "Target locale"
 msgstr "ภาษาเป้าหมาย"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:706
+#: packages/admin/src/components/ContentSettingsPanel.tsx:715
 #: packages/admin/src/components/TaxonomySidebar.tsx:683
 msgid "Taxonomies"
 msgstr "อนุกรมวิธาน"
@@ -8009,10 +8005,6 @@ msgstr "นี่เป็นส่วนที่กำหนดเอง"
 msgid "This is a WordPress site."
 msgstr "นี่เป็นเว็บไซต์ WordPress"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:503
-msgid "This is stored with the entry and is separate from your admin language."
-msgstr ""
-
 #: packages/admin/src/components/users/InviteUserModal.tsx:112
 msgid "This link expires in 7 days and can only be used once."
 msgstr "ลิงก์นี้หมดอายุใน 7 วันและใช้ได้เพียงครั้งเดียวเท่านั้น"
@@ -8079,7 +8071,7 @@ msgstr "การดำเนินการนี้จะลบพื้นท
 msgid "This will grant CLI access with your permissions."
 msgstr "การดำเนินการนี้จะให้สิทธิ์เข้าถึง CLI ด้วยสิทธิ์ของคุณ"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:808
+#: packages/admin/src/components/ContentSettingsPanel.tsx:817
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "การดำเนินการนี้จะย้ายรายการไปยังถังขยะ คุณสามารถกู้คืนได้ในภายหลังจากถังขยะ"
 
@@ -8217,7 +8209,7 @@ msgstr "กำลังแปล..."
 msgid "Translation created"
 msgstr "สร้างคำแปลแล้ว"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:684
+#: packages/admin/src/components/ContentSettingsPanel.tsx:693
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "คำแปล"
@@ -8326,8 +8318,8 @@ msgstr ""
 msgid "Unable to reach marketplace"
 msgstr "ไม่สามารถเชื่อมต่อกับมาร์เก็ตเพลซได้"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1205
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1222
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1214
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1231
 msgid "Unassigned"
 msgstr "ยังไม่ได้กำหนด"
 
@@ -8404,7 +8396,7 @@ msgstr "พบตารางเนื้อหาที่ยังไม่ไ
 msgid "Unresolved assignment"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:547
+#: packages/admin/src/components/ContentSettingsPanel.tsx:556
 msgid "Unschedule"
 msgstr "ยกเลิกการกำหนดเวลา"
 
@@ -8434,7 +8426,7 @@ msgstr "วิดเจ็ตไม่มีชื่อ"
 msgid "Unverified publisher"
 msgstr "ผู้เผยแพร่ที่ยังไม่ได้รับการยืนยัน"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1032
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "ขึ้น"
 
@@ -8450,7 +8442,7 @@ msgstr "อัปเดต"
 msgid "Update Field"
 msgstr "อัปเดตฟิลด์"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:621
+#: packages/admin/src/components/ContentSettingsPanel.tsx:630
 msgid "Update publish date"
 msgstr ""
 
@@ -8478,7 +8470,7 @@ msgid "Update to v{0}"
 msgstr "อัปเดตเป็น v{0}"
 
 #: packages/admin/src/components/ContentList.tsx:842
-#: packages/admin/src/components/ContentSettingsPanel.tsx:637
+#: packages/admin/src/components/ContentSettingsPanel.tsx:646
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
 msgstr "อัปเดตแล้ว"
@@ -8866,6 +8858,10 @@ msgstr "จำนวนเต็ม"
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:123
 msgid "Why can't this be changed?"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:517
+msgid "Why English is used"
 msgstr ""
 
 #: packages/admin/src/components/SeoPanel.tsx:222

@@ -657,7 +657,7 @@ msgid "Active"
 msgstr "सक्रिय"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:171
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1003
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1012
 #: packages/admin/src/components/MenuEditor.tsx:441
 #: packages/admin/src/components/TaxonomySidebar.tsx:619
 msgid "Add"
@@ -1176,7 +1176,7 @@ msgstr "प्रमाणीकरण रद्द कर दिया गय�
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:288
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1213
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1222
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1416,8 +1416,8 @@ msgid "Byline Schema"
 msgstr "बाइलाइन स्कीमा"
 
 #: packages/admin/src/components/BylineFilter.tsx:135
-#: packages/admin/src/components/ContentSettingsPanel.tsx:661
-#: packages/admin/src/components/ContentSettingsPanel.tsx:664
+#: packages/admin/src/components/ContentSettingsPanel.tsx:670
+#: packages/admin/src/components/ContentSettingsPanel.tsx:673
 #: packages/admin/src/components/Sidebar.tsx:285
 #: packages/admin/src/routes/bylines.tsx:375
 msgid "Bylines"
@@ -1459,10 +1459,10 @@ msgstr "सामग्री देख सकते हैं"
 #: packages/admin/src/components/ContentList.tsx:1419
 #: packages/admin/src/components/ContentPickerModal.tsx:240
 #: packages/admin/src/components/ContentSettingsPanel.tsx:99
-#: packages/admin/src/components/ContentSettingsPanel.tsx:582
-#: packages/admin/src/components/ContentSettingsPanel.tsx:814
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1117
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1170
+#: packages/admin/src/components/ContentSettingsPanel.tsx:591
+#: packages/admin/src/components/ContentSettingsPanel.tsx:823
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1126
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1179
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:193
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:194
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1906,12 +1906,8 @@ msgstr "सामग्री अब लाइव है"
 msgid "content items"
 msgstr "सामग्री आइटम"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:499
+#: packages/admin/src/components/ContentSettingsPanel.tsx:498
 msgid "Content locale"
-msgstr ""
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:510
-msgid "Content locale defaults to English"
 msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:47
@@ -2035,7 +2031,7 @@ msgstr "कस्टम फ़ील्ड लोड नहीं किया �
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "\"{draft}\" को MIME प्रकार में मैप नहीं किया जा सका। सीधे MIME टाइप करें."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1009
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1018
 msgid "Couldn't search bylines. Please try again."
 msgstr "बायलाइन नहीं खोजी जा सकी. कृपया पुन: प्रयास करें।"
 
@@ -2048,7 +2044,7 @@ msgstr "सत्यापित नहीं किया जा सका क�
 msgid "Count"
 msgstr "गिनती करना"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1150
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
@@ -2089,7 +2085,7 @@ msgstr "खाता बनाएं"
 msgid "Create an account"
 msgstr "खाता बनाएं"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1089
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1098
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "बायलाइन बनाएं"
@@ -2210,7 +2206,7 @@ msgid "Create, update, delete content"
 msgstr "सामग्री बनाएँ, अद्यतन करें, हटाएँ"
 
 #: packages/admin/src/components/ContentList.tsx:841
-#: packages/admin/src/components/ContentSettingsPanel.tsx:633
+#: packages/admin/src/components/ContentSettingsPanel.tsx:642
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
@@ -2239,7 +2235,7 @@ msgstr "पर बनाया गया"
 msgid "Creating collections and fields..."
 msgstr "संग्रह और फ़ील्ड बनाए जा रहे हैं..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1141
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1150
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
@@ -2738,8 +2734,8 @@ msgstr "एक नेविगेशन मेनू प्रदर्शित
 msgid "Display category list"
 msgstr "श्रेणी सूची प्रदर्शित करें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1092
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1154
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1101
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1163
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "प्रदर्शित होने वाला नाम"
@@ -2805,7 +2801,7 @@ msgstr "कोई खाता नहीं है? <0>साइन अप क�
 msgid "Done"
 msgstr "हो गया"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1035
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1044
 msgid "Down"
 msgstr "नीचे"
 
@@ -2933,7 +2929,7 @@ msgstr "उदाहरण के लिए, सीआई/सीडी पाइ
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "उदाहरण के लिए, मैकबुक प्रो, आईफोन"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1044
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1053
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -2969,7 +2965,7 @@ msgstr "संपादित करें {itemLabel}"
 msgid "Edit {title}"
 msgstr "संपादित करें {title}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1151
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1160
 msgid "Edit byline"
 msgstr "बायलाइन संपादित करें"
 
@@ -3135,6 +3131,10 @@ msgstr "पुनर्निर्देश सक्षम करें"
 #: packages/admin/src/components/Redirects.tsx:426
 msgid "Enabled"
 msgstr "सक्रिय"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:504
+msgid "English is used because no content locale is configured. Content locale is stored with the entry and is separate from your admin language."
+msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:423
 #: packages/admin/src/components/MenuEditor.tsx:601
@@ -3307,7 +3307,7 @@ msgstr "व्यवस्थापक बनाने में विफल"
 msgid "Failed to create backup"
 msgstr "बैकअप बनाने में विफल"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1135
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1144
 msgid "Failed to create byline"
 msgstr "बायलाइन बनाने में विफल"
 
@@ -3802,7 +3802,7 @@ msgstr "{0} को अपडेट करने में विफल"
 msgid "Failed to update backup settings"
 msgstr "बैकअप सेटिंग अपडेट करने में विफल"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1185
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1194
 msgid "Failed to update byline"
 msgstr "बायलाइन अपडेट करने में विफल"
 
@@ -4616,7 +4616,7 @@ msgstr "जेएसएक्स"
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr "इस टैब को खुला रखें. आयात छोटे चरणों में चलता है और बाधित होने पर इसे सुरक्षित रूप से पुनः चलाया जा सकता है।"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1014
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1023
 msgid "Keep typing to narrow down more bylines."
 msgstr "अधिक बाइलाइन कम करने के लिए टाइप करते रहें।"
 
@@ -4957,7 +4957,7 @@ msgstr "प्रबंधित करना"
 msgid "Manage {0} for {1}"
 msgstr "{1} के लिए {0} प्रबंधित करें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:976
+#: packages/admin/src/components/ContentSettingsPanel.tsx:985
 msgid "Manage bylines in {entryLocale}"
 msgstr "{entryLocale} में बायलाइन प्रबंधित करें"
 
@@ -5271,14 +5271,14 @@ msgstr "कूड़ेदान में ले जाएं"
 
 #: packages/admin/src/components/ContentList.tsx:536
 #: packages/admin/src/components/ContentList.tsx:1258
-#: packages/admin/src/components/ContentSettingsPanel.tsx:801
-#: packages/admin/src/components/ContentSettingsPanel.tsx:821
+#: packages/admin/src/components/ContentSettingsPanel.tsx:810
+#: packages/admin/src/components/ContentSettingsPanel.tsx:830
 msgid "Move to Trash"
 msgstr "कूड़ेदान में ले जाएं"
 
 #: packages/admin/src/components/ContentList.tsx:514
 #: packages/admin/src/components/ContentList.tsx:1243
-#: packages/admin/src/components/ContentSettingsPanel.tsx:806
+#: packages/admin/src/components/ContentSettingsPanel.tsx:815
 msgid "Move to Trash?"
 msgstr "कूड़ेदान में ले जाएं?"
 
@@ -5481,7 +5481,7 @@ msgstr ""
 msgid "No byline fields yet."
 msgstr "अभी तक कोई बायलाइन फ़ील्ड नहीं."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:968
+#: packages/admin/src/components/ContentSettingsPanel.tsx:977
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "{entryLocale} में कोई बायलाइन उपलब्ध नहीं है। इस प्रविष्टि पर किसी एक को श्रेय देने से पहले बायलाइन्स पृष्ठ से एक संस्करण बनाएं।"
 
@@ -5490,7 +5490,7 @@ msgstr "{entryLocale} में कोई बायलाइन उपलब्�
 msgid "No bylines found"
 msgstr "कोई बायलाइन नहीं मिली"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1076
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1085
 msgid "No bylines selected."
 msgstr "कोई बायलाइन चयनित नहीं."
 
@@ -5517,10 +5517,6 @@ msgstr "कोई सामग्री नहीं मिली"
 #: packages/admin/src/components/ContentPickerModal.tsx:177
 msgid "No content in this collection"
 msgstr "इस संग्रह में कोई सामग्री नहीं है"
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:511
-msgid "No content locale is configured, so EmDash stores new content as English (en). Changing the admin language does not change this value."
-msgstr ""
 
 #: packages/admin/src/components/ContentTypeList.tsx:204
 msgid "No content types yet."
@@ -5596,7 +5592,7 @@ msgstr "कोई लिंक किया हुआ उपयोगकर्�
 msgid "No matches"
 msgstr "कोई मेल नहीं"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1011
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1020
 msgid "No matching bylines."
 msgstr "कोई मेल खाती बायलाइन नहीं."
 
@@ -5905,7 +5901,7 @@ msgstr "ऑर्डर सहेजा गया"
 msgid "Original:"
 msgstr "मूल:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:768
+#: packages/admin/src/components/ContentSettingsPanel.tsx:777
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "रूपरेखा"
@@ -5914,8 +5910,8 @@ msgstr "रूपरेखा"
 msgid "Overrides the page title in search engine results"
 msgstr "खोज इंजन परिणामों में पृष्ठ शीर्षक को ओवरराइड करता है"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/ContentSettingsPanel.tsx:649
+#: packages/admin/src/components/ContentSettingsPanel.tsx:655
+#: packages/admin/src/components/ContentSettingsPanel.tsx:658
 msgid "Ownership"
 msgstr "स्वामित्व"
 
@@ -6298,7 +6294,7 @@ msgstr "प्रदाता:"
 msgid "Publish"
 msgstr "प्रकाशित करना"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:603
+#: packages/admin/src/components/ContentSettingsPanel.tsx:612
 msgid "Publish date"
 msgstr ""
 
@@ -6335,7 +6331,7 @@ msgstr "अजगर"
 msgid "Queued"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1084
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1093
 msgid "Quick create byline"
 msgstr "त्वरित बायलाइन बनाएं"
 
@@ -6475,7 +6471,7 @@ msgstr "इंस्टॉल करने के लिए रिलीज़ �
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1053
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1062
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:172
 #: packages/admin/src/components/PortableTextEditor.tsx:4233
@@ -6742,7 +6738,7 @@ msgstr "नई अनुमतियों की समीक्षा कर�
 msgid "Revision restored"
 msgstr "पुनरीक्षण बहाल"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:776
+#: packages/admin/src/components/ContentSettingsPanel.tsx:785
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -6804,7 +6800,7 @@ msgstr "भूमिका"
 msgid "Role {role}"
 msgstr "भूमिका {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1058
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1067
 msgid "Role label"
 msgstr "भूमिका लेबल"
 
@@ -6834,7 +6830,7 @@ msgstr "जंग"
 msgid "Same window"
 msgstr "वही खिड़की"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1200
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:277
@@ -6886,7 +6882,7 @@ msgstr "सहेजा गया"
 msgid "Saved \"{0}\"."
 msgstr "\"{0}\" सहेजा गया।"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1191
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1200
 #: packages/admin/src/components/FieldEditor.tsx:689
 #: packages/admin/src/components/MediaDetailPanel.tsx:439
 #: packages/admin/src/components/MenuEditor.tsx:626
@@ -6914,15 +6910,15 @@ msgstr "एस.बी.ओ.एम"
 msgid "SBOM · {0}"
 msgstr "एसबीओएम · {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:571
+#: packages/admin/src/components/ContentSettingsPanel.tsx:580
 msgid "Schedule"
 msgstr "अनुसूची"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:557
+#: packages/admin/src/components/ContentSettingsPanel.tsx:566
 msgid "Schedule for"
 msgstr "के लिए शेड्यूल करें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:594
+#: packages/admin/src/components/ContentSettingsPanel.tsx:603
 msgid "Schedule for later"
 msgstr "बाद के लिए शेड्यूल करें"
 
@@ -6933,7 +6929,7 @@ msgid "Scheduled"
 msgstr "अनुसूचित"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:545
+#: packages/admin/src/components/ContentSettingsPanel.tsx:554
 msgid "Scheduled for: {0}"
 msgstr "इसके लिए शेड्यूल किया गया: {0}"
 
@@ -7022,12 +7018,12 @@ msgid "Search by name or email..."
 msgstr "नाम या ईमेल से खोजें..."
 
 #: packages/admin/src/components/BylineFilter.tsx:121
-#: packages/admin/src/components/ContentSettingsPanel.tsx:985
+#: packages/admin/src/components/ContentSettingsPanel.tsx:994
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr "बायलाइन खोजें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:984
+#: packages/admin/src/components/ContentSettingsPanel.tsx:993
 msgid "Search bylines to add..."
 msgstr "जोड़ने के लिए बायलाइन खोजें..."
 
@@ -7114,7 +7110,7 @@ msgstr "खोज..."
 msgid "Searchable"
 msgstr "खोज सकने"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:989
+#: packages/admin/src/components/ContentSettingsPanel.tsx:998
 msgid "Searching..."
 msgstr "खोज रहे हैं..."
 
@@ -7363,8 +7359,8 @@ msgstr "परीक्षण ईमेल भेजें"
 msgid "Sending..."
 msgstr "भेजा जा रहा है..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:719
-#: packages/admin/src/components/ContentSettingsPanel.tsx:722
+#: packages/admin/src/components/ContentSettingsPanel.tsx:728
+#: packages/admin/src/components/ContentSettingsPanel.tsx:731
 #: packages/admin/src/components/ContentTypeEditor.tsx:487
 #: packages/admin/src/components/Settings.tsx:60
 msgid "SEO"
@@ -7605,8 +7601,8 @@ msgstr "छोड़ा गया"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
 #: packages/admin/src/components/ContentSettingsPanel.tsx:491
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1100
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1162
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1109
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1171
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:403
 #: packages/admin/src/components/ContentTypeList.tsx:181
@@ -7722,7 +7718,7 @@ msgid "Start writing, or type '/' for commands"
 msgstr "लिखना प्रारंभ करें, या आदेशों के लिए '/' टाइप करें"
 
 #: packages/admin/src/components/ContentList.tsx:592
-#: packages/admin/src/components/ContentSettingsPanel.tsx:517
+#: packages/admin/src/components/ContentSettingsPanel.tsx:526
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/users/UserList.tsx:104
@@ -7839,7 +7835,7 @@ msgstr "लक्ष्य"
 msgid "Target locale"
 msgstr "लक्ष्य स्थान"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:706
+#: packages/admin/src/components/ContentSettingsPanel.tsx:715
 #: packages/admin/src/components/TaxonomySidebar.tsx:683
 msgid "Taxonomies"
 msgstr "taxonomies"
@@ -8012,10 +8008,6 @@ msgstr "यह एक कस्टम अनुभाग है."
 msgid "This is a WordPress site."
 msgstr "यह एक वर्डप्रेस साइट है."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:503
-msgid "This is stored with the entry and is separate from your admin language."
-msgstr ""
-
 #: packages/admin/src/components/users/InviteUserModal.tsx:112
 msgid "This link expires in 7 days and can only be used once."
 msgstr "यह लिंक 7 दिनों में समाप्त हो जाता है और इसका उपयोग केवल एक बार किया जा सकता है।"
@@ -8082,7 +8074,7 @@ msgstr "इससे विजेट क्षेत्र और उसके �
 msgid "This will grant CLI access with your permissions."
 msgstr "यह आपकी अनुमतियों के साथ सीएलआई पहुंच प्रदान करेगा।"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:808
+#: packages/admin/src/components/ContentSettingsPanel.tsx:817
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "यह आइटम को कूड़ेदान में ले जाएगा। आप इसे बाद में कूड़ेदान से पुनर्स्थापित कर सकते हैं।"
 
@@ -8220,7 +8212,7 @@ msgstr "अनुवाद हो रहा है..."
 msgid "Translation created"
 msgstr "अनुवाद बनाया गया"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:684
+#: packages/admin/src/components/ContentSettingsPanel.tsx:693
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "अनुवाद"
@@ -8329,8 +8321,8 @@ msgstr "टाइपप्रति"
 msgid "Unable to reach marketplace"
 msgstr "बाज़ार तक पहुंचने में असमर्थ"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1205
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1222
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1214
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1231
 msgid "Unassigned"
 msgstr "सौंपे नहीं गए"
 
@@ -8407,7 +8399,7 @@ msgstr "अपंजीकृत सामग्री तालिकाएँ 
 msgid "Unresolved assignment"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:547
+#: packages/admin/src/components/ContentSettingsPanel.tsx:556
 msgid "Unschedule"
 msgstr "गैर अनुसूचित"
 
@@ -8437,7 +8429,7 @@ msgstr "शीर्षक रहित विजेट"
 msgid "Unverified publisher"
 msgstr "असत्यापित प्रकाशक"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1032
+#: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "ऊपर"
 
@@ -8453,7 +8445,7 @@ msgstr "अद्यतन"
 msgid "Update Field"
 msgstr "फ़ील्ड अद्यतन करें"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:621
+#: packages/admin/src/components/ContentSettingsPanel.tsx:630
 msgid "Update publish date"
 msgstr ""
 
@@ -8481,7 +8473,7 @@ msgid "Update to v{0}"
 msgstr "v{0} पर अद्यतन करें"
 
 #: packages/admin/src/components/ContentList.tsx:842
-#: packages/admin/src/components/ContentSettingsPanel.tsx:637
+#: packages/admin/src/components/ContentSettingsPanel.tsx:646
 #: packages/admin/src/components/RegistryPluginDetail.tsx:501
 msgid "Updated"
 msgstr "अद्यतन"
@@ -8870,6 +8862,10 @@ msgstr "पूरा नंबर"
 #: packages/admin/src/components/MediaDetailPanel.tsx:123
 msgid "Why can't this be changed?"
 msgstr "इसे बदला क्यों नहीं जा सकता?"
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:517
+msgid "Why English is used"
+msgstr ""
 
 #: packages/admin/src/components/SeoPanel.tsx:222
 msgid "Why is this important for duplicate pages?"
