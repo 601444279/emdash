@@ -57,7 +57,7 @@ The replacement implementation is complete through the publisher OAuth callback 
 - the Worker serves confidential client metadata and overlapping JWKS, fails closed on invalid configuration, and keeps canonical publisher authority in SQLite-backed Durable Objects;
 - envelope encryption, publisher custody, generation-bound refresh operations, publisher application sessions, and identity/delegation callback routes pass real workerd tests; and
 - Cloudflare Access authenticates operators through role-specific audiences; a `ServiceControlDurableObject` owns service mode, publisher suspension, idempotency, audit, and epoch-bound publication permits; and
-- repository package typecheck, type-aware lint, 137 release-service tests, Worker build, and startup profiling pass on the top branch.
+- repository package typecheck, type-aware lint, 139 release-service tests, Worker build, and startup profiling pass on the top branch.
 
 The public-client G0 lifecycle is complete on both providers: exact-scope authorization, forced refresh, and server revocation passed. npmX rejected its access token immediately after revocation. Cirrus retained the already-issued access token for its remaining lifetime while preventing future refresh. G0 still requires the deployed confidential-client run and client-key removal observation before either provider is advertised as supported by the hosted service.
 

@@ -465,6 +465,8 @@ Revocation does not remove an already published record. Record removal or yankin
 
 The public service API is versioned under `/v1`.
 
+Health endpoints are outside the versioned API. `GET /health` is configuration-independent process liveness. `GET /ready` loads required configuration and checks the service-control shard, but returns no tenant or operational state.
+
 ### CI API
 
 | Method and path                        | Purpose                                                           |
