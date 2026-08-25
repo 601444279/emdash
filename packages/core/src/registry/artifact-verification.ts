@@ -1,6 +1,6 @@
 import type { VerificationErrorCode } from "@emdash-cms/registry-verification";
 import { validatePluginBundle } from "@emdash-cms/registry-verification/bundle";
-import { verifyMultihash } from "@emdash-cms/registry-verification/checksum";
+import { decodeMultihash, verifyMultihash } from "@emdash-cms/registry-verification/checksum";
 
 import { pluginManifestSchema, reconcileManifestAccess } from "../plugins/manifest-schema.js";
 import type { PluginBundle } from "../plugins/marketplace.js";
@@ -13,7 +13,10 @@ export type RegistryArtifactVerificationCode =
 	| "BUNDLE_RUNTIME_UNSUPPORTED";
 
 export type RegistryArtifactVerificationResult =
-	| { success: true; value: PluginBundle }
+	| {
+			success: true;
+			value: { bundle: PluginBundle; artifactDigest: Uint8Array };
+	  }
 	| {
 			success: false;
 			error: { code: RegistryArtifactVerificationCode; message: string };
@@ -27,6 +30,8 @@ export async function validateRegistryArtifact(
 ): Promise<RegistryArtifactVerificationResult> {
 	const checksumReport = await verifyMultihash(bytes, checksum);
 	if (!checksumReport.success) return checksumReport;
+	const decodedChecksum = decodeMultihash(checksum);
+	if (!decodedChecksum.success) return decodedChecksum;
 
 	const bundleReport = await validatePluginBundle(bytes, {
 		expectedSlug: slug,
@@ -49,13 +54,16 @@ export async function validateRegistryArtifact(
 		return {
 			success: true,
 			value: {
-				manifest: reconcileManifestAccess(manifest.data),
-				backendCode: bundleDecoder.decode(bundleReport.value.backend),
-				adminCode:
-					bundleReport.value.admin === undefined
-						? undefined
-						: bundleDecoder.decode(bundleReport.value.admin),
-				checksum,
+				bundle: {
+					manifest: reconcileManifestAccess(manifest.data),
+					backendCode: bundleDecoder.decode(bundleReport.value.backend),
+					adminCode:
+						bundleReport.value.admin === undefined
+							? undefined
+							: bundleDecoder.decode(bundleReport.value.admin),
+					checksum,
+				},
+				artifactDigest: decodedChecksum.value.digest,
 			},
 		};
 	} catch {

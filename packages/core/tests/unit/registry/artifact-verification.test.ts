@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { gzipSync } from "node:zlib";
 
-import { computeMultihash } from "@emdash-cms/registry-verification/checksum";
+import { computeMultihash, decodeMultihash } from "@emdash-cms/registry-verification/checksum";
 import { packTar, type TarEntry } from "modern-tar";
 import { describe, expect, it } from "vitest";
 
@@ -52,21 +52,23 @@ async function checksum(bytes: Uint8Array): Promise<string> {
 describe("validateRegistryArtifact", () => {
 	it("returns a runtime bundle after shared checksum, archive, and manifest validation", async () => {
 		const bytes = await createBundle(pluginManifest());
-		const result = await validateRegistryArtifact(
-			bytes,
-			await checksum(bytes),
-			"test-plugin",
-			"1.0.0",
-		);
+		const expectedChecksum = await checksum(bytes);
+		const result = await validateRegistryArtifact(bytes, expectedChecksum, "test-plugin", "1.0.0");
 
 		expect(result).toMatchObject({
 			success: true,
 			value: {
-				manifest: { id: "test-plugin", version: "1.0.0" },
-				backendCode: "export default {};",
-				adminCode: "export default {};",
+				bundle: {
+					manifest: { id: "test-plugin", version: "1.0.0" },
+					backendCode: "export default {};",
+					adminCode: "export default {};",
+				},
+				artifactDigest: expect.any(Uint8Array),
 			},
 		});
+		const decoded = decodeMultihash(expectedChecksum);
+		if (!decoded.success || !result.success) throw new Error("expected valid checksum and bundle");
+		expect(result.value.artifactDigest).toEqual(decoded.value.digest);
 	});
 
 	it("rejects legacy bare-hex checksums at the installer boundary", async () => {
