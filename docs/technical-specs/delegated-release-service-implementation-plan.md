@@ -133,16 +133,16 @@ W3 -> W8 -> W10 -> W12
 
 ## Integration gates
 
-| Gate | Required evidence | Unblocks |
-| --- | --- | --- |
-| **G0 Design** | RFC decisions reconciled; exact create-only scope proved on every claimed PDS; no broad fallback | Authority-bearing implementation |
-| **G1 Contracts** | Lexicons, direct-PDS reads, shared record/bundle/provenance reports, and fixtures pass in Node and workerd | Service Workflow and installer work |
-| **G2 Durable state** | Service shell, Access auth, control object, publisher object, migrations, state machine, idempotency, and alarms pass real workerd tests | OAuth, OIDC, Workflow integration |
-| **G3 Automatic vertical slice** | Controlled GitHub workflow publishes one valid non-escalating release and converges under retries | Independent enforcement and private service trials |
-| **G4 Independent enforcement** | A clean EmDash site accepts valid output and rejects every invalid service-output fixture | Hosted limited beta |
-| **G5 Approval** | `always` and escalation releases require a valid current approver and passkey; every invalidation path re-approves | Broader publisher beta |
-| **G6 Operational beta** | Pause, suspension, revocation, reconciliation, key rotation, backup/export, alerts, and self-host path work without database edits | Public beta |
-| **G7 Production** | End-to-end conformance, recovery drills, and external security review have no unresolved critical/high findings | Production launch |
+| Gate                            | Required evidence                                                                                                                        | Unblocks                                           |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| **G0 Design**                   | RFC decisions reconciled; exact create-only scope proved on every claimed PDS; no broad fallback                                         | Authority-bearing implementation                   |
+| **G1 Contracts**                | Lexicons, direct-PDS reads, shared record/bundle/provenance reports, and fixtures pass in Node and workerd                               | Service Workflow and installer work                |
+| **G2 Durable state**            | Service shell, Access auth, control object, publisher object, migrations, state machine, idempotency, and alarms pass real workerd tests | OAuth, OIDC, Workflow integration                  |
+| **G3 Automatic vertical slice** | Controlled GitHub workflow publishes one valid non-escalating release and converges under retries                                        | Independent enforcement and private service trials |
+| **G4 Independent enforcement**  | A clean EmDash site accepts valid output and rejects every invalid service-output fixture                                                | Hosted limited beta                                |
+| **G5 Approval**                 | `always` and escalation releases require a valid current approver and passkey; every invalidation path re-approves                       | Broader publisher beta                             |
+| **G6 Operational beta**         | Pause, suspension, revocation, reconciliation, key rotation, backup/export, alerts, and self-host path work without database edits       | Public beta                                        |
+| **G7 Production**               | End-to-end conformance, recovery drills, and external security review have no unresolved critical/high findings                          | Production launch                                  |
 
 ## W0 Design and feasibility
 
@@ -152,14 +152,14 @@ Dependencies: none.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
+| Task   | Work                                                                                                                                                      |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `W0.1` | Reconcile RFC #1870 with the Durable Object architecture, Access operator authentication, existing `emdash-plugin` command, and active experimental NSIDs |
-| `W0.2` | Freeze the first-release profile policy, provenance, workload policy, approval digest, intent state, and error contracts |
-| `W0.3` | Validate the exact create-only grant against the available npmX-hosted Bluesky PDS and Cirrus test accounts |
-| `W0.4` | Validate confidential OAuth refresh, DPoP behavior, revocation, and client-key rotation with real authorization servers |
-| `W0.5` | Confirm current Workflow event, retention, retry, and test APIs support approval and recovery; record limits outside the protocol contract |
-| `W0.6` | Define hosted-service Access audience and group-to-role mapping and the self-host configuration contract |
+| `W0.2` | Freeze the first-release profile policy, provenance, workload policy, approval digest, intent state, and error contracts                                  |
+| `W0.3` | Validate the exact create-only grant against the available npmX-hosted Bluesky PDS and Cirrus test accounts                                               |
+| `W0.4` | Validate confidential OAuth refresh, DPoP behavior, revocation, and client-key rotation with real authorization servers                                   |
+| `W0.5` | Confirm current Workflow event, retention, retry, and test APIs support approval and recovery; record limits outside the protocol contract                |
+| `W0.6` | Define hosted-service Access audience and group-to-role mapping and the self-host configuration contract                                                  |
 
 ### Acceptance criteria
 
@@ -188,15 +188,15 @@ Dependencies: G0 contract decisions.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
-| `W1.1` | Audit profile/release lexicons and generated types against the accepted RFC; keep additions optional |
-| `W1.2` | Finalize the exact permission helper and create-only publishing client without update/delete escape hatches |
-| `W1.3` | Complete authoritative direct-PDS profile, release, list, and deterministic-key reads |
+| Task   | Work                                                                                                                                        |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `W1.1` | Audit profile/release lexicons and generated types against the accepted RFC; keep additions optional                                        |
+| `W1.2` | Finalize the exact permission helper and create-only publishing client without update/delete escape hatches                                 |
+| `W1.3` | Complete authoritative direct-PDS profile, release, list, and deterministic-key reads                                                       |
 | `W1.4` | Produce one structured record/policy report covering normalized policy, profile CID, release CID, provenance status, and stable error codes |
-| `W1.5` | Confirm canonical bundle/manifest and declared-access reports share one implementation across service and installer |
-| `W1.6` | Expand real provenance fixtures for valid, missing, corrupt, substituted, foreign-source, wrong-builder, and unsupported predicates |
-| `W1.7` | Verify packed published output in Node and workerd and retain interop fixtures outside planning documents |
+| `W1.5` | Confirm canonical bundle/manifest and declared-access reports share one implementation across service and installer                         |
+| `W1.6` | Expand real provenance fixtures for valid, missing, corrupt, substituted, foreign-source, wrong-builder, and unsupported predicates         |
+| `W1.7` | Verify packed published output in Node and workerd and retain interop fixtures outside planning documents                                   |
 
 ### Acceptance criteria
 
@@ -234,14 +234,14 @@ Dependencies: G0 architecture and Access decisions.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
+| Task   | Work                                                                                                                                                 |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `W2.1` | Scaffold the Worker, static assets, test configuration, bindings, Durable Object migrations, Workflow binding, verifier binding, and generated types |
-| `W2.2` | Add versioned JSON envelopes, request IDs, body limits, security headers, CORS policy, error handling, and route composition |
-| `W2.3` | Implement Access JWT verification, group-to-role mapping, CSRF, and operator mutation idempotency |
-| `W2.4` | Implement `ServiceControlDurableObject`, service modes, publication permits, publisher controls, audit, and alarm-backed cleanup |
-| `W2.5` | Add health and readiness behavior that distinguishes configuration, binding, and dependency failure without exposing tenant state |
-| `W2.6` | Add CI lanes for Node tests, workerd tests, Worker build, binding generation, and packed-output checks |
+| `W2.2` | Add versioned JSON envelopes, request IDs, body limits, security headers, CORS policy, error handling, and route composition                         |
+| `W2.3` | Implement Access JWT verification, group-to-role mapping, CSRF, and operator mutation idempotency                                                    |
+| `W2.4` | Implement `ServiceControlDurableObject`, service modes, publication permits, publisher controls, audit, and alarm-backed cleanup                     |
+| `W2.5` | Add health and readiness behavior that distinguishes configuration, binding, and dependency failure without exposing tenant state                    |
+| `W2.6` | Add CI lanes for Node tests, workerd tests, Worker build, binding generation, and packed-output checks                                               |
 
 ### Acceptance criteria
 
@@ -269,15 +269,15 @@ Dependencies: W2.1 and shared state/error contracts.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
+| Task   | Work                                                                                                                                                                                     |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `W3.1` | Implement forward-only object schema migration with `publisher`, `delegations`, `workload_policies`, `intents`, reservations, transitions, operations, audit, idempotency, and deadlines |
-| `W3.2` | Implement the complete intent state machine with expected-state and generation guards |
-| `W3.3` | Implement package/version reservation and OIDC/request idempotency semantics |
-| `W3.4` | Implement generation-bound refresh and publication operation tokens without external I/O inside transactions |
-| `W3.5` | Implement append-only audit and public/private serializers |
-| `W3.6` | Implement one-alarm deadline queue for operation recovery, intent expiry, session cleanup, and audit/snapshot scheduling |
-| `W3.7` | Implement publisher session epoch and publisher/service suspension checks |
+| `W3.2` | Implement the complete intent state machine with expected-state and generation guards                                                                                                    |
+| `W3.3` | Implement package/version reservation and OIDC/request idempotency semantics                                                                                                             |
+| `W3.4` | Implement generation-bound refresh and publication operation tokens without external I/O inside transactions                                                                             |
+| `W3.5` | Implement append-only audit and public/private serializers                                                                                                                               |
+| `W3.6` | Implement one-alarm deadline queue for operation recovery, intent expiry, session cleanup, and audit/snapshot scheduling                                                                 |
+| `W3.7` | Implement publisher session epoch and publisher/service suspension checks                                                                                                                |
 
 ### Acceptance criteria
 
@@ -307,14 +307,14 @@ Dependencies: W1 exact permission, W2 API, W3 delegation and operation RPCs.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
+| Task   | Work                                                                                                           |
+| ------ | -------------------------------------------------------------------------------------------------------------- |
 | `W4.1` | Implement confidential-client metadata, versioned JWKS, PKCE/state/nonce transactions, and callback validation |
-| `W4.2` | Implement identity-only publisher login and short-lived publisher application sessions |
-| `W4.3` | Implement exact-scope delegation authorization and returned-grant validation |
-| `W4.4` | Port and review versioned envelope encryption with publisher/field-associated data |
-| `W4.5` | Persist encrypted sessions in the publisher object and implement serialized refresh using operation tokens |
-| `W4.6` | Implement publisher and operator revocation, client-key rotation, reauthorization, and failure classification |
+| `W4.2` | Implement identity-only publisher login and short-lived publisher application sessions                         |
+| `W4.3` | Implement exact-scope delegation authorization and returned-grant validation                                   |
+| `W4.4` | Port and review versioned envelope encryption with publisher/field-associated data                             |
+| `W4.5` | Persist encrypted sessions in the publisher object and implement serialized refresh using operation tokens     |
+| `W4.6` | Implement publisher and operator revocation, client-key rotation, reauthorization, and failure classification  |
 
 ### Acceptance criteria
 
@@ -343,14 +343,14 @@ Dependencies: W2 API, W3 workload/idempotency RPCs, frozen W1 repository canonic
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
-| `W5.1` | Define issuer-neutral verified-workload types and error codes |
+| Task   | Work                                                                                                                                          |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `W5.1` | Define issuer-neutral verified-workload types and error codes                                                                                 |
 | `W5.2` | Implement GitHub issuer/JWKS verification and audience, expiry, repository, workflow, ref, environment, run ID, and run-attempt normalization |
-| `W5.3` | Implement publisher-authorized workload-policy create, replace, disable, and audit operations |
-| `W5.4` | Implement intent request schema, token disposal, request digest, service/publisher admission, reservation, and Workflow start |
-| `W5.5` | Implement OIDC-authenticated intent status and cancellation using fresh matching workload identity |
-| `W5.6` | Add dry-run admission that validates OIDC and policy without reserving or publishing a version |
+| `W5.3` | Implement publisher-authorized workload-policy create, replace, disable, and audit operations                                                 |
+| `W5.4` | Implement intent request schema, token disposal, request digest, service/publisher admission, reservation, and Workflow start                 |
+| `W5.5` | Implement OIDC-authenticated intent status and cancellation using fresh matching workload identity                                            |
+| `W5.6` | Add dry-run admission that validates OIDC and policy without reserving or publishing a version                                                |
 
 ### Acceptance criteria
 
@@ -379,14 +379,14 @@ Dependencies: G1, W3 intent RPCs, W5 admitted intents.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
-| `W6.1` | Scaffold the verifier Worker with only the required egress/config bindings and shared-verification dependencies |
-| `W6.2` | Implement bounded artifact and provenance verification reports over the service binding |
+| Task   | Work                                                                                                                                                  |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `W6.1` | Scaffold the verifier Worker with only the required egress/config bindings and shared-verification dependencies                                       |
+| `W6.2` | Implement bounded artifact and provenance verification reports over the service binding                                                               |
 | `W6.3` | Implement Workflow steps for authoritative profile, release-key absence, access baseline, artifact, provenance, workload binding, and policy decision |
-| `W6.4` | Persist every step result through the publisher object and make static step names replay-safe |
-| `W6.5` | Implement `awaiting_approval`, decision event, cancellation event, timeout, and expiry behavior |
-| `W6.6` | Implement lost/expired Workflow recovery from authoritative intent and audit state |
+| `W6.4` | Persist every step result through the publisher object and make static step names replay-safe                                                         |
+| `W6.5` | Implement `awaiting_approval`, decision event, cancellation event, timeout, and expiry behavior                                                       |
+| `W6.6` | Implement lost/expired Workflow recovery from authoritative intent and audit state                                                                    |
 
 ### Acceptance criteria
 
@@ -414,14 +414,14 @@ Dependencies: W4 delegation, W6 verified intents, W2 service permits.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
+| Task   | Work                                                                                                                             |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | `W7.1` | Implement final re-fetch/reverification and invalidation of changed profile, baseline, artifact, provenance, workload, or policy |
-| `W7.2` | Implement fresh service permit, publisher revocation check, publication operation token, and serialized session refresh |
-| `W7.3` | Implement deterministic create-only release publication |
-| `W7.4` | Implement exact-match, absence, conflict, and transient ambiguous-write reconciliation |
-| `W7.5` | Implement alarm/operator recovery and bounded retry policy |
-| `W7.6` | Emit terminal audit and optional projection events only after authoritative completion |
+| `W7.2` | Implement fresh service permit, publisher revocation check, publication operation token, and serialized session refresh          |
+| `W7.3` | Implement deterministic create-only release publication                                                                          |
+| `W7.4` | Implement exact-match, absence, conflict, and transient ambiguous-write reconciliation                                           |
+| `W7.5` | Implement alarm/operator recovery and bounded retry policy                                                                       |
+| `W7.6` | Emit terminal audit and optional projection events only after authoritative completion                                           |
 
 ### Acceptance criteria
 
@@ -450,15 +450,15 @@ Dependencies: W3 RPC conventions, W4 identity OAuth, W6 approval digest/event co
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
-| `W8.1` | Port and review required-user-verification registration/authentication primitives in `@emdash-cms/auth` |
+| Task   | Work                                                                                                                              |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `W8.1` | Port and review required-user-verification registration/authentication primitives in `@emdash-cms/auth`                           |
 | `W8.2` | Implement approver object schema, migrations, identity transactions, credentials, challenges, decisions, audit, and cleanup alarm |
-| `W8.3` | Implement approver DID proof and short-lived approver sessions |
-| `W8.4` | Implement multiple named passkeys, counter handling, revocation, and credential-safe serializers |
-| `W8.5` | Define and compute the canonical approval digest and create single-use challenges |
+| `W8.3` | Implement approver DID proof and short-lived approver sessions                                                                    |
+| `W8.4` | Implement multiple named passkeys, counter handling, revocation, and credential-safe serializers                                  |
+| `W8.5` | Define and compute the canonical approval digest and create single-use challenges                                                 |
 | `W8.6` | Verify approve/reject assertions, return idempotent receipts, validate current profile membership, and deliver the Workflow event |
-| `W8.7` | Invalidate outstanding challenges on rejection, cancellation, expiry, digest change, or credential revocation |
+| `W8.7` | Invalidate outstanding challenges on rejection, cancellation, expiry, digest change, or credential revocation                     |
 
 ### Acceptance criteria
 
@@ -487,13 +487,13 @@ Dependencies: G1 shared verification. It can proceed independently of W2 to W8.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
-| `W9.1` | Replace duplicate install verification with shared record, bundle, manifest, and provenance reports |
-| `W9.2` | Fetch authoritative profile/release records directly and evaluate current signed profile policy |
-| `W9.3` | Enforce required provenance and fail supplied invalid/unverifiable provenance regardless of policy default |
+| Task   | Work                                                                                                           |
+| ------ | -------------------------------------------------------------------------------------------------------------- |
+| `W9.1` | Replace duplicate install verification with shared record, bundle, manifest, and provenance reports            |
+| `W9.2` | Fetch authoritative profile/release records directly and evaluate current signed profile policy                |
+| `W9.3` | Enforce required provenance and fail supplied invalid/unverifiable provenance regardless of policy default     |
 | `W9.4` | Present provenance and policy status in install/update consent without trusting service or aggregator verdicts |
-| `W9.5` | Add install/update conformance fixtures shared with service output |
+| `W9.5` | Add install/update conformance fixtures shared with service output                                             |
 
 ### Acceptance criteria
 
@@ -523,15 +523,15 @@ Dependencies: stable APIs from W4 to W8 and W2 Access roles.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
-| `W10.1` | Add typed API client, polling, stable error mapping, and idempotency helpers |
-| `W10.2` | Build the official GitHub Action for OIDC, submission, status, approval URL, and terminal output |
+| Task    | Work                                                                                                             |
+| ------- | ---------------------------------------------------------------------------------------------------------------- |
+| `W10.1` | Add typed API client, polling, stable error mapping, and idempotency helpers                                     |
+| `W10.2` | Build the official GitHub Action for OIDC, submission, status, approval URL, and terminal output                 |
 | `W10.3` | Add CLI commands for delegate, revoke, workload policy, dry run, submit/status/cancel, enrol, and approve/reject |
-| `W10.4` | Build publisher delegation, workload, intent, approver-status, and audit views |
-| `W10.5` | Build approval detail, declared-access diff, provenance/workload evidence, and passkey decision views |
-| `W10.6` | Build Access operator status, pause, publisher lookup, suspension, revocation, reconciliation, and audit views |
-| `W10.7` | Complete Lingui, accessibility, keyboard, responsive, and Arabic RTL coverage |
+| `W10.4` | Build publisher delegation, workload, intent, approver-status, and audit views                                   |
+| `W10.5` | Build approval detail, declared-access diff, provenance/workload evidence, and passkey decision views            |
+| `W10.6` | Build Access operator status, pause, publisher lookup, suspension, revocation, reconciliation, and audit views   |
+| `W10.7` | Complete Lingui, accessibility, keyboard, responsive, and Arabic RTL coverage                                    |
 
 ### Acceptance criteria
 
@@ -561,15 +561,15 @@ Dependencies: W2 control plane and W3 publisher audit contract. Work can begin b
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
+| Task    | Work                                                                                                                                 |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `W11.1` | Decide whether direct DID lookup is sufficient for beta; if not, build Queue-to-D1 sanitized operator projection and rebuild tooling |
-| `W11.2` | Implement encrypted publisher snapshots and append-only audit exports to R2 with bounded resumable scheduling |
-| `W11.3` | Implement encryption-key activation, background re-encryption, verification, retirement, and emergency rotation |
-| `W11.4` | Add structured logs, metrics, alerts, health checks, correlation IDs, and privacy redaction |
-| `W11.5` | Add per-publisher, per-repository, and per-workload abuse/rate controls without a global request bottleneck |
+| `W11.2` | Implement encrypted publisher snapshots and append-only audit exports to R2 with bounded resumable scheduling                        |
+| `W11.3` | Implement encryption-key activation, background re-encryption, verification, retirement, and emergency rotation                      |
+| `W11.4` | Add structured logs, metrics, alerts, health checks, correlation IDs, and privacy redaction                                          |
+| `W11.5` | Add per-publisher, per-repository, and per-workload abuse/rate controls without a global request bottleneck                          |
 | `W11.6` | Document and test Access, Durable Object, Workflow, verifier, Secrets Store, R2, optional D1, and custom-domain self-host deployment |
-| `W11.7` | Write incident, revocation, PDS outage, ambiguous write, key compromise, shard restore, Workflow loss, and rollback runbooks |
+| `W11.7` | Write incident, revocation, PDS outage, ambiguous write, key compromise, shard restore, Workflow loss, and rollback runbooks         |
 
 ### Acceptance criteria
 
@@ -599,15 +599,15 @@ Dependencies: begins at G1 and expands after every gate.
 
 ### Tasks
 
-| Task | Work |
-| --- | --- |
-| `W12.1` | Maintain one fixture corpus for records, bundles, provenance, workload claims, policy, approvals, and public/private errors |
-| `W12.2` | Build real workerd Durable Object and Workflow integration tests, including alarms, hibernation/restart, retries, and migrations |
-| `W12.3` | Build browser OAuth, Access, WebAuthn, CSRF, isolation, localization, and RTL tests |
-| `W12.4` | Build controlled real-PDS and GitHub-OIDC end-to-end tests for hosted and self-host deployments |
+| Task    | Work                                                                                                                                              |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `W12.1` | Maintain one fixture corpus for records, bundles, provenance, workload claims, policy, approvals, and public/private errors                       |
+| `W12.2` | Build real workerd Durable Object and Workflow integration tests, including alarms, hibernation/restart, retries, and migrations                  |
+| `W12.3` | Build browser OAuth, Access, WebAuthn, CSRF, isolation, localization, and RTL tests                                                               |
+| `W12.4` | Build controlled real-PDS and GitHub-OIDC end-to-end tests for hosted and self-host deployments                                                   |
 | `W12.5` | Add adversarial and fault-injection tests for replay, concurrency, substitution, SSRF, token leakage, ambiguous writes, pause races, and key loss |
-| `W12.6` | Run backup/restore, encryption rotation, Access compromise, delegation revocation, Workflow loss, PDS outage, and rollback drills |
-| `W12.7` | Complete external security review and track closure by severity |
+| `W12.6` | Run backup/restore, encryption rotation, Access compromise, delegation revocation, Workflow loss, PDS outage, and rollback drills                 |
+| `W12.7` | Complete external security review and track closure by severity                                                                                   |
 
 ### Acceptance criteria
 
@@ -625,22 +625,22 @@ Use one worktree per PR-sized task. Independent lanes branch from current `main`
 
 ### Worktree names and ownership
 
-| Lane | Suggested worktree | Suggested branch | Initial scope |
-| --- | --- | --- | --- |
-| Coordinator | `emdash-drs-integration` | `feat/drs-integration` | Spec, dependency coordination, root workspace/CI, final gates |
-| Feasibility | `emdash-drs-w0` | `docs/drs-feasibility` | W0 evidence and RFC updates |
-| Contracts | `emdash-drs-w1` | `feat/drs-contracts` | W1 packages and fixtures |
-| Platform | `emdash-drs-w2` | `feat/drs-platform` | W2 app scaffold, bindings, Access, control object |
-| Publisher state | `emdash-drs-w3` | `feat/drs-publisher-do` | W3 publisher object only |
-| OAuth | `emdash-drs-w4` | `feat/drs-oauth` | W4 OAuth and encryption only |
-| Workload | `emdash-drs-w5` | `feat/drs-github-oidc` | W5 OIDC, workload policy, admission |
-| Verification | `emdash-drs-w6` | `feat/drs-verification-workflow` | W6 Workflow and verifier |
-| Publication | `emdash-drs-w7` | `feat/drs-publication` | W7 PDS write/reconciliation |
-| Approval | `emdash-drs-w8` | `feat/drs-approval` | W8 approver object/passkeys |
-| Installer | `emdash-drs-w9` | `feat/drs-installer-policy` | W9 core install/update enforcement |
-| Clients | `emdash-drs-w10` | `feat/drs-clients` | W10 API client, Action, CLI, UIs split further as needed |
-| Operations | `emdash-drs-w11` | `feat/drs-operations` | W11 projection, backup, observability, self-hosting |
-| Conformance | `emdash-drs-w12` | `test/drs-conformance` | W12 shared cross-component tests |
+| Lane            | Suggested worktree       | Suggested branch                 | Initial scope                                                 |
+| --------------- | ------------------------ | -------------------------------- | ------------------------------------------------------------- |
+| Coordinator     | `emdash-drs-integration` | `feat/drs-integration`           | Spec, dependency coordination, root workspace/CI, final gates |
+| Feasibility     | `emdash-drs-w0`          | `docs/drs-feasibility`           | W0 evidence and RFC updates                                   |
+| Contracts       | `emdash-drs-w1`          | `feat/drs-contracts`             | W1 packages and fixtures                                      |
+| Platform        | `emdash-drs-w2`          | `feat/drs-platform`              | W2 app scaffold, bindings, Access, control object             |
+| Publisher state | `emdash-drs-w3`          | `feat/drs-publisher-do`          | W3 publisher object only                                      |
+| OAuth           | `emdash-drs-w4`          | `feat/drs-oauth`                 | W4 OAuth and encryption only                                  |
+| Workload        | `emdash-drs-w5`          | `feat/drs-github-oidc`           | W5 OIDC, workload policy, admission                           |
+| Verification    | `emdash-drs-w6`          | `feat/drs-verification-workflow` | W6 Workflow and verifier                                      |
+| Publication     | `emdash-drs-w7`          | `feat/drs-publication`           | W7 PDS write/reconciliation                                   |
+| Approval        | `emdash-drs-w8`          | `feat/drs-approval`              | W8 approver object/passkeys                                   |
+| Installer       | `emdash-drs-w9`          | `feat/drs-installer-policy`      | W9 core install/update enforcement                            |
+| Clients         | `emdash-drs-w10`         | `feat/drs-clients`               | W10 API client, Action, CLI, UIs split further as needed      |
+| Operations      | `emdash-drs-w11`         | `feat/drs-operations`            | W11 projection, backup, observability, self-hosting           |
+| Conformance     | `emdash-drs-w12`         | `test/drs-conformance`           | W12 shared cross-component tests                              |
 
 These names describe logical slots, not permission to keep all worktrees active. Limit active implementation worktrees to the current execution wave.
 
@@ -738,19 +738,19 @@ Each branch is one template-compliant draft PR. Create the PRs with their explic
 
 ### Planned GitHub stacks
 
-| Stack | Bottom-to-top branches | Merge gate |
-| --- | --- | --- |
-| **Contracts** | `feat/drs-contracts` -> `feat/drs-record-verification` | G1 |
-| **Platform state** | `feat/drs-platform` -> `feat/drs-publisher-do` -> `feat/drs-publisher-operations` | G2 |
-| **Publisher authority** | `feat/drs-encryption` -> `feat/drs-oauth` -> `feat/drs-github-oidc` -> `feat/drs-intent-admission` | G2/G3 prerequisites |
-| **Automatic publication** | `feat/drs-verifier` -> `feat/drs-verification-workflow` -> `feat/drs-publication` | G3 |
-| **Independent consumer** | `feat/drs-installer-policy` | G4; independent stack rooted on merged contracts |
-| **Approval** | `feat/drs-required-uv` -> `feat/drs-approver-do` -> `feat/drs-approval-integration` | G5 |
-| **Clients** | `feat/drs-api-client` -> `feat/drs-github-action` -> `feat/drs-cli` | G5/G6 |
-| **Publisher UI** | `feat/drs-publisher-ui` -> `feat/drs-approver-ui` | G5/G6 |
-| **Operator UI** | `feat/drs-operator-ui` | G6; independent after Access APIs merge |
-| **Operations** | `feat/drs-backup` -> `feat/drs-observability` -> `feat/drs-self-hosting` | G6 |
-| **Conformance** | `test/drs-conformance` -> `test/drs-recovery-drills` | G7 |
+| Stack                     | Bottom-to-top branches                                                                             | Merge gate                                       |
+| ------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| **Contracts**             | `feat/drs-contracts` -> `feat/drs-record-verification`                                             | G1                                               |
+| **Platform state**        | `feat/drs-platform` -> `feat/drs-publisher-do` -> `feat/drs-publisher-operations`                  | G2                                               |
+| **Publisher authority**   | `feat/drs-encryption` -> `feat/drs-oauth` -> `feat/drs-github-oidc` -> `feat/drs-intent-admission` | G2/G3 prerequisites                              |
+| **Automatic publication** | `feat/drs-verifier` -> `feat/drs-verification-workflow` -> `feat/drs-publication`                  | G3                                               |
+| **Independent consumer**  | `feat/drs-installer-policy`                                                                        | G4; independent stack rooted on merged contracts |
+| **Approval**              | `feat/drs-required-uv` -> `feat/drs-approver-do` -> `feat/drs-approval-integration`                | G5                                               |
+| **Clients**               | `feat/drs-api-client` -> `feat/drs-github-action` -> `feat/drs-cli`                                | G5/G6                                            |
+| **Publisher UI**          | `feat/drs-publisher-ui` -> `feat/drs-approver-ui`                                                  | G5/G6                                            |
+| **Operator UI**           | `feat/drs-operator-ui`                                                                             | G6; independent after Access APIs merge          |
+| **Operations**            | `feat/drs-backup` -> `feat/drs-observability` -> `feat/drs-self-hosting`                           | G6                                               |
+| **Conformance**           | `test/drs-conformance` -> `test/drs-recovery-drills`                                               | G7                                               |
 
 If a listed stack grows beyond a coherent review story, finish and merge the completed lower stack at its gate, then start a new stack from updated `main`. Do not keep a months-long stack open merely to preserve the table above.
 
@@ -773,16 +773,16 @@ If the task discovers a required change outside its file ownership, it reports t
 
 These files are serialized through the coordinator or named owner:
 
-| Hotspot | Owner |
-| --- | --- |
-| Root `package.json`, `pnpm-workspace.yaml`, and `pnpm-lock.yaml` | Coordinator |
-| `.github/workflows/ci.yml` | Coordinator after workstream test commands are known |
-| `apps/release-service/wrangler.jsonc` and generated Worker types | W2 platform owner |
-| `apps/release-service/src/env.ts` | W2 platform owner; bindings are proposed through interface changes |
-| Registry lexicons and generated types | W1 contract owner |
-| Package barrel exports | Owning package's lowest stack branch |
-| Companion specification and this plan | Coordinator |
-| Changeset consolidation | Coordinator before final PR submission |
+| Hotspot                                                          | Owner                                                              |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Root `package.json`, `pnpm-workspace.yaml`, and `pnpm-lock.yaml` | Coordinator                                                        |
+| `.github/workflows/ci.yml`                                       | Coordinator after workstream test commands are known               |
+| `apps/release-service/wrangler.jsonc` and generated Worker types | W2 platform owner                                                  |
+| `apps/release-service/src/env.ts`                                | W2 platform owner; bindings are proposed through interface changes |
+| Registry lexicons and generated types                            | W1 contract owner                                                  |
+| Package barrel exports                                           | Owning package's lowest stack branch                               |
+| Companion specification and this plan                            | Coordinator                                                        |
+| Changeset consolidation                                          | Coordinator before final PR submission                             |
 
 The platform scaffold should declare the planned Durable Object, Workflow, verifier, R2, Secrets Store, Queue, and optional D1 interfaces early. Downstream worktrees implement behind those interfaces instead of repeatedly modifying environment types and configuration.
 

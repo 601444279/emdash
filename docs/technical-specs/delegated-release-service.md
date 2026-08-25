@@ -40,12 +40,12 @@ Canonical service state is sharded across SQLite-backed Durable Objects. A `Publ
 
 The service has four independent authentication realms. Credentials and sessions from one realm never authorize another.
 
-| Actor | Authentication | Authority |
-| --- | --- | --- |
-| CI workflow | GitHub Actions OIDC | Submit an intent for a configured repository and workflow |
-| Publisher | AT Protocol OAuth | Establish or revoke delegation and configure service-local workload policy |
-| Approver | AT Protocol OAuth plus an enrolled passkey | Approve or reject one exact release intent |
-| Service operator | Cloudflare Access | Observe, pause, suspend, revoke, retry, and recover the service |
+| Actor            | Authentication                             | Authority                                                                  |
+| ---------------- | ------------------------------------------ | -------------------------------------------------------------------------- |
+| CI workflow      | GitHub Actions OIDC                        | Submit an intent for a configured repository and workflow                  |
+| Publisher        | AT Protocol OAuth                          | Establish or revoke delegation and configure service-local workload policy |
+| Approver         | AT Protocol OAuth plus an enrolled passkey | Approve or reject one exact release intent                                 |
+| Service operator | Cloudflare Access                          | Observe, pause, suspend, revoke, retry, and recover the service            |
 
 Cloudflare Access protects `/admin/*` and the operator API. The Worker verifies the Access JWT's issuer, audience, expiry, and group claims. Access-injected identity headers are not sufficient by themselves. Operator mutations retain CSRF and idempotency protection.
 
@@ -311,42 +311,42 @@ The following schemas describe required data and constraints. Exact SQL belongs 
 
 ### Publisher shard
 
-| Table | Required properties |
-| --- | --- |
-| `publisher` | One row; DID, status, creation time, suspension reason code, session epoch |
-| `delegations` | Encrypted session envelope, exact scope, PDS, client key ID, expiry, refresh metadata, encryption-key version, revocation state |
-| `workload_policies` | Package slug, repository, workflow reference, ref/environment restrictions, active state, authorizing publisher identity |
-| `intents` | ULID, package/version, state, Workflow ID, normalized OIDC claims, record inputs, verification summaries, approval digest, result URI/CID, error code |
-| `intent_transitions` | Intent ID, monotonic sequence, from/to state, actor realm and identity, reason code, timestamp |
-| `release_reservations` | Unique package/version, intent ID, reservation state |
-| `idempotency_keys` | Realm, key, request digest, intent/result reference, expiry |
-| `operations` | Kind, generation, token hash, intent ID, start/deadline, completion state |
-| `audit_events` | Monotonic sequence, event type, actor realm, actor identity, subject, public-safe payload, timestamp |
-| `deadlines` | Kind, subject ID, scheduled time, generation |
+| Table                  | Required properties                                                                                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `publisher`            | One row; DID, status, creation time, suspension reason code, session epoch                                                                            |
+| `delegations`          | Encrypted session envelope, exact scope, PDS, client key ID, expiry, refresh metadata, encryption-key version, revocation state                       |
+| `workload_policies`    | Package slug, repository, workflow reference, ref/environment restrictions, active state, authorizing publisher identity                              |
+| `intents`              | ULID, package/version, state, Workflow ID, normalized OIDC claims, record inputs, verification summaries, approval digest, result URI/CID, error code |
+| `intent_transitions`   | Intent ID, monotonic sequence, from/to state, actor realm and identity, reason code, timestamp                                                        |
+| `release_reservations` | Unique package/version, intent ID, reservation state                                                                                                  |
+| `idempotency_keys`     | Realm, key, request digest, intent/result reference, expiry                                                                                           |
+| `operations`           | Kind, generation, token hash, intent ID, start/deadline, completion state                                                                             |
+| `audit_events`         | Monotonic sequence, event type, actor realm, actor identity, subject, public-safe payload, timestamp                                                  |
+| `deadlines`            | Kind, subject ID, scheduled time, generation                                                                                                          |
 
 Sensitive values are encrypted individually with associated data binding the publisher DID, table, row identity, and key version. The database never stores an encryption master key.
 
 ### Approver shard
 
-| Table | Required properties |
-| --- | --- |
-| `approver` | One row; DID, status, session epoch |
-| `credentials` | Credential ID, public key, counter, transports, name, creation, last use, revocation |
-| `identity_transactions` | OAuth state hash, PKCE state, expiry, completion |
-| `approval_challenges` | Challenge hash, intent ID, publisher DID, approval digest, expiry, consumed time |
-| `decisions` | Idempotency key, intent ID, digest, decision, credential ID, verification time |
-| `audit_events` | Monotonic sequence, event type, subject, public-safe payload, timestamp |
-| `deadlines` | Challenge or session cleanup deadline and generation |
+| Table                   | Required properties                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------ |
+| `approver`              | One row; DID, status, session epoch                                                  |
+| `credentials`           | Credential ID, public key, counter, transports, name, creation, last use, revocation |
+| `identity_transactions` | OAuth state hash, PKCE state, expiry, completion                                     |
+| `approval_challenges`   | Challenge hash, intent ID, publisher DID, approval digest, expiry, consumed time     |
+| `decisions`             | Idempotency key, intent ID, digest, decision, credential ID, verification time       |
+| `audit_events`          | Monotonic sequence, event type, subject, public-safe payload, timestamp              |
+| `deadlines`             | Challenge or session cleanup deadline and generation                                 |
 
 ### Service-control shard
 
-| Table | Required properties |
-| --- | --- |
-| `service_state` | Current mode, epoch, reason code, Access operator identity, changed time |
-| `encryption_keys` | Key version, status, activation and retirement metadata; never key material |
-| `publisher_controls` | Publisher DID, allow/suspend state, reason code, operator identity, timestamp |
-| `operator_idempotency` | Mutation key, request digest, result, expiry |
-| `audit_events` | Monotonic sequence, operator identity, action, subject, public-safe payload, timestamp |
+| Table                  | Required properties                                                                    |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| `service_state`        | Current mode, epoch, reason code, Access operator identity, changed time               |
+| `encryption_keys`      | Key version, status, activation and retirement metadata; never key material            |
+| `publisher_controls`   | Publisher DID, allow/suspend state, reason code, operator identity, timestamp          |
+| `operator_idempotency` | Mutation key, request digest, result, expiry                                           |
+| `audit_events`         | Monotonic sequence, operator identity, action, subject, public-safe payload, timestamp |
 
 ## Release intent state machine
 
@@ -465,48 +465,48 @@ The public service API is versioned under `/v1`.
 
 ### CI API
 
-| Method and path | Purpose |
-| --- | --- |
-| `POST /v1/release-intents` | Submit or replay an OIDC-authenticated intent |
-| `GET /v1/release-intents/{id}` | Read status using matching workload identity or publisher session |
-| `POST /v1/release-intents/{id}/cancel` | Cancel before publication |
+| Method and path                        | Purpose                                                           |
+| -------------------------------------- | ----------------------------------------------------------------- |
+| `POST /v1/release-intents`             | Submit or replay an OIDC-authenticated intent                     |
+| `GET /v1/release-intents/{id}`         | Read status using matching workload identity or publisher session |
+| `POST /v1/release-intents/{id}/cancel` | Cancel before publication                                         |
 
 ### Publisher API
 
-| Method and path | Purpose |
-| --- | --- |
-| `GET /v1/publisher` | Read publisher and delegation state |
-| `POST /v1/publisher/delegation` | Start or complete exact-scope delegation |
-| `DELETE /v1/publisher/delegation` | Revoke retained authority |
-| `GET /v1/publisher/workloads` | List package workload policies |
-| `POST /v1/publisher/workloads` | Create or replace an authorized policy |
-| `DELETE /v1/publisher/workloads/{id}` | Disable a policy |
-| `GET /v1/publisher/intents` | List publisher intents with cursor pagination |
+| Method and path                       | Purpose                                       |
+| ------------------------------------- | --------------------------------------------- |
+| `GET /v1/publisher`                   | Read publisher and delegation state           |
+| `POST /v1/publisher/delegation`       | Start or complete exact-scope delegation      |
+| `DELETE /v1/publisher/delegation`     | Revoke retained authority                     |
+| `GET /v1/publisher/workloads`         | List package workload policies                |
+| `POST /v1/publisher/workloads`        | Create or replace an authorized policy        |
+| `DELETE /v1/publisher/workloads/{id}` | Disable a policy                              |
+| `GET /v1/publisher/intents`           | List publisher intents with cursor pagination |
 
 ### Approver API
 
-| Method and path | Purpose |
-| --- | --- |
-| `GET /v1/approver/credentials` | List active and revoked passkeys |
-| `POST /v1/approver/credentials/options` | Begin enrolment |
-| `POST /v1/approver/credentials` | Finish enrolment |
-| `DELETE /v1/approver/credentials/{id}` | Revoke one credential |
-| `GET /v1/approvals/{intentId}` | Read approval-safe intent details |
-| `POST /v1/approvals/{intentId}/options` | Create a digest-bound challenge |
-| `POST /v1/approvals/{intentId}` | Approve or reject |
+| Method and path                         | Purpose                           |
+| --------------------------------------- | --------------------------------- |
+| `GET /v1/approver/credentials`          | List active and revoked passkeys  |
+| `POST /v1/approver/credentials/options` | Begin enrolment                   |
+| `POST /v1/approver/credentials`         | Finish enrolment                  |
+| `DELETE /v1/approver/credentials/{id}`  | Revoke one credential             |
+| `GET /v1/approvals/{intentId}`          | Read approval-safe intent details |
+| `POST /v1/approvals/{intentId}/options` | Create a digest-bound challenge   |
+| `POST /v1/approvals/{intentId}`         | Approve or reject                 |
 
 ### Access operator API
 
-| Method and path | Purpose |
-| --- | --- |
-| `GET /admin/api/status` | Read service mode and component health |
-| `POST /admin/api/pause` | Change admission or publication mode |
-| `GET /admin/api/publishers/{did}` | Read authoritative sanitized publisher state |
-| `POST /admin/api/publishers/{did}/suspend` | Suspend or restore publisher admission |
-| `POST /admin/api/publishers/{did}/revoke` | Revoke retained service authority |
-| `POST /admin/api/intents/{id}/cancel` | Stop an unpublished intent |
-| `POST /admin/api/intents/{id}/reconcile` | Trigger bounded reconciliation |
-| `GET /admin/api/audit` | Query global or projected operational audit data |
+| Method and path                            | Purpose                                          |
+| ------------------------------------------ | ------------------------------------------------ |
+| `GET /admin/api/status`                    | Read service mode and component health           |
+| `POST /admin/api/pause`                    | Change admission or publication mode             |
+| `GET /admin/api/publishers/{did}`          | Read authoritative sanitized publisher state     |
+| `POST /admin/api/publishers/{did}/suspend` | Suspend or restore publisher admission           |
+| `POST /admin/api/publishers/{did}/revoke`  | Revoke retained service authority                |
+| `POST /admin/api/intents/{id}/cancel`      | Stop an unpublished intent                       |
+| `POST /admin/api/intents/{id}/reconcile`   | Trigger bounded reconciliation                   |
+| `GET /admin/api/audit`                     | Query global or projected operational audit data |
 
 State-changing requests require content-type validation, CSRF where cookies are used, and idempotency keys. API errors expose stable codes and public-safe messages.
 
@@ -514,28 +514,28 @@ State-changing requests require content-type validation, CSRF where cookies are 
 
 At minimum, the API and Workflow use these error classes:
 
-| Code | Meaning | Retry behavior |
-| --- | --- | --- |
-| `AUTH_INVALID` | Authentication or session proof failed | Permanent for request |
-| `ACCESS_DENIED` | Verified actor lacks required role or ownership | Permanent |
-| `PUBLISHER_SUSPENDED` | Hosted service or operator blocked the publisher | Retry after state change |
-| `SERVICE_PAUSED` | Admission or publication is paused | Retry after state change |
-| `DELEGATION_REQUIRED` | No usable exact-scope session exists | Publisher must reauthorize |
-| `WORKLOAD_NOT_ALLOWED` | OIDC claims do not match active policy | Permanent until policy changes |
-| `IDEMPOTENCY_CONFLICT` | Same key was used with a different request | Permanent |
-| `VERSION_RESERVED` | Package/version belongs to another intent | Permanent or return owner intent |
-| `RELEASE_EXISTS` | Proposed deterministic key already exists | Permanent unless exact replay |
-| `PROFILE_CHANGED` | Authoritative policy changed after verification or approval | Reverify and possibly reapprove |
-| `BASELINE_CHANGED` | Access baseline changed | Reverify and possibly reapprove |
-| `ARTIFACT_INVALID` | Fetch, checksum, bundle, or manifest failed | Permanent for supplied input |
-| `PROVENANCE_INVALID` | Provenance or workload binding failed | Permanent for supplied input |
-| `APPROVAL_REQUIRED` | Valid release awaits human decision | Not an error state |
-| `APPROVAL_INVALID` | DID, credential, challenge, digest, or UV failed | Permanent for attempt |
-| `DELEGATION_REVOKED` | Session was revoked or cannot refresh | Publisher must reauthorize |
-| `PDS_TRANSIENT` | PDS result is retryable | Workflow retry |
-| `PDS_AMBIGUOUS` | Create outcome is unknown | Reconciliation |
-| `RELEASE_CONFLICT` | Deterministic key contains different data | Terminal conflict |
-| `INTERNAL_ERROR` | Public-safe catch-all | Operator-visible correlation ID |
+| Code                   | Meaning                                                     | Retry behavior                   |
+| ---------------------- | ----------------------------------------------------------- | -------------------------------- |
+| `AUTH_INVALID`         | Authentication or session proof failed                      | Permanent for request            |
+| `ACCESS_DENIED`        | Verified actor lacks required role or ownership             | Permanent                        |
+| `PUBLISHER_SUSPENDED`  | Hosted service or operator blocked the publisher            | Retry after state change         |
+| `SERVICE_PAUSED`       | Admission or publication is paused                          | Retry after state change         |
+| `DELEGATION_REQUIRED`  | No usable exact-scope session exists                        | Publisher must reauthorize       |
+| `WORKLOAD_NOT_ALLOWED` | OIDC claims do not match active policy                      | Permanent until policy changes   |
+| `IDEMPOTENCY_CONFLICT` | Same key was used with a different request                  | Permanent                        |
+| `VERSION_RESERVED`     | Package/version belongs to another intent                   | Permanent or return owner intent |
+| `RELEASE_EXISTS`       | Proposed deterministic key already exists                   | Permanent unless exact replay    |
+| `PROFILE_CHANGED`      | Authoritative policy changed after verification or approval | Reverify and possibly reapprove  |
+| `BASELINE_CHANGED`     | Access baseline changed                                     | Reverify and possibly reapprove  |
+| `ARTIFACT_INVALID`     | Fetch, checksum, bundle, or manifest failed                 | Permanent for supplied input     |
+| `PROVENANCE_INVALID`   | Provenance or workload binding failed                       | Permanent for supplied input     |
+| `APPROVAL_REQUIRED`    | Valid release awaits human decision                         | Not an error state               |
+| `APPROVAL_INVALID`     | DID, credential, challenge, digest, or UV failed            | Permanent for attempt            |
+| `DELEGATION_REVOKED`   | Session was revoked or cannot refresh                       | Publisher must reauthorize       |
+| `PDS_TRANSIENT`        | PDS result is retryable                                     | Workflow retry                   |
+| `PDS_AMBIGUOUS`        | Create outcome is unknown                                   | Reconciliation                   |
+| `RELEASE_CONFLICT`     | Deterministic key contains different data                   | Terminal conflict                |
+| `INTERNAL_ERROR`       | Public-safe catch-all                                       | Operator-visible correlation ID  |
 
 Provider payloads, tokens, secrets, raw assertions, private evidence, and stack traces never enter public errors or persistent generic error strings.
 
