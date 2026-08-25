@@ -11,7 +11,10 @@ import { loadConfiguration } from "../src/config.js";
 import { SERVICE_CONTROL_OBJECT_NAME } from "../src/control-do/service-control-do.js";
 import { createPublisherOAuthStores } from "../src/oauth/custody.js";
 import type { AuthoritativeRecord } from "../src/verification/pds.js";
-import { startReleaseIntentWorkflow } from "../src/workflows/start.js";
+import {
+	restartReleaseIntentWorkflow,
+	startReleaseIntentWorkflow,
+} from "../src/workflows/start.js";
 import { ASSERTION_KEY_2, TEST_BINDINGS } from "./fixtures/oauth.js";
 
 const PUBLISHER_DID = "did:web:publisher.example.com";
@@ -209,6 +212,7 @@ async function createVerifyingIntent(transitionToVerifying = true) {
 		version: "1.2.3",
 		workloadPolicyVersion: 1,
 		workloadIdentityDigest: "A".repeat(43),
+		workloadIdempotencyDigest: "I".repeat(43),
 		idempotencyKey: "github-run-100-attempt-1",
 		requestDigest: "B".repeat(43),
 		workloadIdentityJson: JSON.stringify({ issuer: "github-actions", runId: "100" }),
@@ -482,6 +486,122 @@ describe("ReleaseIntentWorkflow", () => {
 			).resolves.toMatchObject({ state: expectedState });
 		},
 	);
+
+	it("restarts a completed ready Workflow after publication is unpaused", async () => {
+		let paused = false;
+		let createAttempts = 0;
+		vi.stubGlobal(
+			"fetch",
+			workflowNetwork({
+				onAuthorizationMetadata: async () => {
+					if (paused) return;
+					paused = true;
+					await env.SERVICE_CONTROL_DO.getByName(SERVICE_CONTROL_OBJECT_NAME).setServiceMode({
+						actor: CONTROL_ACTOR,
+						idempotencyKey: "publication-restart-pause",
+						requestDigest: "R".repeat(43),
+						mode: "publication-paused",
+						reasonCode: "TEST_PAUSE",
+					});
+				},
+				onCreateRecord: () => {
+					createAttempts += 1;
+					return Response.json({ uri: CREATED_URI, cid: CREATED_CID });
+				},
+			}),
+		);
+		await createVerifyingIntent();
+		await using introspector = await introspectWorkflowInstance(
+			env.RELEASE_INTENT_WORKFLOW,
+			INTENT_ID,
+		);
+		await env.RELEASE_INTENT_WORKFLOW.create({
+			id: INTENT_ID,
+			params: { publisherDid: PUBLISHER_DID, intentId: INTENT_ID },
+		});
+		await introspector.waitForStatus("complete");
+		await expect(introspector.getOutput()).resolves.toMatchObject({ state: "ready" });
+
+		await env.SERVICE_CONTROL_DO.getByName(SERVICE_CONTROL_OBJECT_NAME).setServiceMode({
+			actor: CONTROL_ACTOR,
+			idempotencyKey: "publication-restart-active",
+			requestDigest: "A".repeat(43),
+			mode: "active",
+			reasonCode: null,
+		});
+		await expect(
+			restartReleaseIntentWorkflow(
+				env.RELEASE_INTENT_WORKFLOW,
+				env.PUBLISHER_DO,
+				PUBLISHER_DID,
+				INTENT_ID,
+			),
+		).resolves.toEqual({ ok: true, workflowId: INTENT_ID, restarted: true });
+		await introspector.waitForStepResult({ name: "recovery-policy-decision" });
+		await introspector.waitForStatus("complete");
+		await expect(introspector.getOutput()).resolves.toEqual({
+			intentId: INTENT_ID,
+			state: "published",
+			reasonCode: null,
+		});
+		expect(createAttempts).toBe(1);
+	});
+
+	it("restarts an errored reconciliation and accepts the exact authoritative record", async () => {
+		let reconciliationAvailable = false;
+		let createAttempts = 0;
+		let authoritative: AuthoritativeRecord | null = null;
+		const expected = releaseRecord();
+		vi.stubGlobal(
+			"fetch",
+			workflowNetwork({
+				authoritativeRelease: () => {
+					if (!reconciliationAvailable) throw new Error("Simulated PDS read outage");
+					return authoritative;
+				},
+				onCreateRecord: () => {
+					createAttempts += 1;
+					authoritative = {
+						uri: CREATED_URI,
+						cid: CREATED_CID,
+						value: structuredClone(expected),
+					};
+					throw new Error("Simulated timeout after commit");
+				},
+			}),
+		);
+		await createVerifyingIntent();
+		await using introspector = await introspectWorkflowInstance(
+			env.RELEASE_INTENT_WORKFLOW,
+			INTENT_ID,
+		);
+		await env.RELEASE_INTENT_WORKFLOW.create({
+			id: INTENT_ID,
+			params: { publisherDid: PUBLISHER_DID, intentId: INTENT_ID },
+		});
+		await introspector.waitForStatus("errored");
+		await expect(
+			env.PUBLISHER_DO.getByName(PUBLISHER_DID).getIntent(PUBLISHER_DID, INTENT_ID),
+		).resolves.toMatchObject({ state: "reconciling" });
+
+		reconciliationAvailable = true;
+		await expect(
+			restartReleaseIntentWorkflow(
+				env.RELEASE_INTENT_WORKFLOW,
+				env.PUBLISHER_DO,
+				PUBLISHER_DID,
+				INTENT_ID,
+			),
+		).resolves.toEqual({ ok: true, workflowId: INTENT_ID, restarted: true });
+		await introspector.waitForStepResult({ name: "recovery-reconciliation" });
+		await introspector.waitForStatus("complete");
+		await expect(introspector.getOutput()).resolves.toEqual({
+			intentId: INTENT_ID,
+			state: "published",
+			reasonCode: null,
+		});
+		expect(createAttempts).toBe(1);
+	});
 
 	it("waits for a canonical approval transition and resumes from its event", async () => {
 		const profile: Record<string, unknown> = {

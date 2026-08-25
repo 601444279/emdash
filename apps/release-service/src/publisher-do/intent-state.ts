@@ -55,6 +55,7 @@ export interface StoredIntent {
 	stateGeneration: number;
 	workloadPolicyVersion: number;
 	workloadIdentityDigest: string;
+	workloadIdempotencyDigest: string;
 	requestDigest: string;
 	workloadIdentityJson: string;
 	releaseInputJson: string;
@@ -72,6 +73,7 @@ export interface CreateIntentInput {
 	version: string;
 	workloadPolicyVersion: number;
 	workloadIdentityDigest: string;
+	workloadIdempotencyDigest: string;
 	idempotencyKey: string;
 	requestDigest: string;
 	workloadIdentityJson: string;
@@ -86,6 +88,11 @@ export type CreateIntentResult =
 	| { ok: false; code: "RESERVATION_CONFLICT"; existingIntentId: string }
 	| { ok: false; code: "WORKLOAD_POLICY_UNAVAILABLE" }
 	| { ok: false; code: "PUBLISHER_SUSPENDED" };
+
+export interface IntentIdempotencyMatch {
+	intent: StoredIntent;
+	requestDigest: string;
+}
 
 export interface TransitionIntentInput {
 	publisherDid: string;
@@ -130,6 +137,7 @@ interface IntentRow {
 	state_generation: number;
 	workload_policy_version: number;
 	workload_identity_digest: string;
+	workload_idempotency_digest: string;
 	request_digest: string;
 	workload_identity_json: string;
 	release_input_json: string;
@@ -202,6 +210,7 @@ function rowToIntent(row: IntentRow): StoredIntent {
 		stateGeneration: row.state_generation,
 		workloadPolicyVersion: row.workload_policy_version,
 		workloadIdentityDigest: row.workload_identity_digest,
+		workloadIdempotencyDigest: row.workload_idempotency_digest,
 		requestDigest: row.request_digest,
 		workloadIdentityJson: row.workload_identity_json,
 		releaseInputJson: row.release_input_json,
@@ -223,6 +232,7 @@ export function initializeIntentStateSchema(storage: DurableObjectStorage): void
 			state_generation INTEGER NOT NULL CHECK (state_generation >= 1),
 			workload_policy_version INTEGER NOT NULL CHECK (workload_policy_version >= 1),
 			workload_identity_digest TEXT NOT NULL,
+			workload_idempotency_digest TEXT NOT NULL,
 			request_digest TEXT NOT NULL,
 			workload_identity_json TEXT NOT NULL,
 			release_input_json TEXT NOT NULL,
@@ -257,12 +267,12 @@ export function initializeIntentStateSchema(storage: DurableObjectStorage): void
 			PRIMARY KEY (package_slug, version)
 		);
 		CREATE TABLE IF NOT EXISTS intent_idempotency (
-			workload_identity_digest TEXT NOT NULL,
+			workload_idempotency_digest TEXT NOT NULL,
 			mutation_key TEXT NOT NULL,
 			request_digest TEXT NOT NULL,
 			intent_id TEXT NOT NULL,
 			expires_at INTEGER NOT NULL,
-			PRIMARY KEY (workload_identity_digest, mutation_key)
+			PRIMARY KEY (workload_idempotency_digest, mutation_key)
 		);
 		CREATE INDEX IF NOT EXISTS idx_intent_idempotency_expiry
 			ON intent_idempotency(expires_at);
@@ -286,6 +296,7 @@ export class IntentStateStore {
 			!Number.isSafeInteger(input.workloadPolicyVersion) ||
 			input.workloadPolicyVersion < 1 ||
 			!DIGEST_PATTERN.test(input.workloadIdentityDigest) ||
+			!DIGEST_PATTERN.test(input.workloadIdempotencyDigest) ||
 			!IDEMPOTENCY_KEY_PATTERN.test(input.idempotencyKey) ||
 			!DIGEST_PATTERN.test(input.requestDigest) ||
 			!validCanonicalObjectJson(input.workloadIdentityJson, MAX_WORKLOAD_JSON_CHARS) ||
@@ -302,8 +313,8 @@ export class IntentStateStore {
 			const idempotency = this.#storage.sql
 				.exec<IdempotencyRow>(
 					`SELECT request_digest, intent_id, expires_at FROM intent_idempotency
-					 WHERE workload_identity_digest = ? AND mutation_key = ?`,
-					input.workloadIdentityDigest,
+					 WHERE workload_idempotency_digest = ? AND mutation_key = ?`,
+					input.workloadIdempotencyDigest,
 					input.idempotencyKey,
 				)
 				.toArray()[0];
@@ -318,8 +329,8 @@ export class IntentStateStore {
 			if (idempotency) {
 				this.#storage.sql.exec(
 					`DELETE FROM intent_idempotency
-					 WHERE workload_identity_digest = ? AND mutation_key = ?`,
-					input.workloadIdentityDigest,
+					 WHERE workload_idempotency_digest = ? AND mutation_key = ?`,
+					input.workloadIdempotencyDigest,
 					input.idempotencyKey,
 				);
 			}
@@ -356,15 +367,17 @@ export class IntentStateStore {
 			this.#storage.sql.exec(
 				`INSERT INTO intents (
 					id, package_slug, version, state, state_generation,
-					workload_policy_version, workload_identity_digest, request_digest, workload_identity_json,
+					workload_policy_version, workload_identity_digest, workload_idempotency_digest,
+					request_digest, workload_identity_json,
 					release_input_json, state_data_json, workflow_id,
 					expires_at, created_at, updated_at
-				) VALUES (?, ?, ?, 'received', 1, ?, ?, ?, ?, ?, '{}', NULL, ?, ?, ?)`,
+				) VALUES (?, ?, ?, 'received', 1, ?, ?, ?, ?, ?, ?, '{}', NULL, ?, ?, ?)`,
 				input.intentId,
 				input.packageSlug,
 				input.version,
 				input.workloadPolicyVersion,
 				input.workloadIdentityDigest,
+				input.workloadIdempotencyDigest,
 				input.requestDigest,
 				input.workloadIdentityJson,
 				input.releaseInputJson,
@@ -382,9 +395,9 @@ export class IntentStateStore {
 			);
 			this.#storage.sql.exec(
 				`INSERT INTO intent_idempotency (
-					workload_identity_digest, mutation_key, request_digest, intent_id, expires_at
+					workload_idempotency_digest, mutation_key, request_digest, intent_id, expires_at
 				) VALUES (?, ?, ?, ?, ?)`,
-				input.workloadIdentityDigest,
+				input.workloadIdempotencyDigest,
 				input.idempotencyKey,
 				input.requestDigest,
 				input.intentId,
@@ -411,6 +424,44 @@ export class IntentStateStore {
 				now,
 			);
 			return { ok: true, intent: this.get(input.intentId)!, replayed: false } as const;
+		});
+	}
+
+	findIdempotent(
+		workloadIdempotencyDigest: string,
+		idempotencyKey: string,
+		now = Date.now(),
+	): IntentIdempotencyMatch | null {
+		if (
+			!DIGEST_PATTERN.test(workloadIdempotencyDigest) ||
+			!IDEMPOTENCY_KEY_PATTERN.test(idempotencyKey) ||
+			!Number.isSafeInteger(now) ||
+			now < 0
+		) {
+			throw new IntentStateError();
+		}
+		return this.#storage.transactionSync(() => {
+			const row = this.#storage.sql
+				.exec<IdempotencyRow>(
+					`SELECT request_digest, intent_id, expires_at FROM intent_idempotency
+					 WHERE workload_idempotency_digest = ? AND mutation_key = ?`,
+					workloadIdempotencyDigest,
+					idempotencyKey,
+				)
+				.toArray()[0];
+			if (!row) return null;
+			if (row.expires_at <= now) {
+				this.#storage.sql.exec(
+					`DELETE FROM intent_idempotency
+					 WHERE workload_idempotency_digest = ? AND mutation_key = ?`,
+					workloadIdempotencyDigest,
+					idempotencyKey,
+				);
+				return null;
+			}
+			const intent = this.get(row.intent_id);
+			if (!intent) throw new IntentStateError();
+			return { intent, requestDigest: row.request_digest };
 		});
 	}
 
@@ -529,7 +580,8 @@ export class IntentStateStore {
 		const row = this.#storage.sql
 			.exec<IntentRow>(
 				`SELECT id, package_slug, version, state, state_generation,
-					        workload_policy_version, workload_identity_digest, request_digest, workload_identity_json,
+				        workload_policy_version, workload_identity_digest, workload_idempotency_digest,
+				        request_digest, workload_identity_json,
 				        release_input_json, state_data_json, workflow_id,
 				        expires_at, created_at, updated_at
 				 FROM intents WHERE id = ?`,
@@ -537,6 +589,31 @@ export class IntentStateStore {
 			)
 			.toArray()[0];
 		return row ? rowToIntent(row) : null;
+	}
+
+	list(afterIntentId: string | null, limit: number): readonly StoredIntent[] {
+		if (
+			(afterIntentId !== null && !ULID_PATTERN.test(afterIntentId)) ||
+			!Number.isSafeInteger(limit) ||
+			limit < 1 ||
+			limit > 100
+		) {
+			throw new IntentStateError();
+		}
+		return this.#storage.sql
+			.exec<IntentRow>(
+				`SELECT id, package_slug, version, state, state_generation,
+				        workload_policy_version, workload_identity_digest, workload_idempotency_digest,
+				        request_digest, workload_identity_json, release_input_json, state_data_json,
+				        workflow_id, expires_at, created_at, updated_at
+				 FROM intents WHERE (? IS NULL OR id < ?)
+				 ORDER BY id DESC LIMIT ?`,
+				afterIntentId,
+				afterIntentId,
+				limit,
+			)
+			.toArray()
+			.map(rowToIntent);
 	}
 
 	listTransitions(intentId: string): readonly IntentTransition[] {

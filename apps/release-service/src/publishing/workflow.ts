@@ -74,7 +74,7 @@ async function digest(value: unknown): Promise<string> {
 	);
 }
 
-function releaseFromIntent(intent: StoredIntent): PackageRelease.Main | null {
+export function releaseFromIntent(intent: StoredIntent): PackageRelease.Main | null {
 	let parsed: unknown;
 	try {
 		parsed = JSON.parse(intent.releaseInputJson);

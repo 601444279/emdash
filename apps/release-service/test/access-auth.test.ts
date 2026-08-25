@@ -213,6 +213,30 @@ describe("Access route enforcement", () => {
 		});
 	});
 
+	it("uses the route declaration for roleless operator API paths", async () => {
+		const token = await createAccessToken({ role: "viewer" });
+		const route: RouteDefinition = {
+			method: "GET",
+			path: "/admin/api/status",
+			accessRole: "viewer",
+			handler: (_request, requestId, _configuration, _params, actor) =>
+				apiSuccess({ actor }, requestId),
+		};
+		const response = await handleRequest(
+			new Request("https://release.example.com/admin/api/status", {
+				headers: { "cf-access-jwt-assertion": token },
+			}),
+			TEST_BINDINGS,
+			[route],
+			keyResolver,
+		);
+
+		expect(response.status).toBe(200);
+		expect(await response.json()).toMatchObject({
+			data: { actor: { identity: ACCESS_SUBJECT, role: "viewer" } },
+		});
+	});
+
 	it("fails closed when an operator route omits its Access role", async () => {
 		const unguardedRoute: RouteDefinition = {
 			method: "GET",
