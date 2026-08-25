@@ -1991,6 +1991,9 @@ importers:
       '@cloudflare/vitest-pool-workers':
         specifier: 'catalog:'
         version: 0.16.3(@vitest/runner@4.1.5)(@vitest/snapshot@4.1.5)(vitest@4.1.5)
+      '@emdash-cms/atproto-test-utils':
+        specifier: workspace:*
+        version: link:../atproto-test-utils
       '@emdash-cms/blocks':
         specifier: workspace:*
         version: link:../blocks
@@ -2456,9 +2459,21 @@ importers:
       '@atcute/client':
         specifier: 'catalog:'
         version: 5.0.0(@atcute/lexicons@2.0.0)(typescript@6.0.3)
+      '@atcute/crypto':
+        specifier: 'catalog:'
+        version: 2.4.1
+      '@atcute/identity':
+        specifier: 'catalog:'
+        version: 2.0.0(@atcute/lexicons@2.0.0)(typescript@6.0.3)
+      '@atcute/identity-resolver':
+        specifier: 'catalog:'
+        version: 2.0.0(@atcute/identity@2.0.0(@atcute/lexicons@2.0.0)(typescript@6.0.3))(@atcute/lexicons@2.0.0)(typescript@6.0.3)
       '@atcute/lexicons':
         specifier: 'catalog:'
         version: 2.0.0
+      '@atcute/repo':
+        specifier: 'catalog:'
+        version: 1.0.0(@atcute/cbor@2.3.3(@atcute/cid@2.4.1))(@atcute/cid@2.4.1)(@atcute/lexicons@2.0.0)
       '@emdash-cms/registry-lexicons':
         specifier: workspace:*
         version: link:../registry-lexicons
@@ -2469,6 +2484,9 @@ importers:
       '@arethetypeswrong/cli':
         specifier: 'catalog:'
         version: 0.18.2
+      '@emdash-cms/atproto-test-utils':
+        specifier: workspace:*
+        version: link:../atproto-test-utils
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.13
