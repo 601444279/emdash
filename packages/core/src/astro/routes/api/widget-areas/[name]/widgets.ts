@@ -5,7 +5,7 @@
  */
 
 import type { APIRoute } from "astro";
-import { ulid } from "ulidx";
+import { ulid } from "ulid";
 
 import { requirePerm } from "#api/authorize.js";
 import { apiError, apiSuccess, handleError } from "#api/error.js";
@@ -14,9 +14,11 @@ import { createWidgetBody } from "#api/schemas.js";
 import { rowToWidget } from "#widgets/index.js";
 import type { WidgetRow } from "#widgets/types.js";
 
+import { chromeWidgetAreaTag } from "../../../../../cache/chrome-tags.js";
+
 export const prerender = false;
 
-export const POST: APIRoute = async ({ params, request, locals }) => {
+export const POST: APIRoute = async ({ params, request, locals, cache }) => {
 	const { emdash, user } = locals;
 	const db = emdash.db;
 	const { name } = params;
@@ -75,6 +77,8 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
 			.$castTo<WidgetRow>()
 			.where("id", "=", id)
 			.executeTakeFirstOrThrow();
+
+		if (cache?.enabled && name) await cache.invalidate({ tags: [chromeWidgetAreaTag(name)] });
 
 		return apiSuccess(rowToWidget(widget), 201);
 	} catch (error) {

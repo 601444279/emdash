@@ -13,6 +13,8 @@ import { handleMenuCreate, handleMenuList } from "#api/handlers/menus.js";
 import { isParseError, parseBody, parseQuery } from "#api/parse.js";
 import { createMenuBody, localeFilterQuery } from "#api/schemas.js";
 
+import { chromeMenuTag } from "../../../../cache/chrome-tags.js";
+
 export const prerender = false;
 
 export const GET: APIRoute = async ({ request, locals }) => {
@@ -32,7 +34,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 	}
 };
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, cache }) => {
 	const { emdash, user } = locals;
 
 	const denied = requirePerm(user, "menus:manage");
@@ -43,6 +45,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		if (isParseError(body)) return body;
 
 		const result = await handleMenuCreate(emdash.db, body);
+		if (!result.success) return unwrapResult(result, 201);
+
+		if (cache?.enabled) await cache.invalidate({ tags: [chromeMenuTag(result.data.name)] });
+
 		return unwrapResult(result, 201);
 	} catch (error) {
 		return handleError(error, "Failed to create menu", "MENU_CREATE_ERROR");

@@ -118,6 +118,18 @@ export type {
 	ProseMirrorDocument,
 } from "./content/index.js";
 
+// Chrome cache tags
+export {
+	CHROME_SETTINGS_TAG,
+	chromeMenuTag,
+	chromeTaxonomyTag,
+	chromeWidgetAreaTag,
+	chromeSettingsCacheHint,
+	chromeMenuCacheHint,
+	chromeTaxonomyCacheHint,
+	chromeWidgetAreaCacheHint,
+} from "./cache/chrome-tags.js";
+
 // Utilities
 export { ulid } from "ulidx";
 export { computeContentHash, hashString } from "./utils/hash.js";
@@ -425,6 +437,7 @@ export {
 	getPluginSettings,
 	getSiteSetting,
 	getSiteSettings,
+	getSiteSettingsWithCacheHint,
 	setSiteSettings,
 } from "./settings/index.js";
 export type {
@@ -456,7 +469,7 @@ export { getComments, getCommentCount } from "./comments/query.js";
 export type { GetCommentsOptions, GetCommentsResult } from "./comments/query.js";
 
 // Menus
-export { getMenu, getMenus } from "./menus/index.js";
+export { getMenu, getMenus, getMenuWithCacheHint } from "./menus/index.js";
 export type {
 	Menu,
 	MenuItem,
@@ -477,6 +490,7 @@ export {
 	getTaxonomyDefs,
 	getTaxonomyDef,
 	getTaxonomyTerms,
+	getTaxonomyTermsWithCacheHint,
 	getTerm,
 	getEntryTerms,
 	getTermsForEntries,
@@ -493,7 +507,13 @@ export type {
 } from "./taxonomies/types.js";
 
 // Widgets
-export { getWidgetArea, getWidgetAreas, getWidgetComponents } from "./widgets/index.js";
+export {
+	getWidgetArea,
+	getWidgetAreas,
+	getWidgetAreaWithCacheHint,
+	getWidgetAreasWithCacheHint,
+	getWidgetComponents,
+} from "./widgets/index.js";
 export type {
 	Widget,
 	WidgetArea,

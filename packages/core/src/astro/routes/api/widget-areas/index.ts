@@ -15,6 +15,8 @@ import { createWidgetAreaBody } from "#api/schemas.js";
 import { rowToWidget } from "#widgets/index.js";
 import type { WidgetRow } from "#widgets/types.js";
 
+import { chromeWidgetAreaTag } from "../../../../cache/chrome-tags.js";
+
 export const prerender = false;
 
 export const GET: APIRoute = async ({ locals }) => {
@@ -56,7 +58,7 @@ export const GET: APIRoute = async ({ locals }) => {
 	}
 };
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, cache }) => {
 	const { emdash, user } = locals;
 	const db = emdash.db;
 
@@ -94,6 +96,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			.selectAll()
 			.where("id", "=", id)
 			.executeTakeFirstOrThrow();
+
+		if (cache?.enabled) await cache.invalidate({ tags: [chromeWidgetAreaTag(area.name)] });
 
 		return apiSuccess(area, 201);
 	} catch (error) {

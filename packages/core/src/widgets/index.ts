@@ -1,4 +1,6 @@
+import { chromeWidgetAreaCacheHint, chromeWidgetAreaTag } from "../cache/chrome-tags.js";
 import { getDb } from "../loader.js";
+import type { CacheHint } from "../query.js";
 import { requestCached } from "../request-cache.js";
 import { getWidgetComponents as getComponentRegistry } from "./components.js";
 import type { Widget, WidgetArea, WidgetRow, WidgetComponentDef } from "./types.js";
@@ -86,6 +88,35 @@ export async function getWidgetArea(name: string): Promise<WidgetArea | null> {
 /**
  * Get all widget areas with their widgets
  */
+/**
+ * Get a widget area by name with a route cache hint.
+ *
+ * Returns the same data as {@link getWidgetArea}, plus a `cacheHint` tagged
+ * with `emdash:widget-area:<name>` so widget edits can purge precisely.
+ */
+export async function getWidgetAreaWithCacheHint(
+	name: string,
+): Promise<{ area: WidgetArea | null; cacheHint: CacheHint }> {
+	const area = await getWidgetArea(name);
+	return { area, cacheHint: chromeWidgetAreaCacheHint(name) };
+}
+
+/**
+ * Get all widget areas with a route cache hint.
+ *
+ * The returned hint covers every chrome widget area (`emdash:widget-area:*`).
+ */
+export async function getWidgetAreasWithCacheHint(): Promise<{
+	areas: WidgetArea[];
+	cacheHint: CacheHint;
+}> {
+	const areas = await getWidgetAreas();
+	return { areas, cacheHint: { tags: [chromeWidgetAreaTag("*")] } };
+}
+
+/** Stable edge-cache tag for a named widget area. */
+export { chromeWidgetAreaTag };
+
 export async function getWidgetAreas(): Promise<WidgetArea[]> {
 	const db = await getDb();
 	// Get all areas

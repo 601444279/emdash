@@ -12,6 +12,7 @@
 
 import { sql, type Kysely } from "kysely";
 
+import { chromeTaxonomyCacheHint, chromeTaxonomyTag } from "../cache/chrome-tags.js";
 import type { Database } from "../database/types.js";
 import { validateIdentifier } from "../database/validate.js";
 import { getI18nConfig } from "../i18n/config.js";
@@ -24,6 +25,7 @@ import {
 	invalidateTaxonomyObjectCache,
 	isObjectCacheActive,
 } from "../object-cache/index.js";
+import type { CacheHint } from "../query.js";
 import { peekRequestCache, requestCached, setRequestCacheEntry } from "../request-cache.js";
 import { getRequestContext } from "../request-context.js";
 import { chunks, SQL_BATCH_SIZE } from "../utils/chunks.js";
@@ -317,6 +319,23 @@ export async function getTaxonomyTerms(
 	]);
 	return withCounts(terms, counts);
 }
+
+/**
+ * Get all terms of a taxonomy with a route cache hint.
+ *
+ * Returns the same data as {@link getTaxonomyTerms}, plus a `cacheHint`
+ * tagged with `emdash:taxonomy:<name>` so term edits can purge precisely.
+ */
+export async function getTaxonomyTermsWithCacheHint(
+	taxonomyName: string,
+	options: TaxonomyTermsOptions = {},
+): Promise<{ terms: TaxonomyTerm[]; cacheHint: CacheHint }> {
+	const terms = await getTaxonomyTerms(taxonomyName, options);
+	return { terms, cacheHint: chromeTaxonomyCacheHint(taxonomyName) };
+}
+
+/** Stable edge-cache tag for a named taxonomy. */
+export { chromeTaxonomyTag };
 
 /** Terms without counts, under the cache keys the layout prefetch warms. */
 function getTermList(def: TaxonomyDef, locale: string | undefined): Promise<TaxonomyTerm[]> {

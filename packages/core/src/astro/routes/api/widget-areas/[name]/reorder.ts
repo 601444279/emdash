@@ -11,9 +11,11 @@ import { apiError, apiSuccess, handleError } from "#api/error.js";
 import { isParseError, parseBody } from "#api/parse.js";
 import { reorderWidgetsBody } from "#api/schemas.js";
 
+import { chromeWidgetAreaTag } from "../../../../../cache/chrome-tags.js";
+
 export const prerender = false;
 
-export const POST: APIRoute = async ({ params, request, locals }) => {
+export const POST: APIRoute = async ({ params, request, locals, cache }) => {
 	const { emdash, user } = locals;
 	const db = emdash.db;
 	const { name } = params;
@@ -60,6 +62,8 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
 				db.updateTable("_emdash_widgets").set({ sort_order: index }).where("id", "=", id).execute(),
 			),
 		);
+
+		if (cache?.enabled) await cache.invalidate({ tags: [chromeWidgetAreaTag(name)] });
 
 		return apiSuccess({ success: true });
 	} catch (error) {

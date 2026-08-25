@@ -11,11 +11,13 @@
 import type { Kysely } from "kysely";
 import { sql } from "kysely";
 
+import { chromeMenuCacheHint, chromeMenuTag } from "../cache/chrome-tags.js";
 import type { Database } from "../database/types.js";
 import { validateIdentifier } from "../database/validate.js";
 import { resolveLocale, resolveLocaleChain } from "../i18n/resolve.js";
 import { getDb } from "../loader.js";
 import { cachedQuery, CacheNamespace } from "../object-cache/index.js";
+import type { CacheHint } from "../query.js";
 import { requestCached } from "../request-cache.js";
 import { chunks, SQL_BATCH_SIZE } from "../utils/chunks.js";
 import { sanitizeHref } from "../utils/url.js";
@@ -125,6 +127,38 @@ export async function getMenusWithDb(
 	if (locale !== undefined) query = query.where("locale", "=", locale);
 	return query.execute();
 }
+
+/**
+ * Get a menu by name with a route cache hint.
+ *
+ * Returns the same data as {@link getMenu}, plus a `cacheHint` tagged with
+ * `emdash:menu:<name>` so edits to this menu can purge it precisely.
+ */
+export async function getMenuWithCacheHint(
+	name: string,
+	options: MenuQueryOptions = {},
+): Promise<{ menu: Menu | null; cacheHint: CacheHint }> {
+	const menu = await getMenu(name, options);
+	return { menu, cacheHint: chromeMenuCacheHint(name) };
+}
+
+/**
+ * Get a menu by name with explicit db plus cache hint.
+ *
+ * @internal Use {@link getMenuWithCacheHint} in templates. This variant is for
+ * admin routes that already have a database handle.
+ */
+export async function getMenuWithDbAndCacheHint(
+	name: string,
+	db: Kysely<Database>,
+	options: MenuQueryOptions = {},
+): Promise<{ menu: Menu | null; cacheHint: CacheHint }> {
+	const menu = await getMenuWithDb(name, db, options);
+	return { menu, cacheHint: chromeMenuCacheHint(name) };
+}
+
+/** Stable edge-cache tag for a named menu. */
+export { chromeMenuTag };
 
 /**
  * Build a hierarchical menu tree from a flat list of items. Items are

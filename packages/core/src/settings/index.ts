@@ -8,16 +8,18 @@
 import type { Kysely } from "kysely";
 
 import { after } from "../after.js";
+import { chromeSettingsCacheHint, CHROME_SETTINGS_TAG } from "../cache/chrome-tags.js";
 import { MediaRepository } from "../database/repositories/media.js";
 import { OptionsRepository } from "../database/repositories/options.js";
 import type { Database } from "../database/types.js";
 import { getDb } from "../loader.js";
 import { cachedQuery, invalidateObjectCache } from "../object-cache/index.js";
+import type { CacheHint } from "../query.js";
 import { peekRequestCache, requestCached } from "../request-cache.js";
+import type { Storage } from "../storage/types.js";
 
 /** Object-cache namespace for site settings. */
 const SETTINGS_CACHE_NAMESPACE = "settings";
-import type { Storage } from "../storage/types.js";
 import {
 	createSingleFlightCache,
 	type SingleFlightCache,
@@ -275,6 +277,38 @@ export async function getSiteSettingsWithDb(
 
 	return typedSettings;
 }
+
+/**
+ * Get all site settings along with a route cache hint.
+ *
+ * Returns the same data as {@link getSiteSettings}, plus a `cacheHint` that
+ * tags the response with `emdash:settings` so edge caches can be purged on
+ * every settings write.
+ */
+export async function getSiteSettingsWithCacheHint(): Promise<{
+	settings: Partial<SiteSettings>;
+	cacheHint: CacheHint;
+}> {
+	const settings = await getSiteSettings();
+	return { settings, cacheHint: chromeSettingsCacheHint() };
+}
+
+/**
+ * Get all site settings with explicit db plus cache hint.
+ *
+ * @internal Use {@link getSiteSettingsWithCacheHint} in templates. This
+ * variant is for admin routes that already have a database handle.
+ */
+export async function getSiteSettingsWithDbAndCacheHint(
+	db: Kysely<Database>,
+	storage: Storage | null = null,
+): Promise<{ settings: Partial<SiteSettings>; cacheHint: CacheHint }> {
+	const settings = await getSiteSettingsWithDb(db, storage);
+	return { settings, cacheHint: chromeSettingsCacheHint() };
+}
+
+/** Stable edge-cache tag for site settings. */
+export { CHROME_SETTINGS_TAG };
 
 /**
  * Set site settings (internal function used by admin API)

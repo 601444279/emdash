@@ -13,6 +13,8 @@ import { handleTermCreate, handleTermList } from "#api/handlers/taxonomies.js";
 import { isParseError, parseBody, parseQuery } from "#api/parse.js";
 import { createTermBody, termListQuery } from "#api/schemas.js";
 
+import { chromeTaxonomyTag } from "../../../../../../cache/chrome-tags.js";
+
 export const prerender = false;
 
 /**
@@ -47,7 +49,7 @@ export const GET: APIRoute = async ({ params, request, locals }) => {
 /**
  * Create a new term
  */
-export const POST: APIRoute = async ({ params, request, locals }) => {
+export const POST: APIRoute = async ({ params, request, locals, cache }) => {
 	const { emdash, user } = locals;
 	const { name } = params;
 	if (!name) return apiError("VALIDATION_ERROR", "Taxonomy name required", 400);
@@ -63,6 +65,10 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
 		if (isParseError(body)) return body;
 
 		const result = await handleTermCreate(emdash.db, name, body);
+		if (!result.success) return unwrapResult(result, 201);
+
+		if (cache?.enabled) await cache.invalidate({ tags: [chromeTaxonomyTag(name)] });
+
 		return unwrapResult(result, 201);
 	} catch (error) {
 		return handleError(error, "Failed to create term", "TERM_CREATE_ERROR");
