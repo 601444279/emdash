@@ -129,6 +129,7 @@ describe("PublisherDurableObject", () => {
 				stateHash: STATE_HASH,
 				encryptedState: "encrypted-oauth-state",
 				encryptionKeyVersion: 2,
+				encryptionPurpose: "oauth-console-transaction",
 				clientKeyId: "assertion-1",
 				redirectTarget: "/publisher/delegation",
 				expiresAt: Date.now() + 60_000,
@@ -192,6 +193,7 @@ describe("PublisherDurableObject", () => {
 			stateHash,
 			encryptedState: "encrypted",
 			encryptionKeyVersion: 2,
+			encryptionPurpose: "oauth-delegation-transaction" as const,
 			clientKeyId: "assertion-1",
 			redirectTarget: "/callback",
 			expiresAt,
@@ -215,6 +217,95 @@ describe("PublisherDurableObject", () => {
 			actor_realm: "system",
 			reason_code: "OAUTH_STATE_EXPIRED",
 		});
+	});
+
+	it("pages live ciphertexts and replaces them only by compare-and-set", async () => {
+		const stub = publisher();
+		const now = Date.now();
+		await stub.putOAuthState({
+			publisherDid: DID,
+			stateHash: STATE_HASH,
+			encryptedState: "oauth-ciphertext-v2",
+			encryptionKeyVersion: 2,
+			encryptionPurpose: "oauth-console-transaction",
+			clientKeyId: "assertion-1",
+			redirectTarget: "/publisher",
+			expiresAt: now + 60_000,
+		});
+		await stub.putDelegation({
+			publisherDid: DID,
+			releaseNsid: "com.emdashcms.experimental.package.release",
+			scope: "atproto repo:com.emdashcms.experimental.package.release?action=create",
+			clientKeyId: "assertion-1",
+			encryptedSession: "delegation-ciphertext-v2",
+			...DELEGATION_METADATA,
+			refreshBefore: now + 60_000,
+			expectedVersion: null,
+		});
+
+		const first = await stub.listEncryptionRecords(DID, null, 1, now);
+		expect(first).toMatchObject({
+			items: [
+				{
+					cursor: "delegation:1",
+					envelope: "delegation-ciphertext-v2",
+					keyVersion: 2,
+					context: { purpose: "oauth-session", ownerDid: DID },
+				},
+			],
+			nextCursor: "delegation:1",
+		});
+		const second = await stub.listEncryptionRecords(DID, first.nextCursor, 1, now);
+		expect(second).toMatchObject({
+			items: [
+				{
+					cursor: `oauth-state:${STATE_HASH}`,
+					envelope: "oauth-ciphertext-v2",
+					context: { purpose: "oauth-console-transaction", ownerDid: DID },
+				},
+			],
+			nextCursor: null,
+		});
+
+		await expect(
+			stub.replaceEncryptionRecord({
+				publisherDid: DID,
+				cursor: `oauth-state:${STATE_HASH}`,
+				expectedEnvelope: "wrong-ciphertext",
+				replacementEnvelope: "oauth-ciphertext-v3",
+				replacementKeyVersion: 3,
+				actorIdentity: "operator@example.com",
+				now,
+			}),
+		).resolves.toBe(false);
+		await expect(
+			stub.replaceEncryptionRecord({
+				publisherDid: DID,
+				cursor: `oauth-state:${STATE_HASH}`,
+				expectedEnvelope: "oauth-ciphertext-v2",
+				replacementEnvelope: "oauth-ciphertext-v3",
+				replacementKeyVersion: 3,
+				actorIdentity: "operator@example.com",
+				now,
+			}),
+		).resolves.toBe(true);
+		await runInDurableObject(stub, (instance) => {
+			expect(() => instance.listEncryptionRecords(DID, "not-a-cursor", 10, now)).toThrowError(
+				expect.objectContaining({ code: "ENCRYPTION_OPERATION_INVALID" }),
+			);
+		});
+
+		const records = await stub.listEncryptionRecords(DID, null, 10, now);
+		expect(records.items[1]).toMatchObject({ envelope: "oauth-ciphertext-v3", keyVersion: 3 });
+		const audit = await runInDurableObject(stub, (_instance, state) =>
+			state.storage.sql
+				.exec<{ event_type: string; public_payload: string }>(
+					"SELECT event_type, public_payload FROM audit_events WHERE event_type = 'encryption-rotated'",
+				)
+				.toArray(),
+		);
+		expect(audit).toEqual([{ event_type: "encryption-rotated", public_payload: "{}" }]);
+		expect(JSON.stringify(audit)).not.toContain("ciphertext");
 	});
 
 	it("applies compare-and-set delegation updates and revocation", async () => {

@@ -4,6 +4,8 @@ import {
 	TERMINAL_RELEASE_INTENT_STATES,
 	type CursorPage,
 	type DelegationResource,
+	type EncryptionRotationPageInput,
+	type EncryptionRotationResult,
 	type MutationResult,
 	type OperatorPublisherResource,
 	type PublisherControlResource,
@@ -23,6 +25,8 @@ import {
 export type {
 	CursorPage,
 	DelegationResource,
+	EncryptionRotationPageInput,
+	EncryptionRotationResult,
 	MutationResult,
 	OperatorPublisherResource,
 	PublisherControlResource,
@@ -63,6 +67,7 @@ const API_ERROR_CODES: Readonly<Record<ReleaseServiceApiErrorCode, true>> = {
 	CREDENTIAL_REVOKED: true,
 	CSRF_INVALID: true,
 	DELEGATION_REQUIRED: true,
+	ENCRYPTION_OPERATION_FAILED: true,
 	IDEMPOTENCY_KEY_INVALID: true,
 	IDEMPOTENCY_CONFLICT: true,
 	INTERNAL_ERROR: true,
@@ -809,6 +814,58 @@ function parsePage<T>(value: unknown, parseItem: (item: unknown) => T): CursorPa
 	};
 }
 
+function rotationPageInput(value: EncryptionRotationPageInput): EncryptionRotationPageInput {
+	if (
+		(value.afterCursor !== null &&
+			(typeof value.afterCursor !== "string" || value.afterCursor.length === 0)) ||
+		!Number.isSafeInteger(value.limit) ||
+		value.limit < 1 ||
+		value.limit > 100
+	) {
+		throw new ReleaseServiceError({
+			code: "CLIENT_RESPONSE_INVALID",
+			message: "Encryption rotation page is invalid",
+		});
+	}
+	return value;
+}
+
+function parseEncryptionRotation(value: unknown): EncryptionRotationResult {
+	if (!isRecord(value)) throw invalidResponse();
+	const ownerDid = stringValue(value, "ownerDid");
+	const targetKeyVersion = safeInteger(value, "targetKeyVersion");
+	const scanned = safeInteger(value, "scanned");
+	const rotated = safeInteger(value, "rotated");
+	const raced = safeInteger(value, "raced");
+	const nextCursor = value["nextCursor"];
+	if (
+		!ownerDid ||
+		!DID_PATTERN.test(ownerDid) ||
+		targetKeyVersion === null ||
+		targetKeyVersion < 1 ||
+		scanned === null ||
+		scanned < 0 ||
+		rotated === null ||
+		rotated < 0 ||
+		raced === null ||
+		raced < 0 ||
+		rotated + raced > scanned ||
+		(nextCursor !== null && typeof nextCursor !== "string") ||
+		typeof value["complete"] !== "boolean"
+	) {
+		throw invalidResponse();
+	}
+	return {
+		ownerDid,
+		targetKeyVersion,
+		scanned,
+		rotated,
+		raced,
+		nextCursor,
+		complete: value["complete"],
+	};
+}
+
 export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 	#mutationHeaders(idempotencyKey: string): Headers {
 		return new Headers({
@@ -906,6 +963,42 @@ export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 				if (!isRecord(value)) throw invalidResponse();
 				return parsePublisher(value["publisher"]);
 			},
+		);
+	}
+
+	async rotatePublisherEncryption(
+		publisherDid: string,
+		page: EncryptionRotationPageInput,
+		options: MutationOptions,
+	): Promise<EncryptionRotationResult> {
+		return await this.call(
+			`/admin/api/publishers/${encodeURIComponent(publisherDid)}/encryption/rotate`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: this.#mutationHeaders(options.idempotencyKey),
+				body: JSON.stringify(rotationPageInput(page)),
+				signal: options.signal,
+			},
+			parseEncryptionRotation,
+		);
+	}
+
+	async rotateApproverEncryption(
+		approverDid: string,
+		page: EncryptionRotationPageInput,
+		options: MutationOptions,
+	): Promise<EncryptionRotationResult> {
+		return await this.call(
+			`/admin/api/approvers/${encodeURIComponent(approverDid)}/encryption/rotate`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: this.#mutationHeaders(options.idempotencyKey),
+				body: JSON.stringify(rotationPageInput(page)),
+				signal: options.signal,
+			},
+			parseEncryptionRotation,
 		);
 	}
 

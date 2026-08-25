@@ -1,5 +1,10 @@
 import { DurableObject } from "cloudflare:workers";
 
+import type {
+	EncryptionRecordPage,
+	EncryptionRecordReplacement,
+} from "../operations/encryption-records.js";
+import { MAX_ENCRYPTION_RECORD_PAGE } from "../operations/encryption-records.js";
 import {
 	initializeIntentStateSchema,
 	IntentStateStore,
@@ -72,6 +77,11 @@ const MAX_REFRESH_LEASE_MS = 5 * 60_000;
 const MAX_PUBLISHER_SESSION_MS = 24 * 60 * 60_000;
 const REFRESH_TOKEN_BYTES = 32;
 const BASE64_PADDING_PATTERN = /=+$/;
+const ENCRYPTION_CURSOR_PATTERN = /^(?:delegation:1|oauth-state:[A-Za-z0-9_-]{32,128})$/;
+
+export type PublisherOAuthEncryptionPurpose =
+	| "oauth-console-transaction"
+	| "oauth-delegation-transaction";
 
 export type PublisherStateErrorCode =
 	| "PUBLISHER_DID_INVALID"
@@ -81,6 +91,7 @@ export type PublisherStateErrorCode =
 	| "DELEGATION_INVALID"
 	| "DELEGATION_CAS_REQUIRED"
 	| "DELEGATION_UNAVAILABLE"
+	| "ENCRYPTION_OPERATION_INVALID"
 	| "PUBLISHER_SESSION_INVALID";
 
 export class PublisherStateError extends Error {
@@ -98,6 +109,7 @@ export interface PutOAuthStateInput {
 	stateHash: string;
 	encryptedState: string;
 	encryptionKeyVersion: number;
+	encryptionPurpose: PublisherOAuthEncryptionPurpose;
 	clientKeyId: string;
 	redirectTarget: string;
 	expiresAt: number;
@@ -266,12 +278,26 @@ interface OperationRow {
 	expires_at: number | null;
 }
 
+interface EncryptionRecordRow {
+	[key: string]: string | number | ArrayBuffer | null;
+	cursor: string;
+	envelope: string;
+	key_version: number;
+	purpose: "oauth-session" | PublisherOAuthEncryptionPurpose;
+}
+
 function validBoundedString(value: unknown, maxLength: number): value is string {
 	return typeof value === "string" && value.length > 0 && value.length <= maxLength;
 }
 
 function validPositiveInteger(value: unknown): value is number {
 	return Number.isSafeInteger(value) && Number(value) >= 1;
+}
+
+function validPublisherOAuthEncryptionPurpose(
+	value: unknown,
+): value is PublisherOAuthEncryptionPurpose {
+	return value === "oauth-console-transaction" || value === "oauth-delegation-transaction";
 }
 
 function validOptionalTimestamp(value: unknown): value is number | null {
@@ -338,7 +364,10 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			CREATE TABLE IF NOT EXISTS oauth_states (
 				state_hash TEXT PRIMARY KEY,
 				encrypted_state TEXT NOT NULL,
-				encryption_key_version INTEGER,
+				encryption_key_version INTEGER NOT NULL CHECK (encryption_key_version >= 1),
+				encryption_purpose TEXT NOT NULL CHECK (
+					encryption_purpose IN ('oauth-console-transaction', 'oauth-delegation-transaction')
+				),
 				client_key_id TEXT NOT NULL,
 				redirect_target TEXT NOT NULL,
 				expires_at INTEGER NOT NULL,
@@ -756,6 +785,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			!HASH_PATTERN.test(input.stateHash) ||
 			!validBoundedString(input.encryptedState, MAX_CIPHERTEXT_CHARS) ||
 			!validPositiveInteger(input.encryptionKeyVersion) ||
+			!validPublisherOAuthEncryptionPurpose(input.encryptionPurpose) ||
 			!validBoundedString(input.clientKeyId, 128) ||
 			!validBoundedString(input.redirectTarget, 2048) ||
 			!Number.isSafeInteger(input.expiresAt) ||
@@ -773,12 +803,13 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			if (existing) return { ok: false, code: "OAUTH_STATE_EXISTS" } as const;
 			this.ctx.storage.sql.exec(
 				`INSERT INTO oauth_states (
-						state_hash, encrypted_state, encryption_key_version, client_key_id,
+						state_hash, encrypted_state, encryption_key_version, encryption_purpose, client_key_id,
 						redirect_target, expires_at, created_at
-					) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+					) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 				input.stateHash,
 				input.encryptedState,
 				input.encryptionKeyVersion,
+				input.encryptionPurpose,
 				input.clientKeyId,
 				input.redirectTarget,
 				input.expiresAt,
@@ -909,6 +940,115 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	getDelegation(publisherDid: string): StoredDelegation | null {
 		this.#assertPublisherDid(publisherDid);
 		return this.#readDelegation();
+	}
+
+	listEncryptionRecords(
+		publisherDid: string,
+		afterCursor: string | null,
+		limit: number,
+		now = Date.now(),
+	): EncryptionRecordPage {
+		this.#assertPublisherDid(publisherDid);
+		if (
+			(afterCursor !== null && !ENCRYPTION_CURSOR_PATTERN.test(afterCursor)) ||
+			!Number.isSafeInteger(limit) ||
+			limit < 1 ||
+			limit > MAX_ENCRYPTION_RECORD_PAGE ||
+			!Number.isSafeInteger(now) ||
+			now < 0
+		) {
+			throw new PublisherStateError("ENCRYPTION_OPERATION_INVALID");
+		}
+		const rows = this.ctx.storage.sql
+			.exec<EncryptionRecordRow>(
+				`SELECT cursor, envelope, key_version, purpose FROM (
+					SELECT 'delegation:1' AS cursor, encrypted_session AS envelope,
+						encryption_key_version AS key_version, 'oauth-session' AS purpose
+					FROM delegation
+					WHERE status != 'revoked' AND encrypted_session != ''
+						AND encryption_key_version IS NOT NULL
+					UNION ALL
+					SELECT 'oauth-state:' || state_hash AS cursor, encrypted_state AS envelope,
+						encryption_key_version AS key_version, encryption_purpose AS purpose
+					FROM oauth_states
+					WHERE expires_at > ? AND encrypted_state != ''
+				) WHERE cursor > ? ORDER BY cursor LIMIT ?`,
+				now,
+				afterCursor ?? "",
+				limit + 1,
+			)
+			.toArray();
+		const hasMore = rows.length > limit;
+		const visible = hasMore ? rows.slice(0, limit) : rows;
+		const items = visible.map((row) => {
+			if (row.purpose !== "oauth-session" && !validPublisherOAuthEncryptionPurpose(row.purpose)) {
+				throw new PublisherStateError("ENCRYPTION_OPERATION_INVALID");
+			}
+			return {
+				cursor: row.cursor,
+				envelope: row.envelope,
+				keyVersion: row.key_version,
+				context:
+					row.cursor === "delegation:1"
+						? {
+								purpose: "oauth-session" as const,
+								objectClass: "PublisherDurableObject",
+								table: "delegation",
+								primaryKey: "1",
+								ownerDid: publisherDid,
+							}
+						: {
+								purpose: row.purpose,
+								objectClass: "PublisherDurableObject",
+								table: "oauth_states",
+								primaryKey: row.cursor.slice("oauth-state:".length),
+								ownerDid: publisherDid,
+							},
+			};
+		});
+		return {
+			items,
+			nextCursor: hasMore ? (items.at(-1)?.cursor ?? null) : null,
+		};
+	}
+
+	replaceEncryptionRecord(input: EncryptionRecordReplacement & { publisherDid: string }): boolean {
+		this.#assertPublisherDid(input.publisherDid);
+		const now = input.now ?? Date.now();
+		if (
+			!ENCRYPTION_CURSOR_PATTERN.test(input.cursor) ||
+			!validBoundedString(input.expectedEnvelope, MAX_CIPHERTEXT_CHARS) ||
+			!validBoundedString(input.replacementEnvelope, MAX_CIPHERTEXT_CHARS) ||
+			!validPositiveInteger(input.replacementKeyVersion) ||
+			!ACTOR_IDENTITY_PATTERN.test(input.actorIdentity) ||
+			!Number.isSafeInteger(now) ||
+			now < 0
+		) {
+			throw new PublisherStateError("ENCRYPTION_OPERATION_INVALID");
+		}
+		return this.ctx.storage.transactionSync(() => {
+			const result =
+				input.cursor === "delegation:1"
+					? this.ctx.storage.sql.exec(
+							`UPDATE delegation SET encrypted_session = ?, encryption_key_version = ?
+							 WHERE id = 1 AND status != 'revoked' AND encrypted_session = ?`,
+							input.replacementEnvelope,
+							input.replacementKeyVersion,
+							input.expectedEnvelope,
+						)
+					: this.ctx.storage.sql.exec(
+							`UPDATE oauth_states SET encrypted_state = ?, encryption_key_version = ?
+							 WHERE state_hash = ? AND encrypted_state = ? AND expires_at > ?`,
+							input.replacementEnvelope,
+							input.replacementKeyVersion,
+							input.cursor.slice("oauth-state:".length),
+							input.expectedEnvelope,
+							now,
+						);
+			if (result.rowsWritten !== 1) return false;
+			this.#appendAudit("encryption-rotated", "access", input.actorIdentity, input.cursor, now);
+			return true;
+		});
 	}
 
 	async beginDelegationRefresh(

@@ -2,6 +2,7 @@ import { Badge, Button, Input, Surface } from "@cloudflare/kumo";
 import {
 	ReleaseServiceOperatorClient,
 	createReleaseIdempotencyKey,
+	type EncryptionRotationResult,
 	type OperatorPublisherResource,
 	type ServiceControlState,
 } from "@emdash-cms/registry-client/release-service";
@@ -33,7 +34,11 @@ export function OperatorPage() {
 	const [state, setState] = useState<ServiceControlState | null>(null);
 	const [publisher, setPublisher] = useState<OperatorPublisherResource | null>(null);
 	const [publisherDid, setPublisherDid] = useState("");
+	const [approverDid, setApproverDid] = useState("");
 	const [intentId, setIntentId] = useState("");
+	const [publisherRotationCursor, setPublisherRotationCursor] = useState("");
+	const [approverRotationCursor, setApproverRotationCursor] = useState("");
+	const [rotation, setRotation] = useState<EncryptionRotationResult | null>(null);
 	const [error, setError] = useState<unknown>(null);
 	const [busy, setBusy] = useState(false);
 
@@ -110,6 +115,32 @@ export function OperatorPage() {
 		}
 	}
 
+	async function rotateEncryption(owner: "approver" | "publisher") {
+		setBusy(true);
+		setError(null);
+		try {
+			const result =
+				owner === "publisher"
+					? await client.rotatePublisherEncryption(
+							publisherDid,
+							{ afterCursor: publisherRotationCursor || null, limit: 50 },
+							{ idempotencyKey: createReleaseIdempotencyKey("web-publisher-rotation") },
+						)
+					: await client.rotateApproverEncryption(
+							approverDid,
+							{ afterCursor: approverRotationCursor || null, limit: 50 },
+							{ idempotencyKey: createReleaseIdempotencyKey("web-approver-rotation") },
+						);
+			setRotation(result);
+			if (owner === "publisher") setPublisherRotationCursor(result.nextCursor ?? "");
+			else setApproverRotationCursor(result.nextCursor ?? "");
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
 	async function operateIntent(action: "cancel" | "reconcile") {
 		setBusy(true);
 		setError(null);
@@ -163,6 +194,85 @@ export function OperatorPage() {
 						{t("operator.service.pausePublication", "Pause publication")}
 					</Button>
 				</div>
+			</Surface>
+
+			<Surface className="rounded-xl border bg-kumo-base p-6">
+				<div className="flex flex-wrap items-start justify-between gap-4">
+					<div>
+						<h2 className="text-xl font-semibold text-kumo-strong">
+							{t("operator.encryption.title", "Encryption maintenance")}
+						</h2>
+						<p className="mt-1 text-sm text-kumo-subtle">
+							{t(
+								"operator.encryption.description",
+								"Rotate one bounded shard page, then resume from the returned cursor until verification completes.",
+							)}
+						</p>
+					</div>
+					{rotation ? (
+						<Badge variant={rotation.complete && rotation.raced === 0 ? "success" : "warning"}>
+							{rotation.complete
+								? t("operator.encryption.complete", "Verified")
+								: t("operator.encryption.incomplete", "Resume required")}
+						</Badge>
+					) : null}
+				</div>
+				<div className="mt-5 grid gap-4 md:grid-cols-2">
+					<div className="flex flex-col gap-3">
+						<Input
+							label={t("operator.encryption.publisherDid", "Publisher DID")}
+							value={publisherDid}
+							onChange={(event) => setPublisherDid(event.currentTarget.value)}
+						/>
+						<Input
+							label={t("operator.encryption.publisherCursor", "Publisher resume cursor")}
+							value={publisherRotationCursor}
+							onChange={(event) => setPublisherRotationCursor(event.currentTarget.value)}
+						/>
+						<Button
+							disabled={!publisherDid}
+							loading={busy}
+							onClick={() => rotateEncryption("publisher")}
+							variant="outline"
+						>
+							{t("operator.encryption.publisher", "Rotate publisher shard")}
+						</Button>
+					</div>
+					<div className="flex flex-col gap-3">
+						<Input
+							label={t("operator.encryption.approverDid", "Approver DID")}
+							value={approverDid}
+							onChange={(event) => setApproverDid(event.currentTarget.value)}
+						/>
+						<Input
+							label={t("operator.encryption.approverCursor", "Approver resume cursor")}
+							value={approverRotationCursor}
+							onChange={(event) => setApproverRotationCursor(event.currentTarget.value)}
+						/>
+						<Button
+							disabled={!approverDid}
+							loading={busy}
+							onClick={() => rotateEncryption("approver")}
+							variant="outline"
+						>
+							{t("operator.encryption.approver", "Rotate approver shard")}
+						</Button>
+					</div>
+				</div>
+				{rotation ? (
+					<p className="mt-4 text-sm text-kumo-subtle">
+						{t(
+							"operator.encryption.result",
+							"Key {keyVersion}: scanned {scanned}, rotated {rotated}, raced {raced}.",
+							{
+								keyVersion: rotation.targetKeyVersion,
+								scanned: rotation.scanned,
+								rotated: rotation.rotated,
+								raced: rotation.raced,
+							},
+						)}
+					</p>
+				) : null}
 			</Surface>
 
 			<Surface className="rounded-xl border bg-kumo-base p-6">

@@ -30,6 +30,7 @@ export type ReleaseServiceApiErrorCode =
 	| "CREDENTIAL_REVOKED"
 	| "CSRF_INVALID"
 	| "DELEGATION_REQUIRED"
+	| "ENCRYPTION_OPERATION_FAILED"
 	| "IDEMPOTENCY_KEY_INVALID"
 	| "IDEMPOTENCY_CONFLICT"
 	| "INTERNAL_ERROR"
@@ -151,6 +152,21 @@ export interface PublisherControlResource {
 
 export interface OperatorPublisherResource extends PublisherResource {
 	control: PublisherControlResource;
+}
+
+export interface EncryptionRotationPageInput {
+	afterCursor: string | null;
+	limit: number;
+}
+
+export interface EncryptionRotationResult {
+	ownerDid: string;
+	targetKeyVersion: number;
+	scanned: number;
+	rotated: number;
+	raced: number;
+	nextCursor: string | null;
+	complete: boolean;
 }
 
 export interface CursorPage<T> {

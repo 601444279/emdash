@@ -37,6 +37,12 @@ import {
 	handlePublisherIdentityAuthorize,
 } from "./oauth/routes.js";
 import {
+	handleRotateApproverEncryption,
+	handleRotatePublisherEncryption,
+	matchApproverEncryptionRotationPath,
+	matchPublisherEncryptionRotationPath,
+} from "./operations/encryption-routes.js";
+import {
 	handleCancelOperatorIntent,
 	handleGetOperatorPublisher,
 	handleReconcileOperatorIntent,
@@ -245,6 +251,20 @@ export const ROUTES = Object.freeze([
 		match: matchOperatorPublisherRevokePath,
 		accessRole: "admin",
 		handler: handleRevokeOperatorPublisher,
+	},
+	{
+		method: "POST",
+		path: "/admin/api/publishers/{publisherDid}/encryption/rotate",
+		match: matchPublisherEncryptionRotationPath,
+		accessRole: "admin",
+		handler: handleRotatePublisherEncryption,
+	},
+	{
+		method: "POST",
+		path: "/admin/api/approvers/{approverDid}/encryption/rotate",
+		match: matchApproverEncryptionRotationPath,
+		accessRole: "admin",
+		handler: handleRotateApproverEncryption,
 	},
 	{
 		method: "POST",

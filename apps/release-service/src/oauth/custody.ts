@@ -360,6 +360,7 @@ interface PutDurableOAuthStateInput {
 	stateHash: string;
 	encryptedState: string;
 	encryptionKeyVersion: number;
+	encryptionPurpose: ReturnType<typeof transactionEncryptionPurpose>;
 	clientKeyId: string;
 	redirectTarget: string;
 	expiresAt: number;
@@ -379,7 +380,13 @@ function publisherOAuthStateBackend(
 	return {
 		objectClass: "PublisherDurableObject",
 		table: "oauth_states",
-		put: (input) => stub.putOAuthState({ publisherDid, ...input }),
+		put: (input) => {
+			const { encryptionPurpose, ...stored } = input;
+			if (encryptionPurpose === "oauth-approver-transaction") {
+				throw new OAuthCustodyError("OAUTH_STATE_INVALID");
+			}
+			return stub.putOAuthState({ publisherDid, ...stored, encryptionPurpose });
+		},
 		consume: (stateHash) => stub.consumeOAuthState(publisherDid, stateHash),
 	};
 }
@@ -391,7 +398,12 @@ function approverOAuthStateBackend(
 	return {
 		objectClass: "ApproverDurableObject",
 		table: "identity_transactions",
-		put: (input) => stub.putIdentityTransaction({ approverDid, ...input }),
+		put: ({ encryptionPurpose, ...input }) => {
+			if (encryptionPurpose !== "oauth-approver-transaction") {
+				throw new OAuthCustodyError("OAUTH_STATE_INVALID");
+			}
+			return stub.putIdentityTransaction({ approverDid, ...input });
+		},
 		consume: (stateHash) => stub.consumeIdentityTransaction(approverDid, stateHash),
 	};
 }
@@ -447,6 +459,7 @@ class DurableOAuthStateStore implements Store<string, StoredState> {
 			stateHash,
 			encryptedState: encrypted.envelope,
 			encryptionKeyVersion: encrypted.keyVersion,
+			encryptionPurpose: transactionEncryptionPurpose(this.#options.purpose),
 			clientKeyId: keyId,
 			redirectTarget: userState.redirectTarget,
 			expiresAt: state.expiresAt,

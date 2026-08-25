@@ -294,4 +294,50 @@ describe("ReleaseServiceOperatorClient", () => {
 		expect(headers.get("x-emdash-request")).toBe("1");
 		expect(captured!.init?.credentials).toBe("include");
 	});
+
+	it("pages publisher and approver encryption rotation through Access", async () => {
+		const calls: Array<{ body: string | null; path: string }> = [];
+		const fetch: typeof globalThis.fetch = async (input, init) => {
+			const url = new URL(input instanceof Request ? input.url : input.toString());
+			calls.push({ path: url.pathname, body: typeof init?.body === "string" ? init.body : null });
+			return success({
+				ownerDid: url.pathname.includes("/approvers/") ? "did:plc:approver" : PUBLISHER_DID,
+				targetKeyVersion: 2,
+				scanned: 1,
+				rotated: 1,
+				raced: 0,
+				nextCursor: null,
+				complete: true,
+			});
+		};
+		const client = new ReleaseServiceOperatorClient({ serviceUrl: SERVICE, fetch });
+		await expect(
+			client.rotatePublisherEncryption(
+				PUBLISHER_DID,
+				{ afterCursor: null, limit: 25 },
+				{ idempotencyKey: "operator-publisher-rotation-0001" },
+			),
+		).resolves.toMatchObject({ ownerDid: PUBLISHER_DID, targetKeyVersion: 2, complete: true });
+		await expect(
+			client.rotateApproverEncryption(
+				"did:plc:approver",
+				{
+					afterCursor: "identity-transaction:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG",
+					limit: 10,
+				},
+				{ idempotencyKey: "operator-approver-rotation-0001" },
+			),
+		).resolves.toMatchObject({ ownerDid: "did:plc:approver", rotated: 1 });
+
+		expect(calls).toEqual([
+			{
+				path: `/admin/api/publishers/${encodeURIComponent(PUBLISHER_DID)}/encryption/rotate`,
+				body: '{"afterCursor":null,"limit":25}',
+			},
+			{
+				path: "/admin/api/approvers/did%3Aplc%3Aapprover/encryption/rotate",
+				body: '{"afterCursor":"identity-transaction:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG","limit":10}',
+			},
+		]);
+	});
 });
