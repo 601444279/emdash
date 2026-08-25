@@ -1,6 +1,6 @@
 # Delegated release service implementation plan
 
-Status: Proposed
+Status: In progress
 
 Companion specification: [Delegated release service](./delegated-release-service.md)
 
@@ -48,6 +48,19 @@ The new implementation does not retain:
 - one large publisher/operator console;
 - Queue-plus-cron orchestration for release intents; or
 - aggregator historical-policy enforcement as a prerequisite for the first service release.
+
+### Current execution state
+
+The replacement implementation is rebased on current `main` and complete through the publisher OAuth callback vertical slice:
+
+- the G0 harness requests only the active create-only release scope and has successful authorization/prohibition evidence for the Bluesky PDS implementation hosted by npmX and for Cirrus;
+- the Worker serves confidential client metadata and overlapping JWKS, fails closed on invalid configuration, and keeps canonical publisher authority in SQLite-backed Durable Objects;
+- envelope encryption, publisher custody, generation-bound refresh operations, publisher application sessions, and identity/delegation callback routes pass real workerd tests; and
+- repository package typecheck, type-aware lint, and package tests pass on the top branch. One transient fixed-port collision in the sandbox-workerd suite passed on immediate isolated rerun.
+
+G0 remains open for external refresh and revocation proof. The first test authorizations predated persistence of the loopback client's redirect URI and scope. npmX rejected refresh under a reconstructed client ID; the corrected harness now refuses that unsafe reconstruction before network access. Both providers require one browser reauthorization before noninteractive refresh and revocation can be repeated.
+
+Draft PR #1908 remains donor history and is not a merge target. Its D1 custody and coordination model does not satisfy this plan. Draft PR #1909 is the independent metadata-labeling service and does not join the delegated-release service stack.
 
 ## Execution rules
 
@@ -704,6 +717,24 @@ gh stack merge <stack-number> --yes --squash
 Use the repository's selected merge method if it differs from squash. Stack merge is all-or-nothing unless the repository's merge queue processes the PRs separately. Scope a partial merge to a PR number only when the plan explicitly defines that PR as an integration gate.
 
 Do not add one branch to multiple stacks. When an independent stack needs a merged contract, rebase it onto updated `main`; do not share the contract branch between stacks.
+
+### Active foundation stack
+
+The current bottom-to-top branch chain is:
+
+```text
+main
+└── feat/drs-g0-conformance
+    └── feat/drs-platform-oauth-metadata
+        └── feat/drs-envelope-encryption
+            └── feat/drs-publisher-do-oauth-custody
+                └── feat/drs-publisher-refresh-operations
+                    └── feat/drs-oauth-custody-adapter
+                        └── feat/drs-publisher-application-sessions
+                            └── feat/drs-confidential-oauth-callback
+```
+
+Each branch is one template-compliant draft PR. Create the PRs with their explicit parent bases before calling `gh stack link`; this prevents `gh-stack` from generating non-template PR bodies.
 
 ### Planned GitHub stacks
 
