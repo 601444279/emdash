@@ -1,5 +1,5 @@
 import { cloudflareTest } from "@cloudflare/vitest-pool-workers";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
 import { TEST_ACCESS_AUDIENCES, TEST_ASSERTION_KEYSET } from "./test/fixtures/oauth.js";
 
@@ -8,6 +8,7 @@ process.env["ENCRYPTION_KEYRING"] ??=
 	'{"current":1,"keys":[{"version":1,"key":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8"}]}';
 
 export default defineConfig({
+	test: { exclude: [...configDefaults.exclude, "src/ui/**/*.test.{ts,tsx}"] },
 	plugins: [
 		cloudflareTest({
 			wrangler: { configPath: "./wrangler.jsonc" },

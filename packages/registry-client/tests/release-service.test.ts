@@ -58,6 +58,22 @@ function success(data: unknown, status = 200): Response {
 }
 
 describe("ReleaseServiceClient", () => {
+	it("allows only explicit loopback HTTP origins for local development", () => {
+		expect(
+			new ReleaseServiceClient({
+				serviceUrl: "http://127.0.0.1:5175",
+				workloadToken: "header.payload.signature",
+			}),
+		).toBeInstanceOf(ReleaseServiceClient);
+		expect(
+			() =>
+				new ReleaseServiceClient({
+					serviceUrl: "http://release.example.com",
+					workloadToken: "header.payload.signature",
+				}),
+		).toThrow("HTTPS origin or a loopback");
+	});
+
 	it("submits a typed intent without retaining or exposing the workload token", async () => {
 		const calls: Array<{ init: RequestInit | undefined; url: string }> = [];
 		const workloadToken = "header.payload.signature";

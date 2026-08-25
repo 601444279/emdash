@@ -77,7 +77,7 @@ describe("release-service Worker", () => {
 		expect(
 			(await SELF.fetch("https://release.example.com/health", { method: "POST" })).status,
 		).toBe(405);
-		expect((await SELF.fetch("https://release.example.com/missing")).status).toBe(404);
+		expect((await SELF.fetch("https://release.example.com/v1/missing")).status).toBe(404);
 
 		const internalMessage = "assertion private key leaked";
 		const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});

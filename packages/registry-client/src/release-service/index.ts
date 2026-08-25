@@ -180,8 +180,11 @@ function isApiErrorCode(value: unknown): value is ReleaseServiceApiErrorCode {
 function serviceOrigin(value: string): string {
 	try {
 		const url = new URL(value);
+		const loopback =
+			url.protocol === "http:" &&
+			(url.hostname === "localhost" || url.hostname === "127.0.0.1" || url.hostname === "[::1]");
 		if (
-			url.protocol !== "https:" ||
+			(url.protocol !== "https:" && !loopback) ||
 			url.username !== "" ||
 			url.password !== "" ||
 			url.pathname !== "/" ||
@@ -195,7 +198,7 @@ function serviceOrigin(value: string): string {
 	} catch {
 		throw new ReleaseServiceError({
 			code: "CLIENT_RESPONSE_INVALID",
-			message: "Release service URL must be an HTTPS origin",
+			message: "Release service URL must be an HTTPS origin or a loopback development origin",
 		});
 	}
 }
@@ -517,7 +520,7 @@ class BaseReleaseServiceClient {
 
 	constructor(options: { serviceUrl: string; fetch?: typeof fetch }) {
 		this.serviceUrl = serviceOrigin(options.serviceUrl);
-		this.fetch = options.fetch ?? globalThis.fetch;
+		this.fetch = options.fetch ?? globalThis.fetch.bind(globalThis);
 	}
 
 	protected async call<T>(
