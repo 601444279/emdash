@@ -15,7 +15,14 @@ export function runCommand(command: string, args: string[], cwd: string): Promis
 			shell: process.platform === "win32",
 		});
 		child.once("error", reject);
-		child.once("close", (code) => {
+		child.once("close", (code, signal) => {
+			if (code === 0) {
+				resolvePromise();
+				return;
+			}
+			const reason = signal ? `signal ${signal}` : `code ${code ?? "unknown"}`;
+			reject(new Error(`${command} ${args.join(" ")} exited with ${reason}`));
+		});
 			if (code === 0) {
 				resolvePromise();
 				return;
