@@ -1,5 +1,4 @@
 import type { AccessActor, AccessRole } from "./access/auth.js";
-import { apiSuccess } from "./api/response.js";
 import {
 	handleBeginApprovalDecision,
 	handleCompleteApprovalDecision,
@@ -18,6 +17,7 @@ import type { ServiceConfiguration } from "./config.js";
 import {
 	handleControlAudit,
 	handleGetPublisherControl,
+	handleReadiness,
 	handleServiceStatus,
 	handleSetPublisherControl,
 	handleSetServiceMode,
@@ -118,8 +118,8 @@ export const ROUTES = Object.freeze([
 	},
 	{
 		method: "GET",
-		path: "/health",
-		handler: (_request, requestId) => apiSuccess({ status: "ok" }, requestId),
+		path: "/ready",
+		handler: handleReadiness,
 	},
 	{
 		method: "GET",

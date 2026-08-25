@@ -20,6 +20,27 @@ describe("release-service Worker", () => {
 		});
 	});
 
+	it("serves liveness without loading service configuration", async () => {
+		const response = await handleRequest(new Request("https://test/health"), {
+			...TEST_BINDINGS,
+			PUBLIC_ORIGIN: "",
+		});
+
+		expect(response.status).toBe(200);
+		expect(await response.json()).toMatchObject({ data: { status: "ok" } });
+		expect(
+			(await handleRequest(new Request("https://test/health", { method: "POST" }), TEST_BINDINGS))
+				.status,
+		).toBe(405);
+	});
+
+	it("serves readiness only after configuration and control storage initialize", async () => {
+		const response = await SELF.fetch("https://release.example.invalid/ready");
+
+		expect(response.status).toBe(200);
+		expect(await response.json()).toMatchObject({ data: { status: "ready" } });
+	});
+
 	it("serves public-only OAuth metadata and overlapping keys", async () => {
 		const metadata = await SELF.fetch(
 			"https://untrusted.invalid/.well-known/atproto-client-metadata.json",
@@ -45,7 +66,7 @@ describe("release-service Worker", () => {
 			PUBLIC_ORIGIN: "",
 			OAUTH_REDIRECT_URIS: "[]",
 		} satisfies ConfigurationBindings;
-		const response = await handleRequest(new Request("https://test/health"), bindings);
+		const response = await handleRequest(new Request("https://test/ready"), bindings);
 		expect(response.status).toBe(503);
 		const body = await response.text();
 		expect(body).toContain("CONFIGURATION_ERROR");

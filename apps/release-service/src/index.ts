@@ -8,7 +8,7 @@ import {
 } from "./access/auth.js";
 import { ApiError } from "./api/errors.js";
 import { getRequestId } from "./api/request-id.js";
-import { apiFailure } from "./api/response.js";
+import { apiFailure, apiSuccess } from "./api/response.js";
 import { ConfigurationError, loadConfiguration, type ConfigurationBindings } from "./config.js";
 import { ROUTES, type RouteDefinition } from "./routes.js";
 
@@ -25,8 +25,13 @@ export async function handleRequest(
 ): Promise<Response> {
 	const requestId = getRequestId(request);
 	try {
-		const configuration = await loadConfiguration(bindings);
 		const url = new URL(request.url);
+		if (url.pathname === "/health") {
+			return request.method === "GET"
+				? apiSuccess({ status: "ok" }, requestId)
+				: apiFailure(new ApiError("METHOD_NOT_ALLOWED", 405, "Method not allowed"), requestId);
+		}
+		const configuration = await loadConfiguration(bindings);
 		const matches = routes.flatMap((candidate) => {
 			const params = candidate.match
 				? candidate.match(url.pathname)

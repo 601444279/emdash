@@ -22,7 +22,8 @@ export type ApiErrorCode =
 	| "PUBLISHER_SESSION_INVALID"
 	| "PUBLISHER_SUSPENDED"
 	| "PROFILE_CHANGED"
-	| "PROFILE_FETCH_FAILED";
+	| "PROFILE_FETCH_FAILED"
+	| "SERVICE_UNAVAILABLE";
 
 export interface SerializedApiError {
 	code: ApiErrorCode;

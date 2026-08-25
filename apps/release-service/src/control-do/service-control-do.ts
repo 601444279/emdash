@@ -504,6 +504,11 @@ export class ServiceControlDurableObject extends DurableObject<Env> {
 		return this.#readState();
 	}
 
+	async checkReadiness(): Promise<void> {
+		this.#assertObjectName();
+		this.#readState();
+	}
+
 	async setServiceMode(input: SetServiceModeInput): Promise<OperatorMutationResult<ServiceState>> {
 		this.#assertObjectName();
 		const now = this.#assertOperatorMutation(input);

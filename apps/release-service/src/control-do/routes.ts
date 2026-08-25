@@ -84,6 +84,15 @@ export async function handleServiceStatus(
 	return apiSuccess({ state }, requestId);
 }
 
+export async function handleReadiness(_request: Request, requestId: string): Promise<Response> {
+	try {
+		await control().checkReadiness();
+		return apiSuccess({ status: "ready" }, requestId);
+	} catch {
+		throw new ApiError("SERVICE_UNAVAILABLE", 503, "Service dependency is unavailable");
+	}
+}
+
 export async function handleSetServiceMode(
 	request: Request,
 	requestId: string,
