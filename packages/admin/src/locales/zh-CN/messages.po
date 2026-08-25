@@ -1295,8 +1295,8 @@ msgstr "返回市场"
 msgid "Back to plugins"
 msgstr "返回插件列表"
 
-#: packages/admin/src/components/SectionEditor.tsx:74
-#: packages/admin/src/components/SectionEditor.tsx:175
+#: packages/admin/src/components/SectionEditor.tsx:92
+#: packages/admin/src/components/SectionEditor.tsx:195
 msgid "Back to sections"
 msgstr "返回区块列表"
 
@@ -1792,7 +1792,7 @@ msgstr "已创建的合集："
 msgid "Columns"
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:288
+#: packages/admin/src/components/SectionEditor.tsx:309
 msgid "Comma-separated keywords for search."
 msgstr "逗号分隔的搜索关键词。"
 
@@ -1867,7 +1867,7 @@ msgstr ""
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
 #: packages/admin/src/components/Dashboard.tsx:269
 #: packages/admin/src/components/PortableTextEditor.tsx:2728
-#: packages/admin/src/components/SectionEditor.tsx:195
+#: packages/admin/src/components/SectionEditor.tsx:215
 #: packages/admin/src/components/Sidebar.tsx:408
 #: packages/admin/src/components/Widgets.tsx:899
 msgid "Content"
@@ -2277,7 +2277,7 @@ msgstr "自定义字段"
 msgid "Custom robots.txt content. Leave empty to use the default."
 msgstr "自定义 robots.txt 内容。留空则使用默认值。"
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Custom Section"
 msgstr "自定义区块"
 
@@ -2587,13 +2587,13 @@ msgstr "描述图片..."
 msgid "Describe this image for accessibility"
 msgstr "描述此图片以供无障碍访问"
 
-#: packages/admin/src/components/SectionEditor.tsx:277
+#: packages/admin/src/components/SectionEditor.tsx:298
 msgid "Describe what this section is for..."
 msgstr "描述此区块的用途..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
 #: packages/admin/src/components/RegistryPluginDetail.tsx:805
-#: packages/admin/src/components/SectionEditor.tsx:274
+#: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
 msgid "Description"
@@ -3208,7 +3208,7 @@ msgstr "添加小部件时出错"
 msgid "Error reordering widgets"
 msgstr "重新排序小部件时出错"
 
-#: packages/admin/src/components/SectionEditor.tsx:53
+#: packages/admin/src/components/SectionEditor.tsx:71
 msgid "Error saving section"
 msgstr "保存区块时出错"
 
@@ -4149,7 +4149,7 @@ msgstr "高度"
 msgid "Hero Banner"
 msgstr "主视觉横幅"
 
-#: packages/admin/src/components/SectionEditor.tsx:286
+#: packages/admin/src/components/SectionEditor.tsx:307
 msgid "hero, banner, cta"
 msgstr "主视觉, 横幅, CTA 按钮"
 
@@ -4621,7 +4621,7 @@ msgid "Keep typing to narrow down more bylines."
 msgstr "继续输入以缩小署名范围。"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:304
-#: packages/admin/src/components/SectionEditor.tsx:283
+#: packages/admin/src/components/SectionEditor.tsx:304
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:189
 msgid "Keywords"
 msgstr "关键词"
@@ -7122,7 +7122,7 @@ msgstr "搜索中..."
 msgid "Section"
 msgstr "区块"
 
-#: packages/admin/src/components/SectionEditor.tsx:83
+#: packages/admin/src/components/SectionEditor.tsx:101
 msgid "Section \"{slug}\" could not be found."
 msgstr "未找到区块 \"{slug}\"。"
 
@@ -7134,15 +7134,15 @@ msgstr "区块已创建"
 msgid "Section deleted"
 msgstr "区块已删除"
 
-#: packages/admin/src/components/SectionEditor.tsx:248
+#: packages/admin/src/components/SectionEditor.tsx:269
 msgid "Section Details"
 msgstr "区块详情"
 
-#: packages/admin/src/components/SectionEditor.tsx:79
+#: packages/admin/src/components/SectionEditor.tsx:97
 msgid "Section Not Found"
 msgstr "未找到区块"
 
-#: packages/admin/src/components/SectionEditor.tsx:254
+#: packages/admin/src/components/SectionEditor.tsx:275
 msgid "Section title"
 msgstr "区块标题"
 
@@ -7612,7 +7612,7 @@ msgstr "已跳过"
 #: packages/admin/src/components/ContentTypeList.tsx:181
 #: packages/admin/src/components/FieldEditor.tsx:257
 #: packages/admin/src/components/FieldEditor.tsx:444
-#: packages/admin/src/components/SectionEditor.tsx:259
+#: packages/admin/src/components/SectionEditor.tsx:280
 #: packages/admin/src/components/Sections.tsx:184
 #: packages/admin/src/components/TaxonomyManager.tsx:576
 #: packages/admin/src/routes/byline-schema.tsx:237
@@ -7681,7 +7681,7 @@ msgstr "排序主题"
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:580
 #: packages/admin/src/components/Redirects.tsx:475
-#: packages/admin/src/components/SectionEditor.tsx:294
+#: packages/admin/src/components/SectionEditor.tsx:315
 msgid "Source"
 msgstr "来源"
 
@@ -7950,7 +7950,7 @@ msgid "Theme"
 msgstr "主题"
 
 #. placeholder {0}: section.themeId
-#: packages/admin/src/components/SectionEditor.tsx:307
+#: packages/admin/src/components/SectionEditor.tsx:328
 msgid "Theme ID: {0}"
 msgstr "主题 ID：{0}"
 
@@ -7958,7 +7958,7 @@ msgstr "主题 ID：{0}"
 msgid "Theme not found"
 msgstr "未找到主题"
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Theme Section"
 msgstr "主题区块"
 
@@ -8004,7 +8004,7 @@ msgstr "此字段不接受 {sniffedMime} 文件。"
 msgid "This field is required"
 msgstr "此字段为必填项"
 
-#: packages/admin/src/components/SectionEditor.tsx:301
+#: packages/admin/src/components/SectionEditor.tsx:322
 msgid "This is a custom section."
 msgstr "这是自定义区块。"
 
@@ -8062,11 +8062,11 @@ msgstr "这将删除署名配置文件。内容署名链接将被移除，主要
 msgid "This section contains unsupported Portable Text marks: <0>{0}</0>. Update the section before inserting it."
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:298
+#: packages/admin/src/components/SectionEditor.tsx:319
 msgid "This section is provided by the theme. Editing will create a custom copy that overrides the theme version."
 msgstr "此区块由主题提供。编辑将创建一个自定义副本以覆盖主题版本。"
 
-#: packages/admin/src/components/SectionEditor.tsx:303
+#: packages/admin/src/components/SectionEditor.tsx:324
 msgid "This section was imported from another system."
 msgstr "此区块是从另一个系统导入的。"
 
@@ -8122,7 +8122,7 @@ msgstr "用于显示日期的时区（例如：America/New_York）"
 
 #: packages/admin/src/components/ContentList.tsx:577
 #: packages/admin/src/components/ContentList.tsx:737
-#: packages/admin/src/components/SectionEditor.tsx:251
+#: packages/admin/src/components/SectionEditor.tsx:272
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
 msgid "Title"
@@ -8652,7 +8652,7 @@ msgstr "供屏幕阅读器使用，并在图片加载失败时显示"
 msgid "Used in URLs and API endpoints"
 msgstr "用于 URL 和 API 端点"
 
-#: packages/admin/src/components/SectionEditor.tsx:269
+#: packages/admin/src/components/SectionEditor.tsx:290
 #: packages/admin/src/components/Sections.tsx:196
 msgid "Used to identify this section. Lowercase letters, numbers, and hyphens only."
 msgstr "用于标识此区块。仅限小写字母、数字和连字符。"

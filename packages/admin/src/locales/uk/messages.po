@@ -1295,8 +1295,8 @@ msgstr "Назад до маркетплейсу"
 msgid "Back to plugins"
 msgstr "Назад до плагінів"
 
-#: packages/admin/src/components/SectionEditor.tsx:74
-#: packages/admin/src/components/SectionEditor.tsx:175
+#: packages/admin/src/components/SectionEditor.tsx:92
+#: packages/admin/src/components/SectionEditor.tsx:195
 msgid "Back to sections"
 msgstr "Назад до секцій"
 
@@ -1792,7 +1792,7 @@ msgstr "Створено колекцій:"
 msgid "Columns"
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:288
+#: packages/admin/src/components/SectionEditor.tsx:309
 msgid "Comma-separated keywords for search."
 msgstr "Ключові слова для пошуку через кому."
 
@@ -1867,7 +1867,7 @@ msgstr ""
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
 #: packages/admin/src/components/Dashboard.tsx:269
 #: packages/admin/src/components/PortableTextEditor.tsx:2728
-#: packages/admin/src/components/SectionEditor.tsx:195
+#: packages/admin/src/components/SectionEditor.tsx:215
 #: packages/admin/src/components/Sidebar.tsx:408
 #: packages/admin/src/components/Widgets.tsx:899
 msgid "Content"
@@ -2277,7 +2277,7 @@ msgstr "Власні поля"
 msgid "Custom robots.txt content. Leave empty to use the default."
 msgstr "Власний вміст robots.txt. Залиште порожнім для значення за замовчуванням."
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Custom Section"
 msgstr "Власна секція"
 
@@ -2587,13 +2587,13 @@ msgstr "Опишіть зображення..."
 msgid "Describe this image for accessibility"
 msgstr "Опишіть це зображення для доступності"
 
-#: packages/admin/src/components/SectionEditor.tsx:277
+#: packages/admin/src/components/SectionEditor.tsx:298
 msgid "Describe what this section is for..."
 msgstr "Опишіть, для чого ця секція..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
 #: packages/admin/src/components/RegistryPluginDetail.tsx:805
-#: packages/admin/src/components/SectionEditor.tsx:274
+#: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
 msgid "Description"
@@ -3208,7 +3208,7 @@ msgstr "Помилка додавання віджета"
 msgid "Error reordering widgets"
 msgstr "Помилка зміни порядку віджетів"
 
-#: packages/admin/src/components/SectionEditor.tsx:53
+#: packages/admin/src/components/SectionEditor.tsx:71
 msgid "Error saving section"
 msgstr "Помилка збереження секції"
 
@@ -4149,7 +4149,7 @@ msgstr "Висота"
 msgid "Hero Banner"
 msgstr "Головний банер"
 
-#: packages/admin/src/components/SectionEditor.tsx:286
+#: packages/admin/src/components/SectionEditor.tsx:307
 msgid "hero, banner, cta"
 msgstr "hero, banner, cta"
 
@@ -4621,7 +4621,7 @@ msgid "Keep typing to narrow down more bylines."
 msgstr "Продовжуйте вводити, щоб звузити список підписів."
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:304
-#: packages/admin/src/components/SectionEditor.tsx:283
+#: packages/admin/src/components/SectionEditor.tsx:304
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:189
 msgid "Keywords"
 msgstr "Ключові слова"
@@ -7122,7 +7122,7 @@ msgstr "Пошук..."
 msgid "Section"
 msgstr "Секція"
 
-#: packages/admin/src/components/SectionEditor.tsx:83
+#: packages/admin/src/components/SectionEditor.tsx:101
 msgid "Section \"{slug}\" could not be found."
 msgstr "Розділ \"{slug}\" не знайдено."
 
@@ -7134,15 +7134,15 @@ msgstr "Секцію створено"
 msgid "Section deleted"
 msgstr "Секцію видалено"
 
-#: packages/admin/src/components/SectionEditor.tsx:248
+#: packages/admin/src/components/SectionEditor.tsx:269
 msgid "Section Details"
 msgstr "Деталі секції"
 
-#: packages/admin/src/components/SectionEditor.tsx:79
+#: packages/admin/src/components/SectionEditor.tsx:97
 msgid "Section Not Found"
 msgstr "Секцію не знайдено"
 
-#: packages/admin/src/components/SectionEditor.tsx:254
+#: packages/admin/src/components/SectionEditor.tsx:275
 msgid "Section title"
 msgstr "Назва секції"
 
@@ -7612,7 +7612,7 @@ msgstr "Пропущено"
 #: packages/admin/src/components/ContentTypeList.tsx:181
 #: packages/admin/src/components/FieldEditor.tsx:257
 #: packages/admin/src/components/FieldEditor.tsx:444
-#: packages/admin/src/components/SectionEditor.tsx:259
+#: packages/admin/src/components/SectionEditor.tsx:280
 #: packages/admin/src/components/Sections.tsx:184
 #: packages/admin/src/components/TaxonomyManager.tsx:576
 #: packages/admin/src/routes/byline-schema.tsx:237
@@ -7681,7 +7681,7 @@ msgstr "Сортувати теми"
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:580
 #: packages/admin/src/components/Redirects.tsx:475
-#: packages/admin/src/components/SectionEditor.tsx:294
+#: packages/admin/src/components/SectionEditor.tsx:315
 msgid "Source"
 msgstr "Джерело"
 
@@ -7950,7 +7950,7 @@ msgid "Theme"
 msgstr "Тема"
 
 #. placeholder {0}: section.themeId
-#: packages/admin/src/components/SectionEditor.tsx:307
+#: packages/admin/src/components/SectionEditor.tsx:328
 msgid "Theme ID: {0}"
 msgstr "ID теми: {0}"
 
@@ -7958,7 +7958,7 @@ msgstr "ID теми: {0}"
 msgid "Theme not found"
 msgstr "Тему не знайдено"
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Theme Section"
 msgstr "Розділ теми"
 
@@ -8004,7 +8004,7 @@ msgstr "Це поле не приймає файли {sniffedMime}."
 msgid "This field is required"
 msgstr "Це поле обов’язкове"
 
-#: packages/admin/src/components/SectionEditor.tsx:301
+#: packages/admin/src/components/SectionEditor.tsx:322
 msgid "This is a custom section."
 msgstr "Це власний розділ."
 
@@ -8062,11 +8062,11 @@ msgstr "Це видалить профіль підпису автора. Пос
 msgid "This section contains unsupported Portable Text marks: <0>{0}</0>. Update the section before inserting it."
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:298
+#: packages/admin/src/components/SectionEditor.tsx:319
 msgid "This section is provided by the theme. Editing will create a custom copy that overrides the theme version."
 msgstr "Цей розділ надано темою. Редагування створить власну копію, яка замінить версію з теми."
 
-#: packages/admin/src/components/SectionEditor.tsx:303
+#: packages/admin/src/components/SectionEditor.tsx:324
 msgid "This section was imported from another system."
 msgstr "Цей розділ імпортовано з іншої системи."
 
@@ -8122,7 +8122,7 @@ msgstr "Часовий пояс для відображення дат (напр
 
 #: packages/admin/src/components/ContentList.tsx:577
 #: packages/admin/src/components/ContentList.tsx:737
-#: packages/admin/src/components/SectionEditor.tsx:251
+#: packages/admin/src/components/SectionEditor.tsx:272
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
 msgid "Title"
@@ -8652,7 +8652,7 @@ msgstr "Для зчитувачів екрана та коли зображен�
 msgid "Used in URLs and API endpoints"
 msgstr "Використовується в URL і кінцевих точках API"
 
-#: packages/admin/src/components/SectionEditor.tsx:269
+#: packages/admin/src/components/SectionEditor.tsx:290
 #: packages/admin/src/components/Sections.tsx:196
 msgid "Used to identify this section. Lowercase letters, numbers, and hyphens only."
 msgstr "Ідентифікатор цього розділу. Лише малі літери, цифри та дефіси."

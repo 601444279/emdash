@@ -1299,8 +1299,8 @@ msgstr "العودة إلى السوق"
 msgid "Back to plugins"
 msgstr "العودة إلى الإضافات"
 
-#: packages/admin/src/components/SectionEditor.tsx:74
-#: packages/admin/src/components/SectionEditor.tsx:175
+#: packages/admin/src/components/SectionEditor.tsx:92
+#: packages/admin/src/components/SectionEditor.tsx:195
 msgid "Back to sections"
 msgstr "العودة إلى الأقسام"
 
@@ -1796,7 +1796,7 @@ msgstr "المجموعات المُنشأة:"
 msgid "Columns"
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:288
+#: packages/admin/src/components/SectionEditor.tsx:309
 msgid "Comma-separated keywords for search."
 msgstr "كلمات مفتاحية مفصولة بفاصلة للبحث."
 
@@ -1871,7 +1871,7 @@ msgstr ""
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
 #: packages/admin/src/components/Dashboard.tsx:269
 #: packages/admin/src/components/PortableTextEditor.tsx:2728
-#: packages/admin/src/components/SectionEditor.tsx:195
+#: packages/admin/src/components/SectionEditor.tsx:215
 #: packages/admin/src/components/Sidebar.tsx:408
 #: packages/admin/src/components/Widgets.tsx:899
 msgid "Content"
@@ -2281,7 +2281,7 @@ msgstr "حقول مخصصة"
 msgid "Custom robots.txt content. Leave empty to use the default."
 msgstr "محتوى robots.txt مخصص. اتركه فارغًا لاستخدام الافتراضي."
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Custom Section"
 msgstr "قسم مخصص"
 
@@ -2591,13 +2591,13 @@ msgstr "صِف الصورة..."
 msgid "Describe this image for accessibility"
 msgstr "قم بوصف هذه الصورة لإمكانية الوصول"
 
-#: packages/admin/src/components/SectionEditor.tsx:277
+#: packages/admin/src/components/SectionEditor.tsx:298
 msgid "Describe what this section is for..."
 msgstr "قم بوصف الغرض من هذا القسم..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
 #: packages/admin/src/components/RegistryPluginDetail.tsx:805
-#: packages/admin/src/components/SectionEditor.tsx:274
+#: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
 msgid "Description"
@@ -3209,7 +3209,7 @@ msgstr "خطأ أثناء إضافة عنصر الواجهة"
 msgid "Error reordering widgets"
 msgstr "خطأ أثناء إعادة ترتيب عناصر الواجهة"
 
-#: packages/admin/src/components/SectionEditor.tsx:53
+#: packages/admin/src/components/SectionEditor.tsx:71
 msgid "Error saving section"
 msgstr "خطأ في حفظ القسم"
 
@@ -4150,7 +4150,7 @@ msgstr "الارتفاع"
 msgid "Hero Banner"
 msgstr "لافتة رئيسية"
 
-#: packages/admin/src/components/SectionEditor.tsx:286
+#: packages/admin/src/components/SectionEditor.tsx:307
 msgid "hero, banner, cta"
 msgstr "رئيسية، لافتة، دعوة للإجراء"
 
@@ -4622,7 +4622,7 @@ msgid "Keep typing to narrow down more bylines."
 msgstr ""
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:304
-#: packages/admin/src/components/SectionEditor.tsx:283
+#: packages/admin/src/components/SectionEditor.tsx:304
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:189
 msgid "Keywords"
 msgstr "الكلمات المفتاحية"
@@ -7123,7 +7123,7 @@ msgstr ""
 msgid "Section"
 msgstr "قسم"
 
-#: packages/admin/src/components/SectionEditor.tsx:83
+#: packages/admin/src/components/SectionEditor.tsx:101
 msgid "Section \"{slug}\" could not be found."
 msgstr "لم يتم العثور على القسم \"{slug}\"."
 
@@ -7135,15 +7135,15 @@ msgstr "تم إنشاء القسم"
 msgid "Section deleted"
 msgstr "تم حذف القسم"
 
-#: packages/admin/src/components/SectionEditor.tsx:248
+#: packages/admin/src/components/SectionEditor.tsx:269
 msgid "Section Details"
 msgstr "تفاصيل القسم"
 
-#: packages/admin/src/components/SectionEditor.tsx:79
+#: packages/admin/src/components/SectionEditor.tsx:97
 msgid "Section Not Found"
 msgstr "القسم غير موجود"
 
-#: packages/admin/src/components/SectionEditor.tsx:254
+#: packages/admin/src/components/SectionEditor.tsx:275
 msgid "Section title"
 msgstr "عنوان القسم"
 
@@ -7613,7 +7613,7 @@ msgstr "تم التخطي"
 #: packages/admin/src/components/ContentTypeList.tsx:181
 #: packages/admin/src/components/FieldEditor.tsx:257
 #: packages/admin/src/components/FieldEditor.tsx:444
-#: packages/admin/src/components/SectionEditor.tsx:259
+#: packages/admin/src/components/SectionEditor.tsx:280
 #: packages/admin/src/components/Sections.tsx:184
 #: packages/admin/src/components/TaxonomyManager.tsx:576
 #: packages/admin/src/routes/byline-schema.tsx:237
@@ -7682,7 +7682,7 @@ msgstr "ترتيب المظاهر"
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:580
 #: packages/admin/src/components/Redirects.tsx:475
-#: packages/admin/src/components/SectionEditor.tsx:294
+#: packages/admin/src/components/SectionEditor.tsx:315
 msgid "Source"
 msgstr "المصدر"
 
@@ -7951,7 +7951,7 @@ msgid "Theme"
 msgstr "المظهر"
 
 #. placeholder {0}: section.themeId
-#: packages/admin/src/components/SectionEditor.tsx:307
+#: packages/admin/src/components/SectionEditor.tsx:328
 msgid "Theme ID: {0}"
 msgstr "معرف المظهر: {0}"
 
@@ -7959,7 +7959,7 @@ msgstr "معرف المظهر: {0}"
 msgid "Theme not found"
 msgstr "لم يتم العثور على المظهر"
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Theme Section"
 msgstr "قسم مظهر"
 
@@ -8005,7 +8005,7 @@ msgstr "هذا الحقل لا يقبل ملفات {sniffedMime}."
 msgid "This field is required"
 msgstr "هذا الحقل مطلوب"
 
-#: packages/admin/src/components/SectionEditor.tsx:301
+#: packages/admin/src/components/SectionEditor.tsx:322
 msgid "This is a custom section."
 msgstr "هذا قسم مخصص."
 
@@ -8063,11 +8063,11 @@ msgstr "سيُزال ملف الكاتب. ستُحذف روابط الكُتّا
 msgid "This section contains unsupported Portable Text marks: <0>{0}</0>. Update the section before inserting it."
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:298
+#: packages/admin/src/components/SectionEditor.tsx:319
 msgid "This section is provided by the theme. Editing will create a custom copy that overrides the theme version."
 msgstr "هذا القسم تم توفيره من المظهر. سيؤدي التعديل إلى إنشاء نسخة مخصصة تحل محل نسخة المظهر."
 
-#: packages/admin/src/components/SectionEditor.tsx:303
+#: packages/admin/src/components/SectionEditor.tsx:324
 msgid "This section was imported from another system."
 msgstr "تم استيراد هذا القسم من نظام آخر."
 
@@ -8123,7 +8123,7 @@ msgstr "المنطقة الزمنية لعرض التواريخ (مثال: Ameri
 
 #: packages/admin/src/components/ContentList.tsx:577
 #: packages/admin/src/components/ContentList.tsx:737
-#: packages/admin/src/components/SectionEditor.tsx:251
+#: packages/admin/src/components/SectionEditor.tsx:272
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
 msgid "Title"
@@ -8653,7 +8653,7 @@ msgstr "يُستخدم بواسطة قارئات الشاشة وعند فشل ت
 msgid "Used in URLs and API endpoints"
 msgstr "يُستخدم في الروابط ونقاط نهاية API"
 
-#: packages/admin/src/components/SectionEditor.tsx:269
+#: packages/admin/src/components/SectionEditor.tsx:290
 #: packages/admin/src/components/Sections.tsx:196
 msgid "Used to identify this section. Lowercase letters, numbers, and hyphens only."
 msgstr "يُستخدم لتحديد هوية هذا القسم. أحرف صغيرة وأرقام وشرطات فقط."

@@ -1295,8 +1295,8 @@ msgstr "Zpět na tržiště"
 msgid "Back to plugins"
 msgstr "Zpět na pluginy"
 
-#: packages/admin/src/components/SectionEditor.tsx:74
-#: packages/admin/src/components/SectionEditor.tsx:175
+#: packages/admin/src/components/SectionEditor.tsx:92
+#: packages/admin/src/components/SectionEditor.tsx:195
 msgid "Back to sections"
 msgstr "Zpět na sekce"
 
@@ -1792,7 +1792,7 @@ msgstr "Vytvořené kolekce:"
 msgid "Columns"
 msgstr "Sloupce"
 
-#: packages/admin/src/components/SectionEditor.tsx:288
+#: packages/admin/src/components/SectionEditor.tsx:309
 msgid "Comma-separated keywords for search."
 msgstr "Klíčová slova pro hledání oddělená čárkami."
 
@@ -1867,7 +1867,7 @@ msgstr "obsah"
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
 #: packages/admin/src/components/Dashboard.tsx:269
 #: packages/admin/src/components/PortableTextEditor.tsx:2728
-#: packages/admin/src/components/SectionEditor.tsx:195
+#: packages/admin/src/components/SectionEditor.tsx:215
 #: packages/admin/src/components/Sidebar.tsx:408
 #: packages/admin/src/components/Widgets.tsx:899
 msgid "Content"
@@ -2277,7 +2277,7 @@ msgstr "Vlastní pole"
 msgid "Custom robots.txt content. Leave empty to use the default."
 msgstr "Vlastní obsah souboru robots.txt. Ponechte prázdné pro použití výchozího."
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Custom Section"
 msgstr "Vlastní sekce"
 
@@ -2587,13 +2587,13 @@ msgstr "Popište obrázek..."
 msgid "Describe this image for accessibility"
 msgstr "Popište obrázek pro čtečky obrazovky"
 
-#: packages/admin/src/components/SectionEditor.tsx:277
+#: packages/admin/src/components/SectionEditor.tsx:298
 msgid "Describe what this section is for..."
 msgstr "Popište, k čemu tato sekce slouží..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
 #: packages/admin/src/components/RegistryPluginDetail.tsx:805
-#: packages/admin/src/components/SectionEditor.tsx:274
+#: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
 msgid "Description"
@@ -3208,7 +3208,7 @@ msgstr "Nepodařilo se přidat widget"
 msgid "Error reordering widgets"
 msgstr "Nepodařilo se změnit pořadí widgetů"
 
-#: packages/admin/src/components/SectionEditor.tsx:53
+#: packages/admin/src/components/SectionEditor.tsx:71
 msgid "Error saving section"
 msgstr "Nepodařilo se uložit sekci"
 
@@ -4149,7 +4149,7 @@ msgstr "Výška"
 msgid "Hero Banner"
 msgstr "Hlavní banner"
 
-#: packages/admin/src/components/SectionEditor.tsx:286
+#: packages/admin/src/components/SectionEditor.tsx:307
 msgid "hero, banner, cta"
 msgstr "úvodní sekce, banner, výzva k akci"
 
@@ -4621,7 +4621,7 @@ msgid "Keep typing to narrow down more bylines."
 msgstr "Pokračujte v psaní a výběr autorských podpisů dále zúžíte."
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:304
-#: packages/admin/src/components/SectionEditor.tsx:283
+#: packages/admin/src/components/SectionEditor.tsx:304
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:189
 msgid "Keywords"
 msgstr "Klíčová slova"
@@ -7122,7 +7122,7 @@ msgstr "Hledání..."
 msgid "Section"
 msgstr "Sekce"
 
-#: packages/admin/src/components/SectionEditor.tsx:83
+#: packages/admin/src/components/SectionEditor.tsx:101
 msgid "Section \"{slug}\" could not be found."
 msgstr "Sekci „{slug}“ se nepodařilo najít."
 
@@ -7134,15 +7134,15 @@ msgstr "Sekce vytvořena"
 msgid "Section deleted"
 msgstr "Sekce smazána"
 
-#: packages/admin/src/components/SectionEditor.tsx:248
+#: packages/admin/src/components/SectionEditor.tsx:269
 msgid "Section Details"
 msgstr "Podrobnosti sekce"
 
-#: packages/admin/src/components/SectionEditor.tsx:79
+#: packages/admin/src/components/SectionEditor.tsx:97
 msgid "Section Not Found"
 msgstr "Sekce nenalezena"
 
-#: packages/admin/src/components/SectionEditor.tsx:254
+#: packages/admin/src/components/SectionEditor.tsx:275
 msgid "Section title"
 msgstr "Název sekce"
 
@@ -7612,7 +7612,7 @@ msgstr "Přeskočeno"
 #: packages/admin/src/components/ContentTypeList.tsx:181
 #: packages/admin/src/components/FieldEditor.tsx:257
 #: packages/admin/src/components/FieldEditor.tsx:444
-#: packages/admin/src/components/SectionEditor.tsx:259
+#: packages/admin/src/components/SectionEditor.tsx:280
 #: packages/admin/src/components/Sections.tsx:184
 #: packages/admin/src/components/TaxonomyManager.tsx:576
 #: packages/admin/src/routes/byline-schema.tsx:237
@@ -7681,7 +7681,7 @@ msgstr "Řadit šablony"
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:580
 #: packages/admin/src/components/Redirects.tsx:475
-#: packages/admin/src/components/SectionEditor.tsx:294
+#: packages/admin/src/components/SectionEditor.tsx:315
 msgid "Source"
 msgstr "Zdroj"
 
@@ -7950,7 +7950,7 @@ msgid "Theme"
 msgstr "Šablona"
 
 #. placeholder {0}: section.themeId
-#: packages/admin/src/components/SectionEditor.tsx:307
+#: packages/admin/src/components/SectionEditor.tsx:328
 msgid "Theme ID: {0}"
 msgstr "ID šablony: {0}"
 
@@ -7958,7 +7958,7 @@ msgstr "ID šablony: {0}"
 msgid "Theme not found"
 msgstr "Šablona nenalezena"
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Theme Section"
 msgstr "Sekce šablony"
 
@@ -8004,7 +8004,7 @@ msgstr "Toto pole nepřijímá soubory typu {sniffedMime}."
 msgid "This field is required"
 msgstr "Toto pole je povinné"
 
-#: packages/admin/src/components/SectionEditor.tsx:301
+#: packages/admin/src/components/SectionEditor.tsx:322
 msgid "This is a custom section."
 msgstr "Toto je vlastní sekce."
 
@@ -8062,11 +8062,11 @@ msgstr "Profil autorského podpisu bude odstraněn. Z obsahu budou odebrány odk
 msgid "This section contains unsupported Portable Text marks: <0>{0}</0>. Update the section before inserting it."
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:298
+#: packages/admin/src/components/SectionEditor.tsx:319
 msgid "This section is provided by the theme. Editing will create a custom copy that overrides the theme version."
 msgstr "Tuto sekci poskytuje šablona. Úpravou vznikne vlastní kopie, která nahradí verzi ze šablony."
 
-#: packages/admin/src/components/SectionEditor.tsx:303
+#: packages/admin/src/components/SectionEditor.tsx:324
 msgid "This section was imported from another system."
 msgstr "Tato sekce byla naimportována z jiného systému."
 
@@ -8122,7 +8122,7 @@ msgstr "Časové pásmo pro zobrazení dat (např. America/New_York)"
 
 #: packages/admin/src/components/ContentList.tsx:577
 #: packages/admin/src/components/ContentList.tsx:737
-#: packages/admin/src/components/SectionEditor.tsx:251
+#: packages/admin/src/components/SectionEditor.tsx:272
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
 msgid "Title"
@@ -8652,7 +8652,7 @@ msgstr "Používají jej čtečky obrazovky a zobrazí se také tehdy, když se 
 msgid "Used in URLs and API endpoints"
 msgstr "Používá se v URL a API endpointech"
 
-#: packages/admin/src/components/SectionEditor.tsx:269
+#: packages/admin/src/components/SectionEditor.tsx:290
 #: packages/admin/src/components/Sections.tsx:196
 msgid "Used to identify this section. Lowercase letters, numbers, and hyphens only."
 msgstr "Slouží k identifikaci této sekce. Pouze malá písmena, číslice a pomlčky."

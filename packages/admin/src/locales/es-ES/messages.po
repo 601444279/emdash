@@ -1295,8 +1295,8 @@ msgstr "Volver al mercado"
 msgid "Back to plugins"
 msgstr "Volver a plugins"
 
-#: packages/admin/src/components/SectionEditor.tsx:74
-#: packages/admin/src/components/SectionEditor.tsx:175
+#: packages/admin/src/components/SectionEditor.tsx:92
+#: packages/admin/src/components/SectionEditor.tsx:195
 msgid "Back to sections"
 msgstr "Volver a secciones"
 
@@ -1792,7 +1792,7 @@ msgstr "Colecciones creadas:"
 msgid "Columns"
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:288
+#: packages/admin/src/components/SectionEditor.tsx:309
 msgid "Comma-separated keywords for search."
 msgstr "Palabras clave de búsqueda separadas por comas."
 
@@ -1867,7 +1867,7 @@ msgstr ""
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
 #: packages/admin/src/components/Dashboard.tsx:269
 #: packages/admin/src/components/PortableTextEditor.tsx:2728
-#: packages/admin/src/components/SectionEditor.tsx:195
+#: packages/admin/src/components/SectionEditor.tsx:215
 #: packages/admin/src/components/Sidebar.tsx:408
 #: packages/admin/src/components/Widgets.tsx:899
 msgid "Content"
@@ -2277,7 +2277,7 @@ msgstr "Campos personalizados"
 msgid "Custom robots.txt content. Leave empty to use the default."
 msgstr "Contenido personalizado de robots.txt. Déjelo vacío para usar el valor predeterminado."
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Custom Section"
 msgstr "Sección personalizada"
 
@@ -2587,13 +2587,13 @@ msgstr "Describe la imagen..."
 msgid "Describe this image for accessibility"
 msgstr "Describe esta imagen para accesibilidad."
 
-#: packages/admin/src/components/SectionEditor.tsx:277
+#: packages/admin/src/components/SectionEditor.tsx:298
 msgid "Describe what this section is for..."
 msgstr "Describe para qué sirve esta sección..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
 #: packages/admin/src/components/RegistryPluginDetail.tsx:805
-#: packages/admin/src/components/SectionEditor.tsx:274
+#: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
 msgid "Description"
@@ -3205,7 +3205,7 @@ msgstr "Error al añadir el widget"
 msgid "Error reordering widgets"
 msgstr "Error al reordenar los widgets"
 
-#: packages/admin/src/components/SectionEditor.tsx:53
+#: packages/admin/src/components/SectionEditor.tsx:71
 msgid "Error saving section"
 msgstr "Error al guardar la sección"
 
@@ -4146,7 +4146,7 @@ msgstr "Altura"
 msgid "Hero Banner"
 msgstr "Banner principal"
 
-#: packages/admin/src/components/SectionEditor.tsx:286
+#: packages/admin/src/components/SectionEditor.tsx:307
 msgid "hero, banner, cta"
 msgstr "hero, banner, cta"
 
@@ -4618,7 +4618,7 @@ msgid "Keep typing to narrow down more bylines."
 msgstr ""
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:304
-#: packages/admin/src/components/SectionEditor.tsx:283
+#: packages/admin/src/components/SectionEditor.tsx:304
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:189
 msgid "Keywords"
 msgstr "Palabras clave"
@@ -7119,7 +7119,7 @@ msgstr ""
 msgid "Section"
 msgstr "Sección"
 
-#: packages/admin/src/components/SectionEditor.tsx:83
+#: packages/admin/src/components/SectionEditor.tsx:101
 msgid "Section \"{slug}\" could not be found."
 msgstr "No se pudo encontrar la sección \"{slug}\"."
 
@@ -7131,15 +7131,15 @@ msgstr "Sección creada"
 msgid "Section deleted"
 msgstr "Sección eliminada"
 
-#: packages/admin/src/components/SectionEditor.tsx:248
+#: packages/admin/src/components/SectionEditor.tsx:269
 msgid "Section Details"
 msgstr "Detalles de la sección"
 
-#: packages/admin/src/components/SectionEditor.tsx:79
+#: packages/admin/src/components/SectionEditor.tsx:97
 msgid "Section Not Found"
 msgstr "Sección no encontrada"
 
-#: packages/admin/src/components/SectionEditor.tsx:254
+#: packages/admin/src/components/SectionEditor.tsx:275
 msgid "Section title"
 msgstr "Título de la sección"
 
@@ -7609,7 +7609,7 @@ msgstr "Saltado"
 #: packages/admin/src/components/ContentTypeList.tsx:181
 #: packages/admin/src/components/FieldEditor.tsx:257
 #: packages/admin/src/components/FieldEditor.tsx:444
-#: packages/admin/src/components/SectionEditor.tsx:259
+#: packages/admin/src/components/SectionEditor.tsx:280
 #: packages/admin/src/components/Sections.tsx:184
 #: packages/admin/src/components/TaxonomyManager.tsx:576
 #: packages/admin/src/routes/byline-schema.tsx:237
@@ -7678,7 +7678,7 @@ msgstr "Ordenar temas"
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:580
 #: packages/admin/src/components/Redirects.tsx:475
-#: packages/admin/src/components/SectionEditor.tsx:294
+#: packages/admin/src/components/SectionEditor.tsx:315
 msgid "Source"
 msgstr "Fuente"
 
@@ -7947,7 +7947,7 @@ msgid "Theme"
 msgstr "Tema"
 
 #. placeholder {0}: section.themeId
-#: packages/admin/src/components/SectionEditor.tsx:307
+#: packages/admin/src/components/SectionEditor.tsx:328
 msgid "Theme ID: {0}"
 msgstr "ID del tema: {0}"
 
@@ -7955,7 +7955,7 @@ msgstr "ID del tema: {0}"
 msgid "Theme not found"
 msgstr "Tema no encontrado"
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Theme Section"
 msgstr "Sección temática"
 
@@ -8001,7 +8001,7 @@ msgstr "Este campo no acepta archivos {sniffedMime}."
 msgid "This field is required"
 msgstr "Este campo es obligatorio"
 
-#: packages/admin/src/components/SectionEditor.tsx:301
+#: packages/admin/src/components/SectionEditor.tsx:322
 msgid "This is a custom section."
 msgstr "Esta es una sección personalizada."
 
@@ -8059,11 +8059,11 @@ msgstr "Esto elimina el perfil de la firma. Se quitarán los enlaces de firma de
 msgid "This section contains unsupported Portable Text marks: <0>{0}</0>. Update the section before inserting it."
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:298
+#: packages/admin/src/components/SectionEditor.tsx:319
 msgid "This section is provided by the theme. Editing will create a custom copy that overrides the theme version."
 msgstr "Esta sección está proporcionada por el tema. La edición creará una copia personalizada que anulará la versión del tema."
 
-#: packages/admin/src/components/SectionEditor.tsx:303
+#: packages/admin/src/components/SectionEditor.tsx:324
 msgid "This section was imported from another system."
 msgstr "Esta sección fue importada de otro sistema."
 
@@ -8119,7 +8119,7 @@ msgstr "Zona horaria para mostrar fechas (por ejemplo, América/Nueva_York)"
 
 #: packages/admin/src/components/ContentList.tsx:577
 #: packages/admin/src/components/ContentList.tsx:737
-#: packages/admin/src/components/SectionEditor.tsx:251
+#: packages/admin/src/components/SectionEditor.tsx:272
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
 msgid "Title"
@@ -8649,7 +8649,7 @@ msgstr "Utilizado por lectores de pantalla y cuando la imagen no se carga"
 msgid "Used in URLs and API endpoints"
 msgstr "Se usa en las URL y en los endpoints de la API"
 
-#: packages/admin/src/components/SectionEditor.tsx:269
+#: packages/admin/src/components/SectionEditor.tsx:290
 #: packages/admin/src/components/Sections.tsx:196
 msgid "Used to identify this section. Lowercase letters, numbers, and hyphens only."
 msgstr "Se utiliza para identificar esta sección. Sólo letras minúsculas, números y guiones."

@@ -1295,8 +1295,8 @@ msgstr "กลับไปยังมาร์เก็ตเพลส"
 msgid "Back to plugins"
 msgstr "กลับไปยังปลั๊กอิน"
 
-#: packages/admin/src/components/SectionEditor.tsx:74
-#: packages/admin/src/components/SectionEditor.tsx:175
+#: packages/admin/src/components/SectionEditor.tsx:92
+#: packages/admin/src/components/SectionEditor.tsx:195
 msgid "Back to sections"
 msgstr "กลับไปยังส่วนต่าง ๆ"
 
@@ -1792,7 +1792,7 @@ msgstr "คอลเลกชันที่สร้าง:"
 msgid "Columns"
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:288
+#: packages/admin/src/components/SectionEditor.tsx:309
 msgid "Comma-separated keywords for search."
 msgstr "คำสำคัญสำหรับการค้นหา คั่นด้วยเครื่องหมายจุลภาค"
 
@@ -1867,7 +1867,7 @@ msgstr ""
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
 #: packages/admin/src/components/Dashboard.tsx:269
 #: packages/admin/src/components/PortableTextEditor.tsx:2728
-#: packages/admin/src/components/SectionEditor.tsx:195
+#: packages/admin/src/components/SectionEditor.tsx:215
 #: packages/admin/src/components/Sidebar.tsx:408
 #: packages/admin/src/components/Widgets.tsx:899
 msgid "Content"
@@ -2277,7 +2277,7 @@ msgstr "ฟิลด์กำหนดเอง"
 msgid "Custom robots.txt content. Leave empty to use the default."
 msgstr "เนื้อหา robots.txt แบบกำหนดเอง เว้นว่างไว้เพื่อใช้ค่าเริ่มต้น"
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Custom Section"
 msgstr "ส่วนกำหนดเอง"
 
@@ -2587,13 +2587,13 @@ msgstr "อธิบายรูปภาพ..."
 msgid "Describe this image for accessibility"
 msgstr "อธิบายรูปภาพนี้เพื่อการเข้าถึง"
 
-#: packages/admin/src/components/SectionEditor.tsx:277
+#: packages/admin/src/components/SectionEditor.tsx:298
 msgid "Describe what this section is for..."
 msgstr "อธิบายว่าส่วนนี้มีไว้เพื่ออะไร..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
 #: packages/admin/src/components/RegistryPluginDetail.tsx:805
-#: packages/admin/src/components/SectionEditor.tsx:274
+#: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
 msgid "Description"
@@ -3205,7 +3205,7 @@ msgstr "เกิดข้อผิดพลาดในการเพิ่ม
 msgid "Error reordering widgets"
 msgstr "เกิดข้อผิดพลาดในการจัดเรียงวิดเจ็ตใหม่"
 
-#: packages/admin/src/components/SectionEditor.tsx:53
+#: packages/admin/src/components/SectionEditor.tsx:71
 msgid "Error saving section"
 msgstr "เกิดข้อผิดพลาดในการบันทึกส่วน"
 
@@ -4146,7 +4146,7 @@ msgstr "ความสูง"
 msgid "Hero Banner"
 msgstr "แบนเนอร์ Hero"
 
-#: packages/admin/src/components/SectionEditor.tsx:286
+#: packages/admin/src/components/SectionEditor.tsx:307
 msgid "hero, banner, cta"
 msgstr "hero, banner, cta"
 
@@ -4618,7 +4618,7 @@ msgid "Keep typing to narrow down more bylines."
 msgstr "พิมพ์ต่อเพื่อค้นหาผู้เขียนให้แคบลง"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:304
-#: packages/admin/src/components/SectionEditor.tsx:283
+#: packages/admin/src/components/SectionEditor.tsx:304
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:189
 msgid "Keywords"
 msgstr "คำสำคัญ"
@@ -7119,7 +7119,7 @@ msgstr "กำลังค้นหา..."
 msgid "Section"
 msgstr "ส่วน"
 
-#: packages/admin/src/components/SectionEditor.tsx:83
+#: packages/admin/src/components/SectionEditor.tsx:101
 msgid "Section \"{slug}\" could not be found."
 msgstr "ไม่พบส่วน \"{slug}\""
 
@@ -7131,15 +7131,15 @@ msgstr "สร้างส่วนแล้ว"
 msgid "Section deleted"
 msgstr "ลบส่วนแล้ว"
 
-#: packages/admin/src/components/SectionEditor.tsx:248
+#: packages/admin/src/components/SectionEditor.tsx:269
 msgid "Section Details"
 msgstr "รายละเอียดส่วน"
 
-#: packages/admin/src/components/SectionEditor.tsx:79
+#: packages/admin/src/components/SectionEditor.tsx:97
 msgid "Section Not Found"
 msgstr "ไม่พบส่วน"
 
-#: packages/admin/src/components/SectionEditor.tsx:254
+#: packages/admin/src/components/SectionEditor.tsx:275
 msgid "Section title"
 msgstr "ชื่อส่วน"
 
@@ -7609,7 +7609,7 @@ msgstr "ข้ามแล้ว"
 #: packages/admin/src/components/ContentTypeList.tsx:181
 #: packages/admin/src/components/FieldEditor.tsx:257
 #: packages/admin/src/components/FieldEditor.tsx:444
-#: packages/admin/src/components/SectionEditor.tsx:259
+#: packages/admin/src/components/SectionEditor.tsx:280
 #: packages/admin/src/components/Sections.tsx:184
 #: packages/admin/src/components/TaxonomyManager.tsx:576
 #: packages/admin/src/routes/byline-schema.tsx:237
@@ -7678,7 +7678,7 @@ msgstr "จัดเรียงธีม"
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:580
 #: packages/admin/src/components/Redirects.tsx:475
-#: packages/admin/src/components/SectionEditor.tsx:294
+#: packages/admin/src/components/SectionEditor.tsx:315
 msgid "Source"
 msgstr "แหล่งที่มา"
 
@@ -7947,7 +7947,7 @@ msgid "Theme"
 msgstr "ธีม"
 
 #. placeholder {0}: section.themeId
-#: packages/admin/src/components/SectionEditor.tsx:307
+#: packages/admin/src/components/SectionEditor.tsx:328
 msgid "Theme ID: {0}"
 msgstr "ID ธีม: {0}"
 
@@ -7955,7 +7955,7 @@ msgstr "ID ธีม: {0}"
 msgid "Theme not found"
 msgstr "ไม่พบธีม"
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Theme Section"
 msgstr "ส่วนของธีม"
 
@@ -8001,7 +8001,7 @@ msgstr "ฟิลด์นี้ไม่รองรับไฟล์ {sniffed
 msgid "This field is required"
 msgstr "ฟิลด์นี้ต้องระบุ"
 
-#: packages/admin/src/components/SectionEditor.tsx:301
+#: packages/admin/src/components/SectionEditor.tsx:322
 msgid "This is a custom section."
 msgstr "นี่เป็นส่วนที่กำหนดเอง"
 
@@ -8059,11 +8059,11 @@ msgstr "การดำเนินการนี้จะนำโปรไฟ
 msgid "This section contains unsupported Portable Text marks: <0>{0}</0>. Update the section before inserting it."
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:298
+#: packages/admin/src/components/SectionEditor.tsx:319
 msgid "This section is provided by the theme. Editing will create a custom copy that overrides the theme version."
 msgstr "ส่วนนี้มาจากธีม การแก้ไขจะสร้างสำเนาที่กำหนดเองซึ่งจะแทนที่เวอร์ชันของธีม"
 
-#: packages/admin/src/components/SectionEditor.tsx:303
+#: packages/admin/src/components/SectionEditor.tsx:324
 msgid "This section was imported from another system."
 msgstr "ส่วนนี้นำเข้ามาจากระบบอื่น"
 
@@ -8119,7 +8119,7 @@ msgstr "เขตเวลาสำหรับการแสดงวันท
 
 #: packages/admin/src/components/ContentList.tsx:577
 #: packages/admin/src/components/ContentList.tsx:737
-#: packages/admin/src/components/SectionEditor.tsx:251
+#: packages/admin/src/components/SectionEditor.tsx:272
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
 msgid "Title"
@@ -8649,7 +8649,7 @@ msgstr "ใช้โดยโปรแกรมอ่านหน้าจอแ
 msgid "Used in URLs and API endpoints"
 msgstr "ใช้ใน URL และ API endpoint"
 
-#: packages/admin/src/components/SectionEditor.tsx:269
+#: packages/admin/src/components/SectionEditor.tsx:290
 #: packages/admin/src/components/Sections.tsx:196
 msgid "Used to identify this section. Lowercase letters, numbers, and hyphens only."
 msgstr "ใช้เพื่อระบุส่วนนี้ ใช้ได้เฉพาะตัวอักษรพิมพ์เล็ก ตัวเลข และยัติภังค์เท่านั้น"

@@ -1295,8 +1295,8 @@ msgstr "बाज़ार में वापस"
 msgid "Back to plugins"
 msgstr "प्लगइन्स पर वापस जाएँ"
 
-#: packages/admin/src/components/SectionEditor.tsx:74
-#: packages/admin/src/components/SectionEditor.tsx:175
+#: packages/admin/src/components/SectionEditor.tsx:92
+#: packages/admin/src/components/SectionEditor.tsx:195
 msgid "Back to sections"
 msgstr "अनुभागों पर वापस जाएँ"
 
@@ -1792,7 +1792,7 @@ msgstr "बनाए गए संग्रह:"
 msgid "Columns"
 msgstr "कॉलम"
 
-#: packages/admin/src/components/SectionEditor.tsx:288
+#: packages/admin/src/components/SectionEditor.tsx:309
 msgid "Comma-separated keywords for search."
 msgstr "खोज के लिए अल्पविराम से अलग किए गए कीवर्ड."
 
@@ -1867,7 +1867,7 @@ msgstr "सामग्री"
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
 #: packages/admin/src/components/Dashboard.tsx:269
 #: packages/admin/src/components/PortableTextEditor.tsx:2728
-#: packages/admin/src/components/SectionEditor.tsx:195
+#: packages/admin/src/components/SectionEditor.tsx:215
 #: packages/admin/src/components/Sidebar.tsx:408
 #: packages/admin/src/components/Widgets.tsx:899
 msgid "Content"
@@ -2277,7 +2277,7 @@ msgstr "तटकर क्षेत्र"
 msgid "Custom robots.txt content. Leave empty to use the default."
 msgstr "कस्टम robots.txt सामग्री. डिफ़ॉल्ट का उपयोग करने के लिए खाली छोड़ दें."
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Custom Section"
 msgstr "कस्टम अनुभाग"
 
@@ -2587,13 +2587,13 @@ msgstr "छवि का वर्णन करें..."
 msgid "Describe this image for accessibility"
 msgstr "पहुंच के लिए इस छवि का वर्णन करें"
 
-#: packages/admin/src/components/SectionEditor.tsx:277
+#: packages/admin/src/components/SectionEditor.tsx:298
 msgid "Describe what this section is for..."
 msgstr "बताएं कि यह अनुभाग किस लिए है..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
 #: packages/admin/src/components/RegistryPluginDetail.tsx:805
-#: packages/admin/src/components/SectionEditor.tsx:274
+#: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
 msgid "Description"
@@ -3208,7 +3208,7 @@ msgstr "विजेट जोड़ने में त्रुटि"
 msgid "Error reordering widgets"
 msgstr "विजेट्स को पुनः व्यवस्थित करने में त्रुटि"
 
-#: packages/admin/src/components/SectionEditor.tsx:53
+#: packages/admin/src/components/SectionEditor.tsx:71
 msgid "Error saving section"
 msgstr "अनुभाग सहेजने में त्रुटि"
 
@@ -4149,7 +4149,7 @@ msgstr "ऊंचाई"
 msgid "Hero Banner"
 msgstr "हीरो बैनर"
 
-#: packages/admin/src/components/SectionEditor.tsx:286
+#: packages/admin/src/components/SectionEditor.tsx:307
 msgid "hero, banner, cta"
 msgstr "हीरो, बैनर, सीटीए"
 
@@ -4621,7 +4621,7 @@ msgid "Keep typing to narrow down more bylines."
 msgstr "अधिक बाइलाइन कम करने के लिए टाइप करते रहें।"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:304
-#: packages/admin/src/components/SectionEditor.tsx:283
+#: packages/admin/src/components/SectionEditor.tsx:304
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:189
 msgid "Keywords"
 msgstr "कीवर्ड"
@@ -7122,7 +7122,7 @@ msgstr "खोज रहे हैं..."
 msgid "Section"
 msgstr "अनुभाग"
 
-#: packages/admin/src/components/SectionEditor.tsx:83
+#: packages/admin/src/components/SectionEditor.tsx:101
 msgid "Section \"{slug}\" could not be found."
 msgstr "अनुभाग \"{slug}\" नहीं पाया जा सका."
 
@@ -7134,15 +7134,15 @@ msgstr "अनुभाग बनाया गया"
 msgid "Section deleted"
 msgstr "अनुभाग हटा दिया गया"
 
-#: packages/admin/src/components/SectionEditor.tsx:248
+#: packages/admin/src/components/SectionEditor.tsx:269
 msgid "Section Details"
 msgstr "अनुभाग विवरण"
 
-#: packages/admin/src/components/SectionEditor.tsx:79
+#: packages/admin/src/components/SectionEditor.tsx:97
 msgid "Section Not Found"
 msgstr "अनुभाग नहीं मिला"
 
-#: packages/admin/src/components/SectionEditor.tsx:254
+#: packages/admin/src/components/SectionEditor.tsx:275
 msgid "Section title"
 msgstr "अनुभाग शीर्षक"
 
@@ -7612,7 +7612,7 @@ msgstr "छोड़ा गया"
 #: packages/admin/src/components/ContentTypeList.tsx:181
 #: packages/admin/src/components/FieldEditor.tsx:257
 #: packages/admin/src/components/FieldEditor.tsx:444
-#: packages/admin/src/components/SectionEditor.tsx:259
+#: packages/admin/src/components/SectionEditor.tsx:280
 #: packages/admin/src/components/Sections.tsx:184
 #: packages/admin/src/components/TaxonomyManager.tsx:576
 #: packages/admin/src/routes/byline-schema.tsx:237
@@ -7681,7 +7681,7 @@ msgstr "विषयों को क्रमबद्ध करें"
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
 #: packages/admin/src/components/PluginManager.tsx:580
 #: packages/admin/src/components/Redirects.tsx:475
-#: packages/admin/src/components/SectionEditor.tsx:294
+#: packages/admin/src/components/SectionEditor.tsx:315
 msgid "Source"
 msgstr "स्रोत"
 
@@ -7950,7 +7950,7 @@ msgid "Theme"
 msgstr "विषय"
 
 #. placeholder {0}: section.themeId
-#: packages/admin/src/components/SectionEditor.tsx:307
+#: packages/admin/src/components/SectionEditor.tsx:328
 msgid "Theme ID: {0}"
 msgstr "थीम आईडी: {0}"
 
@@ -7958,7 +7958,7 @@ msgstr "थीम आईडी: {0}"
 msgid "Theme not found"
 msgstr "थीम नहीं मिली"
 
-#: packages/admin/src/components/SectionEditor.tsx:185
+#: packages/admin/src/components/SectionEditor.tsx:205
 msgid "Theme Section"
 msgstr "थीम अनुभाग"
 
@@ -8004,7 +8004,7 @@ msgstr "यह फ़ील्ड {sniffedMime} फ़ाइलें स्व�
 msgid "This field is required"
 msgstr "यह फ़ील्ड आवश्यक है"
 
-#: packages/admin/src/components/SectionEditor.tsx:301
+#: packages/admin/src/components/SectionEditor.tsx:322
 msgid "This is a custom section."
 msgstr "यह एक कस्टम अनुभाग है."
 
@@ -8062,11 +8062,11 @@ msgstr "इससे बायलाइन प्रोफ़ाइल हट �
 msgid "This section contains unsupported Portable Text marks: <0>{0}</0>. Update the section before inserting it."
 msgstr ""
 
-#: packages/admin/src/components/SectionEditor.tsx:298
+#: packages/admin/src/components/SectionEditor.tsx:319
 msgid "This section is provided by the theme. Editing will create a custom copy that overrides the theme version."
 msgstr "यह अनुभाग थीम द्वारा प्रदान किया गया है. संपादन से एक कस्टम प्रतिलिपि बनेगी जो थीम संस्करण को ओवरराइड करेगी।"
 
-#: packages/admin/src/components/SectionEditor.tsx:303
+#: packages/admin/src/components/SectionEditor.tsx:324
 msgid "This section was imported from another system."
 msgstr "यह अनुभाग किसी अन्य सिस्टम से आयात किया गया था."
 
@@ -8122,7 +8122,7 @@ msgstr "दिनांक प्रदर्शित करने के ल�
 
 #: packages/admin/src/components/ContentList.tsx:577
 #: packages/admin/src/components/ContentList.tsx:737
-#: packages/admin/src/components/SectionEditor.tsx:251
+#: packages/admin/src/components/SectionEditor.tsx:272
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
 msgid "Title"
@@ -8652,7 +8652,7 @@ msgstr "स्क्रीन रीडर द्वारा उपयोग �
 msgid "Used in URLs and API endpoints"
 msgstr "URL और एपीआई एंडपॉइंट में उपयोग किया जाता है"
 
-#: packages/admin/src/components/SectionEditor.tsx:269
+#: packages/admin/src/components/SectionEditor.tsx:290
 #: packages/admin/src/components/Sections.tsx:196
 msgid "Used to identify this section. Lowercase letters, numbers, and hyphens only."
 msgstr "इस अनुभाग की पहचान करने के लिए उपयोग किया जाता है. केवल छोटे अक्षर, संख्याएँ और हाइफ़न।"
