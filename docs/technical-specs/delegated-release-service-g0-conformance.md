@@ -1,6 +1,6 @@
 # Delegated release service G0 PDS conformance
 
-Status: Public-client scope passed; refresh and confidential-client runs pending
+Status: Public-client lifecycle passed; confidential-client deployment runs pending
 
 Companion design: [RFC PR #1870](https://github.com/emdash-cms/emdash/pull/1870)
 
@@ -192,10 +192,25 @@ Do not commit raw evidence until it has been inspected for unexpected provider d
 
 ## Result matrix
 
-| Provider            | Public-client scope | Public-client refresh | Public-client revocation | Confidential scope         | Confidential refresh | Revocation/key removal | Status              |
-| ------------------- | ------------------- | --------------------- | ------------------------ | -------------------------- | -------------------- | ---------------------- | ------------------- |
-| Bluesky PDS at npmX | Pass (2026-08-24)   | Pending after expiry  | Pending                  | Pending service deployment | Pending              | Pending                | Public scope passed |
-| Cirrus              | Pass (2026-08-24)   | Pending after expiry  | Pending                  | Pending service deployment | Pending              | Pending                | Public scope passed |
+| Provider            | Public-client scope | Public-client refresh | Public-client revocation                         | Confidential scope         | Confidential refresh | Revocation/key removal | Status                  |
+| ------------------- | ------------------- | --------------------- | ------------------------------------------------ | -------------------------- | -------------------- | ---------------------- | ----------------------- |
+| Bluesky PDS at npmX | Pass (2026-08-25)   | Pass (2026-08-25)     | Pass; access token rejected immediately          | Pending service deployment | Pending              | Pending                | Public lifecycle passed |
+| Cirrus              | Pass (2026-08-25)   | Pass (2026-08-25)     | Pass; issued access token remained valid briefly | Pending service deployment | Pending              | Pending                | Public lifecycle passed |
+
+### Retained public-client evidence
+
+The redacted reports are retained outside the repository. Their SHA-256 hashes are:
+
+| Provider | Phase     | SHA-256                                                            |
+| -------- | --------- | ------------------------------------------------------------------ |
+| npmX     | authorize | `87f1c3b59c881c3f94193f355bfa6d0bf43d0a46930689ccae8624288f19b9f0` |
+| npmX     | refresh   | `287f689a8cbcdef7ac5994c45cc9c652cc999a36dce94d2412b0350d9a254ab4` |
+| npmX     | revoke    | `77b7f63d5fa00d782dbacaa92c7a28d18c56061e6412b64faece935e217faada` |
+| Cirrus   | authorize | `3a26efb59303d66d498352d39ce02a72091ee2e91b17f69070f454bafb4bf507` |
+| Cirrus   | refresh   | `931ab715f2d4d96817c8647567f28936357206077c8f1076acff6c17aeedf96e` |
+| Cirrus   | revoke    | `87af4eb32677e32405b619a38f12cee6020081cd4eabd37fe1a1ed4f002912c0` |
+
+npmX invalidated the access token immediately after revocation. Cirrus confirmed server-side revocation and local session deletion while the previously issued access token remained usable during its existing lifetime. The latter is permitted: revocation prevents future refresh but does not require retrospective invalidation of every access token.
 
 ## G0 completion criteria
 
