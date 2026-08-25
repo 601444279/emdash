@@ -1,5 +1,19 @@
 import { DurableObject } from "cloudflare:workers";
 
+import {
+	initializeWorkloadPolicySchema,
+	WorkloadPolicyStore,
+	type PutWorkloadPolicyInput,
+	type PutWorkloadPolicyResult,
+	type StoredWorkloadPolicy,
+} from "./workload-policy.js";
+
+export type {
+	PutWorkloadPolicyInput,
+	PutWorkloadPolicyResult,
+	StoredWorkloadPolicy,
+} from "./workload-policy.js";
+
 const DID_PATTERN = /^did:[a-z0-9]+:[A-Za-z0-9._:%-]+$/;
 const HASH_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
@@ -245,10 +259,12 @@ async function hashRefreshToken(token: string): Promise<string> {
 
 export class PublisherDurableObject extends DurableObject<Env> {
 	readonly #objectName: string | undefined;
+	readonly #workloadPolicies: WorkloadPolicyStore;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
 		this.#objectName = ctx.id.name;
+		this.#workloadPolicies = new WorkloadPolicyStore(ctx.storage);
 		void ctx.blockConcurrencyWhile(async () => {
 			this.#initializeSchema();
 		});
@@ -324,6 +340,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				created_at INTEGER NOT NULL
 			);
 		`);
+		initializeWorkloadPolicySchema(this.ctx.storage);
 	}
 
 	#assertPublisherObjectName(publisherDid: string): void {
@@ -376,6 +393,25 @@ export class PublisherDurableObject extends DurableObject<Env> {
 
 	initializePublisher(publisherDid: string): void {
 		this.#assertPublisherDid(publisherDid);
+	}
+
+	putWorkloadPolicy(input: PutWorkloadPolicyInput): PutWorkloadPolicyResult {
+		this.#assertPublisherDid(input.publisherDid);
+		return this.#workloadPolicies.put(input);
+	}
+
+	getWorkloadPolicy(publisherDid: string, packageSlug: string): StoredWorkloadPolicy | null {
+		this.#assertPublisherDid(publisherDid);
+		return this.#workloadPolicies.get(packageSlug);
+	}
+
+	listWorkloadPolicies(
+		publisherDid: string,
+		afterPackageSlug: string | null,
+		limit: number,
+	): readonly StoredWorkloadPolicy[] {
+		this.#assertPublisherDid(publisherDid);
+		return this.#workloadPolicies.list(afterPackageSlug, limit);
 	}
 
 	createPublisherSession(input: CreatePublisherSessionInput): CreatePublisherSessionResult {
