@@ -91,8 +91,11 @@ const HASH_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const ACTOR_IDENTITY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,255}$/;
 const MAX_CIPHERTEXT_CHARS = 1_500_000;
+const MAX_ACTIVE_OAUTH_STATES = 20;
 const MAX_REFRESH_LEASE_MS = 5 * 60_000;
 const MAX_PUBLISHER_SESSION_MS = 24 * 60 * 60_000;
+const MAX_ACTIVE_PUBLISHER_SESSIONS = 20;
+const MAINTENANCE_BATCH_SIZE = 100;
 const REFRESH_TOKEN_BYTES = 32;
 const BASE64_PADDING_PATTERN = /=+$/;
 const ENCRYPTION_CURSOR_PATTERN = /^(?:delegation:1|oauth-state:[A-Za-z0-9_-]{32,128})$/;
@@ -134,6 +137,7 @@ export interface PutOAuthStateInput {
 	clientKeyId: string;
 	redirectTarget: string;
 	expiresAt: number;
+	now?: number;
 }
 
 export interface StoredOAuthState {
@@ -144,7 +148,9 @@ export interface StoredOAuthState {
 	expiresAt: number;
 }
 
-export type PutOAuthStateResult = { ok: true } | { ok: false; code: "OAUTH_STATE_EXISTS" };
+export type PutOAuthStateResult =
+	| { ok: true }
+	| { ok: false; code: "OAUTH_STATE_EXISTS" | "OAUTH_STATE_LIMIT_REACHED" };
 
 export interface PutDelegationInput {
 	publisherDid: string;
@@ -292,7 +298,10 @@ export interface StoredPublisherSession {
 
 export type CreatePublisherSessionResult =
 	| { ok: true; session: StoredPublisherSession }
-	| { ok: false; code: "PUBLISHER_SESSION_EXISTS" | "PUBLISHER_SUSPENDED" };
+	| {
+			ok: false;
+			code: "PUBLISHER_SESSION_EXISTS" | "PUBLISHER_SESSION_LIMIT_REACHED" | "PUBLISHER_SUSPENDED";
+	  };
 
 export type ValidatePublisherSessionResult =
 	| { ok: true; session: StoredPublisherSession }
@@ -397,6 +406,14 @@ function encodeBase64Url(bytes: Uint8Array): string {
 
 async function hashRefreshToken(token: string): Promise<string> {
 	const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+	return encodeBase64Url(new Uint8Array(digest));
+}
+
+async function expirationDigest(intentId: string, expiresAt: number): Promise<string> {
+	const digest = await crypto.subtle.digest(
+		"SHA-256",
+		new TextEncoder().encode(JSON.stringify(["intent-expired", intentId, expiresAt])),
+	);
 	return encodeBase64Url(new Uint8Array(digest));
 }
 
@@ -616,9 +633,11 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		return this.#workloadPolicies.list(afterPackageSlug, limit);
 	}
 
-	createIntent(input: CreateIntentInput): CreateIntentResult {
+	async createIntent(input: CreateIntentInput): Promise<CreateIntentResult> {
 		this.#assertPublisherDid(input.publisherDid);
-		return this.#intents.create(input);
+		const result = this.#intents.create(input);
+		if (result.ok) await this.#scheduleNextAlarm(input.now ?? Date.now());
+		return result;
 	}
 
 	consumeIntentRateLimit(input: ConsumeIntentRateLimitInput): ConsumeIntentRateLimitResult {
@@ -707,7 +726,9 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		return result;
 	}
 
-	createPublisherSession(input: CreatePublisherSessionInput): CreatePublisherSessionResult {
+	async createPublisherSession(
+		input: CreatePublisherSessionInput,
+	): Promise<CreatePublisherSessionResult> {
 		this.#assertPublisherDid(input.publisherDid);
 		const now = input.now ?? Date.now();
 		if (
@@ -720,7 +741,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		) {
 			throw new PublisherStateError("PUBLISHER_SESSION_INVALID");
 		}
-		return this.ctx.storage.transactionSync(() => {
+		const result = this.ctx.storage.transactionSync(() => {
 			const owner = this.#readPublisherSessionOwner();
 			if (!owner || owner.status === "suspended") {
 				return { ok: false, code: "PUBLISHER_SUSPENDED" } as const;
@@ -733,6 +754,12 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				.toArray()[0];
 			if (existing) return { ok: false, code: "PUBLISHER_SESSION_EXISTS" } as const;
 			this.ctx.storage.sql.exec("DELETE FROM publisher_sessions WHERE expires_at <= ?", now);
+			const count = this.ctx.storage.sql
+				.exec<{ count: number }>("SELECT COUNT(*) AS count FROM publisher_sessions")
+				.one().count;
+			if (count >= MAX_ACTIVE_PUBLISHER_SESSIONS) {
+				return { ok: false, code: "PUBLISHER_SESSION_LIMIT_REACHED" } as const;
+			}
 			this.ctx.storage.sql.exec(
 				`INSERT INTO publisher_sessions (
 					token_hash, csrf_hash, session_epoch, expires_at, created_at, last_seen_at
@@ -760,6 +787,8 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				},
 			} as const;
 		});
+		if (result.ok) await this.#scheduleNextAlarm(now);
+		return result;
 	}
 
 	validatePublisherSession(
@@ -857,8 +886,9 @@ export class PublisherDurableObject extends DurableObject<Env> {
 		});
 	}
 
-	putOAuthState(input: PutOAuthStateInput): PutOAuthStateResult {
+	async putOAuthState(input: PutOAuthStateInput): Promise<PutOAuthStateResult> {
 		this.#assertPublisherDid(input.publisherDid);
+		const now = input.now ?? Date.now();
 		if (
 			!HASH_PATTERN.test(input.stateHash) ||
 			!validBoundedString(input.encryptedState, MAX_CIPHERTEXT_CHARS) ||
@@ -867,11 +897,13 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			!validBoundedString(input.clientKeyId, 128) ||
 			!validBoundedString(input.redirectTarget, 2048) ||
 			!Number.isSafeInteger(input.expiresAt) ||
-			input.expiresAt <= Date.now()
+			input.expiresAt <= now ||
+			!Number.isSafeInteger(now) ||
+			now < 0
 		) {
 			throw new PublisherStateError("OAUTH_STATE_INVALID");
 		}
-		return this.ctx.storage.transactionSync(() => {
+		const result = this.ctx.storage.transactionSync(() => {
 			const existing = this.ctx.storage.sql
 				.exec<{ state_hash: string }>(
 					"SELECT state_hash FROM oauth_states WHERE state_hash = ?",
@@ -879,6 +911,13 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				)
 				.toArray()[0];
 			if (existing) return { ok: false, code: "OAUTH_STATE_EXISTS" } as const;
+			this.ctx.storage.sql.exec("DELETE FROM oauth_states WHERE expires_at <= ?", now);
+			const count = this.ctx.storage.sql
+				.exec<{ count: number }>("SELECT COUNT(*) AS count FROM oauth_states")
+				.one().count;
+			if (count >= MAX_ACTIVE_OAUTH_STATES) {
+				return { ok: false, code: "OAUTH_STATE_LIMIT_REACHED" } as const;
+			}
 			this.ctx.storage.sql.exec(
 				`INSERT INTO oauth_states (
 						state_hash, encrypted_state, encryption_key_version, encryption_purpose, client_key_id,
@@ -891,29 +930,31 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				input.clientKeyId,
 				input.redirectTarget,
 				input.expiresAt,
-				Date.now(),
+				now,
 			);
 			this.#appendAudit(
 				"oauth-state-created",
 				"publisher",
 				input.publisherDid,
 				input.stateHash,
-				Date.now(),
+				now,
 			);
 			return { ok: true } as const;
 		});
+		if (result.ok) await this.#scheduleNextAlarm(now);
+		return result;
 	}
 
-	consumeOAuthState(
+	async consumeOAuthState(
 		publisherDid: string,
 		stateHash: string,
 		now = Date.now(),
-	): StoredOAuthState | null {
+	): Promise<StoredOAuthState | null> {
 		this.#assertPublisherDid(publisherDid);
 		if (!HASH_PATTERN.test(stateHash) || !Number.isSafeInteger(now)) {
 			throw new PublisherStateError("OAUTH_STATE_INVALID");
 		}
-		return this.ctx.storage.transactionSync(() => {
+		const result = this.ctx.storage.transactionSync(() => {
 			const row = this.ctx.storage.sql
 				.exec<OAuthStateRow>(
 					`SELECT encrypted_state, encryption_key_version, client_key_id, redirect_target, expires_at
@@ -943,6 +984,8 @@ export class PublisherDurableObject extends DurableObject<Env> {
 				expiresAt: row.expires_at,
 			};
 		});
+		await this.#scheduleNextAlarm(now);
+		return result;
 	}
 
 	putDelegation(input: PutDelegationInput): PutDelegationResult {
@@ -1589,7 +1632,29 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	}
 
 	async #scheduleNextAlarm(now: number): Promise<void> {
-		const deadline = this.#publicationOperations.nextDeadline();
+		const candidates = this.ctx.storage.sql
+			.exec<{
+				operation_deadline: number | null;
+				oauth_expiry: number | null;
+				session_expiry: number | null;
+				idempotency_expiry: number | null;
+				rate_expiry: number | null;
+				intent_expiry: number | null;
+			}>(
+				`SELECT
+					(SELECT MIN(scheduled_at) FROM deadlines) AS operation_deadline,
+					(SELECT MIN(expires_at) FROM oauth_states) AS oauth_expiry,
+					(SELECT MIN(expires_at) FROM publisher_sessions) AS session_expiry,
+					(SELECT MIN(expires_at) FROM intent_idempotency) AS idempotency_expiry,
+					(SELECT MIN(expires_at) FROM intent_rate_idempotency) AS rate_expiry,
+					(SELECT MIN(expires_at) FROM intents
+					 WHERE state IN ('received', 'verifying', 'verified', 'ready')) AS intent_expiry`,
+			)
+			.one();
+		const deadlines = Object.values(candidates).filter(
+			(value): value is number => typeof value === "number",
+		);
+		const deadline = deadlines.length === 0 ? null : Math.min(...deadlines);
 		if (deadline === null) {
 			await this.ctx.storage.deleteAlarm();
 			return;
@@ -1600,10 +1665,29 @@ export class PublisherDurableObject extends DurableObject<Env> {
 	override async alarm(): Promise<void> {
 		const now = Date.now();
 		this.#publicationOperations.recoverExpired(now);
+		const publisherDid = this.#objectName;
+		if (publisherDid !== undefined) {
+			for (const intent of this.#intents.listExpirable(now, MAINTENANCE_BATCH_SIZE)) {
+				this.#intents.transition({
+					publisherDid,
+					intentId: intent.id,
+					expectedState: intent.state,
+					expectedGeneration: intent.stateGeneration,
+					toState: "expired",
+					transitionDigest: await expirationDigest(intent.id, intent.expiresAt),
+					actorRealm: "system",
+					actorIdentity: "release-service",
+					reasonCode: "INTENT_EXPIRED",
+					stateDataJson: '{"reasonCode":"INTENT_EXPIRED"}',
+					now,
+				});
+			}
+		}
 		this.ctx.storage.transactionSync(() => {
 			this.ctx.storage.sql.exec("DELETE FROM oauth_states WHERE expires_at <= ?", now);
 			this.ctx.storage.sql.exec("DELETE FROM publisher_sessions WHERE expires_at <= ?", now);
 			this.ctx.storage.sql.exec("DELETE FROM intent_idempotency WHERE expires_at <= ?", now);
+			this.ctx.storage.sql.exec("DELETE FROM intent_rate_idempotency WHERE expires_at <= ?", now);
 		});
 		await this.#scheduleNextAlarm(now);
 	}

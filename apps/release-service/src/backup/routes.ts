@@ -136,6 +136,9 @@ async function writeEncryptedObject(
 	if (created) return false;
 	const existing = await env.OPERATIONS_ARCHIVE.get(key);
 	if (!existing) throw new ApiError("ARCHIVE_OPERATION_FAILED", 503, "Archive write failed");
+	if (existing.size > MAX_ARCHIVE_OBJECT_BYTES) {
+		throw new ApiError("ARCHIVE_OPERATION_FAILED", 409, "Archive page conflicts with prior write");
+	}
 	let existingPlaintext: string;
 	try {
 		existingPlaintext = decoder.decode(
@@ -191,13 +194,20 @@ async function writeAuditObject(
 	const lastSequence = String(last.sequence).padStart(20, "0");
 	const key = `audit/${ownerHash}/${firstSequence}-${lastSequence}.json`;
 	const content = JSON.stringify({ version: SNAPSHOT_VERSION, publisherDid, events });
+	if (encoder.encode(content).byteLength > MAX_ARCHIVE_OBJECT_BYTES) {
+		throw new ApiError("ARCHIVE_OPERATION_FAILED", 500, "Audit export exceeded its size limit");
+	}
 	const created = await env.OPERATIONS_ARCHIVE.put(key, content, {
 		onlyIf: { etagDoesNotMatch: "*" },
 		httpMetadata: { contentType: "application/json" },
 	});
 	if (created) return;
 	const existing = await env.OPERATIONS_ARCHIVE.get(key);
-	if (!existing || (await existing.text()) !== content) {
+	if (
+		!existing ||
+		existing.size > MAX_ARCHIVE_OBJECT_BYTES ||
+		(await existing.text()) !== content
+	) {
 		throw new ApiError("ARCHIVE_OPERATION_FAILED", 409, "Audit export conflicts with prior write");
 	}
 }

@@ -39,7 +39,7 @@ const RECONCILIATION_STEP_CONFIG = {
 
 export interface PublicationWorkflowOutput {
 	intentId: string;
-	state: "conflict" | "failed" | "invalid" | "published" | "ready";
+	state: "conflict" | "expired" | "failed" | "invalid" | "published" | "ready";
 	reasonCode: string | null;
 }
 
@@ -55,6 +55,7 @@ type TransitionSummary =
 type AttemptResult =
 	| { state: "published"; uri: string; cid: string }
 	| { state: "reconciling" }
+	| { state: "expired" }
 	| { state: "blocked"; reasonCode: string }
 	| { state: "failed"; reasonCode: string };
 
@@ -212,6 +213,21 @@ export async function publishVerifiedIntent(
 				if (current?.state === "reconciling") return { state: "reconciling" };
 				if (!current || current.state !== "ready") {
 					return { state: "failed", reasonCode: "INTENT_NOT_READY" };
+				}
+				if (current.expiresAt <= Date.now()) {
+					const expired = await transition(publisher, {
+						publisherDid,
+						intentId: originalIntent.id,
+						expectedState: "ready",
+						expectedGeneration: current.stateGeneration,
+						toState: "expired",
+						transitionDigest: await digest(["expired", originalIntent.id, current.expiresAt]),
+						actorRealm: "system",
+						actorIdentity: "release-service",
+						reasonCode: "INTENT_EXPIRED",
+						stateDataJson: JSON.stringify({ reasonCode: "INTENT_EXPIRED" }),
+					});
+					return expired.ok ? { state: "expired" } : { state: "failed", reasonCode: expired.code };
 				}
 				const permit = await control.issuePublicationPermit(
 					publisherDid,
@@ -394,6 +410,9 @@ export async function publishVerifiedIntent(
 		);
 		if (attemptResult.state === "published") {
 			return { intentId: originalIntent.id, state: "published", reasonCode: null };
+		}
+		if (attemptResult.state === "expired") {
+			return { intentId: originalIntent.id, state: "expired", reasonCode: "INTENT_EXPIRED" };
 		}
 		if (attemptResult.state === "failed") {
 			return { intentId: originalIntent.id, state: "failed", reasonCode: attemptResult.reasonCode };

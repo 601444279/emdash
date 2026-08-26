@@ -257,9 +257,9 @@ describe("publisher release intents", () => {
 			code: "PUBLISHER_SUSPENDED",
 		});
 		await runInDurableObject(stub, async (instance) => {
-			expect(() =>
+			await expect(
 				instance.createIntent(intent({ workloadIdentityJson: '{ "runId": "100" }' })),
-			).toThrowError(expect.objectContaining({ code: "INTENT_INPUT_INVALID" }));
+			).rejects.toMatchObject({ code: "INTENT_INPUT_INVALID" });
 		});
 	});
 });
