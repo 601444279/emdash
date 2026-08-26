@@ -54,7 +54,7 @@ msgstr ": bruk"
 msgid "(from {0})"
 msgstr "(fra {0})"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:533
+#: packages/admin/src/components/RegistryPluginDetail.tsx:570
 msgid "(pre-release)"
 msgstr "(forhåndsutgivelse)"
 
@@ -62,7 +62,7 @@ msgstr "(forhåndsutgivelse)"
 msgid "(synced)"
 msgstr "(synkronisert)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:536
+#: packages/admin/src/components/RegistryPluginDetail.tsx:573
 msgid "(too new)"
 msgstr "(for ny)"
 
@@ -206,7 +206,7 @@ msgstr ""
 #. placeholder {0}: envLabel(m.key)
 #. placeholder {1}: m.required
 #. placeholder {2}: m.host
-#: packages/admin/src/components/RegistryPluginDetail.tsx:636
+#: packages/admin/src/components/RegistryPluginDetail.tsx:647
 msgid "{0} {1} required — you have {2}."
 msgstr "{0} {1} påkrevd — du har {2}."
 
@@ -217,7 +217,7 @@ msgid "{0} • {1}"
 msgstr "{0} • {1}"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:425
+#: packages/admin/src/components/RegistryPluginDetail.tsx:484
 msgid "{0} banner"
 msgstr "{0}-banner"
 
@@ -247,7 +247,7 @@ msgid "{0} has been removed"
 msgstr "{0} er fjernet"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:437
+#: packages/admin/src/components/RegistryPluginDetail.tsx:496
 msgid "{0} icon"
 msgstr "{0}-ikon"
 
@@ -1206,7 +1206,7 @@ msgstr "Autoriser enhet"
 msgid "Authorizing..."
 msgstr "Autoriserer …"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:685
+#: packages/admin/src/components/RegistryPluginDetail.tsx:696
 msgid "Authors"
 msgstr "Forfattere"
 
@@ -1291,7 +1291,7 @@ msgid "Back to marketplace"
 msgstr "Tilbake til markedsplassen"
 
 #: packages/admin/src/components/PluginSettings.tsx:118
-#: packages/admin/src/components/RegistryPluginDetail.tsx:820
+#: packages/admin/src/components/RegistryPluginDetail.tsx:831
 msgid "Back to plugins"
 msgstr "Tilbake til utvidelser"
 
@@ -1371,7 +1371,7 @@ msgstr "Boolsk"
 msgid "Brief summary shown below the title in search results"
 msgstr "Kort sammendrag som vises under tittelen i søkeresultater"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:73
+#: packages/admin/src/components/RegistryBrowse.tsx:92
 msgid "Browse and install plugins published to the decentralized registry."
 msgstr "Bla gjennom og installer utvidelser publisert til det desentraliserte registeret."
 
@@ -1588,7 +1588,7 @@ msgstr "Endre bilde"
 msgid "Change Logo"
 msgstr "Endre logo"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:808
+#: packages/admin/src/components/RegistryPluginDetail.tsx:819
 msgid "Changelog"
 msgstr "Endringslogg"
 
@@ -2327,7 +2327,7 @@ msgstr "Datoformat"
 msgid "Decimal number"
 msgstr "Desimaltall"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:750
+#: packages/admin/src/components/RegistryPluginDetail.tsx:761
 msgid "Declared permissions"
 msgstr "Deklarerte tillatelser"
 
@@ -2588,7 +2588,7 @@ msgid "Describe what this section is for..."
 msgstr "Beskriv hva denne seksjonen er til for …"
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
-#: packages/admin/src/components/RegistryPluginDetail.tsx:805
+#: packages/admin/src/components/RegistryPluginDetail.tsx:816
 #: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
@@ -2827,7 +2827,7 @@ msgstr ""
 msgid "Download backups and schedule automatic backups to storage"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:492
+#: packages/admin/src/components/RegistryPluginDetail.tsx:529
 msgid "Download SBOM"
 msgstr "Last ned SBOM"
 
@@ -3216,7 +3216,7 @@ msgstr "Feil ved lagring av seksjon"
 msgid "Error updating widget"
 msgstr "Feil ved oppdatering av modul"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:596
+#: packages/admin/src/components/RegistryPluginDetail.tsx:607
 msgid "Every published release of this plugin has been withdrawn or could not be verified. Check back later, or contact the publisher."
 msgstr "Alle publiserte utgivelser av denne utvidelsen er trukket tilbake eller kunne ikke verifiseres. Sjekk igjen senere, eller kontakt utgiveren."
 
@@ -3580,7 +3580,7 @@ msgid "Failed to import media"
 msgstr "Kunne ikke importere medier"
 
 #: packages/admin/src/lib/api/marketplace.ts:208
-#: packages/admin/src/lib/api/registry.ts:702
+#: packages/admin/src/lib/api/registry.ts:760
 msgid "Failed to install plugin"
 msgstr "Kunne ikke installere utvidelse"
 
@@ -3632,7 +3632,7 @@ msgstr ""
 msgid "Failed to load plugins: {0}"
 msgstr "Kunne ikke laste inn utvidelser: {0}"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:98
+#: packages/admin/src/components/RegistryBrowse.tsx:117
 msgid "Failed to load plugins. The registry aggregator may be unreachable."
 msgstr "Kunne ikke laste inn utvidelser. Registeraggregatoren er kanskje utilgjengelig."
 
@@ -3777,7 +3777,7 @@ msgid "Failed to set entry terms"
 msgstr "Kunne ikke angi termer for oppføring"
 
 #: packages/admin/src/lib/api/marketplace.ts:249
-#: packages/admin/src/lib/api/registry.ts:858
+#: packages/admin/src/lib/api/registry.ts:916
 msgid "Failed to uninstall plugin"
 msgstr "Kunne ikke avinstallere utvidelse"
 
@@ -3819,7 +3819,7 @@ msgid "Failed to update media"
 msgstr ""
 
 #: packages/admin/src/lib/api/marketplace.ts:232
-#: packages/admin/src/lib/api/registry.ts:776
+#: packages/admin/src/lib/api/registry.ts:834
 msgid "Failed to update plugin"
 msgstr "Kunne ikke oppdatere utvidelse"
 
@@ -3863,7 +3863,7 @@ msgstr "Kunne ikke bekrefte autentisering"
 msgid "Failed to verify registration"
 msgstr "Kunne ikke bekrefte registrering"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:807
+#: packages/admin/src/components/RegistryPluginDetail.tsx:818
 msgid "FAQ"
 msgstr "Ofte stilte spørsmål"
 
@@ -4384,7 +4384,7 @@ msgid "Incompatible"
 msgstr "Inkompatibel"
 
 #: packages/admin/src/components/FieldEditor.tsx:481
-#: packages/admin/src/components/RegistryPluginDetail.tsx:506
+#: packages/admin/src/components/RegistryPluginDetail.tsx:543
 msgid "Indexed"
 msgstr "Indeksert"
 
@@ -4473,7 +4473,7 @@ msgid "Instagram"
 msgstr "Instagram"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:203
-#: packages/admin/src/components/RegistryPluginDetail.tsx:554
+#: packages/admin/src/components/RegistryPluginDetail.tsx:591
 msgid "Install"
 msgstr "Installer"
 
@@ -4489,14 +4489,14 @@ msgstr "Installasjon blokkert"
 msgid "Install the EmDash Exporter plugin on your WordPress site and generate a key under Tools → EmDash Migration."
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:806
+#: packages/admin/src/components/RegistryPluginDetail.tsx:817
 msgid "Installation"
 msgstr "Installasjon"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:263
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:184
-#: packages/admin/src/components/RegistryBrowse.tsx:201
-#: packages/admin/src/components/RegistryPluginDetail.tsx:546
+#: packages/admin/src/components/RegistryBrowse.tsx:207
+#: packages/admin/src/components/RegistryPluginDetail.tsx:583
 msgid "Installed"
 msgstr "Installert"
 
@@ -4581,6 +4581,10 @@ msgstr "Element slettet"
 #: packages/admin/src/components/MenuEditor.tsx:212
 msgid "Item updated"
 msgstr "Element oppdatert"
+
+#: packages/admin/src/components/RegistryPluginDetail.tsx:455
+msgid "Its listing has not been approved for display. Check back later."
+msgstr ""
 
 #: packages/admin/src/components/SetupWizard.tsx:213
 #: packages/admin/src/components/SignupPage.tsx:206
@@ -4775,7 +4779,7 @@ msgstr "Live-visning"
 #: packages/admin/src/components/ContentPickerModal.tsx:228
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/routes/bylines.tsx:468
 msgid "Load more"
@@ -4868,7 +4872,7 @@ msgstr "Laster moduler..."
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/PortableTextEditor.tsx:2425
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
@@ -5566,7 +5570,7 @@ msgstr "Ingen overskrifter i dokumentet"
 msgid "No images in this gallery yet."
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:594
+#: packages/admin/src/components/RegistryPluginDetail.tsx:605
 msgid "No installable releases"
 msgstr "Ingen installerbare utgivelser"
 
@@ -5660,11 +5664,11 @@ msgstr "Ingen utvidelser konfigurert"
 msgid "No plugins found"
 msgstr "Fant ingen utvidelser"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:120
+#: packages/admin/src/components/RegistryBrowse.tsx:139
 msgid "No plugins have been published to this registry yet."
 msgstr "Ingen utvidelser er publisert til dette registeret ennå."
 
-#: packages/admin/src/components/RegistryBrowse.tsx:119
+#: packages/admin/src/components/RegistryBrowse.tsx:138
 msgid "No plugins match \"{debouncedQuery}\"."
 msgstr "Ingen utvidelser samsvarer med \"{debouncedQuery}\"."
 
@@ -5750,7 +5754,7 @@ msgstr ""
 msgid "None (top level)"
 msgstr "Ingen (øverste nivå)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:629
+#: packages/admin/src/components/RegistryPluginDetail.tsx:640
 msgid "Not compatible with this environment"
 msgstr "Ikke kompatibel med dette miljøet"
 
@@ -6108,7 +6112,7 @@ msgstr ""
 msgid "Plugin column unavailable"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:762
+#: packages/admin/src/components/RegistryPluginDetail.tsx:773
 msgid "Plugin details"
 msgstr "Detaljer om utvidelse"
 
@@ -6145,9 +6149,9 @@ msgstr ""
 msgid "Plugin not found"
 msgstr "Utvidelse ikke funnet"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:411
-msgid "Plugin not found. The publisher handle or slug may be incorrect."
-msgstr "Utvidelse ikke funnet. Utgiverhåndtaket eller slug kan være feil."
+#: packages/admin/src/components/RegistryPluginDetail.tsx:470
+msgid "Plugin not found. The publisher or slug may be incorrect."
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:1209
 msgid "plugin on your WordPress site."
@@ -6165,7 +6169,7 @@ msgstr ""
 msgid "Plugin Permissions"
 msgstr "Tillatelser for utvidelse"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:71
+#: packages/admin/src/components/RegistryBrowse.tsx:90
 msgid "Plugin Registry"
 msgstr "Utvidelsesregister"
 
@@ -6184,7 +6188,7 @@ msgstr ""
 msgid "Plugin uninstalled"
 msgstr "Utvidelse avinstallert"
 
-#: packages/admin/src/lib/api/registry.ts:810
+#: packages/admin/src/lib/api/registry.ts:868
 msgid "Plugin update requires re-consent"
 msgstr "Oppdatering av utvidelse krever nytt samtykke"
 
@@ -6230,7 +6234,7 @@ msgstr ""
 msgid "Posts Per Page"
 msgstr "Innlegg per side"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:478
+#: packages/admin/src/components/RegistryPluginDetail.tsx:515
 msgid "Pre-release"
 msgstr "Forhåndsutgivelse"
 
@@ -6319,9 +6323,9 @@ msgstr ""
 msgid "Published At"
 msgstr "Publisert"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:472
-msgid "Published by"
-msgstr "Publisert av"
+#: packages/admin/src/components/RegistryPluginDetail.tsx:507
+msgid "Published by <0/>"
+msgstr ""
 
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:47
 msgid "Python"
@@ -6465,7 +6469,7 @@ msgstr "Registreringen ble avbrutt eller fikk tidsavbrudd. Prøv på nytt."
 msgid "Registry"
 msgstr "Register"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:610
+#: packages/admin/src/components/RegistryPluginDetail.tsx:621
 msgid "Release is too new to install"
 msgstr "Utgivelsen er for ny til å installeres"
 
@@ -6901,12 +6905,12 @@ msgstr "Lagrer …"
 msgid "Saving…"
 msgstr "Lagrer …"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:482
+#: packages/admin/src/components/RegistryPluginDetail.tsx:519
 msgid "SBOM"
 msgstr "SBOM"
 
 #. placeholder {0}: sbom.format
-#: packages/admin/src/components/RegistryPluginDetail.tsx:480
+#: packages/admin/src/components/RegistryPluginDetail.tsx:517
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
@@ -6961,7 +6965,7 @@ msgstr "Omfang"
 #. placeholder {0}: i + 1
 #. placeholder {0}: index + 1
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:254
-#: packages/admin/src/components/RegistryPluginDetail.tsx:655
+#: packages/admin/src/components/RegistryPluginDetail.tsx:666
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:174
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:293
 msgid "Screenshot {0}"
@@ -6982,7 +6986,7 @@ msgid "Screenshot viewer"
 msgstr "Skjermbildevisning"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:244
-#: packages/admin/src/components/RegistryPluginDetail.tsx:649
+#: packages/admin/src/components/RegistryPluginDetail.tsx:660
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:164
 msgid "Screenshots"
 msgstr "Skjermbilder"
@@ -7066,12 +7070,12 @@ msgid "Search pages and content..."
 msgstr "Søk i sider og innhold …"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:103
-#: packages/admin/src/components/RegistryBrowse.tsx:87
+#: packages/admin/src/components/RegistryBrowse.tsx:106
 msgid "Search plugins"
 msgstr "Søk i utvidelser"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:99
-#: packages/admin/src/components/RegistryBrowse.tsx:83
+#: packages/admin/src/components/RegistryBrowse.tsx:102
 msgid "Search plugins..."
 msgstr "Søk i utvidelser …"
 
@@ -7157,7 +7161,7 @@ msgstr "sikker kontekst"
 msgid "Secure your account"
 msgstr "Sikre kontoen din"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:809
+#: packages/admin/src/components/RegistryPluginDetail.tsx:820
 #: packages/admin/src/components/Settings.tsx:70
 msgid "Security"
 msgstr "Sikkerhet"
@@ -7186,7 +7190,7 @@ msgstr "Sikkerhetsvurderingen flagget denne utvidelsen som potensielt utrygg."
 msgid "Security audit passed"
 msgstr "Sikkerhetsvurderingen ble bestått"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:718
+#: packages/admin/src/components/RegistryPluginDetail.tsx:729
 msgid "Security contacts"
 msgstr "Sikkerhetskontakter"
 
@@ -8029,19 +8033,19 @@ msgstr ""
 msgid "This plugin has no configurable settings."
 msgstr ""
 
+#: packages/admin/src/components/RegistryPluginDetail.tsx:453
+msgid "This plugin is not available yet"
+msgstr ""
+
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:287
 msgid "This plugin requires no special permissions."
 msgstr "Denne utvidelsen krever ingen spesielle tillatelser."
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:579
-msgid "This publisher claims a name they couldn't prove they own — possibly impersonating someone else. Install is disabled. If you know the publisher and trust them, ask them to fix their identity setup before retrying."
-msgstr "Denne utgiveren hevder å ha et navn de ikke kunne bevise at de eier — muligens et forsøk på å utgi seg for å være noen andre. Installasjon er deaktivert. Hvis du kjenner utgiveren og stoler på dem, be dem rette opp identitetsoppsettet før du prøver på nytt."
 
 #: packages/admin/src/components/Redirects.tsx:602
 msgid "This redirect rule will be permanently removed."
 msgstr "Denne omdirigeringsregelen vil bli fjernet permanent."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:631
+#: packages/admin/src/components/RegistryPluginDetail.tsx:642
 msgid "This release requires a newer environment than your site currently runs. Upgrade before installing."
 msgstr "Denne versjonen krever et nyere miljø enn nettstedet ditt kjører på nå. Oppgrader før du installerer."
 
@@ -8425,10 +8429,6 @@ msgstr "Fil uten navn"
 msgid "Untitled Widget"
 msgstr "Widget uten navn"
 
-#: packages/admin/src/components/PublisherHandle.tsx:145
-msgid "Unverified publisher"
-msgstr "Ikke-verifisert utgiver"
-
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "Opp"
@@ -8474,7 +8474,7 @@ msgstr "Oppdater til v{0}"
 
 #: packages/admin/src/components/ContentList.tsx:842
 #: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/RegistryPluginDetail.tsx:501
+#: packages/admin/src/components/RegistryPluginDetail.tsx:538
 msgid "Updated"
 msgstr "Oppdatert"
 
@@ -8693,23 +8693,6 @@ msgstr "v{0} tilgjengelig"
 msgid "Validation"
 msgstr "Validering"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:189
-#: packages/admin/src/components/RegistryPluginDetail.tsx:462
-msgid "Verified publisher"
-msgstr "Verifisert utgiver"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:461
-msgid "Verified publisher, confirmed by labeller {verifiedLabeller}"
-msgstr "Verifisert utgiver, bekreftet av merkeren {verifiedLabeller}"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:452
-msgid "Verified publisher. A labeller ({verifiedLabeller}) has confirmed this publisher's identity."
-msgstr "Verifisert utgiver. En merker ({verifiedLabeller}) har bekreftet identiteten til denne utgiveren."
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:453
-msgid "Verified publisher. A labeller has confirmed this publisher's identity."
-msgstr "Verifisert utgiver. En merker har bekreftet identiteten til denne utgiveren."
-
 #: packages/admin/src/components/InviteAcceptPage.tsx:228
 msgid "Verifying your invite..."
 msgstr "Verifiserer invitasjonen din …"
@@ -8724,12 +8707,12 @@ msgid "Verifying..."
 msgstr "Verifiserer …"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:331
-#: packages/admin/src/components/RegistryPluginDetail.tsx:515
+#: packages/admin/src/components/RegistryPluginDetail.tsx:552
 msgid "Version"
 msgstr "Versjon"
 
 #. placeholder {0}: release.version
-#: packages/admin/src/components/RegistryPluginDetail.tsx:477
+#: packages/admin/src/components/RegistryPluginDetail.tsx:514
 msgid "Version {0}"
 msgstr "Versjon {0}"
 
@@ -8759,11 +8742,11 @@ msgstr "Vis publisert {title}"
 msgid "View Site"
 msgstr "Vis nettsted"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:676
+#: packages/admin/src/components/RegistryPluginDetail.tsx:687
 msgid "View source"
 msgstr "Vis kilde"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:931
+#: packages/admin/src/components/RegistryPluginDetail.tsx:923
 msgid "View the {license} license on spdx.org"
 msgstr "Vis {license}-lisensen på spdx.org"
 
@@ -8789,10 +8772,6 @@ msgstr "Advarsel"
 msgid "We couldn't connect to a WordPress site at {0}. This could mean the site isn't WordPress, the REST API is disabled, or the site isn't accessible."
 msgstr "Vi kunne ikke koble til et WordPress-nettsted på {0}. Det kan bety at nettstedet ikke er WordPress, at REST-API-et er deaktivert, eller at nettstedet ikke er tilgjengelig."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:577
-msgid "We couldn't verify this publisher's identity"
-msgstr "Vi kunne ikke verifisere identiteten til denne utgiveren"
-
 #: packages/admin/src/components/WordPressImport.tsx:1084
 msgid "We'll check what import options are available for your site."
 msgstr "Vi sjekker hvilke importalternativer som er tilgjengelige for nettstedet ditt."
@@ -8815,7 +8794,7 @@ msgid "WebAuthn is not supported in this browser"
 msgstr "WebAuthn støttes ikke i denne nettleseren"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:236
-#: packages/admin/src/components/RegistryPluginDetail.tsx:701
+#: packages/admin/src/components/RegistryPluginDetail.tsx:712
 msgid "Website"
 msgstr "Nettsted"
 
@@ -9132,7 +9111,7 @@ msgid "Your Role"
 msgstr "Rollen din"
 
 #. placeholder {0}: formatHoldback(config.policy?.minimumReleaseAgeSeconds ?? 0)
-#: packages/admin/src/components/RegistryPluginDetail.tsx:612
+#: packages/admin/src/components/RegistryPluginDetail.tsx:623
 msgid "Your site requires releases to be at least {0} old before they can be installed. This release will become installable later."
 msgstr "Nettstedet ditt krever at utgivelser er minst {0} gamle før de kan installeres. Denne utgivelsen blir installerbar senere."
 

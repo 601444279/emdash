@@ -54,7 +54,7 @@ msgstr " gerekir:"
 msgid "(from {0})"
 msgstr "({0} üzerinden)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:533
+#: packages/admin/src/components/RegistryPluginDetail.tsx:570
 msgid "(pre-release)"
 msgstr "(yayın öncesi)"
 
@@ -62,7 +62,7 @@ msgstr "(yayın öncesi)"
 msgid "(synced)"
 msgstr "(senkronize edildi)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:536
+#: packages/admin/src/components/RegistryPluginDetail.tsx:573
 msgid "(too new)"
 msgstr "(çok yeni)"
 
@@ -206,7 +206,7 @@ msgstr ""
 #. placeholder {0}: envLabel(m.key)
 #. placeholder {1}: m.required
 #. placeholder {2}: m.host
-#: packages/admin/src/components/RegistryPluginDetail.tsx:636
+#: packages/admin/src/components/RegistryPluginDetail.tsx:647
 msgid "{0} {1} required — you have {2}."
 msgstr "{0} {1} gerekli — {2}'iniz var."
 
@@ -217,7 +217,7 @@ msgid "{0} • {1}"
 msgstr "{0} • {1}"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:425
+#: packages/admin/src/components/RegistryPluginDetail.tsx:484
 msgid "{0} banner"
 msgstr "{0} banner'ı"
 
@@ -247,7 +247,7 @@ msgid "{0} has been removed"
 msgstr "{0} kaldırıldı"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:437
+#: packages/admin/src/components/RegistryPluginDetail.tsx:496
 msgid "{0} icon"
 msgstr "{0} simgesi"
 
@@ -1206,7 +1206,7 @@ msgstr "Cihazı Yetkilendir"
 msgid "Authorizing..."
 msgstr "Yetki veriliyor..."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:685
+#: packages/admin/src/components/RegistryPluginDetail.tsx:696
 msgid "Authors"
 msgstr "Yazarlar"
 
@@ -1291,7 +1291,7 @@ msgid "Back to marketplace"
 msgstr "Pazar yerine geri dön"
 
 #: packages/admin/src/components/PluginSettings.tsx:118
-#: packages/admin/src/components/RegistryPluginDetail.tsx:820
+#: packages/admin/src/components/RegistryPluginDetail.tsx:831
 msgid "Back to plugins"
 msgstr "Eklentilere geri dön"
 
@@ -1371,7 +1371,7 @@ msgstr "Mantıksal"
 msgid "Brief summary shown below the title in search results"
 msgstr "Arama sonuçlarında başlığın altında gösterilen kısa özet"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:73
+#: packages/admin/src/components/RegistryBrowse.tsx:92
 msgid "Browse and install plugins published to the decentralized registry."
 msgstr "Merkeziyetsiz kayıt deposunda yayımlanan eklentilere göz atın ve bunları yükleyin."
 
@@ -1588,7 +1588,7 @@ msgstr "Resmi Değiştir"
 msgid "Change Logo"
 msgstr "Logoyu Değiştir"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:808
+#: packages/admin/src/components/RegistryPluginDetail.tsx:819
 msgid "Changelog"
 msgstr "Değişiklik günlüğü"
 
@@ -2327,7 +2327,7 @@ msgstr "Tarih Formatı"
 msgid "Decimal number"
 msgstr "Ondalık sayı"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:750
+#: packages/admin/src/components/RegistryPluginDetail.tsx:761
 msgid "Declared permissions"
 msgstr "Bildirilen izinler"
 
@@ -2588,7 +2588,7 @@ msgid "Describe what this section is for..."
 msgstr "Bu bölümün ne işe yaradığını açıklayın..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
-#: packages/admin/src/components/RegistryPluginDetail.tsx:805
+#: packages/admin/src/components/RegistryPluginDetail.tsx:816
 #: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
@@ -2827,7 +2827,7 @@ msgstr ""
 msgid "Download backups and schedule automatic backups to storage"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:492
+#: packages/admin/src/components/RegistryPluginDetail.tsx:529
 msgid "Download SBOM"
 msgstr "SBOM'u indirin"
 
@@ -3216,7 +3216,7 @@ msgstr "Bölüm kaydedilirken hata oluştu"
 msgid "Error updating widget"
 msgstr "Widget güncellenirken hata oluştu"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:596
+#: packages/admin/src/components/RegistryPluginDetail.tsx:607
 msgid "Every published release of this plugin has been withdrawn or could not be verified. Check back later, or contact the publisher."
 msgstr "Bu eklentinin yayınlanan her sürümü geri çekildi veya doğrulanamadı. Daha sonra tekrar kontrol edin veya yayıncıyla iletişime geçin."
 
@@ -3580,7 +3580,7 @@ msgid "Failed to import media"
 msgstr "Medya içe aktarılamadı"
 
 #: packages/admin/src/lib/api/marketplace.ts:208
-#: packages/admin/src/lib/api/registry.ts:702
+#: packages/admin/src/lib/api/registry.ts:760
 msgid "Failed to install plugin"
 msgstr "Eklenti yüklenemedi"
 
@@ -3632,7 +3632,7 @@ msgstr ""
 msgid "Failed to load plugins: {0}"
 msgstr "Eklentiler yüklenemedi: {0}"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:98
+#: packages/admin/src/components/RegistryBrowse.tsx:117
 msgid "Failed to load plugins. The registry aggregator may be unreachable."
 msgstr "Eklentiler yüklenemedi. Kayıt deposu toplayıcısına ulaşılamıyor olabilir."
 
@@ -3777,7 +3777,7 @@ msgid "Failed to set entry terms"
 msgstr "Kayıt terimleri ayarlanamadı"
 
 #: packages/admin/src/lib/api/marketplace.ts:249
-#: packages/admin/src/lib/api/registry.ts:858
+#: packages/admin/src/lib/api/registry.ts:916
 msgid "Failed to uninstall plugin"
 msgstr "Eklenti kaldırılamadı"
 
@@ -3819,7 +3819,7 @@ msgid "Failed to update media"
 msgstr "Medya güncellenemedi"
 
 #: packages/admin/src/lib/api/marketplace.ts:232
-#: packages/admin/src/lib/api/registry.ts:776
+#: packages/admin/src/lib/api/registry.ts:834
 msgid "Failed to update plugin"
 msgstr "Eklenti güncellenemedi"
 
@@ -3863,7 +3863,7 @@ msgstr "Kimlik doğrulaması doğrulanamadı"
 msgid "Failed to verify registration"
 msgstr "Kayıt doğrulanamadı"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:807
+#: packages/admin/src/components/RegistryPluginDetail.tsx:818
 msgid "FAQ"
 msgstr "SSS"
 
@@ -4384,7 +4384,7 @@ msgid "Incompatible"
 msgstr "Uyumsuz"
 
 #: packages/admin/src/components/FieldEditor.tsx:481
-#: packages/admin/src/components/RegistryPluginDetail.tsx:506
+#: packages/admin/src/components/RegistryPluginDetail.tsx:543
 msgid "Indexed"
 msgstr "Dizine eklendi"
 
@@ -4473,7 +4473,7 @@ msgid "Instagram"
 msgstr "instagram"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:203
-#: packages/admin/src/components/RegistryPluginDetail.tsx:554
+#: packages/admin/src/components/RegistryPluginDetail.tsx:591
 msgid "Install"
 msgstr "Yükle"
 
@@ -4489,14 +4489,14 @@ msgstr "Yükleme engellendi"
 msgid "Install the EmDash Exporter plugin on your WordPress site and generate a key under Tools → EmDash Migration."
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:806
+#: packages/admin/src/components/RegistryPluginDetail.tsx:817
 msgid "Installation"
 msgstr "Kurulum"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:263
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:184
-#: packages/admin/src/components/RegistryBrowse.tsx:201
-#: packages/admin/src/components/RegistryPluginDetail.tsx:546
+#: packages/admin/src/components/RegistryBrowse.tsx:207
+#: packages/admin/src/components/RegistryPluginDetail.tsx:583
 msgid "Installed"
 msgstr "Yüklendi"
 
@@ -4581,6 +4581,10 @@ msgstr "Öğe silindi"
 #: packages/admin/src/components/MenuEditor.tsx:212
 msgid "Item updated"
 msgstr "Öğe güncellendi"
+
+#: packages/admin/src/components/RegistryPluginDetail.tsx:455
+msgid "Its listing has not been approved for display. Check back later."
+msgstr ""
 
 #: packages/admin/src/components/SetupWizard.tsx:213
 #: packages/admin/src/components/SignupPage.tsx:206
@@ -4775,7 +4779,7 @@ msgstr "Canlı Görünüm"
 #: packages/admin/src/components/ContentPickerModal.tsx:228
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/routes/bylines.tsx:468
 msgid "Load more"
@@ -4868,7 +4872,7 @@ msgstr "Widget'lar yükleniyor..."
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/PortableTextEditor.tsx:2425
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
@@ -5566,7 +5570,7 @@ msgstr "Belgede başlık yok"
 msgid "No images in this gallery yet."
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:594
+#: packages/admin/src/components/RegistryPluginDetail.tsx:605
 msgid "No installable releases"
 msgstr "Yüklenebilir sürüm yok"
 
@@ -5660,11 +5664,11 @@ msgstr "Hiçbir eklenti yapılandırılmadı"
 msgid "No plugins found"
 msgstr "Hiçbir eklenti bulunamadı"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:120
+#: packages/admin/src/components/RegistryBrowse.tsx:139
 msgid "No plugins have been published to this registry yet."
 msgstr "Bu kayıt deposunda henüz eklenti yayımlanmadı."
 
-#: packages/admin/src/components/RegistryBrowse.tsx:119
+#: packages/admin/src/components/RegistryBrowse.tsx:138
 msgid "No plugins match \"{debouncedQuery}\"."
 msgstr "\"{debouncedQuery}\" ile eşleşen eklenti yok."
 
@@ -5750,7 +5754,7 @@ msgstr ""
 msgid "None (top level)"
 msgstr "Yok (en üst düzey)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:629
+#: packages/admin/src/components/RegistryPluginDetail.tsx:640
 msgid "Not compatible with this environment"
 msgstr "Bu ortamla uyumlu değil"
 
@@ -6108,7 +6112,7 @@ msgstr "\"{pluginId}\" eklentisi bulunamadı"
 msgid "Plugin column unavailable"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:762
+#: packages/admin/src/components/RegistryPluginDetail.tsx:773
 msgid "Plugin details"
 msgstr "Eklenti ayrıntıları"
 
@@ -6145,9 +6149,9 @@ msgstr ""
 msgid "Plugin not found"
 msgstr "Eklenti bulunamadı"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:411
-msgid "Plugin not found. The publisher handle or slug may be incorrect."
-msgstr "Eklenti bulunamadı. Yayıncı kullanıcı adı veya slug hatalı olabilir."
+#: packages/admin/src/components/RegistryPluginDetail.tsx:470
+msgid "Plugin not found. The publisher or slug may be incorrect."
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:1209
 msgid "plugin on your WordPress site."
@@ -6165,7 +6169,7 @@ msgstr ""
 msgid "Plugin Permissions"
 msgstr "Eklenti İzinleri"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:71
+#: packages/admin/src/components/RegistryBrowse.tsx:90
 msgid "Plugin Registry"
 msgstr "Eklenti Kayıt Deposu"
 
@@ -6184,7 +6188,7 @@ msgstr ""
 msgid "Plugin uninstalled"
 msgstr "Eklenti kaldırıldı"
 
-#: packages/admin/src/lib/api/registry.ts:810
+#: packages/admin/src/lib/api/registry.ts:868
 msgid "Plugin update requires re-consent"
 msgstr "Eklenti güncellemesi yeniden onay gerektiriyor"
 
@@ -6230,7 +6234,7 @@ msgstr ""
 msgid "Posts Per Page"
 msgstr "Sayfa Başına Gönderiler"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:478
+#: packages/admin/src/components/RegistryPluginDetail.tsx:515
 msgid "Pre-release"
 msgstr "Ön sürüm"
 
@@ -6319,9 +6323,9 @@ msgstr ""
 msgid "Published At"
 msgstr "Yayınlanma Tarihi"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:472
-msgid "Published by"
-msgstr "Yayınlayan"
+#: packages/admin/src/components/RegistryPluginDetail.tsx:507
+msgid "Published by <0/>"
+msgstr ""
 
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:47
 msgid "Python"
@@ -6465,7 +6469,7 @@ msgstr "Kayıt iptal edildi veya zaman aşımına uğradı. Lütfen tekrar deney
 msgid "Registry"
 msgstr "Kayıt deposu"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:610
+#: packages/admin/src/components/RegistryPluginDetail.tsx:621
 msgid "Release is too new to install"
 msgstr "Sürüm yüklenemeyecek kadar yeni"
 
@@ -6901,12 +6905,12 @@ msgstr "Kaydediliyor..."
 msgid "Saving…"
 msgstr "Kaydediliyor…"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:482
+#: packages/admin/src/components/RegistryPluginDetail.tsx:519
 msgid "SBOM"
 msgstr "SBOM"
 
 #. placeholder {0}: sbom.format
-#: packages/admin/src/components/RegistryPluginDetail.tsx:480
+#: packages/admin/src/components/RegistryPluginDetail.tsx:517
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
@@ -6961,7 +6965,7 @@ msgstr "Kapsamlar"
 #. placeholder {0}: i + 1
 #. placeholder {0}: index + 1
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:254
-#: packages/admin/src/components/RegistryPluginDetail.tsx:655
+#: packages/admin/src/components/RegistryPluginDetail.tsx:666
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:174
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:293
 msgid "Screenshot {0}"
@@ -6982,7 +6986,7 @@ msgid "Screenshot viewer"
 msgstr "Ekran görüntüsü görüntüleyici"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:244
-#: packages/admin/src/components/RegistryPluginDetail.tsx:649
+#: packages/admin/src/components/RegistryPluginDetail.tsx:660
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:164
 msgid "Screenshots"
 msgstr "Ekran görüntüleri"
@@ -7066,12 +7070,12 @@ msgid "Search pages and content..."
 msgstr "Sayfalarda ve içerikte arama yapın..."
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:103
-#: packages/admin/src/components/RegistryBrowse.tsx:87
+#: packages/admin/src/components/RegistryBrowse.tsx:106
 msgid "Search plugins"
 msgstr "Eklentileri ara"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:99
-#: packages/admin/src/components/RegistryBrowse.tsx:83
+#: packages/admin/src/components/RegistryBrowse.tsx:102
 msgid "Search plugins..."
 msgstr "Eklentileri ara..."
 
@@ -7157,7 +7161,7 @@ msgstr "güvenli bağlam"
 msgid "Secure your account"
 msgstr "Hesabınızı güvence altına alın"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:809
+#: packages/admin/src/components/RegistryPluginDetail.tsx:820
 #: packages/admin/src/components/Settings.tsx:70
 msgid "Security"
 msgstr "Güvenlik"
@@ -7186,7 +7190,7 @@ msgstr "Güvenlik denetimi bu eklentiyi potansiyel olarak güvensiz olarak işar
 msgid "Security audit passed"
 msgstr "Güvenlik denetimi geçti"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:718
+#: packages/admin/src/components/RegistryPluginDetail.tsx:729
 msgid "Security contacts"
 msgstr "Güvenlik kişileri"
 
@@ -8029,19 +8033,19 @@ msgstr ""
 msgid "This plugin has no configurable settings."
 msgstr ""
 
+#: packages/admin/src/components/RegistryPluginDetail.tsx:453
+msgid "This plugin is not available yet"
+msgstr ""
+
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:287
 msgid "This plugin requires no special permissions."
 msgstr "Bu eklenti özel izin gerektirmez."
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:579
-msgid "This publisher claims a name they couldn't prove they own — possibly impersonating someone else. Install is disabled. If you know the publisher and trust them, ask them to fix their identity setup before retrying."
-msgstr "Bu yayıncı, sahibi olduğunu kanıtlayamadığı bir adı iddia ediyor; muhtemelen başka birinin kimliğine bürünüyor. Kurulum devre dışı. Yayıncıyı tanıyorsanız ve ona güveniyorsanız, yeniden denemeden önce kimlik ayarlarını düzeltmelerini isteyin."
 
 #: packages/admin/src/components/Redirects.tsx:602
 msgid "This redirect rule will be permanently removed."
 msgstr "Bu yönlendirme kuralı kalıcı olarak kaldırılacak."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:631
+#: packages/admin/src/components/RegistryPluginDetail.tsx:642
 msgid "This release requires a newer environment than your site currently runs. Upgrade before installing."
 msgstr "Bu sürüm, sitenizin şu anda çalıştığından daha yeni bir ortam gerektiriyor. Yüklemeden önce yükseltin."
 
@@ -8425,10 +8429,6 @@ msgstr "Başlıksız dosya"
 msgid "Untitled Widget"
 msgstr "Başlıksız Widget"
 
-#: packages/admin/src/components/PublisherHandle.tsx:145
-msgid "Unverified publisher"
-msgstr "Doğrulanmamış yayıncı"
-
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "Yukarı"
@@ -8474,7 +8474,7 @@ msgstr "v{0}'e güncelleme"
 
 #: packages/admin/src/components/ContentList.tsx:842
 #: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/RegistryPluginDetail.tsx:501
+#: packages/admin/src/components/RegistryPluginDetail.tsx:538
 msgid "Updated"
 msgstr "Güncellendi"
 
@@ -8693,23 +8693,6 @@ msgstr "v{0} mevcut"
 msgid "Validation"
 msgstr "Doğrulama"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:189
-#: packages/admin/src/components/RegistryPluginDetail.tsx:462
-msgid "Verified publisher"
-msgstr "Doğrulanmış yayıncı"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:461
-msgid "Verified publisher, confirmed by labeller {verifiedLabeller}"
-msgstr "Doğrulanmış yayıncı, etiketleyici {verifiedLabeller} tarafından onaylandı"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:452
-msgid "Verified publisher. A labeller ({verifiedLabeller}) has confirmed this publisher's identity."
-msgstr "Doğrulanmış yayıncı. Bir etiketleyici ({verifiedLabeller}) bu yayıncının kimliğini doğruladı."
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:453
-msgid "Verified publisher. A labeller has confirmed this publisher's identity."
-msgstr "Doğrulanmış yayıncı. Bir etiketleyici bu yayıncının kimliğini doğruladı."
-
 #: packages/admin/src/components/InviteAcceptPage.tsx:228
 msgid "Verifying your invite..."
 msgstr "Davetiniz doğrulanıyor..."
@@ -8724,12 +8707,12 @@ msgid "Verifying..."
 msgstr "Doğrulanıyor..."
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:331
-#: packages/admin/src/components/RegistryPluginDetail.tsx:515
+#: packages/admin/src/components/RegistryPluginDetail.tsx:552
 msgid "Version"
 msgstr "Sürüm"
 
 #. placeholder {0}: release.version
-#: packages/admin/src/components/RegistryPluginDetail.tsx:477
+#: packages/admin/src/components/RegistryPluginDetail.tsx:514
 msgid "Version {0}"
 msgstr "Sürüm {0}"
 
@@ -8759,11 +8742,11 @@ msgstr "Yayınlanan {title}'i görüntüle"
 msgid "View Site"
 msgstr "Siteyi Görüntüle"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:676
+#: packages/admin/src/components/RegistryPluginDetail.tsx:687
 msgid "View source"
 msgstr "Kaynağı görüntüle"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:931
+#: packages/admin/src/components/RegistryPluginDetail.tsx:923
 msgid "View the {license} license on spdx.org"
 msgstr "{license} lisansını spdx.org'da görüntüleyin"
 
@@ -8789,10 +8772,6 @@ msgstr "Uyar"
 msgid "We couldn't connect to a WordPress site at {0}. This could mean the site isn't WordPress, the REST API is disabled, or the site isn't accessible."
 msgstr "{0}'te bir WordPress sitesine bağlanamadık. Bu, sitenin WordPress olmadığı, REST API'nin devre dışı olduğu veya siteye erişilemediği anlamına gelebilir."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:577
-msgid "We couldn't verify this publisher's identity"
-msgstr "Bu yayıncının kimliğini doğrulayamadık"
-
 #: packages/admin/src/components/WordPressImport.tsx:1084
 msgid "We'll check what import options are available for your site."
 msgstr "Siteniz için hangi içe aktarma seçeneklerinin mevcut olduğunu kontrol edeceğiz."
@@ -8815,7 +8794,7 @@ msgid "WebAuthn is not supported in this browser"
 msgstr "WebAuthn bu tarayıcıda desteklenmiyor"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:236
-#: packages/admin/src/components/RegistryPluginDetail.tsx:701
+#: packages/admin/src/components/RegistryPluginDetail.tsx:712
 msgid "Website"
 msgstr "Web sitesi"
 
@@ -9132,7 +9111,7 @@ msgid "Your Role"
 msgstr "Rolünüz"
 
 #. placeholder {0}: formatHoldback(config.policy?.minimumReleaseAgeSeconds ?? 0)
-#: packages/admin/src/components/RegistryPluginDetail.tsx:612
+#: packages/admin/src/components/RegistryPluginDetail.tsx:623
 msgid "Your site requires releases to be at least {0} old before they can be installed. This release will become installable later."
 msgstr "Siteniz, sürümlerin yüklenebilmesi için en az {0} eski olmasını gerektiriyor. Bu sürüm daha sonra yüklenebilir hale gelecek."
 

@@ -54,7 +54,7 @@ msgstr ": використовуйте"
 msgid "(from {0})"
 msgstr "(від {0})"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:533
+#: packages/admin/src/components/RegistryPluginDetail.tsx:570
 msgid "(pre-release)"
 msgstr "(передреліз)"
 
@@ -62,7 +62,7 @@ msgstr "(передреліз)"
 msgid "(synced)"
 msgstr "(синхронізовано)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:536
+#: packages/admin/src/components/RegistryPluginDetail.tsx:573
 msgid "(too new)"
 msgstr "(занадто новий)"
 
@@ -206,7 +206,7 @@ msgstr "{0, plural, one {Користувач} few {Користувачі} many
 #. placeholder {0}: envLabel(m.key)
 #. placeholder {1}: m.required
 #. placeholder {2}: m.host
-#: packages/admin/src/components/RegistryPluginDetail.tsx:636
+#: packages/admin/src/components/RegistryPluginDetail.tsx:647
 msgid "{0} {1} required — you have {2}."
 msgstr "{0} {1} потрібно — у вас {2}."
 
@@ -217,7 +217,7 @@ msgid "{0} • {1}"
 msgstr "{0} • {1}"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:425
+#: packages/admin/src/components/RegistryPluginDetail.tsx:484
 msgid "{0} banner"
 msgstr "{0} банер"
 
@@ -247,7 +247,7 @@ msgid "{0} has been removed"
 msgstr "{0} видалено"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:437
+#: packages/admin/src/components/RegistryPluginDetail.tsx:496
 msgid "{0} icon"
 msgstr "іконка {0}"
 
@@ -1206,7 +1206,7 @@ msgstr "Авторизувати пристрій"
 msgid "Authorizing..."
 msgstr "Авторизація..."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:685
+#: packages/admin/src/components/RegistryPluginDetail.tsx:696
 msgid "Authors"
 msgstr "Автори"
 
@@ -1291,7 +1291,7 @@ msgid "Back to marketplace"
 msgstr "Назад до маркетплейсу"
 
 #: packages/admin/src/components/PluginSettings.tsx:118
-#: packages/admin/src/components/RegistryPluginDetail.tsx:820
+#: packages/admin/src/components/RegistryPluginDetail.tsx:831
 msgid "Back to plugins"
 msgstr "Назад до плагінів"
 
@@ -1371,7 +1371,7 @@ msgstr "Логічний"
 msgid "Brief summary shown below the title in search results"
 msgstr "Короткий опис під заголовком у результатах пошуку"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:73
+#: packages/admin/src/components/RegistryBrowse.tsx:92
 msgid "Browse and install plugins published to the decentralized registry."
 msgstr "Переглядайте та встановлюйте плагіни з децентралізованого реєстру."
 
@@ -1588,7 +1588,7 @@ msgstr "Змінити зображення"
 msgid "Change Logo"
 msgstr "Змінити логотип"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:808
+#: packages/admin/src/components/RegistryPluginDetail.tsx:819
 msgid "Changelog"
 msgstr "Журнал змін"
 
@@ -2327,7 +2327,7 @@ msgstr "Формат дати"
 msgid "Decimal number"
 msgstr "Десяткове число"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:750
+#: packages/admin/src/components/RegistryPluginDetail.tsx:761
 msgid "Declared permissions"
 msgstr "Оголошені дозволи"
 
@@ -2588,7 +2588,7 @@ msgid "Describe what this section is for..."
 msgstr "Опишіть, для чого ця секція..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
-#: packages/admin/src/components/RegistryPluginDetail.tsx:805
+#: packages/admin/src/components/RegistryPluginDetail.tsx:816
 #: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
@@ -2827,7 +2827,7 @@ msgstr "Завантажити резервну копію"
 msgid "Download backups and schedule automatic backups to storage"
 msgstr "Завантажуйте резервні копії та плануйте автоматичне резервне копіювання в сховище"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:492
+#: packages/admin/src/components/RegistryPluginDetail.tsx:529
 msgid "Download SBOM"
 msgstr "Завантажити SBOM"
 
@@ -3216,7 +3216,7 @@ msgstr "Помилка збереження секції"
 msgid "Error updating widget"
 msgstr "Помилка оновлення віджета"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:596
+#: packages/admin/src/components/RegistryPluginDetail.tsx:607
 msgid "Every published release of this plugin has been withdrawn or could not be verified. Check back later, or contact the publisher."
 msgstr "Усі опубліковані випуски цього плагіна були відкликані або не вдалося їх перевірити. Перевірте пізніше або зверніться до видавця."
 
@@ -3580,7 +3580,7 @@ msgid "Failed to import media"
 msgstr "Не вдалося імпортувати медіа"
 
 #: packages/admin/src/lib/api/marketplace.ts:208
-#: packages/admin/src/lib/api/registry.ts:702
+#: packages/admin/src/lib/api/registry.ts:760
 msgid "Failed to install plugin"
 msgstr "Не вдалося встановити плагін"
 
@@ -3632,7 +3632,7 @@ msgstr ""
 msgid "Failed to load plugins: {0}"
 msgstr "Не вдалося завантажити плагіни: {0}"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:98
+#: packages/admin/src/components/RegistryBrowse.tsx:117
 msgid "Failed to load plugins. The registry aggregator may be unreachable."
 msgstr "Не вдалося завантажити плагіни. Агрегатор реєстру може бути недоступним."
 
@@ -3777,7 +3777,7 @@ msgid "Failed to set entry terms"
 msgstr "Не вдалося встановити терміни запису"
 
 #: packages/admin/src/lib/api/marketplace.ts:249
-#: packages/admin/src/lib/api/registry.ts:858
+#: packages/admin/src/lib/api/registry.ts:916
 msgid "Failed to uninstall plugin"
 msgstr "Не вдалося видалити плагін"
 
@@ -3819,7 +3819,7 @@ msgid "Failed to update media"
 msgstr "Не вдалося оновити медіа"
 
 #: packages/admin/src/lib/api/marketplace.ts:232
-#: packages/admin/src/lib/api/registry.ts:776
+#: packages/admin/src/lib/api/registry.ts:834
 msgid "Failed to update plugin"
 msgstr "Не вдалося оновити плагін"
 
@@ -3863,7 +3863,7 @@ msgstr "Не вдалося підтвердити автентифікацію"
 msgid "Failed to verify registration"
 msgstr "Не вдалося підтвердити реєстрацію"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:807
+#: packages/admin/src/components/RegistryPluginDetail.tsx:818
 msgid "FAQ"
 msgstr "FAQ"
 
@@ -4384,7 +4384,7 @@ msgid "Incompatible"
 msgstr "Несумісний"
 
 #: packages/admin/src/components/FieldEditor.tsx:481
-#: packages/admin/src/components/RegistryPluginDetail.tsx:506
+#: packages/admin/src/components/RegistryPluginDetail.tsx:543
 msgid "Indexed"
 msgstr "Проіндексовано"
 
@@ -4473,7 +4473,7 @@ msgid "Instagram"
 msgstr "Instagram"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:203
-#: packages/admin/src/components/RegistryPluginDetail.tsx:554
+#: packages/admin/src/components/RegistryPluginDetail.tsx:591
 msgid "Install"
 msgstr "Встановити"
 
@@ -4489,14 +4489,14 @@ msgstr "Встановлення заблоковано"
 msgid "Install the EmDash Exporter plugin on your WordPress site and generate a key under Tools → EmDash Migration."
 msgstr "Встановіть плагін EmDash Exporter на сайті WordPress і згенеруйте ключ у розділі Інструменти → EmDash Migration."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:806
+#: packages/admin/src/components/RegistryPluginDetail.tsx:817
 msgid "Installation"
 msgstr "Встановлення"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:263
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:184
-#: packages/admin/src/components/RegistryBrowse.tsx:201
-#: packages/admin/src/components/RegistryPluginDetail.tsx:546
+#: packages/admin/src/components/RegistryBrowse.tsx:207
+#: packages/admin/src/components/RegistryPluginDetail.tsx:583
 msgid "Installed"
 msgstr "Встановлено"
 
@@ -4581,6 +4581,10 @@ msgstr "Елемент видалено"
 #: packages/admin/src/components/MenuEditor.tsx:212
 msgid "Item updated"
 msgstr "Елемент оновлено"
+
+#: packages/admin/src/components/RegistryPluginDetail.tsx:455
+msgid "Its listing has not been approved for display. Check back later."
+msgstr ""
 
 #: packages/admin/src/components/SetupWizard.tsx:213
 #: packages/admin/src/components/SignupPage.tsx:206
@@ -4775,7 +4779,7 @@ msgstr "Перегляд наживо"
 #: packages/admin/src/components/ContentPickerModal.tsx:228
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/routes/bylines.tsx:468
 msgid "Load more"
@@ -4868,7 +4872,7 @@ msgstr "Завантаження віджетів..."
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/PortableTextEditor.tsx:2425
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
@@ -5566,7 +5570,7 @@ msgstr "У документі немає заголовків"
 msgid "No images in this gallery yet."
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:594
+#: packages/admin/src/components/RegistryPluginDetail.tsx:605
 msgid "No installable releases"
 msgstr "Немає встановлюваних випусків"
 
@@ -5660,11 +5664,11 @@ msgstr "Плагіни не налаштовано"
 msgid "No plugins found"
 msgstr "Плагіни не знайдено"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:120
+#: packages/admin/src/components/RegistryBrowse.tsx:139
 msgid "No plugins have been published to this registry yet."
 msgstr "У цьому реєстрі ще не опубліковано жодного плагіна."
 
-#: packages/admin/src/components/RegistryBrowse.tsx:119
+#: packages/admin/src/components/RegistryBrowse.tsx:138
 msgid "No plugins match \"{debouncedQuery}\"."
 msgstr "Немає плагінів, що відповідають \"{debouncedQuery}\"."
 
@@ -5750,7 +5754,7 @@ msgstr "Немає"
 msgid "None (top level)"
 msgstr "Немає (верхній рівень)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:629
+#: packages/admin/src/components/RegistryPluginDetail.tsx:640
 msgid "Not compatible with this environment"
 msgstr "Несумісний з цим середовищем"
 
@@ -6108,7 +6112,7 @@ msgstr "Плагін \"{pluginId}\" не знайдено"
 msgid "Plugin column unavailable"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:762
+#: packages/admin/src/components/RegistryPluginDetail.tsx:773
 msgid "Plugin details"
 msgstr "Деталі плагіна"
 
@@ -6145,9 +6149,9 @@ msgstr ""
 msgid "Plugin not found"
 msgstr "Плагін не знайдено"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:411
-msgid "Plugin not found. The publisher handle or slug may be incorrect."
-msgstr "Плагін не знайдено. Ідентифікатор видавця або slug можуть бути неправильними."
+#: packages/admin/src/components/RegistryPluginDetail.tsx:470
+msgid "Plugin not found. The publisher or slug may be incorrect."
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:1209
 msgid "plugin on your WordPress site."
@@ -6165,7 +6169,7 @@ msgstr ""
 msgid "Plugin Permissions"
 msgstr "Дозволи плагіна"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:71
+#: packages/admin/src/components/RegistryBrowse.tsx:90
 msgid "Plugin Registry"
 msgstr "Реєстр плагінів"
 
@@ -6184,7 +6188,7 @@ msgstr ""
 msgid "Plugin uninstalled"
 msgstr "Плагін видалено"
 
-#: packages/admin/src/lib/api/registry.ts:810
+#: packages/admin/src/lib/api/registry.ts:868
 msgid "Plugin update requires re-consent"
 msgstr "Оновлення плагіна потребує повторної згоди"
 
@@ -6230,7 +6234,7 @@ msgstr "Записи та сторінки"
 msgid "Posts Per Page"
 msgstr "Записів на сторінку"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:478
+#: packages/admin/src/components/RegistryPluginDetail.tsx:515
 msgid "Pre-release"
 msgstr "Передрелізна версія"
 
@@ -6319,9 +6323,9 @@ msgstr "Опубліковано елементів: {total}"
 msgid "Published At"
 msgstr "Дата публікації"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:472
-msgid "Published by"
-msgstr "Опубліковано"
+#: packages/admin/src/components/RegistryPluginDetail.tsx:507
+msgid "Published by <0/>"
+msgstr ""
 
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:47
 msgid "Python"
@@ -6465,7 +6469,7 @@ msgstr "Реєстрацію скасовано або час очікуванн
 msgid "Registry"
 msgstr "Реєстр"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:610
+#: packages/admin/src/components/RegistryPluginDetail.tsx:621
 msgid "Release is too new to install"
 msgstr "Реліз занадто новий для встановлення"
 
@@ -6901,12 +6905,12 @@ msgstr "Збереження..."
 msgid "Saving…"
 msgstr "Збереження…"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:482
+#: packages/admin/src/components/RegistryPluginDetail.tsx:519
 msgid "SBOM"
 msgstr "SBOM"
 
 #. placeholder {0}: sbom.format
-#: packages/admin/src/components/RegistryPluginDetail.tsx:480
+#: packages/admin/src/components/RegistryPluginDetail.tsx:517
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
@@ -6961,7 +6965,7 @@ msgstr "Області доступу"
 #. placeholder {0}: i + 1
 #. placeholder {0}: index + 1
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:254
-#: packages/admin/src/components/RegistryPluginDetail.tsx:655
+#: packages/admin/src/components/RegistryPluginDetail.tsx:666
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:174
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:293
 msgid "Screenshot {0}"
@@ -6982,7 +6986,7 @@ msgid "Screenshot viewer"
 msgstr "Переглядач знімків екрана"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:244
-#: packages/admin/src/components/RegistryPluginDetail.tsx:649
+#: packages/admin/src/components/RegistryPluginDetail.tsx:660
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:164
 msgid "Screenshots"
 msgstr "Знімки екрана"
@@ -7066,12 +7070,12 @@ msgid "Search pages and content..."
 msgstr "Шукати сторінки та вміст..."
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:103
-#: packages/admin/src/components/RegistryBrowse.tsx:87
+#: packages/admin/src/components/RegistryBrowse.tsx:106
 msgid "Search plugins"
 msgstr "Шукати плагіни"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:99
-#: packages/admin/src/components/RegistryBrowse.tsx:83
+#: packages/admin/src/components/RegistryBrowse.tsx:102
 msgid "Search plugins..."
 msgstr "Шукати плагіни..."
 
@@ -7157,7 +7161,7 @@ msgstr "безпечний контекст"
 msgid "Secure your account"
 msgstr "Захистіть свій обліковий запис"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:809
+#: packages/admin/src/components/RegistryPluginDetail.tsx:820
 #: packages/admin/src/components/Settings.tsx:70
 msgid "Security"
 msgstr "Безпека"
@@ -7186,7 +7190,7 @@ msgstr "Аудит безпеки позначив цей плагін як по
 msgid "Security audit passed"
 msgstr "Аудит безпеки пройдено"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:718
+#: packages/admin/src/components/RegistryPluginDetail.tsx:729
 msgid "Security contacts"
 msgstr "Контакти з питань безпеки"
 
@@ -8029,19 +8033,19 @@ msgstr "Це остаточно видалить {0} із сховища."
 msgid "This plugin has no configurable settings."
 msgstr ""
 
+#: packages/admin/src/components/RegistryPluginDetail.tsx:453
+msgid "This plugin is not available yet"
+msgstr ""
+
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:287
 msgid "This plugin requires no special permissions."
 msgstr "Цей плагін не потребує спеціальних дозволів."
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:579
-msgid "This publisher claims a name they couldn't prove they own — possibly impersonating someone else. Install is disabled. If you know the publisher and trust them, ask them to fix their identity setup before retrying."
-msgstr "Цей видавець стверджує право на ім’я, яке не зміг підтвердити — можливо, видає себе за іншу особу. Встановлення вимкнено. Якщо ви знаєте видавця і довіряєте йому, попросіть виправити налаштування ідентичності перед повторною спробою."
 
 #: packages/admin/src/components/Redirects.tsx:602
 msgid "This redirect rule will be permanently removed."
 msgstr "Це правило перенаправлення буде остаточно видалено."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:631
+#: packages/admin/src/components/RegistryPluginDetail.tsx:642
 msgid "This release requires a newer environment than your site currently runs. Upgrade before installing."
 msgstr "Цей випуск потребує новішого середовища, ніж зараз на вашому сайті. Оновіть середовище перед встановленням."
 
@@ -8425,10 +8429,6 @@ msgstr "Файл без назви"
 msgid "Untitled Widget"
 msgstr "Віджет без назви"
 
-#: packages/admin/src/components/PublisherHandle.tsx:145
-msgid "Unverified publisher"
-msgstr "Неперевірений видавець"
-
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "Вгору"
@@ -8474,7 +8474,7 @@ msgstr "Оновити до v{0}"
 
 #: packages/admin/src/components/ContentList.tsx:842
 #: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/RegistryPluginDetail.tsx:501
+#: packages/admin/src/components/RegistryPluginDetail.tsx:538
 msgid "Updated"
 msgstr "Оновлено"
 
@@ -8693,23 +8693,6 @@ msgstr "Доступно v{0}"
 msgid "Validation"
 msgstr "Валідація"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:189
-#: packages/admin/src/components/RegistryPluginDetail.tsx:462
-msgid "Verified publisher"
-msgstr "Перевірений видавець"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:461
-msgid "Verified publisher, confirmed by labeller {verifiedLabeller}"
-msgstr "Перевірений видавець, підтверджено маркувальником {verifiedLabeller}"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:452
-msgid "Verified publisher. A labeller ({verifiedLabeller}) has confirmed this publisher's identity."
-msgstr "Перевірений видавець. Маркувальник ({verifiedLabeller}) підтвердив ідентичність цього видавця."
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:453
-msgid "Verified publisher. A labeller has confirmed this publisher's identity."
-msgstr "Перевірений видавець. Маркувальник підтвердив ідентичність цього видавця."
-
 #: packages/admin/src/components/InviteAcceptPage.tsx:228
 msgid "Verifying your invite..."
 msgstr "Перевірка запрошення..."
@@ -8724,12 +8707,12 @@ msgid "Verifying..."
 msgstr "Перевірка..."
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:331
-#: packages/admin/src/components/RegistryPluginDetail.tsx:515
+#: packages/admin/src/components/RegistryPluginDetail.tsx:552
 msgid "Version"
 msgstr "Версія"
 
 #. placeholder {0}: release.version
-#: packages/admin/src/components/RegistryPluginDetail.tsx:477
+#: packages/admin/src/components/RegistryPluginDetail.tsx:514
 msgid "Version {0}"
 msgstr "Версія {0}"
 
@@ -8759,11 +8742,11 @@ msgstr "Переглянути опублікований {title}"
 msgid "View Site"
 msgstr "Переглянути сайт"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:676
+#: packages/admin/src/components/RegistryPluginDetail.tsx:687
 msgid "View source"
 msgstr "Переглянути код"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:931
+#: packages/admin/src/components/RegistryPluginDetail.tsx:923
 msgid "View the {license} license on spdx.org"
 msgstr "Переглянути ліцензію {license} на spdx.org"
 
@@ -8789,10 +8772,6 @@ msgstr "Попередження"
 msgid "We couldn't connect to a WordPress site at {0}. This could mean the site isn't WordPress, the REST API is disabled, or the site isn't accessible."
 msgstr "Не вдалося підключитися до сайту WordPress за адресою {0}. Можливо, це не WordPress, REST API вимкнено або сайт недоступний."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:577
-msgid "We couldn't verify this publisher's identity"
-msgstr "Не вдалося перевірити ідентичність цього видавця"
-
 #: packages/admin/src/components/WordPressImport.tsx:1084
 msgid "We'll check what import options are available for your site."
 msgstr "Перевіримо, які варіанти імпорту доступні для вашого сайту."
@@ -8815,7 +8794,7 @@ msgid "WebAuthn is not supported in this browser"
 msgstr "WebAuthn не підтримується в цьому браузері"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:236
-#: packages/admin/src/components/RegistryPluginDetail.tsx:701
+#: packages/admin/src/components/RegistryPluginDetail.tsx:712
 msgid "Website"
 msgstr "Вебсайт"
 
@@ -9132,7 +9111,7 @@ msgid "Your Role"
 msgstr "Ваша роль"
 
 #. placeholder {0}: formatHoldback(config.policy?.minimumReleaseAgeSeconds ?? 0)
-#: packages/admin/src/components/RegistryPluginDetail.tsx:612
+#: packages/admin/src/components/RegistryPluginDetail.tsx:623
 msgid "Your site requires releases to be at least {0} old before they can be installed. This release will become installable later."
 msgstr "На вашому сайті випуски можна встановлювати лише після {0} з моменту публікації. Цей випуск стане доступним для встановлення пізніше."
 

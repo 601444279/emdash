@@ -54,7 +54,7 @@ msgstr ": použijte"
 msgid "(from {0})"
 msgstr "(z {0})"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:533
+#: packages/admin/src/components/RegistryPluginDetail.tsx:570
 msgid "(pre-release)"
 msgstr "(předběžná verze)"
 
@@ -62,7 +62,7 @@ msgstr "(předběžná verze)"
 msgid "(synced)"
 msgstr "(synchronizováno)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:536
+#: packages/admin/src/components/RegistryPluginDetail.tsx:573
 msgid "(too new)"
 msgstr "(příliš nová)"
 
@@ -206,7 +206,7 @@ msgstr "{0, plural, one {Uživatel} few {Uživatelé} many {Uživatele} other {U
 #. placeholder {0}: envLabel(m.key)
 #. placeholder {1}: m.required
 #. placeholder {2}: m.host
-#: packages/admin/src/components/RegistryPluginDetail.tsx:636
+#: packages/admin/src/components/RegistryPluginDetail.tsx:647
 msgid "{0} {1} required — you have {2}."
 msgstr "Požadavek: {0} {1}; vaše verze: {2}."
 
@@ -217,7 +217,7 @@ msgid "{0} • {1}"
 msgstr "{0} • {1}"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:425
+#: packages/admin/src/components/RegistryPluginDetail.tsx:484
 msgid "{0} banner"
 msgstr "Banner {0}"
 
@@ -247,7 +247,7 @@ msgid "{0} has been removed"
 msgstr "{0} byl odebrán"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:437
+#: packages/admin/src/components/RegistryPluginDetail.tsx:496
 msgid "{0} icon"
 msgstr "Ikona {0}"
 
@@ -1206,7 +1206,7 @@ msgstr "Autorizovat zařízení"
 msgid "Authorizing..."
 msgstr "Autorizace..."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:685
+#: packages/admin/src/components/RegistryPluginDetail.tsx:696
 msgid "Authors"
 msgstr "Autoři"
 
@@ -1291,7 +1291,7 @@ msgid "Back to marketplace"
 msgstr "Zpět na tržiště"
 
 #: packages/admin/src/components/PluginSettings.tsx:118
-#: packages/admin/src/components/RegistryPluginDetail.tsx:820
+#: packages/admin/src/components/RegistryPluginDetail.tsx:831
 msgid "Back to plugins"
 msgstr "Zpět na pluginy"
 
@@ -1371,7 +1371,7 @@ msgstr "Logická hodnota"
 msgid "Brief summary shown below the title in search results"
 msgstr "Stručný souhrn zobrazený pod titulkem ve výsledcích hledání"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:73
+#: packages/admin/src/components/RegistryBrowse.tsx:92
 msgid "Browse and install plugins published to the decentralized registry."
 msgstr "Procházejte a instalujte pluginy publikované v decentralizovaném registru."
 
@@ -1588,7 +1588,7 @@ msgstr "Změnit obrázek"
 msgid "Change Logo"
 msgstr "Změnit logo"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:808
+#: packages/admin/src/components/RegistryPluginDetail.tsx:819
 msgid "Changelog"
 msgstr "Seznam změn"
 
@@ -2327,7 +2327,7 @@ msgstr "Formát data"
 msgid "Decimal number"
 msgstr "Desetinné číslo"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:750
+#: packages/admin/src/components/RegistryPluginDetail.tsx:761
 msgid "Declared permissions"
 msgstr "Deklarovaná oprávnění"
 
@@ -2588,7 +2588,7 @@ msgid "Describe what this section is for..."
 msgstr "Popište, k čemu tato sekce slouží..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
-#: packages/admin/src/components/RegistryPluginDetail.tsx:805
+#: packages/admin/src/components/RegistryPluginDetail.tsx:816
 #: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
@@ -2827,7 +2827,7 @@ msgstr "Stáhnout zálohu"
 msgid "Download backups and schedule automatic backups to storage"
 msgstr "Stáhnout zálohy a naplánovat automatické zálohování do úložiště"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:492
+#: packages/admin/src/components/RegistryPluginDetail.tsx:529
 msgid "Download SBOM"
 msgstr "Stáhnout SBOM"
 
@@ -3216,7 +3216,7 @@ msgstr "Nepodařilo se uložit sekci"
 msgid "Error updating widget"
 msgstr "Nepodařilo se aktualizovat widget"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:596
+#: packages/admin/src/components/RegistryPluginDetail.tsx:607
 msgid "Every published release of this plugin has been withdrawn or could not be verified. Check back later, or contact the publisher."
 msgstr "Všechna publikovaná vydání tohoto pluginu byla stažena nebo je nebylo možné ověřit. Zkuste to později nebo kontaktujte vydavatele."
 
@@ -3580,7 +3580,7 @@ msgid "Failed to import media"
 msgstr "Nepodařilo se importovat média"
 
 #: packages/admin/src/lib/api/marketplace.ts:208
-#: packages/admin/src/lib/api/registry.ts:702
+#: packages/admin/src/lib/api/registry.ts:760
 msgid "Failed to install plugin"
 msgstr "Nepodařilo se nainstalovat plugin"
 
@@ -3632,7 +3632,7 @@ msgstr "Nepodařilo se načíst nastavení pluginu"
 msgid "Failed to load plugins: {0}"
 msgstr "Nepodařilo se načíst pluginy: {0}"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:98
+#: packages/admin/src/components/RegistryBrowse.tsx:117
 msgid "Failed to load plugins. The registry aggregator may be unreachable."
 msgstr "Nepodařilo se načíst pluginy. Agregátor registru je možná nedostupný."
 
@@ -3777,7 +3777,7 @@ msgid "Failed to set entry terms"
 msgstr "Nepodařilo se nastavit položky taxonomie přiřazené k obsahu"
 
 #: packages/admin/src/lib/api/marketplace.ts:249
-#: packages/admin/src/lib/api/registry.ts:858
+#: packages/admin/src/lib/api/registry.ts:916
 msgid "Failed to uninstall plugin"
 msgstr "Nepodařilo se odinstalovat plugin"
 
@@ -3819,7 +3819,7 @@ msgid "Failed to update media"
 msgstr "Nepodařilo se aktualizovat média"
 
 #: packages/admin/src/lib/api/marketplace.ts:232
-#: packages/admin/src/lib/api/registry.ts:776
+#: packages/admin/src/lib/api/registry.ts:834
 msgid "Failed to update plugin"
 msgstr "Nepodařilo se aktualizovat plugin"
 
@@ -3863,7 +3863,7 @@ msgstr "Nepodařilo se ověřit přihlášení"
 msgid "Failed to verify registration"
 msgstr "Nepodařilo se ověřit registraci"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:807
+#: packages/admin/src/components/RegistryPluginDetail.tsx:818
 msgid "FAQ"
 msgstr "FAQ"
 
@@ -4384,7 +4384,7 @@ msgid "Incompatible"
 msgstr "Nekompatibilní"
 
 #: packages/admin/src/components/FieldEditor.tsx:481
-#: packages/admin/src/components/RegistryPluginDetail.tsx:506
+#: packages/admin/src/components/RegistryPluginDetail.tsx:543
 msgid "Indexed"
 msgstr "Indexováno"
 
@@ -4473,7 +4473,7 @@ msgid "Instagram"
 msgstr "Instagram"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:203
-#: packages/admin/src/components/RegistryPluginDetail.tsx:554
+#: packages/admin/src/components/RegistryPluginDetail.tsx:591
 msgid "Install"
 msgstr "Nainstalovat"
 
@@ -4489,14 +4489,14 @@ msgstr "Instalace blokována"
 msgid "Install the EmDash Exporter plugin on your WordPress site and generate a key under Tools → EmDash Migration."
 msgstr "Nainstalujte plugin EmDash Exporter na svůj web na WordPressu a v nabídce Nástroje → EmDash Migration vygenerujte klíč."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:806
+#: packages/admin/src/components/RegistryPluginDetail.tsx:817
 msgid "Installation"
 msgstr "Instalace"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:263
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:184
-#: packages/admin/src/components/RegistryBrowse.tsx:201
-#: packages/admin/src/components/RegistryPluginDetail.tsx:546
+#: packages/admin/src/components/RegistryBrowse.tsx:207
+#: packages/admin/src/components/RegistryPluginDetail.tsx:583
 msgid "Installed"
 msgstr "Nainstalováno"
 
@@ -4581,6 +4581,10 @@ msgstr "Položka smazána"
 #: packages/admin/src/components/MenuEditor.tsx:212
 msgid "Item updated"
 msgstr "Položka aktualizována"
+
+#: packages/admin/src/components/RegistryPluginDetail.tsx:455
+msgid "Its listing has not been approved for display. Check back later."
+msgstr ""
 
 #: packages/admin/src/components/SetupWizard.tsx:213
 #: packages/admin/src/components/SignupPage.tsx:206
@@ -4775,7 +4779,7 @@ msgstr "Živý náhled"
 #: packages/admin/src/components/ContentPickerModal.tsx:228
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/routes/bylines.tsx:468
 msgid "Load more"
@@ -4868,7 +4872,7 @@ msgstr "Načítání widgetů..."
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/PortableTextEditor.tsx:2425
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
@@ -5566,7 +5570,7 @@ msgstr "V dokumentu nejsou žádné nadpisy"
 msgid "No images in this gallery yet."
 msgstr "V této galerii zatím nejsou žádné obrázky."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:594
+#: packages/admin/src/components/RegistryPluginDetail.tsx:605
 msgid "No installable releases"
 msgstr "Žádná instalovatelná vydání"
 
@@ -5660,11 +5664,11 @@ msgstr "Nejsou nastaveny žádné pluginy"
 msgid "No plugins found"
 msgstr "Nenalezeny žádné pluginy"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:120
+#: packages/admin/src/components/RegistryBrowse.tsx:139
 msgid "No plugins have been published to this registry yet."
 msgstr "Do tohoto registru zatím nebyly publikovány žádné pluginy."
 
-#: packages/admin/src/components/RegistryBrowse.tsx:119
+#: packages/admin/src/components/RegistryBrowse.tsx:138
 msgid "No plugins match \"{debouncedQuery}\"."
 msgstr "Dotazu „{debouncedQuery}“ neodpovídají žádné pluginy."
 
@@ -5750,7 +5754,7 @@ msgstr "Žádný"
 msgid "None (top level)"
 msgstr "Žádná (nejvyšší úroveň)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:629
+#: packages/admin/src/components/RegistryPluginDetail.tsx:640
 msgid "Not compatible with this environment"
 msgstr "Není kompatibilní s tímto prostředím"
 
@@ -6108,7 +6112,7 @@ msgstr "Plugin „{pluginId}“ nebyl nalezen"
 msgid "Plugin column unavailable"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:762
+#: packages/admin/src/components/RegistryPluginDetail.tsx:773
 msgid "Plugin details"
 msgstr "Podrobnosti pluginu"
 
@@ -6145,9 +6149,9 @@ msgstr "MCP nástroje pluginů vyžadují výslovný souhlas"
 msgid "Plugin not found"
 msgstr "Plugin nebyl nalezen"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:411
-msgid "Plugin not found. The publisher handle or slug may be incorrect."
-msgstr "Plugin nebyl nalezen. Identifikátor vydavatele nebo slug může být nesprávný."
+#: packages/admin/src/components/RegistryPluginDetail.tsx:470
+msgid "Plugin not found. The publisher or slug may be incorrect."
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:1209
 msgid "plugin on your WordPress site."
@@ -6165,7 +6169,7 @@ msgstr ""
 msgid "Plugin Permissions"
 msgstr "Oprávnění pluginu"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:71
+#: packages/admin/src/components/RegistryBrowse.tsx:90
 msgid "Plugin Registry"
 msgstr "Registr pluginů"
 
@@ -6184,7 +6188,7 @@ msgstr "Nástroje pluginu: {0}"
 msgid "Plugin uninstalled"
 msgstr "Plugin odinstalován"
 
-#: packages/admin/src/lib/api/registry.ts:810
+#: packages/admin/src/lib/api/registry.ts:868
 msgid "Plugin update requires re-consent"
 msgstr "Aktualizace pluginu vyžaduje nový souhlas"
 
@@ -6230,7 +6234,7 @@ msgstr "Příspěvky a stránky"
 msgid "Posts Per Page"
 msgstr "Příspěvků na stránku"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:478
+#: packages/admin/src/components/RegistryPluginDetail.tsx:515
 msgid "Pre-release"
 msgstr "Předběžná verze"
 
@@ -6319,9 +6323,9 @@ msgstr "{total, plural, one {Publikována # položka} few {Publikovány # polož
 msgid "Published At"
 msgstr "Publikováno dne"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:472
-msgid "Published by"
-msgstr "Vydavatel:"
+#: packages/admin/src/components/RegistryPluginDetail.tsx:507
+msgid "Published by <0/>"
+msgstr ""
 
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:47
 msgid "Python"
@@ -6465,7 +6469,7 @@ msgstr "Registrace byla zrušena nebo vypršel časový limit. Zkuste to prosím
 msgid "Registry"
 msgstr "Registr"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:610
+#: packages/admin/src/components/RegistryPluginDetail.tsx:621
 msgid "Release is too new to install"
 msgstr "Toto vydání zatím nelze nainstalovat, protože je příliš nové"
 
@@ -6901,12 +6905,12 @@ msgstr "Ukládání..."
 msgid "Saving…"
 msgstr "Ukládání…"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:482
+#: packages/admin/src/components/RegistryPluginDetail.tsx:519
 msgid "SBOM"
 msgstr "SBOM"
 
 #. placeholder {0}: sbom.format
-#: packages/admin/src/components/RegistryPluginDetail.tsx:480
+#: packages/admin/src/components/RegistryPluginDetail.tsx:517
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
@@ -6961,7 +6965,7 @@ msgstr "Rozsahy"
 #. placeholder {0}: i + 1
 #. placeholder {0}: index + 1
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:254
-#: packages/admin/src/components/RegistryPluginDetail.tsx:655
+#: packages/admin/src/components/RegistryPluginDetail.tsx:666
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:174
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:293
 msgid "Screenshot {0}"
@@ -6982,7 +6986,7 @@ msgid "Screenshot viewer"
 msgstr "Prohlížeč snímků obrazovky"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:244
-#: packages/admin/src/components/RegistryPluginDetail.tsx:649
+#: packages/admin/src/components/RegistryPluginDetail.tsx:660
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:164
 msgid "Screenshots"
 msgstr "Snímky obrazovky"
@@ -7066,12 +7070,12 @@ msgid "Search pages and content..."
 msgstr "Hledat stránky a obsah..."
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:103
-#: packages/admin/src/components/RegistryBrowse.tsx:87
+#: packages/admin/src/components/RegistryBrowse.tsx:106
 msgid "Search plugins"
 msgstr "Hledat pluginy"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:99
-#: packages/admin/src/components/RegistryBrowse.tsx:83
+#: packages/admin/src/components/RegistryBrowse.tsx:102
 msgid "Search plugins..."
 msgstr "Hledat pluginy..."
 
@@ -7157,7 +7161,7 @@ msgstr "zabezpečený kontext"
 msgid "Secure your account"
 msgstr "Zabezpečení účtu"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:809
+#: packages/admin/src/components/RegistryPluginDetail.tsx:820
 #: packages/admin/src/components/Settings.tsx:70
 msgid "Security"
 msgstr "Zabezpečení"
@@ -7186,7 +7190,7 @@ msgstr "Bezpečnostní audit označil tento plugin jako potenciálně nebezpečn
 msgid "Security audit passed"
 msgstr "Bezpečnostní audit proběhl úspěšně"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:718
+#: packages/admin/src/components/RegistryPluginDetail.tsx:729
 msgid "Security contacts"
 msgstr "Bezpečnostní kontakty"
 
@@ -8029,19 +8033,19 @@ msgstr "Trvale odstraní {0} z úložiště."
 msgid "This plugin has no configurable settings."
 msgstr "Tento plugin nemá žádná nastavení."
 
+#: packages/admin/src/components/RegistryPluginDetail.tsx:453
+msgid "This plugin is not available yet"
+msgstr ""
+
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:287
 msgid "This plugin requires no special permissions."
 msgstr "Tento plugin nevyžaduje žádná zvláštní oprávnění."
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:579
-msgid "This publisher claims a name they couldn't prove they own — possibly impersonating someone else. Install is disabled. If you know the publisher and trust them, ask them to fix their identity setup before retrying."
-msgstr "Tento vydavatel si nárokuje jméno, jehož vlastnictví nedokázal prokázat — možná se vydává za někoho jiného. Instalace je zakázána. Pokud vydavatele znáte a důvěřujete mu, požádejte ho, aby před dalším pokusem opravil nastavení své identity."
 
 #: packages/admin/src/components/Redirects.tsx:602
 msgid "This redirect rule will be permanently removed."
 msgstr "Toto pravidlo přesměrování bude trvale odstraněno."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:631
+#: packages/admin/src/components/RegistryPluginDetail.tsx:642
 msgid "This release requires a newer environment than your site currently runs. Upgrade before installing."
 msgstr "Tato verze vyžaduje novější prostředí, než na jakém web běží. Před instalací proveďte upgrade."
 
@@ -8425,10 +8429,6 @@ msgstr "Soubor bez názvu"
 msgid "Untitled Widget"
 msgstr "Widget bez názvu"
 
-#: packages/admin/src/components/PublisherHandle.tsx:145
-msgid "Unverified publisher"
-msgstr "Neověřený vydavatel"
-
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "Nahoru"
@@ -8474,7 +8474,7 @@ msgstr "Aktualizovat na verzi {0}"
 
 #: packages/admin/src/components/ContentList.tsx:842
 #: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/RegistryPluginDetail.tsx:501
+#: packages/admin/src/components/RegistryPluginDetail.tsx:538
 msgid "Updated"
 msgstr "Aktualizováno"
 
@@ -8693,23 +8693,6 @@ msgstr "K dispozici je verze {0}"
 msgid "Validation"
 msgstr "Validace"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:189
-#: packages/admin/src/components/RegistryPluginDetail.tsx:462
-msgid "Verified publisher"
-msgstr "Ověřený vydavatel"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:461
-msgid "Verified publisher, confirmed by labeller {verifiedLabeller}"
-msgstr "Ověřený vydavatel; identitu potvrdil ověřovatel {verifiedLabeller}"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:452
-msgid "Verified publisher. A labeller ({verifiedLabeller}) has confirmed this publisher's identity."
-msgstr "Ověřený vydavatel. Ověřovatel identity ({verifiedLabeller}) potvrdil identitu tohoto vydavatele."
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:453
-msgid "Verified publisher. A labeller has confirmed this publisher's identity."
-msgstr "Ověřený vydavatel. Ověřovatel identity potvrdil identitu tohoto vydavatele."
-
 #: packages/admin/src/components/InviteAcceptPage.tsx:228
 msgid "Verifying your invite..."
 msgstr "Ověřování pozvánky…"
@@ -8724,12 +8707,12 @@ msgid "Verifying..."
 msgstr "Ověřování…"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:331
-#: packages/admin/src/components/RegistryPluginDetail.tsx:515
+#: packages/admin/src/components/RegistryPluginDetail.tsx:552
 msgid "Version"
 msgstr "Verze"
 
 #. placeholder {0}: release.version
-#: packages/admin/src/components/RegistryPluginDetail.tsx:477
+#: packages/admin/src/components/RegistryPluginDetail.tsx:514
 msgid "Version {0}"
 msgstr "Verze {0}"
 
@@ -8759,11 +8742,11 @@ msgstr "Zobrazit publikovanou verzi: {title}"
 msgid "View Site"
 msgstr "Zobrazit web"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:676
+#: packages/admin/src/components/RegistryPluginDetail.tsx:687
 msgid "View source"
 msgstr "Zobrazit zdrojový kód"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:931
+#: packages/admin/src/components/RegistryPluginDetail.tsx:923
 msgid "View the {license} license on spdx.org"
 msgstr "Zobrazit licenci {license} na spdx.org"
 
@@ -8789,10 +8772,6 @@ msgstr "S výhradami"
 msgid "We couldn't connect to a WordPress site at {0}. This could mean the site isn't WordPress, the REST API is disabled, or the site isn't accessible."
 msgstr "Nepodařilo se připojit k webu na WordPressu na adrese {0}. Web možná neběží na WordPressu, REST API je vypnuté nebo web není dostupný."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:577
-msgid "We couldn't verify this publisher's identity"
-msgstr "Identitu tohoto vydavatele se nepodařilo ověřit"
-
 #: packages/admin/src/components/WordPressImport.tsx:1084
 msgid "We'll check what import options are available for your site."
 msgstr "Zjistíme, jaké možnosti importu jsou pro váš web dostupné."
@@ -8815,7 +8794,7 @@ msgid "WebAuthn is not supported in this browser"
 msgstr "WebAuthn není v tomto prohlížeči podporován"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:236
-#: packages/admin/src/components/RegistryPluginDetail.tsx:701
+#: packages/admin/src/components/RegistryPluginDetail.tsx:712
 msgid "Website"
 msgstr "Web"
 
@@ -9132,7 +9111,7 @@ msgid "Your Role"
 msgstr "Vaše role"
 
 #. placeholder {0}: formatHoldback(config.policy?.minimumReleaseAgeSeconds ?? 0)
-#: packages/admin/src/components/RegistryPluginDetail.tsx:612
+#: packages/admin/src/components/RegistryPluginDetail.tsx:623
 msgid "Your site requires releases to be at least {0} old before they can be installed. This release will become installable later."
 msgstr "Váš web vyžaduje, aby byly verze staré alespoň {0}, než je lze nainstalovat. Tuto verzi bude možné nainstalovat později."
 

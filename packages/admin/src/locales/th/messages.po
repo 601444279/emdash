@@ -54,7 +54,7 @@ msgstr ": ใช้"
 msgid "(from {0})"
 msgstr "(จาก {0})"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:533
+#: packages/admin/src/components/RegistryPluginDetail.tsx:570
 msgid "(pre-release)"
 msgstr "(รุ่นก่อนเผยแพร่)"
 
@@ -62,7 +62,7 @@ msgstr "(รุ่นก่อนเผยแพร่)"
 msgid "(synced)"
 msgstr "(ซิงค์แล้ว)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:536
+#: packages/admin/src/components/RegistryPluginDetail.tsx:573
 msgid "(too new)"
 msgstr "(ใหม่เกินไป)"
 
@@ -206,7 +206,7 @@ msgstr ""
 #. placeholder {0}: envLabel(m.key)
 #. placeholder {1}: m.required
 #. placeholder {2}: m.host
-#: packages/admin/src/components/RegistryPluginDetail.tsx:636
+#: packages/admin/src/components/RegistryPluginDetail.tsx:647
 msgid "{0} {1} required — you have {2}."
 msgstr "ต้องการ {0} {1} — คุณมี {2}"
 
@@ -217,7 +217,7 @@ msgid "{0} • {1}"
 msgstr "{0} • {1}"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:425
+#: packages/admin/src/components/RegistryPluginDetail.tsx:484
 msgid "{0} banner"
 msgstr "แบนเนอร์ {0}"
 
@@ -247,7 +247,7 @@ msgid "{0} has been removed"
 msgstr "นำ {0} ออกแล้ว"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:437
+#: packages/admin/src/components/RegistryPluginDetail.tsx:496
 msgid "{0} icon"
 msgstr "ไอคอน {0}"
 
@@ -1206,7 +1206,7 @@ msgstr "อนุญาตสิทธิ์อุปกรณ์"
 msgid "Authorizing..."
 msgstr "กำลังอนุญาตสิทธิ์..."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:685
+#: packages/admin/src/components/RegistryPluginDetail.tsx:696
 msgid "Authors"
 msgstr "ผู้เขียน"
 
@@ -1291,7 +1291,7 @@ msgid "Back to marketplace"
 msgstr "กลับไปยังมาร์เก็ตเพลส"
 
 #: packages/admin/src/components/PluginSettings.tsx:118
-#: packages/admin/src/components/RegistryPluginDetail.tsx:820
+#: packages/admin/src/components/RegistryPluginDetail.tsx:831
 msgid "Back to plugins"
 msgstr "กลับไปยังปลั๊กอิน"
 
@@ -1371,7 +1371,7 @@ msgstr "บูลีน"
 msgid "Brief summary shown below the title in search results"
 msgstr "สรุปสั้น ๆ ที่แสดงใต้ชื่อในผลการค้นหา"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:73
+#: packages/admin/src/components/RegistryBrowse.tsx:92
 msgid "Browse and install plugins published to the decentralized registry."
 msgstr "เรียกดูและติดตั้งปลั๊กอินที่เผยแพร่ในรีจิสตรีแบบกระจายศูนย์"
 
@@ -1588,7 +1588,7 @@ msgstr "เปลี่ยนรูปภาพ"
 msgid "Change Logo"
 msgstr "เปลี่ยนโลโก้"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:808
+#: packages/admin/src/components/RegistryPluginDetail.tsx:819
 msgid "Changelog"
 msgstr "บันทึกการเปลี่ยนแปลง"
 
@@ -2327,7 +2327,7 @@ msgstr "รูปแบบวันที่"
 msgid "Decimal number"
 msgstr "เลขทศนิยม"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:750
+#: packages/admin/src/components/RegistryPluginDetail.tsx:761
 msgid "Declared permissions"
 msgstr "สิทธิ์ที่ประกาศไว้"
 
@@ -2588,7 +2588,7 @@ msgid "Describe what this section is for..."
 msgstr "อธิบายว่าส่วนนี้มีไว้เพื่ออะไร..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
-#: packages/admin/src/components/RegistryPluginDetail.tsx:805
+#: packages/admin/src/components/RegistryPluginDetail.tsx:816
 #: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
@@ -2827,7 +2827,7 @@ msgstr ""
 msgid "Download backups and schedule automatic backups to storage"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:492
+#: packages/admin/src/components/RegistryPluginDetail.tsx:529
 msgid "Download SBOM"
 msgstr "ดาวน์โหลด SBOM"
 
@@ -3213,7 +3213,7 @@ msgstr "เกิดข้อผิดพลาดในการบันทึ
 msgid "Error updating widget"
 msgstr "เกิดข้อผิดพลาดในการอัปเดตวิดเจ็ต"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:596
+#: packages/admin/src/components/RegistryPluginDetail.tsx:607
 msgid "Every published release of this plugin has been withdrawn or could not be verified. Check back later, or contact the publisher."
 msgstr "ทุกรุ่นที่เผยแพร่ของปลั๊กอินนี้ถูกถอนออกหรือไม่สามารถยืนยันได้ โปรดกลับมาตรวจสอบใหม่ภายหลัง หรือติดต่อผู้เผยแพร่"
 
@@ -3577,7 +3577,7 @@ msgid "Failed to import media"
 msgstr "นำเข้ามีเดียไม่สำเร็จ"
 
 #: packages/admin/src/lib/api/marketplace.ts:208
-#: packages/admin/src/lib/api/registry.ts:702
+#: packages/admin/src/lib/api/registry.ts:760
 msgid "Failed to install plugin"
 msgstr "ติดตั้งปลั๊กอินไม่สำเร็จ"
 
@@ -3629,7 +3629,7 @@ msgstr ""
 msgid "Failed to load plugins: {0}"
 msgstr "โหลดปลั๊กอินไม่สำเร็จ: {0}"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:98
+#: packages/admin/src/components/RegistryBrowse.tsx:117
 msgid "Failed to load plugins. The registry aggregator may be unreachable."
 msgstr "โหลดปลั๊กอินไม่สำเร็จ อาจไม่สามารถเข้าถึงตัวรวบรวมรีจิสตรีได้"
 
@@ -3774,7 +3774,7 @@ msgid "Failed to set entry terms"
 msgstr "กำหนดเทอมของรายการไม่สำเร็จ"
 
 #: packages/admin/src/lib/api/marketplace.ts:249
-#: packages/admin/src/lib/api/registry.ts:858
+#: packages/admin/src/lib/api/registry.ts:916
 msgid "Failed to uninstall plugin"
 msgstr "ถอนการติดตั้งปลั๊กอินไม่สำเร็จ"
 
@@ -3816,7 +3816,7 @@ msgid "Failed to update media"
 msgstr ""
 
 #: packages/admin/src/lib/api/marketplace.ts:232
-#: packages/admin/src/lib/api/registry.ts:776
+#: packages/admin/src/lib/api/registry.ts:834
 msgid "Failed to update plugin"
 msgstr "อัปเดตปลั๊กอินไม่สำเร็จ"
 
@@ -3860,7 +3860,7 @@ msgstr "ยืนยันการตรวจสอบสิทธิ์ไม
 msgid "Failed to verify registration"
 msgstr "ยืนยันการลงทะเบียนไม่สำเร็จ"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:807
+#: packages/admin/src/components/RegistryPluginDetail.tsx:818
 msgid "FAQ"
 msgstr "คำถามที่พบบ่อย"
 
@@ -4381,7 +4381,7 @@ msgid "Incompatible"
 msgstr "ไม่เข้ากัน"
 
 #: packages/admin/src/components/FieldEditor.tsx:481
-#: packages/admin/src/components/RegistryPluginDetail.tsx:506
+#: packages/admin/src/components/RegistryPluginDetail.tsx:543
 msgid "Indexed"
 msgstr "จัดทำดัชนีแล้ว"
 
@@ -4470,7 +4470,7 @@ msgid "Instagram"
 msgstr "Instagram"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:203
-#: packages/admin/src/components/RegistryPluginDetail.tsx:554
+#: packages/admin/src/components/RegistryPluginDetail.tsx:591
 msgid "Install"
 msgstr "ติดตั้ง"
 
@@ -4486,14 +4486,14 @@ msgstr "การติดตั้งถูกบล็อก"
 msgid "Install the EmDash Exporter plugin on your WordPress site and generate a key under Tools → EmDash Migration."
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:806
+#: packages/admin/src/components/RegistryPluginDetail.tsx:817
 msgid "Installation"
 msgstr "การติดตั้ง"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:263
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:184
-#: packages/admin/src/components/RegistryBrowse.tsx:201
-#: packages/admin/src/components/RegistryPluginDetail.tsx:546
+#: packages/admin/src/components/RegistryBrowse.tsx:207
+#: packages/admin/src/components/RegistryPluginDetail.tsx:583
 msgid "Installed"
 msgstr "ติดตั้งแล้ว"
 
@@ -4578,6 +4578,10 @@ msgstr "ลบรายการแล้ว"
 #: packages/admin/src/components/MenuEditor.tsx:212
 msgid "Item updated"
 msgstr "อัปเดตรายการแล้ว"
+
+#: packages/admin/src/components/RegistryPluginDetail.tsx:455
+msgid "Its listing has not been approved for display. Check back later."
+msgstr ""
 
 #: packages/admin/src/components/SetupWizard.tsx:213
 #: packages/admin/src/components/SignupPage.tsx:206
@@ -4772,7 +4776,7 @@ msgstr "มุมมองสด"
 #: packages/admin/src/components/ContentPickerModal.tsx:228
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/routes/bylines.tsx:468
 msgid "Load more"
@@ -4865,7 +4869,7 @@ msgstr "กำลังโหลดวิดเจ็ต..."
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/PortableTextEditor.tsx:2425
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
@@ -5563,7 +5567,7 @@ msgstr "ไม่มีหัวข้อในเอกสาร"
 msgid "No images in this gallery yet."
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:594
+#: packages/admin/src/components/RegistryPluginDetail.tsx:605
 msgid "No installable releases"
 msgstr "ไม่มีรุ่นที่สามารถติดตั้งได้"
 
@@ -5657,11 +5661,11 @@ msgstr "ยังไม่มีปลั๊กอินที่กำหนด
 msgid "No plugins found"
 msgstr "ไม่พบปลั๊กอิน"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:120
+#: packages/admin/src/components/RegistryBrowse.tsx:139
 msgid "No plugins have been published to this registry yet."
 msgstr "ยังไม่มีปลั๊กอินที่เผยแพร่ไปยัง registry นี้"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:119
+#: packages/admin/src/components/RegistryBrowse.tsx:138
 msgid "No plugins match \"{debouncedQuery}\"."
 msgstr "ไม่มีปลั๊กอินที่ตรงกับ \"{debouncedQuery}\""
 
@@ -5747,7 +5751,7 @@ msgstr ""
 msgid "None (top level)"
 msgstr "ไม่มี (ระดับบนสุด)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:629
+#: packages/admin/src/components/RegistryPluginDetail.tsx:640
 msgid "Not compatible with this environment"
 msgstr "ไม่รองรับกับสภาพแวดล้อมนี้"
 
@@ -6105,7 +6109,7 @@ msgstr ""
 msgid "Plugin column unavailable"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:762
+#: packages/admin/src/components/RegistryPluginDetail.tsx:773
 msgid "Plugin details"
 msgstr "รายละเอียดปลั๊กอิน"
 
@@ -6142,9 +6146,9 @@ msgstr ""
 msgid "Plugin not found"
 msgstr "ไม่พบปลั๊กอิน"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:411
-msgid "Plugin not found. The publisher handle or slug may be incorrect."
-msgstr "ไม่พบปลั๊กอิน อาจระบุ handle ของผู้เผยแพร่หรือ Slug ไม่ถูกต้อง"
+#: packages/admin/src/components/RegistryPluginDetail.tsx:470
+msgid "Plugin not found. The publisher or slug may be incorrect."
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:1209
 msgid "plugin on your WordPress site."
@@ -6162,7 +6166,7 @@ msgstr ""
 msgid "Plugin Permissions"
 msgstr "สิทธิ์ของปลั๊กอิน"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:71
+#: packages/admin/src/components/RegistryBrowse.tsx:90
 msgid "Plugin Registry"
 msgstr "ทะเบียนปลั๊กอิน"
 
@@ -6181,7 +6185,7 @@ msgstr ""
 msgid "Plugin uninstalled"
 msgstr "ถอนการติดตั้งปลั๊กอินแล้ว"
 
-#: packages/admin/src/lib/api/registry.ts:810
+#: packages/admin/src/lib/api/registry.ts:868
 msgid "Plugin update requires re-consent"
 msgstr "การอัปเดตปลั๊กอินต้องขอความยินยอมใหม่"
 
@@ -6227,7 +6231,7 @@ msgstr ""
 msgid "Posts Per Page"
 msgstr "จำนวนโพสต์ต่อหน้า"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:478
+#: packages/admin/src/components/RegistryPluginDetail.tsx:515
 msgid "Pre-release"
 msgstr "รุ่นก่อนเผยแพร่"
 
@@ -6316,9 +6320,9 @@ msgstr ""
 msgid "Published At"
 msgstr "เผยแพร่เมื่อ"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:472
-msgid "Published by"
-msgstr "เผยแพร่โดย"
+#: packages/admin/src/components/RegistryPluginDetail.tsx:507
+msgid "Published by <0/>"
+msgstr ""
 
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:47
 msgid "Python"
@@ -6462,7 +6466,7 @@ msgstr "การลงทะเบียนถูกยกเลิกหรื
 msgid "Registry"
 msgstr "รีจิสทรี"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:610
+#: packages/admin/src/components/RegistryPluginDetail.tsx:621
 msgid "Release is too new to install"
 msgstr "รุ่นนี้ใหม่เกินกว่าจะติดตั้งได้"
 
@@ -6898,12 +6902,12 @@ msgstr "กำลังบันทึก..."
 msgid "Saving…"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:482
+#: packages/admin/src/components/RegistryPluginDetail.tsx:519
 msgid "SBOM"
 msgstr "SBOM"
 
 #. placeholder {0}: sbom.format
-#: packages/admin/src/components/RegistryPluginDetail.tsx:480
+#: packages/admin/src/components/RegistryPluginDetail.tsx:517
 msgid "SBOM · {0}"
 msgstr "SBOM · {0}"
 
@@ -6958,7 +6962,7 @@ msgstr "ขอบเขต"
 #. placeholder {0}: i + 1
 #. placeholder {0}: index + 1
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:254
-#: packages/admin/src/components/RegistryPluginDetail.tsx:655
+#: packages/admin/src/components/RegistryPluginDetail.tsx:666
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:174
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:293
 msgid "Screenshot {0}"
@@ -6979,7 +6983,7 @@ msgid "Screenshot viewer"
 msgstr "ตัวดูภาพหน้าจอ"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:244
-#: packages/admin/src/components/RegistryPluginDetail.tsx:649
+#: packages/admin/src/components/RegistryPluginDetail.tsx:660
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:164
 msgid "Screenshots"
 msgstr "ภาพหน้าจอ"
@@ -7063,12 +7067,12 @@ msgid "Search pages and content..."
 msgstr "ค้นหาหน้าและเนื้อหา..."
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:103
-#: packages/admin/src/components/RegistryBrowse.tsx:87
+#: packages/admin/src/components/RegistryBrowse.tsx:106
 msgid "Search plugins"
 msgstr "ค้นหาปลั๊กอิน"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:99
-#: packages/admin/src/components/RegistryBrowse.tsx:83
+#: packages/admin/src/components/RegistryBrowse.tsx:102
 msgid "Search plugins..."
 msgstr "ค้นหาปลั๊กอิน..."
 
@@ -7154,7 +7158,7 @@ msgstr "secure context"
 msgid "Secure your account"
 msgstr "รักษาความปลอดภัยบัญชีของคุณ"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:809
+#: packages/admin/src/components/RegistryPluginDetail.tsx:820
 #: packages/admin/src/components/Settings.tsx:70
 msgid "Security"
 msgstr "ความปลอดภัย"
@@ -7183,7 +7187,7 @@ msgstr "การตรวจสอบความปลอดภัยระบ
 msgid "Security audit passed"
 msgstr "ผ่านการตรวจสอบความปลอดภัย"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:718
+#: packages/admin/src/components/RegistryPluginDetail.tsx:729
 msgid "Security contacts"
 msgstr "ผู้ติดต่อด้านความปลอดภัย"
 
@@ -8026,19 +8030,19 @@ msgstr ""
 msgid "This plugin has no configurable settings."
 msgstr ""
 
+#: packages/admin/src/components/RegistryPluginDetail.tsx:453
+msgid "This plugin is not available yet"
+msgstr ""
+
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:287
 msgid "This plugin requires no special permissions."
 msgstr "ปลั๊กอินนี้ไม่ต้องการสิทธิ์พิเศษใด ๆ"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:579
-msgid "This publisher claims a name they couldn't prove they own — possibly impersonating someone else. Install is disabled. If you know the publisher and trust them, ask them to fix their identity setup before retrying."
-msgstr "ผู้เผยแพร่นี้อ้างชื่อที่ไม่สามารถพิสูจน์ความเป็นเจ้าของได้ — อาจกำลังแอบอ้างเป็นบุคคลอื่น การติดตั้งถูกปิดใช้งาน หากคุณรู้จักผู้เผยแพร่และไว้วางใจพวกเขา ให้ขอให้พวกเขาแก้ไขการตั้งค่าตัวตนก่อนลองอีกครั้ง"
 
 #: packages/admin/src/components/Redirects.tsx:602
 msgid "This redirect rule will be permanently removed."
 msgstr "กฎการเปลี่ยนเส้นทางนี้จะถูกนำออกอย่างถาวร"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:631
+#: packages/admin/src/components/RegistryPluginDetail.tsx:642
 msgid "This release requires a newer environment than your site currently runs. Upgrade before installing."
 msgstr "รุ่นนี้ต้องการสภาพแวดล้อมที่ใหม่กว่าที่เว็บไซต์ของคุณใช้อยู่ กรุณาอัปเกรดก่อนติดตั้ง"
 
@@ -8422,10 +8426,6 @@ msgstr "ไฟล์ไม่มีชื่อ"
 msgid "Untitled Widget"
 msgstr "วิดเจ็ตไม่มีชื่อ"
 
-#: packages/admin/src/components/PublisherHandle.tsx:145
-msgid "Unverified publisher"
-msgstr "ผู้เผยแพร่ที่ยังไม่ได้รับการยืนยัน"
-
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "ขึ้น"
@@ -8471,7 +8471,7 @@ msgstr "อัปเดตเป็น v{0}"
 
 #: packages/admin/src/components/ContentList.tsx:842
 #: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/RegistryPluginDetail.tsx:501
+#: packages/admin/src/components/RegistryPluginDetail.tsx:538
 msgid "Updated"
 msgstr "อัปเดตแล้ว"
 
@@ -8690,23 +8690,6 @@ msgstr "มี v{0} ให้ใช้งาน"
 msgid "Validation"
 msgstr "การตรวจสอบความถูกต้อง"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:189
-#: packages/admin/src/components/RegistryPluginDetail.tsx:462
-msgid "Verified publisher"
-msgstr "ผู้เผยแพร่ที่ได้รับการยืนยัน"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:461
-msgid "Verified publisher, confirmed by labeller {verifiedLabeller}"
-msgstr "ผู้เผยแพร่ที่ยืนยันแล้ว ยืนยันโดยผู้ตรวจสอบ {verifiedLabeller}"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:452
-msgid "Verified publisher. A labeller ({verifiedLabeller}) has confirmed this publisher's identity."
-msgstr "ผู้เผยแพร่ที่ยืนยันแล้ว ผู้ตรวจสอบ ({verifiedLabeller}) ได้ยืนยันตัวตนของผู้เผยแพร่รายนี้แล้ว"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:453
-msgid "Verified publisher. A labeller has confirmed this publisher's identity."
-msgstr "ผู้เผยแพร่ที่ยืนยันแล้ว ผู้ตรวจสอบได้ยืนยันตัวตนของผู้เผยแพร่รายนี้แล้ว"
-
 #: packages/admin/src/components/InviteAcceptPage.tsx:228
 msgid "Verifying your invite..."
 msgstr "กำลังยืนยันคำเชิญของคุณ..."
@@ -8721,12 +8704,12 @@ msgid "Verifying..."
 msgstr "กำลังยืนยัน..."
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:331
-#: packages/admin/src/components/RegistryPluginDetail.tsx:515
+#: packages/admin/src/components/RegistryPluginDetail.tsx:552
 msgid "Version"
 msgstr "เวอร์ชัน"
 
 #. placeholder {0}: release.version
-#: packages/admin/src/components/RegistryPluginDetail.tsx:477
+#: packages/admin/src/components/RegistryPluginDetail.tsx:514
 msgid "Version {0}"
 msgstr "เวอร์ชัน {0}"
 
@@ -8756,11 +8739,11 @@ msgstr "ดู {title} ที่เผยแพร่แล้ว"
 msgid "View Site"
 msgstr "ดูเว็บไซต์"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:676
+#: packages/admin/src/components/RegistryPluginDetail.tsx:687
 msgid "View source"
 msgstr "ดูซอร์ส"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:931
+#: packages/admin/src/components/RegistryPluginDetail.tsx:923
 msgid "View the {license} license on spdx.org"
 msgstr "ดูสัญญาอนุญาต {license} บน spdx.org"
 
@@ -8786,10 +8769,6 @@ msgstr "เตือน"
 msgid "We couldn't connect to a WordPress site at {0}. This could mean the site isn't WordPress, the REST API is disabled, or the site isn't accessible."
 msgstr "เราไม่สามารถเชื่อมต่อกับเว็บไซต์ WordPress ที่ {0} ได้ อาจเป็นเพราะเว็บไซต์ไม่ใช่ WordPress, REST API ถูกปิดใช้งาน หรือไม่สามารถเข้าถึงเว็บไซต์ได้"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:577
-msgid "We couldn't verify this publisher's identity"
-msgstr "เราไม่สามารถยืนยันตัวตนของผู้เผยแพร่รายนี้ได้"
-
 #: packages/admin/src/components/WordPressImport.tsx:1084
 msgid "We'll check what import options are available for your site."
 msgstr "เราจะตรวจสอบว่ามีตัวเลือกการนำเข้าใดบ้างที่พร้อมใช้งานสำหรับเว็บไซต์ของคุณ"
@@ -8812,7 +8791,7 @@ msgid "WebAuthn is not supported in this browser"
 msgstr "WebAuthn ไม่รองรับในเบราว์เซอร์นี้"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:236
-#: packages/admin/src/components/RegistryPluginDetail.tsx:701
+#: packages/admin/src/components/RegistryPluginDetail.tsx:712
 msgid "Website"
 msgstr "เว็บไซต์"
 
@@ -9129,7 +9108,7 @@ msgid "Your Role"
 msgstr "บทบาทของคุณ"
 
 #. placeholder {0}: formatHoldback(config.policy?.minimumReleaseAgeSeconds ?? 0)
-#: packages/admin/src/components/RegistryPluginDetail.tsx:612
+#: packages/admin/src/components/RegistryPluginDetail.tsx:623
 msgid "Your site requires releases to be at least {0} old before they can be installed. This release will become installable later."
 msgstr "เว็บไซต์ของคุณกำหนดให้รุ่นต้องมีอายุอย่างน้อย {0} ก่อนจึงจะติดตั้งได้ รุ่นนี้จะติดตั้งได้ในภายหลัง"
 

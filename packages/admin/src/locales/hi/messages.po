@@ -54,7 +54,7 @@ msgstr ": उपयोग"
 msgid "(from {0})"
 msgstr "({0} से)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:533
+#: packages/admin/src/components/RegistryPluginDetail.tsx:570
 msgid "(pre-release)"
 msgstr "(रिलीज़ से पहले)"
 
@@ -62,7 +62,7 @@ msgstr "(रिलीज़ से पहले)"
 msgid "(synced)"
 msgstr "(समन्वयित)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:536
+#: packages/admin/src/components/RegistryPluginDetail.tsx:573
 msgid "(too new)"
 msgstr "(बहुत नया)"
 
@@ -206,7 +206,7 @@ msgstr "{0, plural, one {उपयोगकर्ता} other {उपयोग�
 #. placeholder {0}: envLabel(m.key)
 #. placeholder {1}: m.required
 #. placeholder {2}: m.host
-#: packages/admin/src/components/RegistryPluginDetail.tsx:636
+#: packages/admin/src/components/RegistryPluginDetail.tsx:647
 msgid "{0} {1} required — you have {2}."
 msgstr "{0} {1} आवश्यक - आपके पास {2} है।"
 
@@ -217,7 +217,7 @@ msgid "{0} • {1}"
 msgstr "{0} • {1}"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:425
+#: packages/admin/src/components/RegistryPluginDetail.tsx:484
 msgid "{0} banner"
 msgstr "{0} बैनर"
 
@@ -247,7 +247,7 @@ msgid "{0} has been removed"
 msgstr "{0} हटा दिया गया है"
 
 #. placeholder {0}: displayName ?? slug
-#: packages/admin/src/components/RegistryPluginDetail.tsx:437
+#: packages/admin/src/components/RegistryPluginDetail.tsx:496
 msgid "{0} icon"
 msgstr "{0} आइकन"
 
@@ -1206,7 +1206,7 @@ msgstr "डिवाइस को अधिकृत करें"
 msgid "Authorizing..."
 msgstr "प्राधिकृत किया जा रहा है..."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:685
+#: packages/admin/src/components/RegistryPluginDetail.tsx:696
 msgid "Authors"
 msgstr "लेखक"
 
@@ -1291,7 +1291,7 @@ msgid "Back to marketplace"
 msgstr "बाज़ार में वापस"
 
 #: packages/admin/src/components/PluginSettings.tsx:118
-#: packages/admin/src/components/RegistryPluginDetail.tsx:820
+#: packages/admin/src/components/RegistryPluginDetail.tsx:831
 msgid "Back to plugins"
 msgstr "प्लगइन्स पर वापस जाएँ"
 
@@ -1371,7 +1371,7 @@ msgstr "बूलियन"
 msgid "Brief summary shown below the title in search results"
 msgstr "खोज परिणामों में शीर्षक के नीचे संक्षिप्त सारांश दिखाया गया है"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:73
+#: packages/admin/src/components/RegistryBrowse.tsx:92
 msgid "Browse and install plugins published to the decentralized registry."
 msgstr "विकेंद्रीकृत रजिस्ट्री में प्रकाशित प्लगइन्स ब्राउज़ करें और इंस्टॉल करें।"
 
@@ -1588,7 +1588,7 @@ msgstr "छवि बदलें"
 msgid "Change Logo"
 msgstr "लोगो बदलें"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:808
+#: packages/admin/src/components/RegistryPluginDetail.tsx:819
 msgid "Changelog"
 msgstr "बदलाव का"
 
@@ -2327,7 +2327,7 @@ msgstr "तारिख का प्रारूप"
 msgid "Decimal number"
 msgstr "दशमलव संख्या"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:750
+#: packages/admin/src/components/RegistryPluginDetail.tsx:761
 msgid "Declared permissions"
 msgstr "घोषित अनुमतियाँ"
 
@@ -2588,7 +2588,7 @@ msgid "Describe what this section is for..."
 msgstr "बताएं कि यह अनुभाग किस लिए है..."
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:414
-#: packages/admin/src/components/RegistryPluginDetail.tsx:805
+#: packages/admin/src/components/RegistryPluginDetail.tsx:816
 #: packages/admin/src/components/SectionEditor.tsx:295
 #: packages/admin/src/components/Sections.tsx:200
 #: packages/admin/src/components/Widgets.tsx:438
@@ -2827,7 +2827,7 @@ msgstr "बैकअप डाउनलोड करें"
 msgid "Download backups and schedule automatic backups to storage"
 msgstr "बैकअप डाउनलोड करें और स्टोरेज में स्वचालित बैकअप शेड्यूल करें"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:492
+#: packages/admin/src/components/RegistryPluginDetail.tsx:529
 msgid "Download SBOM"
 msgstr "एसबीओएम डाउनलोड करें"
 
@@ -3216,7 +3216,7 @@ msgstr "अनुभाग सहेजने में त्रुटि"
 msgid "Error updating widget"
 msgstr "विजेट अपडेट करने में त्रुटि"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:596
+#: packages/admin/src/components/RegistryPluginDetail.tsx:607
 msgid "Every published release of this plugin has been withdrawn or could not be verified. Check back later, or contact the publisher."
 msgstr "इस प्लगइन की प्रत्येक प्रकाशित रिलीज़ को वापस ले लिया गया है या सत्यापित नहीं किया जा सका है। बाद में दोबारा जाँचें, या प्रकाशक से संपर्क करें।"
 
@@ -3580,7 +3580,7 @@ msgid "Failed to import media"
 msgstr "मीडिया आयात करने में विफल"
 
 #: packages/admin/src/lib/api/marketplace.ts:208
-#: packages/admin/src/lib/api/registry.ts:702
+#: packages/admin/src/lib/api/registry.ts:760
 msgid "Failed to install plugin"
 msgstr "प्लगइन स्थापित करने में विफल"
 
@@ -3632,7 +3632,7 @@ msgstr "प्लगइन सेटिंग्स लोड करने म�
 msgid "Failed to load plugins: {0}"
 msgstr "प्लगइन्स लोड करने में विफल: {0}"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:98
+#: packages/admin/src/components/RegistryBrowse.tsx:117
 msgid "Failed to load plugins. The registry aggregator may be unreachable."
 msgstr "प्लगइन्स लोड करने में विफल. रजिस्ट्री एग्रीगेटर पहुंच योग्य नहीं हो सकता है."
 
@@ -3777,7 +3777,7 @@ msgid "Failed to set entry terms"
 msgstr "प्रवेश शर्तें निर्धारित करने में विफल"
 
 #: packages/admin/src/lib/api/marketplace.ts:249
-#: packages/admin/src/lib/api/registry.ts:858
+#: packages/admin/src/lib/api/registry.ts:916
 msgid "Failed to uninstall plugin"
 msgstr "प्लगइन अनइंस्टॉल करने में विफल"
 
@@ -3819,7 +3819,7 @@ msgid "Failed to update media"
 msgstr "मीडिया अपडेट करने में विफल"
 
 #: packages/admin/src/lib/api/marketplace.ts:232
-#: packages/admin/src/lib/api/registry.ts:776
+#: packages/admin/src/lib/api/registry.ts:834
 msgid "Failed to update plugin"
 msgstr "प्लगइन अद्यतन करने में विफल"
 
@@ -3863,7 +3863,7 @@ msgstr "प्रमाणीकरण सत्यापित करने म
 msgid "Failed to verify registration"
 msgstr "पंजीकरण सत्यापित करने में विफल"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:807
+#: packages/admin/src/components/RegistryPluginDetail.tsx:818
 msgid "FAQ"
 msgstr "अक्सर पूछे जाने वाले प्रश्न"
 
@@ -4384,7 +4384,7 @@ msgid "Incompatible"
 msgstr "असंगत"
 
 #: packages/admin/src/components/FieldEditor.tsx:481
-#: packages/admin/src/components/RegistryPluginDetail.tsx:506
+#: packages/admin/src/components/RegistryPluginDetail.tsx:543
 msgid "Indexed"
 msgstr "इंडेक्स किए गए"
 
@@ -4473,7 +4473,7 @@ msgid "Instagram"
 msgstr "Instagram"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:203
-#: packages/admin/src/components/RegistryPluginDetail.tsx:554
+#: packages/admin/src/components/RegistryPluginDetail.tsx:591
 msgid "Install"
 msgstr "स्थापित करना"
 
@@ -4489,14 +4489,14 @@ msgstr "इंस्टॉल अवरुद्ध है"
 msgid "Install the EmDash Exporter plugin on your WordPress site and generate a key under Tools → EmDash Migration."
 msgstr "अपनी वर्डप्रेस साइट पर EmDash एक्सपोर्टर प्लगइन इंस्टॉल करें और टूल्स → EmDash माइग्रेशन के तहत एक कुंजी जेनरेट करें।"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:806
+#: packages/admin/src/components/RegistryPluginDetail.tsx:817
 msgid "Installation"
 msgstr "इंस्टालेशन"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:263
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:184
-#: packages/admin/src/components/RegistryBrowse.tsx:201
-#: packages/admin/src/components/RegistryPluginDetail.tsx:546
+#: packages/admin/src/components/RegistryBrowse.tsx:207
+#: packages/admin/src/components/RegistryPluginDetail.tsx:583
 msgid "Installed"
 msgstr "स्थापित"
 
@@ -4581,6 +4581,10 @@ msgstr "आइटम हटा दिया गया"
 #: packages/admin/src/components/MenuEditor.tsx:212
 msgid "Item updated"
 msgstr "आइटम अपडेट किया गया"
+
+#: packages/admin/src/components/RegistryPluginDetail.tsx:455
+msgid "Its listing has not been approved for display. Check back later."
+msgstr ""
 
 #: packages/admin/src/components/SetupWizard.tsx:213
 #: packages/admin/src/components/SignupPage.tsx:206
@@ -4775,7 +4779,7 @@ msgstr "लाइव देखें"
 #: packages/admin/src/components/ContentPickerModal.tsx:228
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/routes/bylines.tsx:468
 msgid "Load more"
@@ -4868,7 +4872,7 @@ msgstr "विजेट लोड हो रहे हैं..."
 #: packages/admin/src/components/MediaPickerModal.tsx:775
 #: packages/admin/src/components/PortableTextEditor.tsx:2425
 #: packages/admin/src/components/Redirects.tsx:560
-#: packages/admin/src/components/RegistryBrowse.tsx:146
+#: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
@@ -5566,7 +5570,7 @@ msgstr "दस्तावेज़ में कोई शीर्षक न�
 msgid "No images in this gallery yet."
 msgstr "इस गैलरी में अभी तक कोई छवि नहीं है."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:594
+#: packages/admin/src/components/RegistryPluginDetail.tsx:605
 msgid "No installable releases"
 msgstr "कोई इंस्टॉल करने योग्य रिलीज़ नहीं"
 
@@ -5660,11 +5664,11 @@ msgstr "कोई प्लगइन्स कॉन्फ़िगर नही
 msgid "No plugins found"
 msgstr "कोई प्लगइन्स नहीं मिला"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:120
+#: packages/admin/src/components/RegistryBrowse.tsx:139
 msgid "No plugins have been published to this registry yet."
 msgstr "इस रजिस्ट्री में अभी तक कोई प्लगइन्स प्रकाशित नहीं किया गया है।"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:119
+#: packages/admin/src/components/RegistryBrowse.tsx:138
 msgid "No plugins match \"{debouncedQuery}\"."
 msgstr "कोई प्लगइन्स \"{debouncedQuery}\" से मेल नहीं खाता।"
 
@@ -5750,7 +5754,7 @@ msgstr "कोई नहीं"
 msgid "None (top level)"
 msgstr "कोई नहीं (शीर्ष स्तर)"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:629
+#: packages/admin/src/components/RegistryPluginDetail.tsx:640
 msgid "Not compatible with this environment"
 msgstr "इस वातावरण के अनुकूल नहीं है"
 
@@ -6108,7 +6112,7 @@ msgstr "प्लगइन \"{pluginId}\" नहीं मिला"
 msgid "Plugin column unavailable"
 msgstr ""
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:762
+#: packages/admin/src/components/RegistryPluginDetail.tsx:773
 msgid "Plugin details"
 msgstr "प्लगइन विवरण"
 
@@ -6145,9 +6149,9 @@ msgstr "प्लगइन एमसीपी टूल के लिए स्�
 msgid "Plugin not found"
 msgstr "प्लगइन नहीं मिला"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:411
-msgid "Plugin not found. The publisher handle or slug may be incorrect."
-msgstr "प्लगइन नहीं मिला. प्रकाशक हैंडल या स्लग ग़लत हो सकता है."
+#: packages/admin/src/components/RegistryPluginDetail.tsx:470
+msgid "Plugin not found. The publisher or slug may be incorrect."
+msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:1209
 msgid "plugin on your WordPress site."
@@ -6165,7 +6169,7 @@ msgstr ""
 msgid "Plugin Permissions"
 msgstr "प्लगइन अनुमतियाँ"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:71
+#: packages/admin/src/components/RegistryBrowse.tsx:90
 msgid "Plugin Registry"
 msgstr "प्लगइन रजिस्ट्री"
 
@@ -6184,7 +6188,7 @@ msgstr "प्लगइन उपकरण: {0}"
 msgid "Plugin uninstalled"
 msgstr "प्लगइन अनइंस्टॉल किया गया"
 
-#: packages/admin/src/lib/api/registry.ts:810
+#: packages/admin/src/lib/api/registry.ts:868
 msgid "Plugin update requires re-consent"
 msgstr "प्लगइन अद्यतन के लिए पुनः सहमति की आवश्यकता है"
 
@@ -6230,7 +6234,7 @@ msgstr "पोस्ट और पेज"
 msgid "Posts Per Page"
 msgstr "प्रति पृष्ठ पोस्ट"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:478
+#: packages/admin/src/components/RegistryPluginDetail.tsx:515
 msgid "Pre-release"
 msgstr "पूर्व-रिलीज़"
 
@@ -6319,9 +6323,9 @@ msgstr "{total} आइटम प्रकाशित"
 msgid "Published At"
 msgstr "पर प्रकाशित"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:472
-msgid "Published by"
-msgstr "द्वारा प्रकाशित"
+#: packages/admin/src/components/RegistryPluginDetail.tsx:507
+msgid "Published by <0/>"
+msgstr ""
 
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:47
 msgid "Python"
@@ -6465,7 +6469,7 @@ msgstr "पंजीकरण रद्द कर दिया गया था 
 msgid "Registry"
 msgstr "रजिस्ट्री"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:610
+#: packages/admin/src/components/RegistryPluginDetail.tsx:621
 msgid "Release is too new to install"
 msgstr "इंस्टॉल करने के लिए रिलीज़ बहुत नई है"
 
@@ -6901,12 +6905,12 @@ msgstr "सहेजा जा रहा है..."
 msgid "Saving…"
 msgstr "सहेजा जा रहा है..."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:482
+#: packages/admin/src/components/RegistryPluginDetail.tsx:519
 msgid "SBOM"
 msgstr "एस.बी.ओ.एम"
 
 #. placeholder {0}: sbom.format
-#: packages/admin/src/components/RegistryPluginDetail.tsx:480
+#: packages/admin/src/components/RegistryPluginDetail.tsx:517
 msgid "SBOM · {0}"
 msgstr "एसबीओएम · {0}"
 
@@ -6961,7 +6965,7 @@ msgstr "कार्यक्षेत्र"
 #. placeholder {0}: i + 1
 #. placeholder {0}: index + 1
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:254
-#: packages/admin/src/components/RegistryPluginDetail.tsx:655
+#: packages/admin/src/components/RegistryPluginDetail.tsx:666
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:174
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:293
 msgid "Screenshot {0}"
@@ -6982,7 +6986,7 @@ msgid "Screenshot viewer"
 msgstr "स्क्रीनशॉट दर्शक"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:244
-#: packages/admin/src/components/RegistryPluginDetail.tsx:649
+#: packages/admin/src/components/RegistryPluginDetail.tsx:660
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:164
 msgid "Screenshots"
 msgstr "स्क्रीनशॉट"
@@ -7066,12 +7070,12 @@ msgid "Search pages and content..."
 msgstr "पृष्ठ और सामग्री खोजें..."
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:103
-#: packages/admin/src/components/RegistryBrowse.tsx:87
+#: packages/admin/src/components/RegistryBrowse.tsx:106
 msgid "Search plugins"
 msgstr "प्लगइन्स खोजें"
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:99
-#: packages/admin/src/components/RegistryBrowse.tsx:83
+#: packages/admin/src/components/RegistryBrowse.tsx:102
 msgid "Search plugins..."
 msgstr "प्लगइन्स खोजें..."
 
@@ -7157,7 +7161,7 @@ msgstr "सुरक्षित संदर्भ"
 msgid "Secure your account"
 msgstr "अपने खाते को सुरक्षित करें"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:809
+#: packages/admin/src/components/RegistryPluginDetail.tsx:820
 #: packages/admin/src/components/Settings.tsx:70
 msgid "Security"
 msgstr "सुरक्षा"
@@ -7186,7 +7190,7 @@ msgstr "सुरक्षा ऑडिट ने इस प्लगइन क�
 msgid "Security audit passed"
 msgstr "सुरक्षा ऑडिट पास हो गया"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:718
+#: packages/admin/src/components/RegistryPluginDetail.tsx:729
 msgid "Security contacts"
 msgstr "सुरक्षा संपर्क"
 
@@ -8029,19 +8033,19 @@ msgstr "यह स्टोरेज से {0} को स्थायी रू
 msgid "This plugin has no configurable settings."
 msgstr "इस प्लगइन में कोई कॉन्फ़िगर करने योग्य सेटिंग नहीं है."
 
+#: packages/admin/src/components/RegistryPluginDetail.tsx:453
+msgid "This plugin is not available yet"
+msgstr ""
+
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:287
 msgid "This plugin requires no special permissions."
 msgstr "इस प्लगइन को किसी विशेष अनुमति की आवश्यकता नहीं है।"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:579
-msgid "This publisher claims a name they couldn't prove they own — possibly impersonating someone else. Install is disabled. If you know the publisher and trust them, ask them to fix their identity setup before retrying."
-msgstr "यह प्रकाशक एक ऐसे नाम का दावा करता है जिसे वे साबित नहीं कर सके - संभवतः किसी और का प्रतिरूपण कर रहा है। इंस्टॉल अक्षम है. यदि आप प्रकाशक को जानते हैं और उन पर भरोसा करते हैं, तो पुनः प्रयास करने से पहले उन्हें अपना पहचान सेटअप ठीक करने के लिए कहें।"
 
 #: packages/admin/src/components/Redirects.tsx:602
 msgid "This redirect rule will be permanently removed."
 msgstr "यह पुनर्निर्देशन नियम स्थायी रूप से हटा दिया जाएगा."
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:631
+#: packages/admin/src/components/RegistryPluginDetail.tsx:642
 msgid "This release requires a newer environment than your site currently runs. Upgrade before installing."
 msgstr "इस रिलीज़ के लिए वर्तमान में चल रही आपकी साइट की तुलना में नए परिवेश की आवश्यकता है। इंस्टॉल करने से पहले अपग्रेड करें."
 
@@ -8425,10 +8429,6 @@ msgstr "शीर्षक रहित फ़ाइल"
 msgid "Untitled Widget"
 msgstr "शीर्षक रहित विजेट"
 
-#: packages/admin/src/components/PublisherHandle.tsx:145
-msgid "Unverified publisher"
-msgstr "असत्यापित प्रकाशक"
-
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1041
 msgid "Up"
 msgstr "ऊपर"
@@ -8474,7 +8474,7 @@ msgstr "v{0} पर अद्यतन करें"
 
 #: packages/admin/src/components/ContentList.tsx:842
 #: packages/admin/src/components/ContentSettingsPanel.tsx:646
-#: packages/admin/src/components/RegistryPluginDetail.tsx:501
+#: packages/admin/src/components/RegistryPluginDetail.tsx:538
 msgid "Updated"
 msgstr "अद्यतन"
 
@@ -8693,23 +8693,6 @@ msgstr "v{0} उपलब्ध"
 msgid "Validation"
 msgstr "मान्यकरण"
 
-#: packages/admin/src/components/RegistryBrowse.tsx:189
-#: packages/admin/src/components/RegistryPluginDetail.tsx:462
-msgid "Verified publisher"
-msgstr "सत्यापित प्रकाशक"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:461
-msgid "Verified publisher, confirmed by labeller {verifiedLabeller}"
-msgstr "सत्यापित प्रकाशक, लेबलर {verifiedLabeller} द्वारा पुष्टि की गई"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:452
-msgid "Verified publisher. A labeller ({verifiedLabeller}) has confirmed this publisher's identity."
-msgstr "सत्यापित प्रकाशक. एक लेबलर ({verifiedLabeller}) ने इस प्रकाशक की पहचान की पुष्टि की है।"
-
-#: packages/admin/src/components/RegistryPluginDetail.tsx:453
-msgid "Verified publisher. A labeller has confirmed this publisher's identity."
-msgstr "सत्यापित प्रकाशक. एक लेबलर ने इस प्रकाशक की पहचान की पुष्टि की है।"
-
 #: packages/admin/src/components/InviteAcceptPage.tsx:228
 msgid "Verifying your invite..."
 msgstr "आपका आमंत्रण सत्यापित किया जा रहा है..."
@@ -8724,12 +8707,12 @@ msgid "Verifying..."
 msgstr "सत्यापन किया जा रहा है..."
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:331
-#: packages/admin/src/components/RegistryPluginDetail.tsx:515
+#: packages/admin/src/components/RegistryPluginDetail.tsx:552
 msgid "Version"
 msgstr "संस्करण"
 
 #. placeholder {0}: release.version
-#: packages/admin/src/components/RegistryPluginDetail.tsx:477
+#: packages/admin/src/components/RegistryPluginDetail.tsx:514
 msgid "Version {0}"
 msgstr "संस्करण {0}"
 
@@ -8759,11 +8742,11 @@ msgstr "प्रकाशित देखें {title}"
 msgid "View Site"
 msgstr "साइट देखें"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:676
+#: packages/admin/src/components/RegistryPluginDetail.tsx:687
 msgid "View source"
 msgstr "स्रोत देखें"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:931
+#: packages/admin/src/components/RegistryPluginDetail.tsx:923
 msgid "View the {license} license on spdx.org"
 msgstr "spdx.org पर {license} लाइसेंस देखें"
 
@@ -8789,10 +8772,6 @@ msgstr "चेतावनी देना"
 msgid "We couldn't connect to a WordPress site at {0}. This could mean the site isn't WordPress, the REST API is disabled, or the site isn't accessible."
 msgstr "हम {0} पर वर्डप्रेस साइट से कनेक्ट नहीं हो सके। इसका मतलब यह हो सकता है कि साइट वर्डप्रेस नहीं है, REST API अक्षम है, या साइट पहुंच योग्य नहीं है।"
 
-#: packages/admin/src/components/RegistryPluginDetail.tsx:577
-msgid "We couldn't verify this publisher's identity"
-msgstr "हम इस प्रकाशक की पहचान सत्यापित नहीं कर सके"
-
 #: packages/admin/src/components/WordPressImport.tsx:1084
 msgid "We'll check what import options are available for your site."
 msgstr "हम जाँचेंगे कि आपकी साइट के लिए कौन से आयात विकल्प उपलब्ध हैं।"
@@ -8815,7 +8794,7 @@ msgid "WebAuthn is not supported in this browser"
 msgstr "इस ब्राउज़र में WebAuthn समर्थित नहीं है"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:236
-#: packages/admin/src/components/RegistryPluginDetail.tsx:701
+#: packages/admin/src/components/RegistryPluginDetail.tsx:712
 msgid "Website"
 msgstr "वेबसाइट"
 
@@ -9132,7 +9111,7 @@ msgid "Your Role"
 msgstr "आपकी भूमिका"
 
 #. placeholder {0}: formatHoldback(config.policy?.minimumReleaseAgeSeconds ?? 0)
-#: packages/admin/src/components/RegistryPluginDetail.tsx:612
+#: packages/admin/src/components/RegistryPluginDetail.tsx:623
 msgid "Your site requires releases to be at least {0} old before they can be installed. This release will become installable later."
 msgstr "आपकी साइट को स्थापित करने से पहले रिलीज़ को कम से कम {0} पुराना होना आवश्यक है। यह रिलीज़ बाद में इंस्टॉल करने योग्य हो जाएगी."
 
