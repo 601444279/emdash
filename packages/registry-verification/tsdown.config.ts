@@ -2,7 +2,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig([
 	{
-		entry: ["src/bundle.ts", "src/checksum.ts", "src/fetch-entry.ts"],
+		entry: ["src/bundle.ts", "src/checksum.ts", "src/fetch-entry.ts", "src/records-entry.ts"],
 		format: ["esm"],
 		outExtensions: () => ({ js: ".js" }),
 		dts: true,
@@ -19,8 +19,7 @@ export default defineConfig([
 		clean: false,
 		platform: "node",
 		target: "es2024",
-		// Sigstore is bundled so the published workerd path carries our pinned
-		// @sigstore/core algorithm-selection fix instead of resolving a pristine copy.
+		outputOptions: { codeSplitting: false },
 		inlineOnly: false,
 		external: ["@emdash-cms/plugin-types", "modern-tar"],
 	},
