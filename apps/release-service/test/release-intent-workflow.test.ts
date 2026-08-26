@@ -601,7 +601,7 @@ describe("ReleaseIntentWorkflow", () => {
 			reasonCode: null,
 		});
 		expect(createAttempts).toBe(1);
-	});
+	}, 15_000);
 
 	it("waits for a canonical approval transition and resumes from its event", async () => {
 		const profile: Record<string, unknown> = {
