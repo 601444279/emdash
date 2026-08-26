@@ -1,5 +1,5 @@
 import { I18nProvider } from "@lingui/react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { getApproval, listApproverCredentials } from "./api.js";
@@ -107,6 +107,23 @@ describe("release-service web surfaces", () => {
 						],
 					});
 				}
+				if (path === "/v1/publisher/workloads/gallery/approvers") {
+					return success({
+						packageSlug: "gallery",
+						profileCid: "bafyprofile",
+						items: [
+							{
+								did: "did:plc:approver",
+								status: "enrolled",
+								credentialCount: 1,
+								activeCredentialCount: 1,
+								firstEnrolledAt: 1_799_999_000_000,
+								lastEnrolledAt: 1_799_999_000_000,
+								lastRevokedAt: null,
+							},
+						],
+					});
+				}
 				return success({
 					items: [
 						{
@@ -135,6 +152,9 @@ describe("release-service web surfaces", () => {
 		expect(screen.getByText("Awaiting approval")).toBeTruthy();
 		expect(screen.getByRole("heading", { name: "Publisher audit" })).toBeTruthy();
 		expect(screen.getByText("workload-policy-stored")).toBeTruthy();
+		fireEvent.click(screen.getByRole("button", { name: "Check approvers" }));
+		expect(await screen.findByRole("heading", { name: "Approver status" })).toBeTruthy();
+		expect(screen.getByText("did:plc:approver")).toBeTruthy();
 	});
 
 	it("shows immutable workload and provenance evidence before approval", async () => {

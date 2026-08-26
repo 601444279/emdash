@@ -208,6 +208,24 @@ export interface PublisherAuditEventResource {
 	createdAt: number;
 }
 
+export type PublisherApproverEnrollmentState = "enrolled" | "not_enrolled" | "revoked";
+
+export interface PublisherApproverStatusResource {
+	did: string;
+	status: PublisherApproverEnrollmentState;
+	credentialCount: number;
+	activeCredentialCount: number;
+	firstEnrolledAt: number | null;
+	lastEnrolledAt: number | null;
+	lastRevokedAt: number | null;
+}
+
+export interface PublisherApproverStatusResult {
+	packageSlug: string;
+	profileCid: string;
+	items: PublisherApproverStatusResource[];
+}
+
 export interface EncryptionRotationPageInput {
 	afterCursor: string | null;
 	limit: number;

@@ -322,6 +322,37 @@ describe("ReleaseServiceClient", () => {
 		expect(captured).toBe(`${SERVICE}/v1/publisher/audit?cursor=2&limit=1`);
 	});
 
+	it("reads publisher-visible approver enrolment status", async () => {
+		let captured = "";
+		const client = new ReleaseServiceClient({
+			serviceUrl: SERVICE,
+			fetch: async (input) => {
+				captured = input instanceof Request ? input.url : input.toString();
+				return success({
+					packageSlug: "gallery",
+					profileCid: "bafyprofile",
+					items: [
+						{
+							did: "did:plc:approver",
+							status: "enrolled",
+							credentialCount: 2,
+							activeCredentialCount: 1,
+							firstEnrolledAt: 1_799_999_000_000,
+							lastEnrolledAt: 1_799_999_500_000,
+							lastRevokedAt: 1_799_999_750_000,
+						},
+					],
+				});
+			},
+		});
+
+		await expect(client.getPublisherApproverStatus("gallery")).resolves.toMatchObject({
+			packageSlug: "gallery",
+			items: [{ did: "did:plc:approver", status: "enrolled", activeCredentialCount: 1 }],
+		});
+		expect(captured).toBe(`${SERVICE}/v1/publisher/workloads/gallery/approvers`);
+	});
+
 	it("creates valid collision-resistant idempotency keys", () => {
 		const first = createReleaseIdempotencyKey("github action");
 		const second = createReleaseIdempotencyKey("github action");

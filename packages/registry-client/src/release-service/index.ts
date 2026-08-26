@@ -16,6 +16,8 @@ import {
 	type OperatorPublisherResource,
 	type PreparePublisherRestoreResult,
 	type PublisherArchiveKind,
+	type PublisherApproverStatusResource,
+	type PublisherApproverStatusResult,
 	type PublisherAuditEventResource,
 	type PublisherArchivePageInput,
 	type PublisherArchivePageResult,
@@ -51,6 +53,9 @@ export type {
 	OperatorPublisherResource,
 	PreparePublisherRestoreResult,
 	PublisherArchiveKind,
+	PublisherApproverEnrollmentState,
+	PublisherApproverStatusResource,
+	PublisherApproverStatusResult,
 	PublisherAuditEventResource,
 	PublisherArchivePageInput,
 	PublisherArchivePageResult,
@@ -272,6 +277,14 @@ function nullableString(value: Record<string, unknown>, key: string): string | n
 function safeInteger(value: Record<string, unknown>, key: string): number | null {
 	const item = value[key];
 	return Number.isSafeInteger(item) ? Number(item) : null;
+}
+
+function nullableSafeInteger(
+	value: Record<string, unknown>,
+	key: string,
+): number | null | undefined {
+	const item = value[key];
+	return item === null ? null : Number.isSafeInteger(item) ? Number(item) : undefined;
 }
 
 function parseIntentResult(value: unknown): ReleaseIntentResult | null | undefined {
@@ -604,6 +617,57 @@ function parsePublisherAuditEvent(value: unknown): PublisherAuditEventResource {
 		subject,
 		reasonCode,
 		createdAt,
+	};
+}
+
+function parsePublisherApproverStatus(value: unknown): PublisherApproverStatusResource {
+	if (!isRecord(value)) throw invalidResponse();
+	const did = stringValue(value, "did");
+	const status = value["status"];
+	const credentialCount = safeInteger(value, "credentialCount");
+	const activeCredentialCount = safeInteger(value, "activeCredentialCount");
+	const firstEnrolledAt = nullableSafeInteger(value, "firstEnrolledAt");
+	const lastEnrolledAt = nullableSafeInteger(value, "lastEnrolledAt");
+	const lastRevokedAt = nullableSafeInteger(value, "lastRevokedAt");
+	const expectedStatus =
+		activeCredentialCount !== null && activeCredentialCount > 0
+			? "enrolled"
+			: credentialCount !== null && credentialCount > 0
+				? "revoked"
+				: "not_enrolled";
+	if (
+		!did ||
+		!DID_PATTERN.test(did) ||
+		(status !== "enrolled" && status !== "not_enrolled" && status !== "revoked") ||
+		status !== expectedStatus ||
+		credentialCount === null ||
+		credentialCount < 0 ||
+		activeCredentialCount === null ||
+		activeCredentialCount < 0 ||
+		activeCredentialCount > credentialCount ||
+		firstEnrolledAt === undefined ||
+		lastEnrolledAt === undefined ||
+		lastRevokedAt === undefined ||
+		(credentialCount === 0 &&
+			(firstEnrolledAt !== null || lastEnrolledAt !== null || lastRevokedAt !== null)) ||
+		(credentialCount > 0 &&
+			(firstEnrolledAt === null ||
+				lastEnrolledAt === null ||
+				firstEnrolledAt < 0 ||
+				lastEnrolledAt < firstEnrolledAt)) ||
+		(lastRevokedAt !== null && (firstEnrolledAt === null || lastRevokedAt < firstEnrolledAt)) ||
+		(status === "revoked" && lastRevokedAt === null)
+	) {
+		throw invalidResponse();
+	}
+	return {
+		did,
+		status,
+		credentialCount,
+		activeCredentialCount,
+		firstEnrolledAt,
+		lastEnrolledAt,
+		lastRevokedAt,
 	};
 }
 
@@ -992,6 +1056,32 @@ export class ReleaseServiceClient extends BaseReleaseServiceClient {
 			`${url.pathname}${url.search}`,
 			{ method: "GET", credentials: "include" },
 			(value) => parsePage(value, parsePublisherAuditEvent),
+		);
+	}
+
+	async getPublisherApproverStatus(packageSlug: string): Promise<PublisherApproverStatusResult> {
+		if (!PACKAGE_SLUG_PATTERN.test(packageSlug)) {
+			throw new ReleaseServiceError({
+				code: "CLIENT_RESPONSE_INVALID",
+				message: "Package slug is invalid",
+			});
+		}
+		return await this.call(
+			`/v1/publisher/workloads/${encodeURIComponent(packageSlug)}/approvers`,
+			{ method: "GET", credentials: "include" },
+			(value) => {
+				if (!isRecord(value) || !Array.isArray(value["items"])) throw invalidResponse();
+				const returnedPackageSlug = stringValue(value, "packageSlug");
+				const profileCid = stringValue(value, "profileCid");
+				if (returnedPackageSlug !== packageSlug || !profileCid || !CID_PATTERN.test(profileCid)) {
+					throw invalidResponse();
+				}
+				return {
+					packageSlug: returnedPackageSlug,
+					profileCid,
+					items: value["items"].map(parsePublisherApproverStatus),
+				};
+			},
 		);
 	}
 }

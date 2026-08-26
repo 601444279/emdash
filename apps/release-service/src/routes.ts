@@ -70,12 +70,14 @@ import {
 } from "./operator/routes.js";
 import {
 	handleDisablePublisherWorkload,
+	handleGetPublisherApproverStatus,
 	handleGetPublisher,
 	handleListPublisherAudit,
 	handleListPublisherIntents,
 	handleListPublisherWorkloads,
 	handlePutPublisherWorkload,
 	handleRevokePublisherDelegation,
+	matchPublisherApproverStatusPath,
 	matchPublisherWorkloadPath,
 } from "./publisher/routes.js";
 
@@ -175,6 +177,13 @@ export const ROUTES = Object.freeze([
 		path: "/v1/publisher/workloads/{packageSlug}",
 		match: matchPublisherWorkloadPath,
 		handler: handleDisablePublisherWorkload,
+	},
+	{
+		method: "GET",
+		path: "/v1/publisher/workloads/{packageSlug}/approvers",
+		match: matchPublisherApproverStatusPath,
+		handler: (request, requestId, configuration, params) =>
+			handleGetPublisherApproverStatus(request, requestId, configuration, params),
 	},
 	{
 		method: "GET",

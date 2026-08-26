@@ -3,6 +3,7 @@ import {
 	ReleaseServiceClient,
 	ReleaseServiceError,
 	createReleaseIdempotencyKey,
+	type PublisherApproverStatusResult,
 	type PublisherAuditEventResource,
 	type PublisherResource,
 	type ReleaseIntentResource,
@@ -83,6 +84,7 @@ export function PublisherPage() {
 		[],
 	);
 	const [data, setData] = useState<PublisherData | null>(null);
+	const [approverStatus, setApproverStatus] = useState<PublisherApproverStatusResult | null>(null);
 	const [loginRequired, setLoginRequired] = useState(false);
 	const [error, setError] = useState<unknown>(null);
 	const [busy, setBusy] = useState(false);
@@ -109,6 +111,7 @@ export function PublisherPage() {
 				audit: audit.items,
 				...(audit.nextCursor ? { auditCursor: audit.nextCursor } : {}),
 			});
+			setApproverStatus(null);
 			setLoginRequired(false);
 		} catch (cause) {
 			if (
@@ -198,6 +201,18 @@ export function PublisherPage() {
 						}
 					: current,
 			);
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function loadApproverStatus(workloadPackageSlug: string) {
+		setBusy(true);
+		setError(null);
+		try {
+			setApproverStatus(await client.getPublisherApproverStatus(workloadPackageSlug));
 		} catch (cause) {
 			setError(cause);
 		} finally {
@@ -306,6 +321,7 @@ export function PublisherPage() {
 							<Table.Head>{t("publisher.workloads.repository", "Repository")}</Table.Head>
 							<Table.Head>{t("publisher.workloads.workflow", "Workflow")}</Table.Head>
 							<Table.Head>{t("publisher.workloads.status", "Status")}</Table.Head>
+							<Table.Head>{t("publisher.workloads.approvers", "Approvers")}</Table.Head>
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>
@@ -321,11 +337,92 @@ export function PublisherPage() {
 											: t("status.disabled", "Disabled")}
 									</Badge>
 								</Table.Cell>
+								<Table.Cell>
+									<Button
+										loading={busy}
+										onClick={() => loadApproverStatus(workload.packageSlug)}
+										variant="outline"
+									>
+										{t("publisher.workloads.checkApprovers", "Check approvers")}
+									</Button>
+								</Table.Cell>
 							</Table.Row>
 						))}
 					</Table.Body>
 				</Table>
 			</Surface>
+
+			{approverStatus ? (
+				<Surface className="rounded-xl border bg-kumo-base p-6">
+					<div>
+						<h2 className="text-xl font-semibold text-kumo-strong">
+							{t("publisher.approvers.title", "Approver status")}
+						</h2>
+						<p className="mt-1 text-sm text-kumo-subtle">
+							{t(
+								"publisher.approvers.description",
+								"Passkey enrolment for approvers in the current signed profile for {packageSlug}.",
+								{ packageSlug: approverStatus.packageSlug },
+							)}
+						</p>
+						<p className="mt-1 break-all text-sm text-kumo-subtle">
+							{t("publisher.approvers.profileCid", "Profile CID: {profileCid}", {
+								profileCid: approverStatus.profileCid,
+							})}
+						</p>
+					</div>
+					{approverStatus.items.length > 0 ? (
+						<div className="mt-5 overflow-x-auto">
+							<Table>
+								<Table.Header>
+									<Table.Row>
+										<Table.Head>{t("publisher.approvers.did", "Approver")}</Table.Head>
+										<Table.Head>{t("publisher.approvers.status", "Status")}</Table.Head>
+										<Table.Head>
+											{t("publisher.approvers.activeCredentials", "Active credentials")}
+										</Table.Head>
+										<Table.Head>
+											{t("publisher.approvers.lastEnrolled", "Last enrolled")}
+										</Table.Head>
+									</Table.Row>
+								</Table.Header>
+								<Table.Body>
+									{approverStatus.items.map((item) => (
+										<Table.Row key={item.did}>
+											<Table.Cell className="break-all">{item.did}</Table.Cell>
+											<Table.Cell>
+												<Badge variant={item.status === "enrolled" ? "success" : "warning"}>
+													{item.status === "enrolled"
+														? t("publisher.approvers.enrolled", "Enrolled")
+														: item.status === "revoked"
+															? t("publisher.approvers.revoked", "Credentials revoked")
+															: t("publisher.approvers.notEnrolled", "Not enrolled")}
+												</Badge>
+											</Table.Cell>
+											<Table.Cell>{item.activeCredentialCount}</Table.Cell>
+											<Table.Cell>
+												{item.lastEnrolledAt === null
+													? t("publisher.approvers.never", "Never")
+													: new Intl.DateTimeFormat(document.documentElement.lang, {
+															dateStyle: "medium",
+															timeStyle: "short",
+														}).format(item.lastEnrolledAt)}
+											</Table.Cell>
+										</Table.Row>
+									))}
+								</Table.Body>
+							</Table>
+						</div>
+					) : (
+						<p className="mt-5 text-sm text-kumo-subtle">
+							{t(
+								"publisher.approvers.empty",
+								"No approvers are listed in the current signed package profile.",
+							)}
+						</p>
+					)}
+				</Surface>
+			) : null}
 
 			<Surface className="overflow-x-auto rounded-xl border bg-kumo-base p-0">
 				<Table>
