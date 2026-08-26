@@ -236,6 +236,31 @@ describe("release-service web surfaces", () => {
 		expect(approve.hasAttribute("disabled")).toBe(false);
 	});
 
+	it("manages approver passkeys without requiring an active release", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(async () =>
+				success({
+					items: [
+						{
+							id: "credential",
+							name: "Work laptop",
+							transports: ["internal"],
+							createdAt: 1_799_999_000_000,
+							lastUsedAt: null,
+							revokedAt: null,
+						},
+					],
+				}),
+			),
+		);
+		renderApp("/approver");
+
+		expect(await screen.findByRole("heading", { name: "Approver passkeys" })).toBeTruthy();
+		expect(screen.getByText("Work laptop")).toBeTruthy();
+		expect(screen.getByRole("button", { name: "Enrol passkey" })).toBeTruthy();
+	});
+
 	it("renders the Access operator control surface", async () => {
 		vi.stubGlobal(
 			"fetch",

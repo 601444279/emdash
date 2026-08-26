@@ -10,7 +10,9 @@ import {
 	cancelDelegatedReleaseIntent,
 	dryRunDelegatedRelease,
 	getDelegatedReleaseIntent,
+	interactiveReleaseUrl,
 	submitDelegatedRelease,
+	type InteractiveReleaseAction,
 } from "../release-service/operations.js";
 
 const POSITIVE_INTEGER_PATTERN = /^[1-9][0-9]*$/;
@@ -29,6 +31,12 @@ function requiredTarget(args: { "publisher-did"?: string; "service-url"?: string
 	if (!serviceUrl) throw new Error("Release service URL is required");
 	if (!publisherDid) throw new Error("Publisher DID is required");
 	return { serviceUrl, publisherDid };
+}
+
+function requiredService(args: { "service-url"?: string }): string {
+	const serviceUrl = args["service-url"] || process.env["EMDASH_RELEASE_SERVICE_URL"];
+	if (!serviceUrl) throw new Error("Release service URL is required");
+	return serviceUrl;
 }
 
 function positiveInteger(value: string, name: string, maximum: number): number {
@@ -66,6 +74,16 @@ function printDryRun(result: DryRunReleaseIntentResult, json: boolean): void {
 	console.log(`  Policy:    ${result.workloadPolicyVersion}`);
 }
 
+function printBrowserHandoff(action: InteractiveReleaseAction, url: URL, json: boolean): void {
+	if (json) {
+		console.log(JSON.stringify({ action, url: url.toString() }));
+		return;
+	}
+	consola.info("Open your browser to:");
+	console.log(`  ${pc.cyan(pc.bold(url.toString()))}`);
+	consola.info("OAuth sessions and passkey assertions remain in the browser.");
+}
+
 const commonArgs = {
 	"service-url": {
 		type: "string" as const,
@@ -80,6 +98,86 @@ const commonArgs = {
 		description: "Output the intent as JSON",
 	},
 };
+
+const browserArgs = {
+	"service-url": commonArgs["service-url"],
+	json: {
+		type: "boolean" as const,
+		description: "Output the browser handoff as JSON",
+	},
+};
+
+export const releaseDelegateCommand = defineCommand({
+	meta: { name: "delegate", description: "Print a browser handoff for publisher delegation" },
+	args: browserArgs,
+	async run({ args }) {
+		const url = interactiveReleaseUrl("delegate", { serviceUrl: requiredService(args) });
+		printBrowserHandoff("delegate", url, args.json);
+	},
+});
+
+export const releaseRevokeCommand = defineCommand({
+	meta: { name: "revoke", description: "Print a browser handoff for authority revocation" },
+	args: browserArgs,
+	async run({ args }) {
+		const url = interactiveReleaseUrl("revoke", { serviceUrl: requiredService(args) });
+		printBrowserHandoff("revoke", url, args.json);
+	},
+});
+
+export const releaseWorkloadCommand = defineCommand({
+	meta: { name: "workload", description: "Print a browser handoff for workload policies" },
+	args: browserArgs,
+	async run({ args }) {
+		const url = interactiveReleaseUrl("workload", { serviceUrl: requiredService(args) });
+		printBrowserHandoff("workload", url, args.json);
+	},
+});
+
+export const releaseEnrolCommand = defineCommand({
+	meta: { name: "enrol", description: "Print a browser handoff for passkey enrolment" },
+	args: browserArgs,
+	async run({ args }) {
+		const url = interactiveReleaseUrl("enrol", { serviceUrl: requiredService(args) });
+		printBrowserHandoff("enrol", url, args.json);
+	},
+});
+
+const approvalBrowserArgs = {
+	"intent-id": {
+		type: "positional" as const,
+		description: "Release intent ULID",
+		required: true,
+	},
+	...browserArgs,
+	"publisher-did": commonArgs["publisher-did"],
+};
+
+export const releaseApproveCommand = defineCommand({
+	meta: { name: "approve", description: "Print a browser handoff for passkey approval" },
+	args: approvalBrowserArgs,
+	async run({ args }) {
+		const target = requiredTarget(args);
+		const url = interactiveReleaseUrl("approve", {
+			...target,
+			intentId: args["intent-id"],
+		});
+		printBrowserHandoff("approve", url, args.json);
+	},
+});
+
+export const releaseRejectCommand = defineCommand({
+	meta: { name: "reject", description: "Print a browser handoff for passkey rejection" },
+	args: approvalBrowserArgs,
+	async run({ args }) {
+		const target = requiredTarget(args);
+		const url = interactiveReleaseUrl("reject", {
+			...target,
+			intentId: args["intent-id"],
+		});
+		printBrowserHandoff("reject", url, args.json);
+	},
+});
 
 export const releaseSubmitCommand = defineCommand({
 	meta: {
@@ -215,9 +313,15 @@ export const releaseCancelCommand = defineCommand({
 export const releaseCommand = defineCommand({
 	meta: { name: "release", description: "Manage delegated release intents" },
 	subCommands: {
+		approve: releaseApproveCommand,
+		delegate: releaseDelegateCommand,
 		"dry-run": releaseDryRunCommand,
+		enrol: releaseEnrolCommand,
+		reject: releaseRejectCommand,
+		revoke: releaseRevokeCommand,
 		submit: releaseSubmitCommand,
 		status: releaseStatusCommand,
 		cancel: releaseCancelCommand,
+		workload: releaseWorkloadCommand,
 	},
 });

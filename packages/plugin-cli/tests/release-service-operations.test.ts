@@ -5,6 +5,7 @@ import {
 	cancelDelegatedReleaseIntent,
 	dryRunDelegatedRelease,
 	getDelegatedReleaseIntent,
+	interactiveReleaseUrl,
 	requestGithubOidcToken,
 	submitDelegatedRelease,
 } from "../src/release-service/operations.js";
@@ -42,6 +43,37 @@ function success(data: unknown, status = 200): Response {
 }
 
 describe("delegated release CLI operations", () => {
+	it("creates browser handoffs without carrying service credentials", () => {
+		expect(interactiveReleaseUrl("delegate", { serviceUrl: SERVICE }).toString()).toBe(
+			`${SERVICE}/publisher?view=delegation`,
+		);
+		expect(interactiveReleaseUrl("revoke", { serviceUrl: SERVICE }).toString()).toBe(
+			`${SERVICE}/publisher?view=delegation&action=revoke`,
+		);
+		expect(interactiveReleaseUrl("workload", { serviceUrl: SERVICE }).toString()).toBe(
+			`${SERVICE}/publisher?view=workloads`,
+		);
+		expect(interactiveReleaseUrl("enrol", { serviceUrl: SERVICE }).toString()).toBe(
+			`${SERVICE}/approver`,
+		);
+		expect(
+			interactiveReleaseUrl("approve", {
+				serviceUrl: SERVICE,
+				publisherDid: PUBLISHER_DID,
+				intentId: INTENT_ID,
+			}).toString(),
+		).toBe(
+			`${SERVICE}/approvals/${INTENT_ID}?publisher=${encodeURIComponent(PUBLISHER_DID)}&decision=approve`,
+		);
+		expect(() =>
+			interactiveReleaseUrl("reject", {
+				serviceUrl: "http://release.example.com",
+				publisherDid: PUBLISHER_DID,
+				intentId: INTENT_ID,
+			}),
+		).toThrow("Release service URL must be a secure origin");
+	});
+
 	it("requests a GitHub OIDC token for the release-service audience", async () => {
 		const calls: Array<{ headers: Headers; url: URL }> = [];
 		const token = await requestGithubOidcToken(SERVICE, {
