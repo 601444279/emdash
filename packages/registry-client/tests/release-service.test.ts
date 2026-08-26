@@ -117,6 +117,46 @@ describe("ReleaseServiceClient", () => {
 		expect(JSON.stringify(result)).not.toContain(workloadToken);
 	});
 
+	it("dry-runs workload admission without an idempotency key", async () => {
+		let request: Request | null = null;
+		const client = new ReleaseServiceClient({
+			serviceUrl: SERVICE,
+			workloadToken: "header.payload.signature",
+			fetch: async (input, init) => {
+				request = new Request(input, init);
+				return success({
+					allowed: true,
+					publisherDid: PUBLISHER_DID,
+					packageSlug: "gallery",
+					version: "1.2.3",
+					workloadPolicyVersion: 2,
+					workloadIdentityDigest: "W".repeat(43),
+					requestDigest: "R".repeat(43),
+				});
+			},
+		});
+		const release = {
+			$type: "com.emdashcms.experimental.package.release" as const,
+			package: "gallery",
+			version: "1.2.3",
+			artifacts: {
+				package: { url: "https://example.com/gallery.tgz", checksum: "bciqexample" },
+			},
+		};
+
+		await expect(
+			client.dryRunIntent({
+				publisherDid: PUBLISHER_DID,
+				packageSlug: "gallery",
+				version: "1.2.3",
+				release,
+			}),
+		).resolves.toMatchObject({ allowed: true, workloadPolicyVersion: 2 });
+		expect(request?.url).toBe(`${SERVICE}/v1/release-intents/dry-run`);
+		expect(request?.headers.get("authorization")).toBe("Bearer header.payload.signature");
+		expect(request?.headers.has("idempotency-key")).toBe(false);
+	});
+
 	it("maps stable server errors, retry hints, and network failures", async () => {
 		const workloadToken = "header.payload.signature";
 		const pausedFetch: typeof globalThis.fetch = async () =>

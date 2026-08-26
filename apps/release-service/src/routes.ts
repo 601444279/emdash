@@ -37,6 +37,7 @@ import {
 import { handleListDirectory } from "./directory/routes.js";
 import {
 	handleCancelReleaseIntent,
+	handleDryRunReleaseIntent,
 	handleGetReleaseIntent,
 	handleSubmitReleaseIntent,
 	matchIntentCancelPath,
@@ -121,6 +122,12 @@ export const ROUTES = Object.freeze([
 		path: "/v1/release-intents",
 		handler: (request, requestId, configuration) =>
 			handleSubmitReleaseIntent(request, requestId, configuration),
+	},
+	{
+		method: "POST",
+		path: "/v1/release-intents/dry-run",
+		handler: (request, requestId, configuration) =>
+			handleDryRunReleaseIntent(request, requestId, configuration),
 	},
 	{
 		method: "GET",

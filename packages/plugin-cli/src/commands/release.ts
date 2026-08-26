@@ -1,10 +1,14 @@
-import type { ReleaseIntentResource } from "@emdash-cms/registry-client/release-service";
+import type {
+	DryRunReleaseIntentResult,
+	ReleaseIntentResource,
+} from "@emdash-cms/registry-client/release-service";
 import { defineCommand } from "citty";
 import { consola } from "consola";
 import pc from "picocolors";
 
 import {
 	cancelDelegatedReleaseIntent,
+	dryRunDelegatedRelease,
 	getDelegatedReleaseIntent,
 	submitDelegatedRelease,
 } from "../release-service/operations.js";
@@ -50,6 +54,16 @@ function printIntent(intent: ReleaseIntentResource, json: boolean): void {
 		console.log(`  CID:    ${intent.result.cid}`);
 	}
 	if (intent.reasonCode) console.log(`  Reason: ${intent.reasonCode}`);
+}
+
+function printDryRun(result: DryRunReleaseIntentResult, json: boolean): void {
+	if (json) {
+		console.log(JSON.stringify(result, null, 2));
+		return;
+	}
+	console.log(`${pc.bold(result.packageSlug)} ${pc.dim(result.version)}`);
+	console.log("  Admission: allowed");
+	console.log(`  Policy:    ${result.workloadPolicyVersion}`);
 }
 
 const commonArgs = {
@@ -133,6 +147,28 @@ export const releaseSubmitCommand = defineCommand({
 	},
 });
 
+export const releaseDryRunCommand = defineCommand({
+	meta: {
+		name: "dry-run",
+		description: "Validate delegated release admission without creating an intent",
+	},
+	args: {
+		"release-file": {
+			type: "positional",
+			description: "Package release record JSON file",
+			required: true,
+		},
+		...commonArgs,
+	},
+	async run({ args }) {
+		const result = await dryRunDelegatedRelease({
+			...requiredTarget(args),
+			releaseFile: args["release-file"],
+		});
+		printDryRun(result, args.json);
+	},
+});
+
 export const releaseStatusCommand = defineCommand({
 	meta: { name: "status", description: "Read a delegated release intent" },
 	args: {
@@ -179,6 +215,7 @@ export const releaseCancelCommand = defineCommand({
 export const releaseCommand = defineCommand({
 	meta: { name: "release", description: "Manage delegated release intents" },
 	subCommands: {
+		"dry-run": releaseDryRunCommand,
 		submit: releaseSubmitCommand,
 		status: releaseStatusCommand,
 		cancel: releaseCancelCommand,

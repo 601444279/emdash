@@ -94,6 +94,16 @@ export interface SubmitReleaseIntentResult {
 	replayed: boolean;
 }
 
+export interface DryRunReleaseIntentResult {
+	allowed: true;
+	publisherDid: string;
+	packageSlug: string;
+	version: string;
+	workloadPolicyVersion: number;
+	workloadIdentityDigest: string;
+	requestDigest: string;
+}
+
 export interface WorkloadPolicyResource {
 	packageSlug: string;
 	repository: string;

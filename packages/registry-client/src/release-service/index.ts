@@ -4,6 +4,7 @@ import {
 	TERMINAL_RELEASE_INTENT_STATES,
 	type CursorPage,
 	type DelegationResource,
+	type DryRunReleaseIntentResult,
 	type DirectoryIdentityKind,
 	type DirectoryIdentityResource,
 	type DirectoryListOptions,
@@ -35,6 +36,7 @@ import {
 export type {
 	CursorPage,
 	DelegationResource,
+	DryRunReleaseIntentResult,
 	DirectoryIdentityKind,
 	DirectoryIdentityResource,
 	DirectoryListOptions,
@@ -75,6 +77,7 @@ const DIGITS_PATTERN = /^[0-9]+$/;
 const CSRF_TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const ARCHIVE_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{15,63}$/;
 const DIRECTORY_SHARD_PATTERN = /^[0-9a-f]{2}$/;
+const DIGEST_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const API_ERROR_CODES: Readonly<Record<ReleaseServiceApiErrorCode, true>> = {
 	ACCESS_DENIED: true,
 	ACCESS_AUTH_INVALID: true,
@@ -342,6 +345,42 @@ function parseIntent(value: unknown, serviceUrl?: string): ReleaseIntentResource
 		updatedAt,
 		result,
 		approvalUrl,
+	};
+}
+
+function parseDryRunIntent(value: unknown): DryRunReleaseIntentResult {
+	if (!isRecord(value)) throw invalidResponse();
+	const publisherDid = stringValue(value, "publisherDid");
+	const packageSlug = stringValue(value, "packageSlug");
+	const version = stringValue(value, "version");
+	const workloadPolicyVersion = safeInteger(value, "workloadPolicyVersion");
+	const workloadIdentityDigest = stringValue(value, "workloadIdentityDigest");
+	const requestDigest = stringValue(value, "requestDigest");
+	if (
+		value["allowed"] !== true ||
+		!publisherDid ||
+		!DID_PATTERN.test(publisherDid) ||
+		!packageSlug ||
+		!PACKAGE_SLUG_PATTERN.test(packageSlug) ||
+		!version ||
+		!VERSION_PATTERN.test(version) ||
+		workloadPolicyVersion === null ||
+		workloadPolicyVersion < 1 ||
+		!workloadIdentityDigest ||
+		!DIGEST_PATTERN.test(workloadIdentityDigest) ||
+		!requestDigest ||
+		!DIGEST_PATTERN.test(requestDigest)
+	) {
+		throw invalidResponse();
+	}
+	return {
+		allowed: true,
+		publisherDid,
+		packageSlug,
+		version,
+		workloadPolicyVersion,
+		workloadIdentityDigest,
+		requestDigest,
 	};
 }
 
@@ -656,6 +695,24 @@ export class ReleaseServiceClient extends BaseReleaseServiceClient {
 					replayed: value["replayed"],
 				};
 			},
+		);
+	}
+
+	async dryRunIntent(
+		input: SubmitReleaseIntentInput,
+		options: RequestOptions = {},
+	): Promise<DryRunReleaseIntentResult> {
+		const headers = await this.#workloadHeaders();
+		headers.set("content-type", "application/json");
+		return await this.call(
+			"/v1/release-intents/dry-run",
+			{
+				method: "POST",
+				headers,
+				body: JSON.stringify(input),
+				signal: options.signal,
+			},
+			parseDryRunIntent,
 		);
 	}
 

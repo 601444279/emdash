@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import releaseFixture from "../../registry-verification/fixtures/records/release.json";
 import {
 	cancelDelegatedReleaseIntent,
+	dryRunDelegatedRelease,
 	getDelegatedReleaseIntent,
 	requestGithubOidcToken,
 	submitDelegatedRelease,
@@ -90,6 +91,41 @@ describe("delegated release CLI operations", () => {
 		expect(serviceRequests[0]?.headers.get("authorization")).toBe(
 			"Bearer header.payload.signature",
 		);
+	});
+
+	it("dry-runs admission without sending an idempotency key", async () => {
+		let serviceRequest: Request | null = null;
+		const result = await dryRunDelegatedRelease(
+			{
+				serviceUrl: SERVICE,
+				publisherDid: PUBLISHER_DID,
+				releaseFile: "release.json",
+			},
+			{
+				environment: ENVIRONMENT,
+				readReleaseRecord: async () => structuredClone(releaseFixture),
+				fetch: async (input, init) => {
+					const url = new URL(input instanceof Request ? input.url : input.toString());
+					if (url.hostname === "token.actions.example") {
+						return Response.json({ value: "header.payload.signature" });
+					}
+					serviceRequest = new Request(url, init);
+					return success({
+						allowed: true,
+						publisherDid: PUBLISHER_DID,
+						packageSlug: "gallery",
+						version: "1.2.3",
+						workloadPolicyVersion: 1,
+						workloadIdentityDigest: "W".repeat(43),
+						requestDigest: "R".repeat(43),
+					});
+				},
+			},
+		);
+
+		expect(result).toMatchObject({ allowed: true, workloadPolicyVersion: 1 });
+		expect(serviceRequest?.url).toBe(`${SERVICE}/v1/release-intents/dry-run`);
+		expect(serviceRequest?.headers.has("idempotency-key")).toBe(false);
 	});
 
 	it("uses fresh OIDC tokens for status and cancellation", async () => {

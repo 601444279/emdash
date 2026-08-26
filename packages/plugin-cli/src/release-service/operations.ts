@@ -4,6 +4,7 @@ import { safeParse } from "@atcute/lexicons";
 import {
 	ReleaseServiceClient,
 	createReleaseIdempotencyKey,
+	type DryRunReleaseIntentResult,
 	type ReleaseIntentResource,
 } from "@emdash-cms/registry-client/release-service";
 import { PackageRelease } from "@emdash-cms/registry-lexicons";
@@ -35,6 +36,10 @@ export interface SubmitDelegatedReleaseOptions extends ReleaseServiceTarget {
 	pollIntervalMs?: number;
 	maxWaitMs?: number;
 	onUpdate?: (intent: ReleaseIntentResource) => void | Promise<void>;
+}
+
+export interface DryRunDelegatedReleaseOptions extends ReleaseServiceTarget {
+	releaseFile: string;
 }
 
 export interface MutateReleaseIntentOptions extends ReleaseServiceTarget {
@@ -150,6 +155,23 @@ export async function submitDelegatedRelease(
 		maxWaitMs: options.maxWaitMs,
 		stopOnApproval: !(options.waitForApproval ?? false),
 		onUpdate: options.onUpdate,
+	});
+}
+
+export async function dryRunDelegatedRelease(
+	options: DryRunDelegatedReleaseOptions,
+	dependencies: ReleaseServiceOperationDependencies = {},
+): Promise<DryRunReleaseIntentResult> {
+	const rawRelease = await (dependencies.readReleaseRecord ?? defaultReadReleaseRecord)(
+		options.releaseFile,
+	);
+	const release = safeParse(PackageRelease.mainSchema, rawRelease);
+	if (!release.ok) throw new Error("Release record file is invalid");
+	return await releaseClient(options, dependencies).dryRunIntent({
+		publisherDid: options.publisherDid,
+		packageSlug: release.value.package,
+		version: release.value.version,
+		release: release.value,
 	});
 }
 

@@ -1,5 +1,5 @@
 import type { PackageRelease } from "@emdash-cms/registry-lexicons";
-import { reset } from "cloudflare:test";
+import { reset, runInDurableObject } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT, type JWTVerifyGetKey } from "jose";
 import { ulid } from "ulidx";
@@ -10,6 +10,7 @@ import { loadConfiguration } from "../src/config.js";
 import { SERVICE_CONTROL_OBJECT_NAME } from "../src/control-do/service-control-do.js";
 import {
 	handleCancelReleaseIntent,
+	handleDryRunReleaseIntent,
 	handleGetReleaseIntent,
 	handleSubmitReleaseIntent,
 } from "../src/intents/routes.js";
@@ -121,6 +122,75 @@ afterEach(async () => {
 });
 
 describe("release intent API", () => {
+	it("dry-runs admission without reserving, rate limiting, or starting a Workflow", async () => {
+		await putPolicy();
+		const configuration = await loadConfiguration(TEST_BINDINGS);
+		const response = await handleDryRunReleaseIntent(
+			request("/v1/release-intents/dry-run", await token(), {
+				method: "POST",
+				body: {
+					publisherDid: PUBLISHER_DID,
+					packageSlug: "gallery",
+					version: "1.2.3",
+					release: release(),
+				},
+			}),
+			"request-dry-run",
+			configuration,
+			{ keyResolver },
+		);
+
+		expect(response.status).toBe(200);
+		await expect(response.json()).resolves.toMatchObject({
+			data: {
+				allowed: true,
+				publisherDid: PUBLISHER_DID,
+				packageSlug: "gallery",
+				version: "1.2.3",
+				workloadPolicyVersion: 1,
+				workloadIdentityDigest: expect.stringMatching(/^[A-Za-z0-9_-]{43}$/),
+				requestDigest: expect.stringMatching(/^[A-Za-z0-9_-]{43}$/),
+			},
+		});
+		await expect(
+			runInDurableObject(env.PUBLISHER_DO.getByName(PUBLISHER_DID), (_instance, state) =>
+				state.storage.sql
+					.exec<{ intents: number; reservations: number; rate_windows: number }>(
+						`SELECT
+							(SELECT COUNT(*) FROM intents) AS intents,
+							(SELECT COUNT(*) FROM release_reservations) AS reservations,
+							(SELECT COUNT(*) FROM intent_rate_windows) AS rate_windows`,
+					)
+					.one(),
+			),
+		).resolves.toEqual({ intents: 0, reservations: 0, rate_windows: 0 });
+	});
+
+	it("does not initialize an unknown publisher shard during dry-run", async () => {
+		const publisherDid = "did:plc:unknownpublisher";
+		const response = await handleDryRunReleaseIntent(
+			request("/v1/release-intents/dry-run", await token(), {
+				method: "POST",
+				body: {
+					publisherDid,
+					packageSlug: "gallery",
+					version: "1.2.3",
+					release: release(),
+				},
+			}),
+			"request-unknown-dry-run",
+			await loadConfiguration(TEST_BINDINGS),
+			{ keyResolver },
+		);
+
+		expect(response.status).toBe(403);
+		await expect(
+			runInDurableObject(env.PUBLISHER_DO.getByName(publisherDid), (_instance, state) =>
+				state.storage.sql.exec<{ count: number }>("SELECT COUNT(*) AS count FROM publisher").one(),
+			),
+		).resolves.toEqual({ count: 0 });
+	});
+
 	it("submits asynchronously, replays with a fresh matching token, and never stores the token", async () => {
 		await putPolicy();
 		const configuration = await loadConfiguration(TEST_BINDINGS);
