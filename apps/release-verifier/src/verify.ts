@@ -204,6 +204,11 @@ export async function verifyRelease(
 			maxBytes: MAX_PROVENANCE_BYTES,
 		});
 		if (!provenanceResource.success) return provenanceResource;
+		const provenanceChecksum = await verifyMultihash(
+			provenanceResource.value.bytes,
+			input.provenance.checksum,
+		);
+		if (!provenanceChecksum.success) return provenanceChecksum;
 		const artifactDigests = await Promise.all(
 			(["SHA-256", "SHA-384", "SHA-512"] as const).map(
 				async (algorithm) =>

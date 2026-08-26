@@ -176,6 +176,44 @@ describe("isolated release verifier", () => {
 		});
 	});
 
+	it("rejects provenance that does not match the signed checksum", async () => {
+		const fixture = await createDelegatedReleaseConformanceFixture();
+		const verify = vi.fn(async (input: ProvenanceVerificationInput) => ({
+			success: true as const,
+			value: {
+				predicateType: "https://slsa.dev/provenance/v1" as const,
+				artifactDigest: input.artifactDigest,
+				sourceRepository: fixture.expected.repository,
+				builderId: fixture.expected.builderId,
+			},
+		}));
+		const result = await verifyRelease(
+			{
+				...fixture.serviceInput,
+				provenance: {
+					...fixture.serviceInput.provenance,
+					checksum: await checksum(encoder.encode("different provenance")),
+				},
+			},
+			{
+				fetch: async (url) =>
+					new Response(
+						url.toString() === fixture.artifactUrl
+							? fixture.artifactBytes
+							: fixture.provenanceDocument,
+					),
+				resolveHostname: async () => ["203.0.113.5"],
+				provenanceVerifier: { verify },
+			},
+		);
+
+		expect(result).toMatchObject({
+			success: false,
+			error: { code: "CHECKSUM_MISMATCH" },
+		});
+		expect(verify).not.toHaveBeenCalled();
+	});
+
 	it("rejects checksum and bundle identity mismatches with stable reports", async () => {
 		const bytes = await validBundle();
 		const dependencies = {
