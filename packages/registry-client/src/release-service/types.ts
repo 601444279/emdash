@@ -182,6 +182,22 @@ export interface DirectoryListOptions {
 	limit?: number;
 }
 
+export interface AuditListOptions {
+	cursor?: string;
+	limit?: number;
+}
+
+export interface ControlAuditEventResource {
+	sequence: number;
+	eventType: string;
+	actorRealm: "access" | "system";
+	actorIdentity: string;
+	actorRole: "admin" | "reviewer" | "viewer" | null;
+	subject: string;
+	reasonCode: string | null;
+	createdAt: number;
+}
+
 export interface EncryptionRotationPageInput {
 	afterCursor: string | null;
 	limit: number;

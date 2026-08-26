@@ -1,12 +1,14 @@
-import { Badge, Button, Input, Surface, Table } from "@cloudflare/kumo";
+import { Badge, Button, Dialog, Input, Surface, Table } from "@cloudflare/kumo";
 import {
 	ReleaseServiceOperatorClient,
 	createReleaseIdempotencyKey,
+	type ControlAuditEventResource,
 	type DirectoryIdentityKind,
 	type DirectoryIdentityResource,
 	type EncryptionRotationResult,
 	type OperatorPublisherResource,
 	type PublisherArchivePageResult,
+	type PublisherRestorePageResult,
 	type ServiceControlState,
 	type StartPublisherArchiveResult,
 } from "@emdash-cms/registry-client/release-service";
@@ -62,6 +64,11 @@ export function OperatorPage() {
 	const [directoryKind, setDirectoryKind] = useState<DirectoryIdentityKind>("publisher");
 	const [directoryCursor, setDirectoryCursor] = useState("");
 	const [directoryItems, setDirectoryItems] = useState<DirectoryIdentityResource[]>([]);
+	const [auditItems, setAuditItems] = useState<ControlAuditEventResource[]>([]);
+	const [auditCursor, setAuditCursor] = useState("");
+	const [restorePage, setRestorePage] = useState("0");
+	const [restoreResult, setRestoreResult] = useState<PublisherRestorePageResult | null>(null);
+	const [restoreConfirmOpen, setRestoreConfirmOpen] = useState(false);
 	const [error, setError] = useState<unknown>(null);
 	const [busy, setBusy] = useState(false);
 
@@ -222,6 +229,58 @@ export function OperatorPage() {
 		}
 	}
 
+	async function listAudit(reset: boolean) {
+		setBusy(true);
+		setError(null);
+		try {
+			const result = await client.listAudit({
+				...(reset || !auditCursor ? {} : { cursor: auditCursor }),
+				limit: 50,
+			});
+			setAuditItems(result.items);
+			setAuditCursor(result.nextCursor ?? "");
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function preparePublisherRestore() {
+		setBusy(true);
+		setError(null);
+		try {
+			await client.preparePublisherRestore(publisherDid, archiveId, {
+				idempotencyKey: createReleaseIdempotencyKey("web-publisher-restore-prepare"),
+			});
+			setRestorePage("0");
+			setRestoreResult(null);
+			setRestoreConfirmOpen(false);
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function restorePublisherPage() {
+		setBusy(true);
+		setError(null);
+		try {
+			const result = await client.restorePublisher(
+				publisherDid,
+				{ archiveId, page: Number(restorePage) },
+				{ idempotencyKey: createReleaseIdempotencyKey("web-publisher-restore") },
+			);
+			setRestoreResult(result);
+			setRestorePage(String(result.nextPage));
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
 	async function operateIntent(action: "cancel" | "reconcile") {
 		setBusy(true);
 		setError(null);
@@ -275,6 +334,63 @@ export function OperatorPage() {
 						{t("operator.service.pausePublication", "Pause publication")}
 					</Button>
 				</div>
+			</Surface>
+
+			<Surface className="rounded-xl border bg-kumo-base p-6">
+				<div className="flex flex-wrap items-start justify-between gap-4">
+					<div>
+						<h2 className="text-xl font-semibold text-kumo-strong">
+							{t("operator.audit.title", "Service audit")}
+						</h2>
+						<p className="mt-1 text-sm text-kumo-subtle">
+							{t(
+								"operator.audit.description",
+								"Review sanitized Access and service-control events in sequence.",
+							)}
+						</p>
+					</div>
+					<Button loading={busy} onClick={() => listAudit(true)} variant="outline">
+						{t("operator.audit.load", "Load audit")}
+					</Button>
+				</div>
+				{auditItems.length > 0 ? (
+					<div className="mt-5 overflow-x-auto">
+						<Table>
+							<Table.Header>
+								<Table.Row>
+									<Table.Head>{t("operator.audit.sequence", "Sequence")}</Table.Head>
+									<Table.Head>{t("operator.audit.event", "Event")}</Table.Head>
+									<Table.Head>{t("operator.audit.actor", "Actor")}</Table.Head>
+									<Table.Head>{t("operator.audit.subject", "Subject")}</Table.Head>
+									<Table.Head>{t("operator.audit.time", "Time")}</Table.Head>
+								</Table.Row>
+							</Table.Header>
+							<Table.Body>
+								{auditItems.map((item) => (
+									<Table.Row key={item.sequence}>
+										<Table.Cell>{item.sequence}</Table.Cell>
+										<Table.Cell>{item.eventType}</Table.Cell>
+										<Table.Cell className="break-all">{item.actorIdentity}</Table.Cell>
+										<Table.Cell className="break-all">{item.subject}</Table.Cell>
+										<Table.Cell>
+											{new Intl.DateTimeFormat(document.documentElement.lang, {
+												dateStyle: "medium",
+												timeStyle: "short",
+											}).format(item.createdAt)}
+										</Table.Cell>
+									</Table.Row>
+								))}
+							</Table.Body>
+						</Table>
+						{auditCursor ? (
+							<div className="mt-4 flex justify-end">
+								<Button loading={busy} onClick={() => listAudit(false)} variant="outline">
+									{t("operator.audit.next", "Next audit page")}
+								</Button>
+							</div>
+						) : null}
+					</div>
+				) : null}
 			</Surface>
 
 			<Surface className="rounded-xl border bg-kumo-base p-6">
@@ -410,7 +526,79 @@ export function OperatorPage() {
 						</p>
 					) : null}
 				</div>
+				<div className="mt-6 border-t pt-5">
+					<h3 className="font-semibold text-kumo-strong">
+						{t("operator.restore.title", "Restore publisher shard")}
+					</h3>
+					<p className="mt-1 text-sm text-kumo-subtle">
+						{t(
+							"operator.restore.description",
+							"Preparation deletes the suspended publisher shard before encrypted pages are applied in order.",
+						)}
+					</p>
+					<div className="mt-4 flex flex-wrap items-end gap-3">
+						<Input
+							label={t("operator.restore.page", "Restore page")}
+							type="number"
+							value={restorePage}
+							onChange={(event) => setRestorePage(event.currentTarget.value)}
+						/>
+						<Button
+							disabled={!publisherDid || !archiveId}
+							loading={busy}
+							onClick={() => setRestoreConfirmOpen(true)}
+							variant="secondary-destructive"
+						>
+							{t("operator.restore.prepare", "Prepare restore")}
+						</Button>
+						<Button
+							disabled={!publisherDid || !archiveId || !Number.isSafeInteger(Number(restorePage))}
+							loading={busy}
+							onClick={restorePublisherPage}
+							variant="outline"
+						>
+							{t("operator.restore.apply", "Apply restore page")}
+						</Button>
+					</div>
+					{restoreResult ? (
+						<p className="mt-4 text-sm text-kumo-subtle">
+							{restoreResult.complete
+								? t("operator.restore.complete", "Restore complete. Reauthorization is required.")
+								: t("operator.restore.next", "Restore page stored. Apply the next page.")}
+						</p>
+					) : null}
+				</div>
 			</Surface>
+
+			<Dialog.Root
+				disablePointerDismissal
+				onOpenChange={setRestoreConfirmOpen}
+				open={restoreConfirmOpen}
+			>
+				<Dialog className="p-6" size="sm">
+					<Dialog.Title className="text-lg font-semibold">
+						{t("operator.restore.confirmTitle", "Delete publisher state for restore?")}
+					</Dialog.Title>
+					<Dialog.Description className="mt-2 text-sm text-kumo-subtle">
+						{t(
+							"operator.restore.confirmDescription",
+							"The publisher must be suspended. This deletes current workload and intent state before archive pages can be restored.",
+						)}
+					</Dialog.Description>
+					<div className="mt-6 flex justify-end gap-3">
+						<Button onClick={() => setRestoreConfirmOpen(false)} variant="secondary">
+							{t("common.cancel", "Cancel")}
+						</Button>
+						<Button
+							loading={busy}
+							onClick={preparePublisherRestore}
+							variant="secondary-destructive"
+						>
+							{t("operator.restore.confirm", "Delete and prepare")}
+						</Button>
+					</div>
+				</Dialog>
+			</Dialog.Root>
 
 			<Surface className="rounded-xl border bg-kumo-base p-6">
 				<div className="flex flex-wrap items-start justify-between gap-4">

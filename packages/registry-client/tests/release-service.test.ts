@@ -301,6 +301,37 @@ describe("ReleaseServiceClient", () => {
 });
 
 describe("ReleaseServiceOperatorClient", () => {
+	it("paginates sanitized service-control audit events", async () => {
+		let captured = "";
+		const client = new ReleaseServiceOperatorClient({
+			serviceUrl: SERVICE,
+			fetch: async (input) => {
+				captured = input instanceof Request ? input.url : input.toString();
+				return success({
+					items: [
+						{
+							sequence: 7,
+							eventType: "service-mode-changed",
+							actorRealm: "access",
+							actorIdentity: "operator-subject",
+							actorRole: "admin",
+							subject: "publication-paused",
+							reasonCode: "MAINTENANCE",
+							createdAt: 1_800_000_000_000,
+						},
+					],
+					nextCursor: "7",
+				});
+			},
+		});
+
+		await expect(client.listAudit({ cursor: "6", limit: 1 })).resolves.toMatchObject({
+			items: [{ sequence: 7, actorRole: "admin" }],
+			nextCursor: "7",
+		});
+		expect(captured).toBe(`${SERVICE}/admin/api/audit?after=6&limit=1`);
+	});
+
 	it("lists one bounded operations-directory shard", async () => {
 		let captured = "";
 		const fetch: typeof globalThis.fetch = async (input) => {

@@ -3,6 +3,8 @@ import type { PackageRelease } from "@emdash-cms/registry-lexicons";
 import {
 	TERMINAL_RELEASE_INTENT_STATES,
 	type CursorPage,
+	type AuditListOptions,
+	type ControlAuditEventResource,
 	type DelegationResource,
 	type DryRunReleaseIntentResult,
 	type DirectoryIdentityKind,
@@ -35,6 +37,8 @@ import {
 
 export type {
 	CursorPage,
+	AuditListOptions,
+	ControlAuditEventResource,
 	DelegationResource,
 	DryRunReleaseIntentResult,
 	DirectoryIdentityKind,
@@ -525,6 +529,44 @@ function parsePublisherControl(value: unknown): PublisherControlResource {
 		throw invalidResponse();
 	}
 	return { publisherDid, status, reasonCode, changedBy, changedAt };
+}
+
+function parseControlAuditEvent(value: unknown): ControlAuditEventResource {
+	if (!isRecord(value)) throw invalidResponse();
+	const sequence = safeInteger(value, "sequence");
+	const eventType = stringValue(value, "eventType");
+	const actorRealm = value["actorRealm"];
+	const actorIdentity = stringValue(value, "actorIdentity");
+	const actorRole = value["actorRole"];
+	const subject = stringValue(value, "subject");
+	const reasonCode = nullableString(value, "reasonCode");
+	const createdAt = safeInteger(value, "createdAt");
+	if (
+		sequence === null ||
+		sequence < 1 ||
+		!eventType ||
+		(actorRealm !== "access" && actorRealm !== "system") ||
+		!actorIdentity ||
+		(actorRole !== null &&
+			actorRole !== "viewer" &&
+			actorRole !== "reviewer" &&
+			actorRole !== "admin") ||
+		!subject ||
+		reasonCode === undefined ||
+		createdAt === null
+	) {
+		throw invalidResponse();
+	}
+	return {
+		sequence,
+		eventType,
+		actorRealm,
+		actorIdentity,
+		actorRole,
+		subject,
+		reasonCode,
+		createdAt,
+	};
 }
 
 function invalidResponse(requestId: string | null = null): ReleaseServiceError {
@@ -1171,6 +1213,41 @@ export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 			`${url.pathname}${url.search}`,
 			{ method: "GET", credentials: "include", signal: options.signal },
 			(value) => parsePage(value, parseDirectoryIdentity),
+		);
+	}
+
+	async listAudit(options: AuditListOptions = {}): Promise<CursorPage<ControlAuditEventResource>> {
+		const url = new URL("/admin/api/audit", this.serviceUrl);
+		if (options.cursor) {
+			if (!DIGITS_PATTERN.test(options.cursor)) {
+				throw new ReleaseServiceError({
+					code: "CLIENT_RESPONSE_INVALID",
+					message: "Audit cursor is invalid",
+				});
+			}
+			url.searchParams.set("after", options.cursor);
+		}
+		if (options.limit !== undefined) {
+			if (!Number.isSafeInteger(options.limit) || options.limit < 1 || options.limit > 100) {
+				throw new ReleaseServiceError({
+					code: "CLIENT_RESPONSE_INVALID",
+					message: "Audit limit is invalid",
+				});
+			}
+			url.searchParams.set("limit", String(options.limit));
+		}
+		return await this.call(
+			`${url.pathname}${url.search}`,
+			{ method: "GET", credentials: "include" },
+			(value) => {
+				if (!isRecord(value) || !Array.isArray(value["items"])) throw invalidResponse();
+				const nextCursor = nullableString(value, "nextCursor");
+				if (nextCursor === undefined) throw invalidResponse();
+				return {
+					items: value["items"].map(parseControlAuditEvent),
+					...(nextCursor ? { nextCursor } : {}),
+				};
+			},
 		);
 	}
 
