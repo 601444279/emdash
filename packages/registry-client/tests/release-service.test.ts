@@ -480,7 +480,7 @@ describe("ReleaseServiceOperatorClient", () => {
 				ownerDid: url.pathname.includes("/approvers/") ? "did:plc:approver" : PUBLISHER_DID,
 				targetKeyVersion: 2,
 				scanned: 1,
-				rotated: 1,
+				rotated: 0,
 				raced: 0,
 				nextCursor: null,
 				complete: true,
@@ -503,7 +503,7 @@ describe("ReleaseServiceOperatorClient", () => {
 				},
 				{ idempotencyKey: "operator-approver-rotation-0001" },
 			),
-		).resolves.toMatchObject({ ownerDid: "did:plc:approver", rotated: 1 });
+		).resolves.toMatchObject({ ownerDid: "did:plc:approver", rotated: 0 });
 
 		expect(calls).toEqual([
 			{
@@ -514,6 +514,78 @@ describe("ReleaseServiceOperatorClient", () => {
 				path: "/admin/api/approvers/did%3Aplc%3Aapprover/encryption/rotate",
 				body: '{"afterCursor":"identity-transaction:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG","limit":10}',
 			},
+		]);
+	});
+
+	it("reads, activates, and retires encryption key lifecycle state", async () => {
+		const calls: Array<{ body: string | null; path: string }> = [];
+		const fetch: typeof globalThis.fetch = async (input, init) => {
+			const url = new URL(input instanceof Request ? input.url : input.toString());
+			calls.push({ path: url.pathname, body: typeof init?.body === "string" ? init.body : null });
+			if (init?.method === "GET") {
+				return success({
+					configured: { activeVersion: 2, versions: [1, 2] },
+					keys: [
+						{
+							version: 1,
+							status: "readable",
+							activatedAt: 0,
+							retiredAt: null,
+							changedBy: "system:bootstrap",
+							updatedAt: 100,
+						},
+						{
+							version: 2,
+							status: "active",
+							activatedAt: 100,
+							retiredAt: null,
+							changedBy: "operator",
+							updatedAt: 100,
+						},
+					],
+					verification: null,
+				});
+			}
+			if (url.pathname.endsWith("/verify")) {
+				return success({ workflowId: "V".repeat(43), created: true });
+			}
+			const retiring = url.pathname.endsWith("/retire");
+			return success({
+				key: {
+					version: retiring ? 1 : 2,
+					status: retiring ? "retired" : "active",
+					activatedAt: retiring ? 0 : 100,
+					retiredAt: retiring ? 200 : null,
+					changedBy: "operator",
+					updatedAt: retiring ? 200 : 100,
+				},
+				replayed: false,
+			});
+		};
+		const client = new ReleaseServiceOperatorClient({ serviceUrl: SERVICE, fetch });
+		await expect(client.getEncryptionKeyStatus()).resolves.toMatchObject({
+			configured: { activeVersion: 2 },
+			keys: [
+				{ version: 1, status: "readable" },
+				{ version: 2, status: "active" },
+			],
+		});
+		await expect(
+			client.activateEncryptionKey(2, { idempotencyKey: "operator-key-activate-0001" }),
+		).resolves.toMatchObject({ value: { version: 2, status: "active" }, replayed: false });
+		await expect(
+			client.startEncryptionVerification(1, {
+				idempotencyKey: "operator-key-verification-0001",
+			}),
+		).resolves.toEqual({ workflowId: "V".repeat(43), created: true });
+		await expect(
+			client.retireEncryptionKey(1, { idempotencyKey: "operator-key-retire-0001" }),
+		).resolves.toMatchObject({ value: { version: 1, status: "retired" }, replayed: false });
+		expect(calls).toEqual([
+			{ path: "/admin/api/viewer/encryption/keys", body: null },
+			{ path: "/admin/api/admin/encryption/keys/activate", body: '{"version":2}' },
+			{ path: "/admin/api/admin/encryption/verify", body: '{"retiringVersion":1}' },
+			{ path: "/admin/api/admin/encryption/keys/1/retire", body: "{}" },
 		]);
 	});
 

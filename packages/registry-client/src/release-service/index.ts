@@ -10,6 +10,9 @@ import {
 	type DirectoryIdentityKind,
 	type DirectoryIdentityResource,
 	type DirectoryListOptions,
+	type EncryptionKeyStateResource,
+	type EncryptionKeyStatusResource,
+	type EncryptionVerificationResource,
 	type EncryptionRotationPageInput,
 	type EncryptionRotationResult,
 	type MutationResult,
@@ -33,6 +36,7 @@ import {
 	type ReleaseServiceClientErrorCode,
 	type ServiceControlState,
 	type StartPublisherArchiveResult,
+	type StartEncryptionVerificationResult,
 	type SubmitReleaseIntentInput,
 	type SubmitReleaseIntentResult,
 	type WorkloadPolicyResource,
@@ -47,6 +51,10 @@ export type {
 	DirectoryIdentityKind,
 	DirectoryIdentityResource,
 	DirectoryListOptions,
+	EncryptionKeyLifecycleStatus,
+	EncryptionKeyStateResource,
+	EncryptionKeyStatusResource,
+	EncryptionVerificationResource,
 	EncryptionRotationPageInput,
 	EncryptionRotationResult,
 	MutationResult,
@@ -71,6 +79,7 @@ export type {
 	ReleaseServiceClientErrorCode,
 	ServiceControlState,
 	StartPublisherArchiveResult,
+	StartEncryptionVerificationResult,
 	SubmitReleaseIntentInput,
 	SubmitReleaseIntentResult,
 	WorkloadPolicyResource,
@@ -1155,7 +1164,8 @@ function parseEncryptionRotation(value: unknown): EncryptionRotationResult {
 		raced < 0 ||
 		rotated + raced > scanned ||
 		(nextCursor !== null && typeof nextCursor !== "string") ||
-		typeof value["complete"] !== "boolean"
+		typeof value["complete"] !== "boolean" ||
+		value["complete"] !== (nextCursor === null && rotated === 0 && raced === 0)
 	) {
 		throw invalidResponse();
 	}
@@ -1167,6 +1177,111 @@ function parseEncryptionRotation(value: unknown): EncryptionRotationResult {
 		raced,
 		nextCursor,
 		complete: value["complete"],
+	};
+}
+
+function parseEncryptionKeyState(value: unknown): EncryptionKeyStateResource {
+	if (!isRecord(value)) throw invalidResponse();
+	const version = safeInteger(value, "version");
+	const status = value["status"];
+	const activatedAt = safeInteger(value, "activatedAt");
+	const retiredAt = nullableSafeInteger(value, "retiredAt");
+	const changedBy = stringValue(value, "changedBy");
+	const updatedAt = safeInteger(value, "updatedAt");
+	if (
+		version === null ||
+		version < 1 ||
+		version > 2_147_483_647 ||
+		(status !== "active" && status !== "readable" && status !== "retired") ||
+		activatedAt === null ||
+		activatedAt < 0 ||
+		retiredAt === undefined ||
+		(retiredAt !== null && retiredAt < activatedAt) ||
+		(status === "retired") !== (retiredAt !== null) ||
+		!changedBy ||
+		updatedAt === null ||
+		updatedAt < activatedAt
+	) {
+		throw invalidResponse();
+	}
+	return { version, status, activatedAt, retiredAt, changedBy, updatedAt };
+}
+
+function parseEncryptionVerification(value: unknown): EncryptionVerificationResource {
+	if (!isRecord(value)) throw invalidResponse();
+	const targetKeyVersion = safeInteger(value, "targetKeyVersion");
+	const workflowId = stringValue(value, "workflowId");
+	const publishers = safeInteger(value, "publishers");
+	const approvers = safeInteger(value, "approvers");
+	const records = safeInteger(value, "records");
+	const rotated = safeInteger(value, "rotated");
+	const verifiedAt = safeInteger(value, "verifiedAt");
+	if (
+		targetKeyVersion === null ||
+		targetKeyVersion < 1 ||
+		!workflowId ||
+		!DIGEST_PATTERN.test(workflowId) ||
+		publishers === null ||
+		publishers < 0 ||
+		approvers === null ||
+		approvers < 0 ||
+		records === null ||
+		records < 0 ||
+		rotated === null ||
+		rotated < 0 ||
+		verifiedAt === null ||
+		verifiedAt < 0
+	) {
+		throw invalidResponse();
+	}
+	return {
+		targetKeyVersion,
+		workflowId,
+		publishers,
+		approvers,
+		records,
+		rotated,
+		verifiedAt,
+	};
+}
+
+function parseEncryptionKeyStatus(value: unknown): EncryptionKeyStatusResource {
+	if (!isRecord(value) || !isRecord(value["configured"]) || !Array.isArray(value["keys"])) {
+		throw invalidResponse();
+	}
+	const activeVersion = safeInteger(value["configured"], "activeVersion");
+	const versions = value["configured"]["versions"];
+	if (
+		activeVersion === null ||
+		activeVersion < 1 ||
+		!Array.isArray(versions) ||
+		versions.length === 0 ||
+		versions.some(
+			(version) =>
+				!Number.isSafeInteger(version) || Number(version) < 1 || Number(version) > 2_147_483_647,
+		) ||
+		new Set(versions).size !== versions.length ||
+		!versions.includes(activeVersion)
+	) {
+		throw invalidResponse();
+	}
+	const keys = value["keys"].map(parseEncryptionKeyState);
+	if (
+		new Set(keys.map((key) => key.version)).size !== keys.length ||
+		keys.filter((key) => key.status === "active").length !== 1
+	) {
+		throw invalidResponse();
+	}
+	const verification =
+		value["verification"] === null ? null : parseEncryptionVerification(value["verification"]);
+	const controlledActiveVersion = keys.find((key) => key.status === "active")!.version;
+	if (verification !== null && verification.targetKeyVersion !== controlledActiveVersion) {
+		throw invalidResponse();
+	}
+	return {
+		configured: { activeVersion, versions: versions.map(Number) },
+		keys,
+		verification,
 	};
 }
 
@@ -1343,6 +1458,104 @@ export class ReleaseServiceOperatorClient extends BaseReleaseServiceClient {
 			(value) => {
 				if (!isRecord(value)) throw invalidResponse();
 				return parseServiceState(value["state"]);
+			},
+		);
+	}
+
+	async getEncryptionKeyStatus(options: RequestOptions = {}): Promise<EncryptionKeyStatusResource> {
+		return await this.call(
+			"/admin/api/viewer/encryption/keys",
+			{ method: "GET", credentials: "include", signal: options.signal },
+			parseEncryptionKeyStatus,
+		);
+	}
+
+	async activateEncryptionKey(
+		version: number,
+		options: MutationOptions,
+	): Promise<MutationResult<EncryptionKeyStateResource>> {
+		if (!Number.isSafeInteger(version) || version < 1 || version > 2_147_483_647) {
+			throw new ReleaseServiceError({
+				code: "CLIENT_RESPONSE_INVALID",
+				message: "Encryption key version is invalid",
+			});
+		}
+		return await this.call(
+			"/admin/api/admin/encryption/keys/activate",
+			{
+				method: "POST",
+				credentials: "include",
+				headers: this.#mutationHeaders(options.idempotencyKey),
+				body: JSON.stringify({ version }),
+				signal: options.signal,
+			},
+			(value) => {
+				if (!isRecord(value) || typeof value["replayed"] !== "boolean") {
+					throw invalidResponse();
+				}
+				return { value: parseEncryptionKeyState(value["key"]), replayed: value["replayed"] };
+			},
+		);
+	}
+
+	async startEncryptionVerification(
+		retiringVersion: number,
+		options: MutationOptions,
+	): Promise<StartEncryptionVerificationResult> {
+		if (
+			!Number.isSafeInteger(retiringVersion) ||
+			retiringVersion < 1 ||
+			retiringVersion > 2_147_483_647
+		) {
+			throw new ReleaseServiceError({
+				code: "CLIENT_RESPONSE_INVALID",
+				message: "Retiring encryption key version is invalid",
+			});
+		}
+		return await this.call(
+			"/admin/api/admin/encryption/verify",
+			{
+				method: "POST",
+				credentials: "include",
+				headers: this.#mutationHeaders(options.idempotencyKey),
+				body: JSON.stringify({ retiringVersion }),
+				signal: options.signal,
+			},
+			(value) => {
+				if (!isRecord(value) || typeof value["created"] !== "boolean") {
+					throw invalidResponse();
+				}
+				const workflowId = stringValue(value, "workflowId");
+				if (!workflowId || !DIGEST_PATTERN.test(workflowId)) throw invalidResponse();
+				return { workflowId, created: value["created"] };
+			},
+		);
+	}
+
+	async retireEncryptionKey(
+		version: number,
+		options: MutationOptions,
+	): Promise<MutationResult<EncryptionKeyStateResource>> {
+		if (!Number.isSafeInteger(version) || version < 1 || version > 2_147_483_647) {
+			throw new ReleaseServiceError({
+				code: "CLIENT_RESPONSE_INVALID",
+				message: "Encryption key version is invalid",
+			});
+		}
+		return await this.call(
+			`/admin/api/admin/encryption/keys/${version}/retire`,
+			{
+				method: "POST",
+				credentials: "include",
+				headers: this.#mutationHeaders(options.idempotencyKey),
+				body: "{}",
+				signal: options.signal,
+			},
+			(value) => {
+				if (!isRecord(value) || typeof value["replayed"] !== "boolean") {
+					throw invalidResponse();
+				}
+				return { value: parseEncryptionKeyState(value["key"]), replayed: value["replayed"] };
 			},
 		);
 	}

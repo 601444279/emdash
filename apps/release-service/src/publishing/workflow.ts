@@ -61,6 +61,7 @@ type AttemptResult =
 
 function isRetryablePublicationBlock(code: string): boolean {
 	return (
+		code === "ENCRYPTION_KEY_INACTIVE" ||
 		code === "PERMIT_EXPIRED" ||
 		code === "PERMIT_STALE" ||
 		code === "PUBLICATION_PAUSED" ||
@@ -229,10 +230,12 @@ export async function publishVerifiedIntent(
 					});
 					return expired.ok ? { state: "expired" } : { state: "failed", reasonCode: expired.code };
 				}
+				const serviceConfiguration = await loadConfiguration(env);
 				const permit = await control.issuePublicationPermit(
 					publisherDid,
 					originalIntent.id,
 					PUBLICATION_TTL_MS,
+					serviceConfiguration.encryption.currentKeyVersion,
 				);
 				if (!permit.ok) return { state: "blocked", reasonCode: permit.code };
 				const publishing = await transition(publisher, {
@@ -301,7 +304,6 @@ export async function publishVerifiedIntent(
 				};
 				let writeStarted = false;
 				try {
-					const configuration = await loadConfiguration(env);
 					const flow = {
 						purpose: "release_delegation",
 						expectedDid: publisherDid,
@@ -309,8 +311,8 @@ export async function publishVerifiedIntent(
 					} as const;
 					const oauth = createPublisherOAuthClient({
 						namespace: env.PUBLISHER_DO,
-						encryption: configuration.encryption,
-						oauth: configuration.oauth,
+						encryption: serviceConfiguration.encryption,
+						oauth: serviceConfiguration.oauth,
 						flow,
 					});
 					const restored = await oauth.restoreForPublication();

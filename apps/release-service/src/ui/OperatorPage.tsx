@@ -5,6 +5,7 @@ import {
 	type ControlAuditEventResource,
 	type DirectoryIdentityKind,
 	type DirectoryIdentityResource,
+	type EncryptionKeyStatusResource,
 	type EncryptionRotationResult,
 	type OperatorPublisherResource,
 	type PublisherArchivePageResult,
@@ -56,6 +57,10 @@ export function OperatorPage() {
 	const [publisherRotationCursor, setPublisherRotationCursor] = useState("");
 	const [approverRotationCursor, setApproverRotationCursor] = useState("");
 	const [rotation, setRotation] = useState<EncryptionRotationResult | null>(null);
+	const [encryptionKeys, setEncryptionKeys] = useState<EncryptionKeyStatusResource | null>(null);
+	const [retireKeyVersion, setRetireKeyVersion] = useState("");
+	const [retireKeyConfirmOpen, setRetireKeyConfirmOpen] = useState(false);
+	const [verificationWorkflowId, setVerificationWorkflowId] = useState<string | null>(null);
 	const [archiveId, setArchiveId] = useState(() => `archive-${crypto.randomUUID()}`);
 	const [archiveCursor, setArchiveCursor] = useState("");
 	const [archivePage, setArchivePage] = useState("0");
@@ -74,7 +79,12 @@ export function OperatorPage() {
 
 	const refreshStatus = useCallback(async () => {
 		try {
-			setState(await client.getStatus());
+			const [serviceState, keyStatus] = await Promise.all([
+				client.getStatus(),
+				client.getEncryptionKeyStatus(),
+			]);
+			setState(serviceState);
+			setEncryptionKeys(keyStatus);
 		} catch (cause) {
 			setError(cause);
 		}
@@ -164,6 +174,70 @@ export function OperatorPage() {
 			setRotation(result);
 			if (owner === "publisher") setPublisherRotationCursor(result.nextCursor ?? "");
 			else setApproverRotationCursor(result.nextCursor ?? "");
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function activateConfiguredEncryptionKey() {
+		if (!encryptionKeys) return;
+		setBusy(true);
+		setError(null);
+		try {
+			await client.activateEncryptionKey(encryptionKeys.configured.activeVersion, {
+				idempotencyKey: createReleaseIdempotencyKey("web-key-activate"),
+			});
+			setEncryptionKeys(await client.getEncryptionKeyStatus());
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function retireEncryptionKey() {
+		const version = Number(retireKeyVersion);
+		if (!Number.isSafeInteger(version) || version < 1) return;
+		setBusy(true);
+		setError(null);
+		try {
+			await client.retireEncryptionKey(version, {
+				idempotencyKey: createReleaseIdempotencyKey("web-key-retire"),
+			});
+			setEncryptionKeys(await client.getEncryptionKeyStatus());
+			setRetireKeyVersion("");
+			setRetireKeyConfirmOpen(false);
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function startEncryptionVerification() {
+		const version = Number(retireKeyVersion);
+		if (!Number.isSafeInteger(version) || version < 1) return;
+		setBusy(true);
+		setError(null);
+		try {
+			const result = await client.startEncryptionVerification(version, {
+				idempotencyKey: createReleaseIdempotencyKey("web-key-verify"),
+			});
+			setVerificationWorkflowId(result.workflowId);
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function refreshEncryptionKeyStatus() {
+		setBusy(true);
+		setError(null);
+		try {
+			setEncryptionKeys(await client.getEncryptionKeyStatus());
 		} catch (cause) {
 			setError(cause);
 		} finally {
@@ -609,7 +683,7 @@ export function OperatorPage() {
 						<p className="mt-1 text-sm text-kumo-subtle">
 							{t(
 								"operator.encryption.description",
-								"Rotate one bounded shard page, then resume from the returned cursor until verification completes.",
+								"Keep publication paused while activating, rotating, verifying, or retiring encryption keys.",
 							)}
 						</p>
 					</div>
@@ -621,6 +695,137 @@ export function OperatorPage() {
 						</Badge>
 					) : null}
 				</div>
+				{encryptionKeys ? (
+					<div className="mt-5 flex flex-col gap-4">
+						<p className="text-sm text-kumo-subtle">
+							{t(
+								"operator.encryption.configured",
+								"Configured active key: {activeVersion}. Available versions: {versions}.",
+								{
+									activeVersion: encryptionKeys.configured.activeVersion,
+									versions: encryptionKeys.configured.versions.join(", "),
+								},
+							)}
+						</p>
+						<div className="overflow-x-auto">
+							<Table>
+								<Table.Header>
+									<Table.Row>
+										<Table.Head>{t("operator.encryption.version", "Version")}</Table.Head>
+										<Table.Head>{t("operator.encryption.status", "Status")}</Table.Head>
+										<Table.Head>{t("operator.encryption.updated", "Updated")}</Table.Head>
+									</Table.Row>
+								</Table.Header>
+								<Table.Body>
+									{encryptionKeys.keys.map((key) => (
+										<Table.Row key={key.version}>
+											<Table.Cell>{key.version}</Table.Cell>
+											<Table.Cell>
+												<Badge
+													variant={
+														key.status === "active"
+															? "success"
+															: key.status === "readable"
+																? "warning"
+																: "neutral"
+													}
+												>
+													{key.status === "active"
+														? t("operator.encryption.active", "Active")
+														: key.status === "readable"
+															? t("operator.encryption.readable", "Readable")
+															: t("operator.encryption.retired", "Retired")}
+												</Badge>
+											</Table.Cell>
+											<Table.Cell>
+												{key.updatedAt === 0
+													? t("operator.encryption.bootstrap", "Bootstrap")
+													: new Intl.DateTimeFormat(document.documentElement.lang, {
+															dateStyle: "medium",
+															timeStyle: "short",
+														}).format(key.updatedAt)}
+											</Table.Cell>
+										</Table.Row>
+									))}
+								</Table.Body>
+							</Table>
+						</div>
+						{encryptionKeys.verification ? (
+							<p className="text-sm text-kumo-subtle">
+								{t(
+									"operator.encryption.verification",
+									"Key {keyVersion} verified {publishers} publisher shards, {approvers} approver shards, and {records} retained records.",
+									{
+										keyVersion: encryptionKeys.verification.targetKeyVersion,
+										publishers: encryptionKeys.verification.publishers,
+										approvers: encryptionKeys.verification.approvers,
+										records: encryptionKeys.verification.records,
+									},
+								)}
+							</p>
+						) : null}
+						{verificationWorkflowId ? (
+							<p className="break-all text-sm text-kumo-subtle">
+								{t("operator.encryption.workflow", "Verification Workflow: {workflowId}", {
+									workflowId: verificationWorkflowId,
+								})}
+							</p>
+						) : null}
+						<div className="flex flex-wrap items-end gap-3">
+							<Button loading={busy} onClick={refreshEncryptionKeyStatus} variant="outline">
+								{t("operator.encryption.refresh", "Refresh key status")}
+							</Button>
+							<Button
+								disabled={
+									state?.mode !== "publication-paused" ||
+									encryptionKeys.keys.find((key) => key.status === "active")?.version ===
+										encryptionKeys.configured.activeVersion
+								}
+								loading={busy}
+								onClick={activateConfiguredEncryptionKey}
+								variant="outline"
+							>
+								{t("operator.encryption.activate", "Activate configured key")}
+							</Button>
+							<Input
+								label={t("operator.encryption.previousVersion", "Previous key version")}
+								type="number"
+								value={retireKeyVersion}
+								onChange={(event) => setRetireKeyVersion(event.currentTarget.value)}
+							/>
+							<Button
+								disabled={
+									state?.mode !== "publication-paused" ||
+									!Number.isSafeInteger(Number(retireKeyVersion)) ||
+									Number(retireKeyVersion) < 1 ||
+									!encryptionKeys.configured.versions.includes(Number(retireKeyVersion))
+								}
+								loading={busy}
+								onClick={startEncryptionVerification}
+								variant="outline"
+							>
+								{t("operator.encryption.verify", "Start fleet verification")}
+							</Button>
+							<Button
+								disabled={
+									state?.mode !== "publication-paused" ||
+									!Number.isSafeInteger(Number(retireKeyVersion)) ||
+									Number(retireKeyVersion) < 1 ||
+									encryptionKeys.configured.versions.includes(Number(retireKeyVersion)) ||
+									encryptionKeys.verification === null
+								}
+								loading={busy}
+								onClick={() => setRetireKeyConfirmOpen(true)}
+								variant="secondary-destructive"
+							>
+								{t("operator.encryption.retire", "Retire removed key")}
+							</Button>
+						</div>
+					</div>
+				) : null}
+				<h3 className="mt-6 font-semibold text-kumo-strong">
+					{t("operator.encryption.rotationTitle", "Shard rotation")}
+				</h3>
 				<div className="mt-5 grid gap-4 md:grid-cols-2">
 					<div className="flex flex-col gap-3">
 						<Input
@@ -678,6 +883,32 @@ export function OperatorPage() {
 					</p>
 				) : null}
 			</Surface>
+
+			<Dialog.Root
+				disablePointerDismissal
+				onOpenChange={setRetireKeyConfirmOpen}
+				open={retireKeyConfirmOpen}
+			>
+				<Dialog className="p-6" size="sm">
+					<Dialog.Title className="text-lg font-semibold">
+						{t("operator.encryption.retireConfirmTitle", "Retire encryption key?")}
+					</Dialog.Title>
+					<Dialog.Description className="mt-2 text-sm text-kumo-subtle">
+						{t(
+							"operator.encryption.retireConfirmDescription",
+							"Retire this version only after two zero-change verification scans and after removing it from the configured keyring. Remaining ciphertext for this version will become unreadable.",
+						)}
+					</Dialog.Description>
+					<div className="mt-6 flex justify-end gap-3">
+						<Button onClick={() => setRetireKeyConfirmOpen(false)} variant="secondary">
+							{t("common.cancel", "Cancel")}
+						</Button>
+						<Button loading={busy} onClick={retireEncryptionKey} variant="secondary-destructive">
+							{t("operator.encryption.retireConfirm", "Retire key")}
+						</Button>
+					</div>
+				</Dialog>
+			</Dialog.Root>
 
 			<Surface className="rounded-xl border bg-kumo-base p-6">
 				<h2 className="text-xl font-semibold text-kumo-strong">

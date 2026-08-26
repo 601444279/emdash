@@ -241,6 +241,41 @@ export interface EncryptionRotationResult {
 	complete: boolean;
 }
 
+export type EncryptionKeyLifecycleStatus = "active" | "readable" | "retired";
+
+export interface EncryptionKeyStateResource {
+	version: number;
+	status: EncryptionKeyLifecycleStatus;
+	activatedAt: number;
+	retiredAt: number | null;
+	changedBy: string;
+	updatedAt: number;
+}
+
+export interface EncryptionKeyStatusResource {
+	configured: {
+		activeVersion: number;
+		versions: number[];
+	};
+	keys: EncryptionKeyStateResource[];
+	verification: EncryptionVerificationResource | null;
+}
+
+export interface EncryptionVerificationResource {
+	targetKeyVersion: number;
+	workflowId: string;
+	publishers: number;
+	approvers: number;
+	records: number;
+	rotated: number;
+	verifiedAt: number;
+}
+
+export interface StartEncryptionVerificationResult {
+	workflowId: string;
+	created: boolean;
+}
+
 export type PublisherArchiveKind = "audit-events" | "intents" | "metadata" | "workload-policies";
 
 export interface PublisherArchivePageInput {

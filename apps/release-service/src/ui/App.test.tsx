@@ -239,8 +239,28 @@ describe("release-service web surfaces", () => {
 	it("renders the Access operator control surface", async () => {
 		vi.stubGlobal(
 			"fetch",
-			vi.fn(async () =>
-				success({
+			vi.fn(async (input: RequestInfo | URL) => {
+				const path = new URL(
+					input instanceof Request ? input.url : input.toString(),
+					location.origin,
+				).pathname;
+				if (path === "/admin/api/viewer/encryption/keys") {
+					return success({
+						configured: { activeVersion: 1, versions: [1] },
+						keys: [
+							{
+								version: 1,
+								status: "active",
+								activatedAt: 0,
+								retiredAt: null,
+								changedBy: "system:bootstrap",
+								updatedAt: 0,
+							},
+						],
+						verification: null,
+					});
+				}
+				return success({
 					state: {
 						mode: "active",
 						epoch: 1,
@@ -248,8 +268,8 @@ describe("release-service web surfaces", () => {
 						changedBy: "system:bootstrap",
 						changedAt: 0,
 					},
-				}),
-			),
+				});
+			}),
 		);
 		renderApp("/admin");
 
@@ -264,6 +284,8 @@ describe("release-service web surfaces", () => {
 		expect(screen.getByRole("heading", { name: "Restore publisher shard" })).toBeTruthy();
 		expect(screen.getByRole("button", { name: "Prepare restore" })).toBeTruthy();
 		expect(screen.getByRole("heading", { name: "Encryption maintenance" })).toBeTruthy();
+		expect(screen.getByText("Configured active key: 1. Available versions: 1.")).toBeTruthy();
+		expect(screen.getByRole("button", { name: "Activate configured key" })).toBeTruthy();
 		expect(screen.getByRole("heading", { name: "Publisher lookup" })).toBeTruthy();
 	});
 

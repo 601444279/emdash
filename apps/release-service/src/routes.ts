@@ -27,12 +27,17 @@ import {
 } from "./backup/workflow-route.js";
 import type { ServiceConfiguration } from "./config.js";
 import {
+	handleActivateEncryptionKey,
 	handleControlAudit,
+	handleEncryptionKeyStatus,
 	handleGetPublisherControl,
 	handleReadiness,
+	handleRetireEncryptionKey,
 	handleServiceStatus,
 	handleSetPublisherControl,
 	handleSetServiceMode,
+	handleStartEncryptionVerification,
+	matchRetireEncryptionKeyPath,
 } from "./control-do/routes.js";
 import { handleListDirectory } from "./directory/routes.js";
 import {
@@ -374,6 +379,12 @@ export const ROUTES = Object.freeze([
 		handler: accessHandler(handleControlAudit),
 	},
 	{
+		method: "GET",
+		path: "/admin/api/viewer/encryption/keys",
+		accessRole: "viewer",
+		handler: accessHandler(handleEncryptionKeyStatus),
+	},
+	{
 		method: "POST",
 		path: "/admin/api/admin/service-mode",
 		accessRole: "admin",
@@ -384,5 +395,24 @@ export const ROUTES = Object.freeze([
 		path: "/admin/api/admin/publisher-control",
 		accessRole: "admin",
 		handler: accessHandler(handleSetPublisherControl),
+	},
+	{
+		method: "POST",
+		path: "/admin/api/admin/encryption/keys/activate",
+		accessRole: "admin",
+		handler: accessHandler(handleActivateEncryptionKey),
+	},
+	{
+		method: "POST",
+		path: "/admin/api/admin/encryption/verify",
+		accessRole: "admin",
+		handler: accessHandler(handleStartEncryptionVerification),
+	},
+	{
+		method: "POST",
+		path: "/admin/api/admin/encryption/keys/{version}/retire",
+		match: matchRetireEncryptionKeyPath,
+		accessRole: "admin",
+		handler: handleRetireEncryptionKey,
 	},
 ] as const satisfies readonly RouteDefinition[]);

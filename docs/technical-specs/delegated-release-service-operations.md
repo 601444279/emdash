@@ -93,7 +93,7 @@ pnpm build
 pnpm exec wrangler deploy --dry-run
 ```
 
-After deployment, `GET /health` must return `200` without loading configuration. `GET /ready` must return `200` only after configuration and the service-control Durable Object initialize successfully.
+After deployment, `GET /health` must return `200` without loading configuration. `GET /ready` returns `200` only after configuration loads, the service-control Durable Object initializes, and its active encryption-key version matches `ENCRYPTION_KEYRING.current`.
 
 ## Operations directory
 
@@ -110,23 +110,22 @@ Rebuild a missing directory as publishers and approvers complete OAuth again. Di
 1. Pause publication in the operator console.
 2. Add the new key version to `ENCRYPTION_KEYRING`, retain every old key, and set `current` to the new version.
 3. Deploy the keyring change without removing old keys.
-4. Enumerate every publisher and approver from the operations directory.
-5. For each DID, run the relevant rotation operation from an empty cursor until it reports `Verified`.
-6. Repeat a full scan from an empty cursor. Every page must report the new target version, zero races, and completion.
-7. Confirm that no `refresh_failure`, `archive_gap`, or `restore_failure` event appeared during the scan.
-8. Remove the retired key version from `ENCRYPTION_KEYRING` and deploy the reduced keyring.
-9. Run another full verification scan. Missing retained key material must fail with `ENCRYPTION_OPERATION_FAILED`.
-10. Restore the previous service mode.
+4. Select **Activate configured key**. The service records the previous version as readable and keeps readiness closed until the configured and controlled active versions match.
+5. Enter the previous version and select **Start fleet verification**. The Workflow scans every publisher and approver in all 256 directory partitions, rotates retained ciphertext with compare-and-set writes, and requires two consecutive zero-change passes for each shard.
+6. Refresh the key status until the Workflow verification record appears. Confirm that no `refresh_failure`, `archive_gap`, or `restore_failure` event appeared during the campaign.
+7. Remove the previous version from `ENCRYPTION_KEYRING` and deploy the reduced keyring.
+8. Refresh the key status, enter the removed version, and select **Retire removed key**. Retirement fails unless publication remains paused, the active version has a completed fleet verification, and the retired version is absent from the configured keyring.
+9. Restore the previous service mode.
 
-Rotation decrypts and re-encrypts outside the Durable Object storage transaction. Each replacement uses a ciphertext compare-and-set, so concurrent refresh or OAuth completion wins safely and appears as a race that requires another scan.
+Rotation decrypts and re-encrypts outside the Durable Object storage transaction. Each replacement uses a ciphertext compare-and-set, so concurrent refresh or OAuth completion wins safely and causes another verification pass. The per-publisher and per-approver rotation controls remain available for diagnosing a failed Workflow shard.
 
 ### Compromised encryption key
 
 1. Pause publication immediately.
 2. Revoke affected publisher delegation when retained state cannot be trusted.
 3. Activate a new encryption key while retaining the compromised key only for the bounded rotation window.
-4. Rotate and verify every directory entry.
-5. Remove the compromised key after a complete zero-race verification pass.
+4. Run fleet verification and wait for its recorded two-pass result.
+5. Remove and retire the compromised key after verification completes.
 6. Require reauthorization for every publisher whose ciphertext could not be proved readable and authentic.
 
 ## Archive publisher shards

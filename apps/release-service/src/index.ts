@@ -23,6 +23,7 @@ export { PublisherDurableObject } from "./publisher-do/publisher-do.js";
 export { ApproverDurableObject } from "./approver-do/approver-do.js";
 export { ReleaseIntentWorkflow } from "./workflows/release-intent.js";
 export { PublisherArchiveWorkflow } from "./workflows/publisher-archive.js";
+export { EncryptionVerificationWorkflow } from "./workflows/encryption-verification.js";
 export { ServiceControlDurableObject } from "./control-do/service-control-do.js";
 export { IdentityDirectoryDurableObject } from "./directory/identity-directory-do.js";
 

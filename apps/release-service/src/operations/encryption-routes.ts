@@ -134,7 +134,7 @@ async function rotateEncryptionRecords(
 			rotated,
 			raced,
 			nextCursor: page.nextCursor,
-			complete: page.nextCursor === null && raced === 0,
+			complete: page.nextCursor === null && rotated === 0 && raced === 0,
 		},
 		requestId,
 	);

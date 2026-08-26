@@ -10,7 +10,8 @@
 		"preview": "vite preview",
 		"deploy": "vite build && wrangler deploy",
 		"typecheck": "tsgo --noEmit && tsgo --noEmit -p tsconfig.ui.json",
-		"test": "vitest run && pnpm run test:ui",
+		"test": "vitest run && pnpm run test:encryption-v2 && pnpm run test:ui",
+		"test:encryption-v2": "vitest run --config vitest.encryption-v2.config.ts",
 		"test:ui": "vitest run --config vitest.ui.config.ts",
 		"test:browser": "playwright test --config playwright.config.ts",
 		"types": "wrangler types"
