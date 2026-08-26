@@ -889,6 +889,7 @@ const API_ERROR_CODES = {
 	APPROVAL_INVALID: true,
 	APPROVER_SESSION_INVALID: true,
 	APPROVER_SUSPENDED: true,
+	ARCHIVE_OPERATION_FAILED: true,
 	AUTH_INVALID: true,
 	CONFIGURATION_ERROR: true,
 	CREDENTIAL_LIMIT_REACHED: true,
@@ -896,6 +897,7 @@ const API_ERROR_CODES = {
 	CREDENTIAL_REVOKED: true,
 	CSRF_INVALID: true,
 	DELEGATION_REQUIRED: true,
+	ENCRYPTION_OPERATION_FAILED: true,
 	IDEMPOTENCY_KEY_INVALID: true,
 	IDEMPOTENCY_CONFLICT: true,
 	INTERNAL_ERROR: true,
@@ -911,11 +913,13 @@ const API_ERROR_CODES = {
 	PUBLISHER_SESSION_INVALID: true,
 	PUBLISHER_SUSPENDED: true,
 	RELEASE_EXISTS: true,
+	RESTORE_OPERATION_FAILED: true,
 	SERVICE_PAUSED: true,
 	SERVICE_UNAVAILABLE: true,
 	VERSION_RESERVED: true,
 	WORKFLOW_UNAVAILABLE: true,
-	WORKLOAD_NOT_ALLOWED: true
+	WORKLOAD_NOT_ALLOWED: true,
+	WORKLOAD_RATE_LIMITED: true
 };
 const RETRYABLE_ERROR_CODES = new Set([
 	"CONFIGURATION_ERROR",
@@ -925,7 +929,8 @@ const RETRYABLE_ERROR_CODES = new Set([
 	"PUBLISHER_SUSPENDED",
 	"SERVICE_PAUSED",
 	"SERVICE_UNAVAILABLE",
-	"WORKFLOW_UNAVAILABLE"
+	"WORKFLOW_UNAVAILABLE",
+	"WORKLOAD_RATE_LIMITED"
 ]);
 const INTENT_STATES = {
 	received: true,
@@ -971,12 +976,13 @@ function isApiErrorCode(value) {
 function serviceOrigin(value) {
 	try {
 		const url = new URL(value);
-		if (url.protocol !== "https:" || url.username !== "" || url.password !== "" || url.pathname !== "/" || url.search !== "" || url.hash !== "" || url.origin !== value) throw new Error("invalid origin");
+		const loopback = url.protocol === "http:" && (url.hostname === "localhost" || url.hostname === "127.0.0.1" || url.hostname === "[::1]");
+		if (url.protocol !== "https:" && !loopback || url.username !== "" || url.password !== "" || url.pathname !== "/" || url.search !== "" || url.hash !== "" || url.origin !== value) throw new Error("invalid origin");
 		return url.origin;
 	} catch {
 		throw new ReleaseServiceError({
 			code: "CLIENT_RESPONSE_INVALID",
-			message: "Release service URL must be an HTTPS origin"
+			message: "Release service URL must be an HTTPS origin or a loopback development origin"
 		});
 	}
 }
@@ -1032,7 +1038,7 @@ function parseIntent(value, serviceUrl) {
 		} catch {
 			throw invalidResponse();
 		}
-		if (parsedApproval.origin !== serviceUrl || parsedApproval.protocol !== "https:") throw invalidResponse();
+		if (parsedApproval.origin !== serviceUrl) throw invalidResponse();
 	}
 	return {
 		id,
@@ -1172,7 +1178,7 @@ var BaseReleaseServiceClient = class {
 	fetch;
 	constructor(options) {
 		this.serviceUrl = serviceOrigin(options.serviceUrl);
-		this.fetch = options.fetch ?? globalThis.fetch;
+		this.fetch = options.fetch ?? globalThis.fetch.bind(globalThis);
 	}
 	async call(path, init, parse) {
 		let response;
