@@ -16,18 +16,18 @@ This runbook covers self-host deployment, routine maintenance, and incident reco
 
 The release-service Worker expects the following resources.
 
-| Binding | Resource | Purpose |
-| --- | --- | --- |
-| `PUBLISHER_DO` | `PublisherDurableObject` | Per-publisher delegation, workload, intent, publication, audit, restore, and rate-limit state |
-| `APPROVER_DO` | `ApproverDurableObject` | Per-approver sessions, passkeys, decisions, audit, and encrypted OAuth transactions |
-| `SERVICE_CONTROL_DO` | `ServiceControlDurableObject` | Global pause mode, publisher suspension, publication permits, and operator audit |
-| `IDENTITY_DIRECTORY_DO` | `IdentityDirectoryDurableObject` | Non-authoritative publisher and approver inventory, sharded by DID hash |
-| `RELEASE_INTENT_WORKFLOW` | Workflow | Verification, approval wait, publication, and reconciliation |
-| `PUBLISHER_ARCHIVE_WORKFLOW` | Workflow | Bounded, retryable publisher snapshot and audit export |
-| `RELEASE_VERIFIER` | Service binding | Isolated artifact and provenance verification |
-| `OPERATIONS_ARCHIVE` | R2 bucket | Encrypted publisher snapshot pages and append-only sanitized audit pages |
-| `OPERATIONS_METRICS` | Analytics Engine dataset | Privacy-safe operational alert events |
-| `ASSETS` | Worker static assets | Publisher, approver, and Access operator web surfaces |
+| Binding                      | Resource                         | Purpose                                                                                       |
+| ---------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------- |
+| `PUBLISHER_DO`               | `PublisherDurableObject`         | Per-publisher delegation, workload, intent, publication, audit, restore, and rate-limit state |
+| `APPROVER_DO`                | `ApproverDurableObject`          | Per-approver sessions, passkeys, decisions, audit, and encrypted OAuth transactions           |
+| `SERVICE_CONTROL_DO`         | `ServiceControlDurableObject`    | Global pause mode, publisher suspension, publication permits, and operator audit              |
+| `IDENTITY_DIRECTORY_DO`      | `IdentityDirectoryDurableObject` | Non-authoritative publisher and approver inventory, sharded by DID hash                       |
+| `RELEASE_INTENT_WORKFLOW`    | Workflow                         | Verification, approval wait, publication, and reconciliation                                  |
+| `PUBLISHER_ARCHIVE_WORKFLOW` | Workflow                         | Bounded, retryable publisher snapshot and audit export                                        |
+| `RELEASE_VERIFIER`           | Service binding                  | Isolated artifact and provenance verification                                                 |
+| `OPERATIONS_ARCHIVE`         | R2 bucket                        | Encrypted publisher snapshot pages and append-only sanitized audit pages                      |
+| `OPERATIONS_METRICS`         | Analytics Engine dataset         | Privacy-safe operational alert events                                                         |
+| `ASSETS`                     | Worker static assets             | Publisher, approver, and Access operator web surfaces                                         |
 
 The initial Durable Object migration tag is `v1`. It contains every class and table required before the first deployment.
 
@@ -49,11 +49,11 @@ Changing `DEPLOYMENT_ID` makes existing encryption envelopes unreadable because 
 
 Create Access applications whose path specificity supplies the audience required by each route family.
 
-| Audience | Paths | Capability |
-| --- | --- | --- |
-| Viewer | `/admin*`, `/admin/api/status`, `/admin/api/directory`, read-only publisher and audit routes | Load the operator console and inspect state |
-| Reviewer | `/admin/api/intents/*` | Cancel or reconcile release intents |
-| Admin | `/admin/api/pause`, `/admin/api/publishers/*`, `/admin/api/approvers/*` | Pause publication, suspend or revoke publishers, rotate keys, archive, and restore |
+| Audience | Paths                                                                                        | Capability                                                                         |
+| -------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Viewer   | `/admin*`, `/admin/api/status`, `/admin/api/directory`, read-only publisher and audit routes | Load the operator console and inspect state                                        |
+| Reviewer | `/admin/api/intents/*`                                                                       | Cancel or reconcile release intents                                                |
+| Admin    | `/admin/api/pause`, `/admin/api/publishers/*`, `/admin/api/approvers/*`                      | Pause publication, suspend or revoke publishers, rotate keys, archive, and restore |
 
 The Worker verifies the Access JWT issuer and the route-specific audience. Access group claims do not grant a role inside the Worker.
 
@@ -69,7 +69,7 @@ pnpm exec wrangler secret put ENCRYPTION_KEYRING
 
 `OAUTH_ASSERTION_KEYSET` contains the active confidential-client assertion key and any previous public keys still needed by an authorization server. `ENCRYPTION_KEYRING` contains the active encryption key and retained decryption keys.
 
-The base configuration uses Worker secret bindings. A Secrets Store deployment requires an adapter that resolves each `SecretsStoreSecret.get()` result before calling `loadConfiguration()`. The current configuration loader accepts string bindings, so do not replace them with Secrets Store bindings until that adapter and its failure tests are present. Do not commit a Secrets Store ID to the reusable base configuration.
+The base configuration uses Worker secret bindings. `loadConfiguration()` also accepts `SecretsStoreSecret` bindings and resolves each value with `get()` on every load, so key rotation is visible to the configuration cache. Define Secrets Store bindings in a deployment-specific Wrangler environment. Do not commit a Secrets Store ID to the reusable base configuration.
 
 ### R2 and verifier
 
@@ -243,30 +243,30 @@ Archive audit pages remain in R2. Restore begins a new shard audit history with 
 
 `OPERATIONS_METRICS` writes privacy-safe Analytics Engine points with this layout:
 
-| Position | Value |
-| --- | --- |
-| `index1` | Publisher/workload hash or `global` |
-| `blob1` | Event name |
-| `blob2` | Outcome or error code |
-| `blob3` | Scope |
-| `blob4` | Request ID |
-| `double1` | Event value, normally `1` |
-| `double2` | Unix time in milliseconds |
+| Position  | Value                               |
+| --------- | ----------------------------------- |
+| `index1`  | Publisher/workload hash or `global` |
+| `blob1`   | Event name                          |
+| `blob2`   | Outcome or error code               |
+| `blob3`   | Scope                               |
+| `blob4`   | Request ID                          |
+| `double1` | Event value, normally `1`           |
+| `double2` | Unix time in milliseconds           |
 
 Configure alert queries for these event names:
 
-| Event | Required response |
-| --- | --- |
-| `publication_paused` | Confirm the incident owner and reason immediately |
-| `refresh_failure` | Check authorization-server health and retained key availability |
-| `reconciliation_required` | Monitor backlog age and deterministic PDS outcomes |
-| `verifier_failure` | Check verifier availability and failure-code distribution |
-| `access_denied` | Investigate spikes by audience and request path logs |
-| `archive_gap` | Resume the failed archive page and verify the manifest |
-| `restore_failure` | Keep the publisher suspended and inspect archive/page ordering |
-| `configuration_failure` | Keep readiness failed and correct variables or secrets |
-| `directory_failure` | Repair projection registration without changing authority |
-| `intent_rate_limited` | Review workload, repository, and publisher abuse patterns |
+| Event                     | Required response                                               |
+| ------------------------- | --------------------------------------------------------------- |
+| `publication_paused`      | Confirm the incident owner and reason immediately               |
+| `refresh_failure`         | Check authorization-server health and retained key availability |
+| `reconciliation_required` | Monitor backlog age and deterministic PDS outcomes              |
+| `verifier_failure`        | Check verifier availability and failure-code distribution       |
+| `access_denied`           | Investigate spikes by audience and request path logs            |
+| `archive_gap`             | Resume the failed archive page and verify the manifest          |
+| `restore_failure`         | Keep the publisher suspended and inspect archive/page ordering  |
+| `configuration_failure`   | Keep readiness failed and correct variables or secrets          |
+| `directory_failure`       | Repair projection registration without changing authority       |
+| `intent_rate_limited`     | Review workload, repository, and publisher abuse patterns       |
 
 Alert delivery is deployment-specific. A production launch requires tested notification routing and an on-call owner for every event above.
 
