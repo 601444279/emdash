@@ -71,6 +71,7 @@ import {
 import {
 	handleDisablePublisherWorkload,
 	handleGetPublisher,
+	handleListPublisherAudit,
 	handleListPublisherIntents,
 	handleListPublisherWorkloads,
 	handlePutPublisherWorkload,
@@ -179,6 +180,11 @@ export const ROUTES = Object.freeze([
 		method: "GET",
 		path: "/v1/publisher/intents",
 		handler: handleListPublisherIntents,
+	},
+	{
+		method: "GET",
+		path: "/v1/publisher/audit",
+		handler: handleListPublisherAudit,
 	},
 	{
 		method: "POST",

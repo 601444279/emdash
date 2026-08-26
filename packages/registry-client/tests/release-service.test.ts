@@ -292,6 +292,36 @@ describe("ReleaseServiceClient", () => {
 		expect(mutationHeaders.has("authorization")).toBe(false);
 	});
 
+	it("lists only the authenticated publisher audit", async () => {
+		let captured = "";
+		const client = new ReleaseServiceClient({
+			serviceUrl: SERVICE,
+			fetch: async (input) => {
+				captured = input instanceof Request ? input.url : input.toString();
+				return success({
+					items: [
+						{
+							sequence: 3,
+							eventType: "workload-policy-stored",
+							actorRealm: "publisher",
+							actorIdentity: PUBLISHER_DID,
+							subject: "gallery",
+							reasonCode: null,
+							createdAt: 1_800_000_000_000,
+						},
+					],
+					nextCursor: "3",
+				});
+			},
+		});
+
+		await expect(client.listPublisherAudit({ cursor: "2", limit: 1 })).resolves.toMatchObject({
+			items: [{ sequence: 3, actorRealm: "publisher" }],
+			nextCursor: "3",
+		});
+		expect(captured).toBe(`${SERVICE}/v1/publisher/audit?cursor=2&limit=1`);
+	});
+
 	it("creates valid collision-resistant idempotency keys", () => {
 		const first = createReleaseIdempotencyKey("github action");
 		const second = createReleaseIdempotencyKey("github action");

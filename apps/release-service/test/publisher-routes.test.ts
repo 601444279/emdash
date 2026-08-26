@@ -7,6 +7,7 @@ import { createPublisherApplicationSession } from "../src/publisher-session/sess
 import {
 	handleDisablePublisherWorkload,
 	handleGetPublisher,
+	handleListPublisherAudit,
 	handleListPublisherIntents,
 	handleListPublisherWorkloads,
 	handlePutPublisherWorkload,
@@ -180,6 +181,26 @@ describe("publisher API", () => {
 		expect(await response.json()).toMatchObject({
 			data: { items: [{ id: INTENT_ID, publisherDid: PUBLISHER_DID }] },
 		});
+	});
+
+	it("paginates the authenticated publisher audit without private payloads", async () => {
+		const configuration = await loadConfiguration(TEST_BINDINGS);
+		await sessionHeaders();
+		const response = await handleListPublisherAudit(
+			request("/v1/publisher/audit?limit=1", await sessionHeaders()),
+			"request-audit",
+			configuration,
+		);
+
+		expect(response.status).toBe(200);
+		const body = await response.json();
+		expect(body).toMatchObject({
+			data: {
+				items: [{ sequence: 1, eventType: "publisher-session-created" }],
+				nextCursor: "1",
+			},
+		});
+		expect(JSON.stringify(body)).not.toContain("csrf");
 	});
 
 	it("revokes retained authority idempotently without exposing OAuth errors", async () => {

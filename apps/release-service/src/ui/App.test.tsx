@@ -92,6 +92,21 @@ describe("release-service web surfaces", () => {
 						],
 					});
 				}
+				if (path === "/v1/publisher/audit") {
+					return success({
+						items: [
+							{
+								sequence: 3,
+								eventType: "workload-policy-stored",
+								actorRealm: "publisher",
+								actorIdentity: PUBLISHER_DID,
+								subject: "gallery",
+								reasonCode: null,
+								createdAt: 1_799_999_250_000,
+							},
+						],
+					});
+				}
 				return success({
 					items: [
 						{
@@ -115,9 +130,11 @@ describe("release-service web surfaces", () => {
 		);
 		renderApp("/publisher");
 
-		expect(await screen.findByText(PUBLISHER_DID)).toBeTruthy();
+		expect((await screen.findAllByText(PUBLISHER_DID)).length).toBeGreaterThan(0);
 		expect(screen.getAllByText("gallery").length).toBeGreaterThan(0);
 		expect(screen.getByText("Awaiting approval")).toBeTruthy();
+		expect(screen.getByRole("heading", { name: "Publisher audit" })).toBeTruthy();
+		expect(screen.getByText("workload-policy-stored")).toBeTruthy();
 	});
 
 	it("shows immutable workload and provenance evidence before approval", async () => {

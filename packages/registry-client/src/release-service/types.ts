@@ -198,6 +198,16 @@ export interface ControlAuditEventResource {
 	createdAt: number;
 }
 
+export interface PublisherAuditEventResource {
+	sequence: number;
+	eventType: string;
+	actorRealm: "access" | "approver" | "oidc" | "publisher" | "system";
+	actorIdentity: string;
+	subject: string;
+	reasonCode: string | null;
+	createdAt: number;
+}
+
 export interface EncryptionRotationPageInput {
 	afterCursor: string | null;
 	limit: number;

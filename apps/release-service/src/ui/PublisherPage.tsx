@@ -3,6 +3,7 @@ import {
 	ReleaseServiceClient,
 	ReleaseServiceError,
 	createReleaseIdempotencyKey,
+	type PublisherAuditEventResource,
 	type PublisherResource,
 	type ReleaseIntentResource,
 	type WorkloadPolicyResource,
@@ -17,6 +18,8 @@ interface PublisherData {
 	publisher: PublisherResource;
 	workloads: WorkloadPolicyResource[];
 	intents: ReleaseIntentResource[];
+	audit: PublisherAuditEventResource[];
+	auditCursor?: string;
 }
 
 function stateVariant(state: string): "error" | "neutral" | "success" | "warning" {
@@ -93,12 +96,19 @@ export function PublisherPage() {
 	const refresh = useCallback(async () => {
 		setError(null);
 		try {
-			const [publisher, workloads, intents] = await Promise.all([
+			const [publisher, workloads, intents, audit] = await Promise.all([
 				client.getPublisher(),
 				client.listWorkloads({ limit: 100 }),
 				client.listPublisherIntents({ limit: 100 }),
+				client.listPublisherAudit({ limit: 50 }),
 			]);
-			setData({ publisher, workloads: workloads.items, intents: intents.items });
+			setData({
+				publisher,
+				workloads: workloads.items,
+				intents: intents.items,
+				audit: audit.items,
+				...(audit.nextCursor ? { auditCursor: audit.nextCursor } : {}),
+			});
 			setLoginRequired(false);
 		} catch (cause) {
 			if (
@@ -164,6 +174,30 @@ export function PublisherPage() {
 			setRepositoryOwnerId("");
 			setWorkflowRef("");
 			await refresh();
+		} catch (cause) {
+			setError(cause);
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function loadNextAuditPage() {
+		if (!data?.auditCursor) return;
+		setBusy(true);
+		setError(null);
+		try {
+			const audit = await client.listPublisherAudit({ cursor: data.auditCursor, limit: 50 });
+			setData((current) =>
+				current
+					? {
+							...current,
+							audit: audit.items,
+							...(audit.nextCursor
+								? { auditCursor: audit.nextCursor }
+								: { auditCursor: undefined }),
+						}
+					: current,
+			);
 		} catch (cause) {
 			setError(cause);
 		} finally {
@@ -321,6 +355,64 @@ export function PublisherPage() {
 						))}
 					</Table.Body>
 				</Table>
+			</Surface>
+
+			<Surface className="rounded-xl border bg-kumo-base p-6">
+				<div className="flex flex-wrap items-start justify-between gap-4">
+					<div>
+						<h2 className="text-xl font-semibold text-kumo-strong">
+							{t("publisher.audit.title", "Publisher audit")}
+						</h2>
+						<p className="mt-1 text-sm text-kumo-subtle">
+							{t(
+								"publisher.audit.description",
+								"Review sanitized events for this publisher. Private OAuth and session data is never returned.",
+							)}
+						</p>
+					</div>
+				</div>
+				{data.audit.length > 0 ? (
+					<div className="mt-5 overflow-x-auto">
+						<Table>
+							<Table.Header>
+								<Table.Row>
+									<Table.Head>{t("publisher.audit.sequence", "Sequence")}</Table.Head>
+									<Table.Head>{t("publisher.audit.event", "Event")}</Table.Head>
+									<Table.Head>{t("publisher.audit.actor", "Actor")}</Table.Head>
+									<Table.Head>{t("publisher.audit.subject", "Subject")}</Table.Head>
+									<Table.Head>{t("publisher.audit.time", "Time")}</Table.Head>
+								</Table.Row>
+							</Table.Header>
+							<Table.Body>
+								{data.audit.map((item) => (
+									<Table.Row key={item.sequence}>
+										<Table.Cell>{item.sequence}</Table.Cell>
+										<Table.Cell>{item.eventType}</Table.Cell>
+										<Table.Cell className="break-all">{item.actorIdentity}</Table.Cell>
+										<Table.Cell className="break-all">{item.subject}</Table.Cell>
+										<Table.Cell>
+											{new Intl.DateTimeFormat(document.documentElement.lang, {
+												dateStyle: "medium",
+												timeStyle: "short",
+											}).format(item.createdAt)}
+										</Table.Cell>
+									</Table.Row>
+								))}
+							</Table.Body>
+						</Table>
+					</div>
+				) : (
+					<p className="mt-5 text-sm text-kumo-subtle">
+						{t("publisher.audit.empty", "No audit events")}
+					</p>
+				)}
+				{data.auditCursor ? (
+					<div className="mt-4 flex justify-end">
+						<Button loading={busy} onClick={loadNextAuditPage} variant="outline">
+							{t("publisher.audit.next", "Next audit page")}
+						</Button>
+					</div>
+				) : null}
 			</Surface>
 		</div>
 	);

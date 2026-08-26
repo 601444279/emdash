@@ -16,6 +16,7 @@ import {
 	type OperatorPublisherResource,
 	type PreparePublisherRestoreResult,
 	type PublisherArchiveKind,
+	type PublisherAuditEventResource,
 	type PublisherArchivePageInput,
 	type PublisherArchivePageResult,
 	type PublisherControlResource,
@@ -50,6 +51,7 @@ export type {
 	OperatorPublisherResource,
 	PreparePublisherRestoreResult,
 	PublisherArchiveKind,
+	PublisherAuditEventResource,
 	PublisherArchivePageInput,
 	PublisherArchivePageResult,
 	PublisherControlResource,
@@ -569,6 +571,42 @@ function parseControlAuditEvent(value: unknown): ControlAuditEventResource {
 	};
 }
 
+function parsePublisherAuditEvent(value: unknown): PublisherAuditEventResource {
+	if (!isRecord(value)) throw invalidResponse();
+	const sequence = safeInteger(value, "sequence");
+	const eventType = stringValue(value, "eventType");
+	const actorRealm = value["actorRealm"];
+	const actorIdentity = stringValue(value, "actorIdentity");
+	const subject = stringValue(value, "subject");
+	const reasonCode = nullableString(value, "reasonCode");
+	const createdAt = safeInteger(value, "createdAt");
+	if (
+		sequence === null ||
+		sequence < 1 ||
+		!eventType ||
+		(actorRealm !== "access" &&
+			actorRealm !== "approver" &&
+			actorRealm !== "oidc" &&
+			actorRealm !== "publisher" &&
+			actorRealm !== "system") ||
+		!actorIdentity ||
+		!subject ||
+		reasonCode === undefined ||
+		createdAt === null
+	) {
+		throw invalidResponse();
+	}
+	return {
+		sequence,
+		eventType,
+		actorRealm,
+		actorIdentity,
+		subject,
+		reasonCode,
+		createdAt,
+	};
+}
+
 function invalidResponse(requestId: string | null = null): ReleaseServiceError {
 	return new ReleaseServiceError({
 		code: "CLIENT_RESPONSE_INVALID",
@@ -925,6 +963,35 @@ export class ReleaseServiceClient extends BaseReleaseServiceClient {
 			`${url.pathname}${url.search}`,
 			{ method: "GET", credentials: "include", signal: options.signal },
 			(value) => parsePage(value, (item) => parseIntent(item, this.serviceUrl)),
+		);
+	}
+
+	async listPublisherAudit(
+		options: AuditListOptions = {},
+	): Promise<CursorPage<PublisherAuditEventResource>> {
+		const url = new URL("/v1/publisher/audit", this.serviceUrl);
+		if (options.cursor) {
+			if (!DIGITS_PATTERN.test(options.cursor)) {
+				throw new ReleaseServiceError({
+					code: "CLIENT_RESPONSE_INVALID",
+					message: "Audit cursor is invalid",
+				});
+			}
+			url.searchParams.set("cursor", options.cursor);
+		}
+		if (options.limit !== undefined) {
+			if (!Number.isSafeInteger(options.limit) || options.limit < 1 || options.limit > 100) {
+				throw new ReleaseServiceError({
+					code: "CLIENT_RESPONSE_INVALID",
+					message: "Audit limit is invalid",
+				});
+			}
+			url.searchParams.set("limit", String(options.limit));
+		}
+		return await this.call(
+			`${url.pathname}${url.search}`,
+			{ method: "GET", credentials: "include" },
+			(value) => parsePage(value, parsePublisherAuditEvent),
 		);
 	}
 }

@@ -1190,7 +1190,7 @@ export class PublisherDurableObject extends DurableObject<Env> {
 			afterSequence < 0 ||
 			!Number.isSafeInteger(limit) ||
 			limit < 1 ||
-			limit > 100
+			limit > 101
 		) {
 			throw new PublisherStateError("OPERATIONS_EXPORT_INVALID");
 		}

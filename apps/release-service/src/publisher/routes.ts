@@ -386,3 +386,40 @@ export async function handleListPublisherIntents(
 		return routeFailure(error, requestId);
 	}
 }
+
+export async function handleListPublisherAudit(
+	request: Request,
+	requestId: string,
+	configuration: ServiceConfiguration,
+): Promise<Response> {
+	try {
+		const session = await publisherSession(request, configuration);
+		const url = new URL(request.url);
+		if ([...url.searchParams.keys()].some((key) => key !== "cursor" && key !== "limit")) {
+			throw new ApiError("INVALID_REQUEST", 400, "Invalid pagination parameters");
+		}
+		const cursorValue = url.searchParams.get("cursor");
+		if (
+			url.searchParams.getAll("cursor").length > 1 ||
+			url.searchParams.getAll("limit").length > 1 ||
+			(cursorValue !== null && !POSITIVE_INTEGER_PATTERN.test(cursorValue))
+		) {
+			throw new ApiError("INVALID_REQUEST", 400, "Invalid pagination parameters");
+		}
+		const cursor = cursorValue === null ? 0 : Number(cursorValue);
+		if (!Number.isSafeInteger(cursor)) {
+			throw new ApiError("INVALID_REQUEST", 400, "Invalid pagination parameters");
+		}
+		const limit = parseLimit(url);
+		const rows = await env.PUBLISHER_DO.getByName(session.publisherDid).listAuditEvents(
+			session.publisherDid,
+			cursor,
+			limit + 1,
+		);
+		const items = rows.slice(0, limit);
+		const nextCursor = rows.length > limit ? String(items.at(-1)?.sequence) : undefined;
+		return apiSuccess({ items, ...(nextCursor ? { nextCursor } : {}) }, requestId);
+	} catch (error) {
+		return routeFailure(error, requestId);
+	}
+}
