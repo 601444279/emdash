@@ -181,6 +181,47 @@ describe("publisher OAuth routes", () => {
 		).resolves.toEqual([expect.objectContaining({ did: DID, kind: "publisher" })]);
 	});
 
+	it("fails the callback before issuing an app session when directory registration fails", async () => {
+		const network = oauthNetwork();
+		vi.stubGlobal("fetch", network.fetch);
+		const config = await configuration();
+		const start = await handlePublisherIdentityAuthorize(
+			new Request(`${ORIGIN}/v1/publisher/session/authorize`, {
+				method: "POST",
+				headers: {
+					"content-type": "application/json",
+					origin: ORIGIN,
+					"x-emdash-request": "1",
+				},
+				body: JSON.stringify({ identifier: DID, redirectTarget: "/publisher" }),
+			}),
+			"route-start-directory-failure",
+			config,
+		);
+		const routeCookie = cookiePair(start.headers.get("set-cookie") ?? "");
+		const state =
+			network.requests.find((request) => request.path === "/par")?.body.get("state") ?? "";
+
+		const callback = await handleOAuthCallback(
+			new Request(
+				`${ORIGIN}/oauth/callback?code=code-1&state=${encodeURIComponent(state)}&iss=${encodeURIComponent("https://authorization.example")}`,
+				{ headers: { cookie: routeCookie } },
+			),
+			"route-callback-directory-failure",
+			config,
+			{
+				registerDirectoryIdentity: async () => {
+					throw new Error("directory unavailable");
+				},
+			},
+		);
+
+		expect(callback.status).toBe(400);
+		const setCookie = callback.headers.get("set-cookie") ?? "";
+		expect(setCookie).not.toContain("__Host-emdash_publisher_session=");
+		expect(setCookie).not.toContain("__Host-emdash_publisher_csrf=");
+	});
+
 	it("keeps approver identity state and cookies in the approver realm", async () => {
 		const network = oauthNetwork();
 		vi.stubGlobal("fetch", network.fetch);
@@ -295,6 +336,50 @@ describe("publisher OAuth routes", () => {
 			"atproto repo:com.emdashcms.experimental.package.release?action=create",
 		);
 		expect(par?.body.get("scope")).not.toContain("transition:generic");
+	});
+
+	it("does not retain delegated authority when directory registration fails", async () => {
+		const network = oauthNetwork();
+		vi.stubGlobal("fetch", network.fetch);
+		const config = await configuration();
+		const session = await createPublisherApplicationSession(env.PUBLISHER_DO, DID);
+		const sessionCookies = session.setCookieHeaders.map(cookiePair);
+		const csrf = sessionCookies[1]?.split("=", 2)[1] ?? "";
+		const start = await handlePublisherDelegationAuthorize(
+			new Request(`${ORIGIN}/v1/publisher/delegation/authorize`, {
+				method: "POST",
+				headers: {
+					"content-type": "application/json",
+					cookie: sessionCookies.join("; "),
+					origin: ORIGIN,
+					"x-emdash-request": "1",
+					"x-emdash-csrf": csrf,
+				},
+				body: JSON.stringify({ redirectTarget: "/publisher" }),
+			}),
+			"delegation-directory-start",
+			config,
+		);
+		const routeCookie = cookiePair(start.headers.get("set-cookie") ?? "");
+		const state =
+			network.requests.find((request) => request.path === "/par")?.body.get("state") ?? "";
+
+		const callback = await handleOAuthCallback(
+			new Request(
+				`${ORIGIN}/oauth/callback?code=code-1&state=${encodeURIComponent(state)}&iss=${encodeURIComponent("https://authorization.example")}`,
+				{ headers: { cookie: [...sessionCookies, routeCookie].join("; ") } },
+			),
+			"delegation-directory-callback",
+			config,
+			{
+				registerDirectoryIdentity: async () => {
+					throw new Error("directory unavailable");
+				},
+			},
+		);
+
+		expect(callback.status).toBe(400);
+		await expect(env.PUBLISHER_DO.getByName(DID).getDelegation(DID)).resolves.toBeNull();
 	});
 
 	it("rejects callback state substitution and clears the routing cookie", async () => {

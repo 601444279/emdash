@@ -23,6 +23,10 @@ import {
 	canonicalizeRedirectTarget,
 } from "./custody.js";
 
+export interface OAuthRouteDependencies {
+	registerDirectoryIdentity?: typeof registerDirectoryIdentity;
+}
+
 export async function handleApproverIdentityAuthorize(
 	request: Request,
 	requestId: string,
@@ -269,6 +273,7 @@ export async function handleOAuthCallback(
 	request: Request,
 	requestId: string,
 	configuration: ServiceConfiguration,
+	dependencies: OAuthRouteDependencies = {},
 ): Promise<Response> {
 	try {
 		const params = new URL(request.url).searchParams;
@@ -307,26 +312,30 @@ export async function handleOAuthCallback(
 							redirectTarget: route.redirectTarget,
 						},
 					});
-		await client.callback(params);
-		try {
-			await registerDirectoryIdentity(
-				route.purpose === "approver_identity" ? "approver" : "publisher",
-				route.expectedDid,
-			);
-		} catch (error) {
-			writeOperationsMetric({
-				event: "directory_failure",
-				outcome: route.purpose === "approver_identity" ? "approver" : "publisher",
-				requestId,
-			});
-			console.error(
-				JSON.stringify({
-					event: "identity_directory_registration_failed",
+		const identityKind = route.purpose === "approver_identity" ? "approver" : "publisher";
+		const register = dependencies.registerDirectoryIdentity ?? registerDirectoryIdentity;
+		const registerIdentity = async () => {
+			try {
+				await register(identityKind, route.expectedDid);
+			} catch (error) {
+				writeOperationsMetric({
+					event: "directory_failure",
+					outcome: identityKind,
 					requestId,
-					name: error instanceof Error ? error.name : "UnknownError",
-				}),
-			);
-		}
+				});
+				console.error(
+					JSON.stringify({
+						event: "identity_directory_registration_failed",
+						requestId,
+						name: error instanceof Error ? error.name : "UnknownError",
+					}),
+				);
+				throw error;
+			}
+		};
+		if (route.purpose === "release_delegation") await registerIdentity();
+		await client.callback(params);
+		if (route.purpose !== "release_delegation") await registerIdentity();
 		const headers = new Headers({
 			"cache-control": "no-store",
 			location: new URL(route.redirectTarget, configuration.publicOrigin).toString(),

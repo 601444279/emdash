@@ -97,11 +97,11 @@ After deployment, `GET /health` must return `200` without loading configuration.
 
 ## Operations directory
 
-Successful publisher and approver OAuth callbacks register the DID in one of 256 directory Durable Objects. Directory registration failure emits `directory_failure` but does not block OAuth or create authority.
+Successful publisher and approver OAuth callbacks register the DID in one of 256 directory Durable Objects before issuing an application session or retaining release delegation. Directory registration failure emits `directory_failure`, fails the callback, and leaves no new application session or delegated authority.
 
 The operator console skips empty partitions when listing publishers or approvers. API clients can resume one partition at a time with `ReleaseServiceOperatorClient.listDirectory()`. Fleet operations must retain the returned cursor until it becomes absent.
 
-Rebuild a missing directory as publishers and approvers complete OAuth again. Directory rows are not evidence of active delegation or approver eligibility; query each authoritative shard before acting.
+Rebuild a missing directory as publishers and approvers complete OAuth again. Directory rows are not evidence of active delegation or approver eligibility; query each authoritative shard before acting. Do not start fleet key verification or retire a key until every lost directory partition has been rebuilt.
 
 ## Rotate encryption keys
 
@@ -264,7 +264,7 @@ Configure alert queries for these event names:
 | `archive_gap`             | Resume the failed archive page and verify the manifest          |
 | `restore_failure`         | Keep the publisher suspended and inspect archive/page ordering  |
 | `configuration_failure`   | Keep readiness failed and correct variables or secrets          |
-| `directory_failure`       | Repair projection registration without changing authority       |
+| `directory_failure`       | Retry authorization so registration completes before authority  |
 | `intent_rate_limited`     | Review workload, repository, and publisher abuse patterns       |
 
 Alert delivery is deployment-specific. A production launch requires tested notification routing and an on-call owner for every event above.
