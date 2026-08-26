@@ -225,12 +225,13 @@ The reference implementation runs on Cloudflare Workers and shards canonical sta
 
 - A SQLite-backed `PublisherDurableObject`, addressed by publisher DID, owns delegated OAuth, workload policy, release intents, package/version reservations, and publisher audit.
 - A SQLite-backed `ApproverDurableObject`, addressed by approver DID, owns passkeys, challenges, decisions, and approver audit.
-- A low-traffic `ServiceControlDurableObject` owns global pause, publisher suspension, and encryption-key-version state.
+- A low-traffic `ServiceControlDurableObject` owns global pause, publisher suspension, publication permits, and encryption-key-version state.
+- A 256-partition `IdentityDirectoryDurableObject` indexes successful publisher and approver identity callbacks for operator discovery. The directory is rebuildable and grants no authority.
 - One Cloudflare Workflow orchestrates each release intent, including durable retries and approval waits. Workflow state is not an authorization source.
 - A separate verifier Worker fetches untrusted artifact and provenance URLs without access to publisher credentials or operator authority.
-- D1 MAY provide a rebuildable cross-publisher operator projection. It is never canonical service or authorization state.
+- D1 is not part of the first reference deployment. A future D1 analytics or search projection would remain rebuildable and non-authoritative.
 
-Slow network operations do not run inside a Durable Object transaction or a `blockConcurrencyWhile()` section. The publisher object atomically grants a generation-bound refresh or publication operation token, the Workflow performs the external request, and only that token can complete the transition. An alarm expires abandoned operations into reconciliation.
+Slow network operations do not run inside a Durable Object transaction or a `blockConcurrencyWhile()` section. The publisher object atomically grants a generation-bound refresh or publication operation token, the Workflow performs the external request, and only that token can complete the transition. Its alarm expires abandoned operations into reconciliation, expires non-publishing intents, and removes expired OAuth, session, and idempotency state.
 
 Service operators authenticate through Cloudflare Access. Access roles can pause, suspend, revoke, cancel, retry, and reconcile. They cannot establish publisher delegation, edit signed profile policy, enrol approvers, approve a release, or publish one. Publishers and approvers still use atproto OAuth because Access identity does not prove control of a DID.
 
@@ -281,7 +282,7 @@ The delegated release service MUST persist enrolment outcomes so revocation, re-
 
 **Re-enrolment.** An approver who loses their authenticator MAY re-enrol by repeating the ceremony. The delegated release service MUST require the OAuth proof again, MUST replace the previous credential (multiple credentials per DID MAY be supported as an explicit "add another authenticator" action), and MUST log the re-enrolment and notify the author. An unexpected re-enrolment is a signal the author needs to see.
 
-**Revocation.** Removing a DID from the signed `approvers` list revokes that approver for that package as soon as the delegated release service observes the profile update on the firehose. The delegated release service MAY retain the credential record if the same DID is still listed on other packages it serves.
+**Revocation.** Removing a DID from the signed `approvers` list revokes that approver for that package. The delegated release service fetches the current profile directly from the publisher's DID-resolved PDS before accepting a decision, so a stale staged intent cannot preserve removed membership. The delegated release service MAY retain the credential record if the same DID is still listed on other packages it serves.
 
 **Cross-package and cross-signer.** A passkey enrolment is per (DID, delegated release service) pair, bound to the delegated release service's origin. The same DID can be enrolled at multiple delegated release services, with independent credentials. Within one delegated release service, an already-enrolled DID listed on a new package does not need to re-enrol; the delegated release service SHOULD inform the approver of the new association.
 
@@ -293,7 +294,7 @@ The approver's view, before they touch the passkey, shows the submitting workflo
 
 ## Lifecycle
 
-- **TTL.** Staged intents expire after an operator-configured window (recommended 24 hours). An expired intent is discarded; CI resubmits if still wanted.
+- **TTL.** Staged intents expire after a bounded window; the first reference implementation uses 24 hours. An expired intent remains as terminal audit state and cannot publish. A later attempt uses a new package version and intent.
 - **Cancellation.** The submitting workflow MAY cancel its own staged intent before approval (using the same OIDC identity it submitted under). An approver MAY explicitly reject an intent; rejection is logged and the submitter is notified.
 - **Storage.** Staged intents live in the delegated release service's own storage; they are not records in the author's PDS. The delegated release service is now stateful in a way it was not when it merely held a session — see [Drawbacks](#drawbacks).
 
@@ -388,13 +389,13 @@ This is scoped to the policy in force at the release's publication time, determi
 
 # Delegated publishing without protocol changes
 
-RFC 0001 leaves multi-author and team publishing to a shared organisational atproto account. The signing-service model gives a cleaner pattern for delegating _release approval_ without any protocol support, expressed entirely as signing-service policy:
+RFC 0001 leaves multi-author and team publishing to a shared organisational atproto account. The delegated release service gives a cleaner pattern for delegating _release approval_ through signed profile policy:
 
 - The package is owned by a **dedicated publisher account**: an atproto account used for nothing except publishing this package (or this organisation's packages). It holds the profile and is the identity releases are signed under.
 - That account delegates, to the delegated release service, a release-scoped session and a workflow-publishing policy describing which CI workflows may trigger a release. The set of humans whose passkeys can approve releases is named in the profile's `approvers` list (see [Release policy](#release-policy)), signed by the publisher account.
 - Individual contributors never hold the publisher account's credentials. They trigger releases through CI; approvals (required for every escalating release, and for every release under `confirmation: always`) are granted with each approver's own passkey against their own identity.
 
-Because the publisher account does nothing else, the blast radius of its compromise is bounded to that package's releases, and because approval delegation lives in signing-service policy rather than the protocol, teams can change who may approve without touching any record or any lexicon. This needs no protocol support beyond the release-scoped delegation already described; it is a deployment pattern the delegated release service enables, and the recommended one for teams.
+Because the publisher account does nothing else, the blast radius of its compromise is bounded to that package's releases. Teams change approval membership by updating the publisher-signed profile policy; they do not share the publisher credential or require a new lexicon. This needs no protocol support beyond the release-scoped delegation and profile extension already described.
 
 # What you trust a delegated release service for
 
