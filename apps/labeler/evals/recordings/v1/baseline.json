@@ -232,6 +232,33 @@
 				"configuredUnits": 20
 			}
 		},
+		"benign-emdash-origin-phrase": {
+			"output": {
+				"schemaVersion": 1,
+				"findings": [],
+				"coveredEvidenceRefs": [
+					"profile.slug",
+					"profile.name",
+					"profile.description",
+					"profile.keywords[0]",
+					"profile.keywords[1]",
+					"profile.keywords[2]",
+					"profile.keywords[3]",
+					"profile.keywords[4]",
+					"profile.license",
+					"profile.authors[0].name",
+					"profile.security[0].email",
+					"profile.authors[0].url"
+				]
+			},
+			"latencyMs": 3341,
+			"usage": {
+				"inputTokens": 910,
+				"outputTokens": 92,
+				"totalTokens": 1002,
+				"configuredUnits": 1
+			}
+		},
 		"borderline-official-compatibility": {
 			"output": {
 				"schemaVersion": 1,

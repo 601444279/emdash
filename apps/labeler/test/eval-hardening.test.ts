@@ -166,6 +166,19 @@ describe("sealed evaluation datasets", () => {
 			]),
 		);
 	});
+
+	it("uses a fixture's profile slug as its canonical record key", async () => {
+		const dataset = await loadEvalDataset({ readFile: readDatasetFile });
+		const fixture = dataset.fixtures.find(({ id }) => id === "benign-emdash-origin-phrase");
+		if (!fixture || fixture.kind !== "text") throw new Error("origin phrase fixture is missing");
+		const request = await buildCanonicalTextEvalRequest(fixture);
+		expect(request.subject.uri).toMatch(/\/freeform$/);
+		expect(request.text).toContainEqual({
+			ref: "profile.slug",
+			value: "freeform",
+			format: "plain",
+		});
+	});
 });
 
 describe("promotion hardening", () => {

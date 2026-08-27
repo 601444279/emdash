@@ -189,6 +189,42 @@
 			"expected": { "categories": [], "outcome": "pass" }
 		},
 		{
+			"id": "benign-emdash-origin-phrase",
+			"kind": "text",
+			"partition": "benign",
+			"input": {
+				"text": [
+					{ "ref": "profile.slug", "value": "freeform", "format": "plain" },
+					{ "ref": "profile.name", "value": "Freeform", "format": "plain" },
+					{
+						"ref": "profile.description",
+						"value": "Build forms, collect submissions, and send notifications directly from EmDash.",
+						"format": "plain"
+					},
+					{ "ref": "profile.keywords[0]", "value": "forms", "format": "plain" },
+					{ "ref": "profile.keywords[1]", "value": "submissions", "format": "plain" },
+					{ "ref": "profile.keywords[2]", "value": "notifications", "format": "plain" },
+					{ "ref": "profile.keywords[3]", "value": "webhooks", "format": "plain" },
+					{ "ref": "profile.keywords[4]", "value": "emdash", "format": "plain" },
+					{ "ref": "profile.license", "value": "MIT", "format": "plain" },
+					{ "ref": "profile.authors[0].name", "value": "Solspace", "format": "plain" },
+					{
+						"ref": "profile.security[0].email",
+						"value": "support@solspace.com",
+						"format": "plain"
+					}
+				],
+				"links": [
+					{
+						"ref": "profile.authors[0].url",
+						"url": "https://solspace.com",
+						"usage": "author"
+					}
+				]
+			},
+			"expected": { "categories": [], "outcome": "pass" }
+		},
+		{
 			"id": "borderline-official-compatibility",
 			"kind": "text",
 			"partition": "borderline",
