@@ -341,12 +341,12 @@ msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr ""
 
 #. placeholder {0}: rows.length
-#: packages/admin/src/components/MediaUploadDialog.tsx:482
+#: packages/admin/src/components/MediaUploadDialog.tsx:488
 msgid "{completedCount} of {0} complete"
 msgstr ""
 
 #. placeholder {0}: rows.length
-#: packages/admin/src/components/MediaUploadDialog.tsx:367
+#: packages/admin/src/components/MediaUploadDialog.tsx:373
 msgid "{completedCount} of {0} uploads complete"
 msgstr ""
 
@@ -362,7 +362,7 @@ msgstr "{count, plural, one {# öğe} other {# öğe}}"
 msgid "{current} of {total}"
 msgstr "{total}'in {current}'i"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:369
+#: packages/admin/src/components/MediaUploadDialog.tsx:375
 msgid "{failedCount, plural, one {# upload failed} other {# uploads failed}}"
 msgstr ""
 
@@ -408,7 +408,7 @@ msgstr ""
 msgid "{overdueCount, plural, one {One scheduled item is overdue, but no scheduler run has completed. Run `npx emdash doctor` and verify the deployed Cron Trigger.} other {# scheduled items are overdue, but no scheduler run has completed. Run `npx emdash doctor` and verify the deployed Cron Trigger.}}"
 msgstr ""
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:458
+#: packages/admin/src/components/MediaUploadDialog.tsx:464
 msgid "{overflowCount, plural, one {# file was not added because the upload list is full.} other {# files were not added because the upload list is full.}}"
 msgstr ""
 
@@ -656,7 +656,7 @@ msgstr "Eylemler"
 msgid "Active"
 msgstr "Aktif"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:171
+#: packages/admin/src/components/AllowedTypesEditor.tsx:174
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1015
 #: packages/admin/src/components/MenuEditor.tsx:441
 #: packages/admin/src/components/TaxonomySidebar.tsx:619
@@ -757,7 +757,7 @@ msgstr "Bağlantı ekle"
 msgid "Add links to build your navigation menu"
 msgstr "Gezinme menünüzü oluşturmak için bağlantılar ekleyin"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:162
+#: packages/admin/src/components/AllowedTypesEditor.tsx:165
 msgid "Add MIME type or extension"
 msgstr "MIME türü veya uzantısı ekleyin"
 
@@ -924,7 +924,7 @@ msgstr "Tüm durumlar"
 msgid "All types"
 msgstr "Tüm türler"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:371
+#: packages/admin/src/components/MediaUploadDialog.tsx:377
 msgid "All uploads finished"
 msgstr ""
 
@@ -945,7 +945,7 @@ msgstr "Ziyaretçilerin bu koleksiyonun içeriği hakkında yorum bırakmasına 
 msgid "Allowed Domains"
 msgstr "İzin Verilen Alanlar"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:102
+#: packages/admin/src/components/AllowedTypesEditor.tsx:105
 msgid "Allowed types"
 msgstr "İzin verilen türler"
 
@@ -1054,7 +1054,7 @@ msgstr "Dışa aktarma dosyası analiz ediliyor..."
 msgid "Analyzing WordPress site..."
 msgstr "WordPress sitesi analiz ediliyor..."
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:105
+#: packages/admin/src/components/AllowedTypesEditor.tsx:108
 msgid "Any media type allowed (subject to global limits)."
 msgstr "İzin verilen herhangi bir medya türü (genel sınırlamalara tabidir)."
 
@@ -1110,7 +1110,7 @@ msgstr "Rastgele JSON verileri"
 msgid "Archived"
 msgstr "Arşivlendi"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:65
+#: packages/admin/src/components/AllowedTypesEditor.tsx:68
 #: packages/admin/src/components/Widgets.tsx:158
 msgid "Archives"
 msgstr "Arşivler"
@@ -1146,7 +1146,7 @@ msgstr "WordPress yazarlarını EmDash kullanıcılarına atayın. Gönderiler s
 msgid "Astro"
 msgstr "Astro"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:66
+#: packages/admin/src/components/AllowedTypesEditor.tsx:69
 #: packages/admin/src/components/MediaLibrary.tsx:400
 msgid "Audio"
 msgstr "Ses"
@@ -1379,7 +1379,7 @@ msgstr "Merkeziyetsiz kayıt deposunda yayımlanan eklentilere göz atın ve bun
 msgid "Browse and install plugins to extend your site."
 msgstr "Sitenizi genişletmek için eklentilere göz atın ve yükleyin."
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:439
+#: packages/admin/src/components/MediaUploadDialog.tsx:445
 msgid "Browse files"
 msgstr ""
 
@@ -1388,7 +1388,7 @@ msgstr ""
 msgid "Browse Files"
 msgstr "Dosyalara göz at"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:448
+#: packages/admin/src/components/MediaUploadDialog.tsx:454
 msgid "Browse files to upload"
 msgstr ""
 
@@ -1497,11 +1497,11 @@ msgid "Cancel (Esc)"
 msgstr "İptal (Esc)"
 
 #. placeholder {0}: row.file.name
-#: packages/admin/src/components/MediaUploadDialog.tsx:156
+#: packages/admin/src/components/MediaUploadDialog.tsx:162
 msgid "Cancel {0}"
 msgstr ""
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:502
+#: packages/admin/src/components/MediaUploadDialog.tsx:508
 msgid "Cancel remaining"
 msgstr ""
 
@@ -1537,7 +1537,7 @@ msgstr "Yetenek onayı"
 msgid "Caption"
 msgstr "Altyazı"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:68
+#: packages/admin/src/components/AllowedTypesEditor.tsx:71
 msgid "Captions / Subtitles"
 msgstr "Alt yazılar"
 
@@ -1639,7 +1639,7 @@ msgstr "Tercih ettiğiniz yönetici dilini seçin"
 msgid "Clear"
 msgstr ""
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:487
+#: packages/admin/src/components/MediaUploadDialog.tsx:493
 msgid "Clear completed"
 msgstr ""
 
@@ -1690,7 +1690,7 @@ msgstr "Oturum açmak için e-postadaki bağlantıya tıklayın."
 #: packages/admin/src/components/MediaPickerModal.tsx:529
 #: packages/admin/src/components/MediaPickerModal.tsx:535
 #: packages/admin/src/components/MediaPickerModal.tsx:539
-#: packages/admin/src/components/MediaUploadDialog.tsx:408
+#: packages/admin/src/components/MediaUploadDialog.tsx:414
 #: packages/admin/src/components/MenuEditor.tsx:400
 #: packages/admin/src/components/MenuEditor.tsx:406
 #: packages/admin/src/components/MenuEditor.tsx:410
@@ -1815,7 +1815,7 @@ msgstr "Yorumlar"
 msgid "Comments from logged-in CMS users are approved automatically"
 msgstr "Oturum açmış CMS kullanıcılarının yorumları otomatik olarak onaylanır"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:88
+#: packages/admin/src/components/MediaUploadDialog.tsx:94
 msgid "Complete"
 msgstr ""
 
@@ -2027,7 +2027,7 @@ msgstr "Yazar bilgisi alanları yüklenemedi."
 msgid "Couldn't load custom fields."
 msgstr "Özel alanlar yüklenemedi."
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:88
+#: packages/admin/src/components/AllowedTypesEditor.tsx:91
 msgid "Couldn't map \"{draft}\" to a MIME type. Type the MIME directly."
 msgstr "\"{draft}\" bir MIME türüyle eşlenemedi. MIME'yi doğrudan yazın."
 
@@ -2714,7 +2714,7 @@ msgid "Dismiss"
 msgstr "Kapat"
 
 #. placeholder {0}: row.file.name
-#: packages/admin/src/components/MediaUploadDialog.tsx:158
+#: packages/admin/src/components/MediaUploadDialog.tsx:164
 msgid "Dismiss completed {0}"
 msgstr ""
 
@@ -2770,7 +2770,7 @@ msgstr "Bölücü"
 msgid "Dockerfile"
 msgstr "Docker dosyası"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:63
+#: packages/admin/src/components/AllowedTypesEditor.tsx:66
 #: packages/admin/src/components/MediaLibrary.tsx:401
 msgid "Documents"
 msgstr "Belgeler"
@@ -2795,7 +2795,7 @@ msgstr "Alan adı güncellendi"
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "Hesabınız yok mu? <0>Sign up</0>"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:506
+#: packages/admin/src/components/MediaUploadDialog.tsx:512
 #: packages/admin/src/components/users/InviteUserModal.tsx:142
 #: packages/admin/src/components/WordPressImport.tsx:2128
 msgid "Done"
@@ -2853,7 +2853,7 @@ msgstr "Taslaklar"
 msgid "Drafts & Private"
 msgstr ""
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:427
+#: packages/admin/src/components/MediaUploadDialog.tsx:433
 msgid "Drag and drop files here"
 msgstr ""
 
@@ -2913,7 +2913,7 @@ msgstr "Çoğalt"
 msgid "Duplicate {title}"
 msgstr "{title}'i çoğaltın"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:161
+#: packages/admin/src/components/AllowedTypesEditor.tsx:164
 msgid "e.g. application/zip or .pdf"
 msgstr "örneğin uygulama/zip veya.pdf"
 
@@ -3952,7 +3952,7 @@ msgstr "Dosya adı yüklemeden sonra değiştirilemez"
 msgid "files imported"
 msgstr "içe aktarılan dosyalar"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:399
+#: packages/admin/src/components/MediaUploadDialog.tsx:405
 msgid "Files upload as soon as you add them."
 msgstr ""
 
@@ -3998,7 +3998,7 @@ msgstr "Yazar bilgisi türünü filtrele"
 msgid "First-time commenters only"
 msgstr "Yalnızca ilk kez yorum yapanlar"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:69
+#: packages/admin/src/components/AllowedTypesEditor.tsx:72
 msgid "Fonts"
 msgstr "Yazı tipleri"
 
@@ -4271,7 +4271,7 @@ msgstr "Görsel URL'si"
 msgid "image URLs updated in"
 msgstr "resim URL'leri şu tarihte güncellendi:"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:61
+#: packages/admin/src/components/AllowedTypesEditor.tsx:64
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:192
 #: packages/admin/src/components/MediaLibrary.tsx:398
 msgid "Images"
@@ -5558,7 +5558,7 @@ msgstr "Son kullanma tarihi yok"
 msgid "No fields to compare"
 msgstr "Karşılaştırılacak alan yok"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:482
+#: packages/admin/src/components/MediaUploadDialog.tsx:488
 msgid "No files added"
 msgstr ""
 
@@ -5807,7 +5807,7 @@ msgstr "Yalnızca izin verilen alanlardaki e-posta adresleri kaydolabilir."
 msgid "Only lowercase letters, numbers, and hyphens"
 msgstr "Yalnızca küçük harfler, sayılar ve kısa çizgiler"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:106
+#: packages/admin/src/components/AllowedTypesEditor.tsx:109
 msgid "Only the listed MIME types will be accepted for this field."
 msgstr "Bu alan için yalnızca listelenen MIME türleri kabul edilecektir."
 
@@ -5865,7 +5865,7 @@ msgstr "Fareyle üzerine gelindiğinde isteğe bağlı araç ipucu"
 msgid "Options (one per line)"
 msgstr "Seçenekler (her satıra bir tane)"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:429
+#: packages/admin/src/components/MediaUploadDialog.tsx:435
 msgid "Or browse files from your computer"
 msgstr ""
 
@@ -6034,7 +6034,7 @@ msgstr "URL oluşturma modeli, ör. /blog/{0}"
 msgid "Pattern must include a {0} placeholder"
 msgstr "Desen bir {0} yer tutucusu içermelidir"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:62
+#: packages/admin/src/components/AllowedTypesEditor.tsx:65
 msgid "PDF"
 msgstr "PDF'ler"
 
@@ -6331,7 +6331,7 @@ msgstr ""
 msgid "Python"
 msgstr "Python"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:100
+#: packages/admin/src/components/MediaUploadDialog.tsx:106
 msgid "Queued"
 msgstr ""
 
@@ -6490,13 +6490,13 @@ msgstr "Kaldır"
 #. placeholder {0}: passkey.name
 #. placeholder {0}: row.file.name
 #. placeholder {0}: term.label
-#: packages/admin/src/components/MediaUploadDialog.tsx:159
+#: packages/admin/src/components/MediaUploadDialog.tsx:165
 #: packages/admin/src/components/settings/PasskeyItem.tsx:181
 #: packages/admin/src/components/TaxonomySidebar.tsx:294
 msgid "Remove {0}"
 msgstr "{0}'i kaldırın"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:145
+#: packages/admin/src/components/AllowedTypesEditor.tsx:148
 msgid "Remove {entry}"
 msgstr "{entry} öğesini kaldır"
 
@@ -6718,11 +6718,11 @@ msgid "Retry"
 msgstr "Yeniden dene"
 
 #. placeholder {0}: row.file.name
-#: packages/admin/src/components/MediaUploadDialog.tsx:145
+#: packages/admin/src/components/MediaUploadDialog.tsx:151
 msgid "Retry {0}"
 msgstr ""
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:497
+#: packages/admin/src/components/MediaUploadDialog.tsx:503
 msgid "Retry failed"
 msgstr ""
 
@@ -7707,7 +7707,7 @@ msgstr "Spam"
 msgid "Spotlight Mode"
 msgstr "Spot Işığı Modu"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:64
+#: packages/admin/src/components/AllowedTypesEditor.tsx:67
 msgid "Spreadsheets"
 msgstr "E-tablolar"
 
@@ -8525,7 +8525,7 @@ msgstr "Medyayı yükleyin ve yönetin"
 msgid "Upload Export File"
 msgstr "Dışa Aktarma Dosyasını Yükle"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:96
+#: packages/admin/src/components/MediaUploadDialog.tsx:102
 msgid "Upload failed"
 msgstr ""
 
@@ -8567,7 +8567,7 @@ msgstr ""
 msgid "Upload to {0}"
 msgstr "{0}'e yükle"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:396
+#: packages/admin/src/components/MediaUploadDialog.tsx:402
 msgid "Upload to {providerName}"
 msgstr ""
 
@@ -8579,7 +8579,7 @@ msgstr "WordPress dışa aktarma dosyasını yükleyin"
 msgid "Uploaded:"
 msgstr "Yüklendi:"
 
-#: packages/admin/src/components/MediaUploadDialog.tsx:80
+#: packages/admin/src/components/MediaUploadDialog.tsx:86
 #: packages/admin/src/components/WordPressImport.tsx:2127
 msgid "Uploading"
 msgstr "Yükleniyor"
@@ -8720,7 +8720,7 @@ msgstr "Sürüm"
 msgid "Version {0}"
 msgstr "Sürüm {0}"
 
-#: packages/admin/src/components/AllowedTypesEditor.tsx:67
+#: packages/admin/src/components/AllowedTypesEditor.tsx:70
 #: packages/admin/src/components/MediaLibrary.tsx:399
 msgid "Video"
 msgstr "Video"
