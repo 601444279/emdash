@@ -471,7 +471,7 @@ async function handleOperatorRead(
 		const canonicalInput = parseStoredJson(row["canonical_input_json"]);
 		const relatedProfile =
 			row["subject_kind"] === "release"
-				? await readProductionRelatedProfile(env.DB, canonicalInput)
+				? await readOperatorRelatedProfile(env.DB, canonicalInput)
 				: null;
 		return mutationResponse({
 			assessment: {
@@ -571,7 +571,7 @@ async function readProductionAssessmentMedia(
 	});
 }
 
-async function readProductionRelatedProfile(
+export async function readOperatorRelatedProfile(
 	db: D1Database,
 	canonicalInput: unknown,
 ): Promise<unknown> {
@@ -585,10 +585,11 @@ async function readProductionRelatedProfile(
 		.prepare(
 			`SELECT assessment.canonical_input_json
 			 FROM current_subjects subject
-			 JOIN current_assessments current
-			   ON current.subject_uri = subject.uri AND current.subject_cid = subject.cid
-			 JOIN assessments assessment ON assessment.id = current.assessment_id
+			 JOIN assessments assessment
+			   ON assessment.subject_uri = subject.uri AND assessment.subject_cid = subject.cid
 			 WHERE subject.uri = ? AND subject.deleted_at IS NULL
+			   AND assessment.canonical_input_json IS NOT NULL
+			 ORDER BY assessment.updated_at DESC, assessment.id DESC
 			 LIMIT 1`,
 		)
 		.bind(profileUri)
