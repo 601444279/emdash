@@ -65,8 +65,8 @@ msgstr "{0, plural, one {(# รายการ)} other {(# รายการ)}}
 
 #. placeholder {0}: 1
 #. placeholder {0}: value.bylineIds.length
-#: packages/admin/src/components/BylineFilter.tsx:103
-#: packages/admin/src/components/BylineFilter.tsx:104
+#: packages/admin/src/components/BylineFilter.tsx:105
+#: packages/admin/src/components/BylineFilter.tsx:106
 msgid "{0, plural, one {# byline} other {# bylines}}"
 msgstr ""
 
@@ -86,7 +86,7 @@ msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {อัปเดตความคิดเห็น # รายการ} other {อัปเดตความคิดเห็น # รายการ}}"
 
 #. placeholder {0}: comments.length
-#: packages/admin/src/components/comments/CommentInbox.tsx:345
+#: packages/admin/src/components/comments/CommentInbox.tsx:336
 msgid "{0, plural, one {# comment} other {# comments}}"
 msgstr "{0, plural, one {# ความคิดเห็น} other {# ความคิดเห็น}}"
 
@@ -103,7 +103,7 @@ msgstr "{0, plural, one {นำเข้าเนื้อหา # รายก�
 #. placeholder {0}: locationFolders.length
 #. placeholder {0}: visibleFolders.length
 #: packages/admin/src/components/MediaDetailPanel.tsx:750
-#: packages/admin/src/components/MediaLibrary.tsx:1012
+#: packages/admin/src/components/MediaLibrary.tsx:1006
 msgid "{0, plural, one {# folder loaded} other {# folders loaded}}"
 msgstr ""
 
@@ -161,7 +161,7 @@ msgid "{0, plural, one {# redirect is part of a loop.} other {# redirects are pa
 msgstr "{0, plural, one {การเปลี่ยนเส้นทาง # รายการเป็นส่วนหนึ่งของลูป} other {การเปลี่ยนเส้นทาง # รายการเป็นส่วนหนึ่งของลูป}}"
 
 #. placeholder {0}: selected.size
-#: packages/admin/src/components/comments/CommentInbox.tsx:229
+#: packages/admin/src/components/comments/CommentInbox.tsx:220
 msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {เลือกแล้ว #} other {เลือกแล้ว #}}"
 
@@ -360,7 +360,7 @@ msgstr ""
 
 #. placeholder {0}: hasMore ? "+" : ""
 #. placeholder {1}: hasMore ? "+" : ""
-#: packages/admin/src/components/ContentList.tsx:1088
+#: packages/admin/src/components/ContentList.tsx:1200
 msgid "{filteredCount, plural, one {#{0} item} other {#{1} items}}"
 msgstr "{filteredCount, plural, one {#{0} รายการ} other {#{1} รายการ}}"
 
@@ -376,7 +376,7 @@ msgstr "{label} — ไม่มีคำแปล"
 msgid "{label} — view translation"
 msgstr "{label} — ดูคำแปล"
 
-#: packages/admin/src/components/ContentList.tsx:1077
+#: packages/admin/src/components/ContentList.tsx:1189
 msgid "{matchCount, plural, one {# item matching \"{searchQuery}\"} other {# items matching \"{searchQuery}\"}}"
 msgstr "{matchCount, plural, other {# รายการที่ตรงกับ \"{searchQuery}\"}}"
 
@@ -430,19 +430,19 @@ msgstr ""
 msgid "{rewrittenUrls, plural, one {<rewrittenCount>#</rewrittenCount> image URL updated in {updatedContentItems, plural, one {<contentCount>#</contentCount> content item} other {<contentCount>#</contentCount> content items}}} other {<rewrittenCount>#</rewrittenCount> image URLs updated in {updatedContentItems, plural, one {<contentCount>#</contentCount> content item} other {<contentCount>#</contentCount> content items}}}}"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:474
+#: packages/admin/src/components/ContentList.tsx:493
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:516
+#: packages/admin/src/components/ContentList.tsx:535
 msgid "{selectedCount, plural, one {Move # item to trash? You can restore it later.} other {Move # items to trash? You can restore them later.}}"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1083
+#: packages/admin/src/components/ContentList.tsx:1195
 msgid "{total, plural, one {# item} other {# items}}"
 msgstr "{total, plural, one {# รายการ} other {# รายการ}}"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:150
+#: packages/admin/src/components/comments/CommentInbox.tsx:151
 msgid "{total, plural, one {# total} other {# total}}"
 msgstr "{total, plural, one {รวม #} other {รวม #}}"
 
@@ -597,6 +597,10 @@ msgstr "คำอธิบายสั้น ๆ ของเว็บไซต�
 msgid "A source and target locale are required"
 msgstr ""
 
+#: packages/admin/src/components/BylineFilter.tsx:184
+msgid "About inferred bylines"
+msgstr ""
+
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:201
 msgid "Accept & Install"
 msgstr "ยอมรับและติดตั้ง"
@@ -643,9 +647,9 @@ msgstr "ข้อมูลบัญชี"
 msgid "ACF Fields"
 msgstr ""
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:300
-#: packages/admin/src/components/ContentList.tsx:617
-#: packages/admin/src/components/ContentList.tsx:743
+#: packages/admin/src/components/comments/CommentInbox.tsx:291
+#: packages/admin/src/components/ContentList.tsx:636
+#: packages/admin/src/components/ContentList.tsx:762
 #: packages/admin/src/components/ContentTypeList.tsx:190
 #: packages/admin/src/components/TaxonomyManager.tsx:1056
 #: packages/admin/src/routes/byline-schema.tsx:249
@@ -657,7 +661,7 @@ msgid "Activation cannot be confirmed. Keep editing paused and refresh the statu
 msgstr ""
 
 #: packages/admin/src/components/users/UserDetail.tsx:206
-#: packages/admin/src/components/users/UserList.tsx:217
+#: packages/admin/src/components/users/UserList.tsx:210
 msgid "Active"
 msgstr "ใช้งานอยู่"
 
@@ -766,7 +770,7 @@ msgstr "เพิ่มลิงก์เพื่อสร้างเมนู
 msgid "Add MIME type or extension"
 msgstr "เพิ่มประเภท MIME หรือนามสกุลไฟล์"
 
-#: packages/admin/src/components/ContentList.tsx:408
+#: packages/admin/src/components/ContentList.tsx:431
 msgid "Add New"
 msgstr "เพิ่มใหม่"
 
@@ -882,16 +886,16 @@ msgstr "จัดชิดขวา"
 msgid "Alignment"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:435
+#: packages/admin/src/components/ContentList.tsx:443
 msgid "All"
 msgstr "ทั้งหมด"
 
-#: packages/admin/src/components/ContentList.tsx:891
-#: packages/admin/src/components/ContentList.tsx:895
+#: packages/admin/src/components/ContentList.tsx:911
+#: packages/admin/src/components/ContentList.tsx:915
 msgid "All authors"
 msgstr ""
 
-#: packages/admin/src/components/BylineFilter.tsx:101
+#: packages/admin/src/components/BylineFilter.tsx:103
 #: packages/admin/src/routes/bylines.tsx:412
 msgid "All bylines"
 msgstr "ชื่อผู้เขียนทั้งหมด"
@@ -900,7 +904,7 @@ msgstr "ชื่อผู้เขียนทั้งหมด"
 msgid "All capabilities"
 msgstr "ความสามารถทั้งหมด"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:134
+#: packages/admin/src/components/comments/CommentInbox.tsx:135
 msgid "All collections"
 msgstr "คอลเลกชันทั้งหมด"
 
@@ -916,8 +920,8 @@ msgstr "เนื้อหาที่นำเข้าทั้งหมดจ
 msgid "All locales"
 msgstr "ทุกภาษา"
 
-#: packages/admin/src/components/users/UserList.tsx:42
-#: packages/admin/src/components/users/UserList.tsx:46
+#: packages/admin/src/components/users/UserList.tsx:43
+#: packages/admin/src/components/users/UserList.tsx:47
 msgid "All roles"
 msgstr "ทุกบทบาท"
 
@@ -925,12 +929,12 @@ msgstr "ทุกบทบาท"
 msgid "All Sources"
 msgstr "ทุกแหล่งที่มา"
 
-#: packages/admin/src/components/ContentList.tsx:831
+#: packages/admin/src/components/ContentList.tsx:850
 #: packages/admin/src/components/Redirects.tsx:426
 msgid "All statuses"
 msgstr "ทุกสถานะ"
 
-#: packages/admin/src/components/MediaLibrary.tsx:962
+#: packages/admin/src/components/MediaLibrary.tsx:988
 #: packages/admin/src/components/Redirects.tsx:432
 msgid "All types"
 msgstr "ทุกประเภท"
@@ -968,13 +972,13 @@ msgstr "มีบัญชีอยู่แล้ว?"
 msgid "Also delete plugin storage data"
 msgstr "ลบข้อมูลที่จัดเก็บของปลั๊กอินด้วย"
 
-#: packages/admin/src/components/BylineFilter.tsx:175
+#: packages/admin/src/components/BylineFilter.tsx:183
 msgid "Also match the byline linked to an entry's author when it has none assigned."
 msgstr ""
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:381
 #: packages/admin/src/components/editor/ImageNode.tsx:244
-#: packages/admin/src/components/MediaLibrary.tsx:1216
+#: packages/admin/src/components/MediaLibrary.tsx:1210
 msgid "Alt text"
 msgstr "ข้อความ Alt"
 
@@ -985,12 +989,12 @@ msgstr "ข้อความ Alt"
 msgid "Alt Text"
 msgstr "ข้อความ Alt"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1549
+#: packages/admin/src/components/MediaLibrary.tsx:1543
 msgid "Alt text is not applicable to folders"
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:1823
-#: packages/admin/src/components/MediaLibrary.tsx:1880
+#: packages/admin/src/components/MediaLibrary.tsx:1817
+#: packages/admin/src/components/MediaLibrary.tsx:1874
 msgid "Alt text set"
 msgstr "ตั้งค่าข้อความ Alt แล้ว"
 
@@ -1103,8 +1107,8 @@ msgid "Apply link"
 msgstr "ใช้ลิงก์"
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:148
-#: packages/admin/src/components/comments/CommentInbox.tsx:238
-#: packages/admin/src/components/comments/CommentInbox.tsx:490
+#: packages/admin/src/components/comments/CommentInbox.tsx:229
+#: packages/admin/src/components/comments/CommentInbox.tsx:481
 msgid "Approve"
 msgstr "อนุมัติ"
 
@@ -1112,7 +1116,7 @@ msgstr "อนุมัติ"
 msgid "approved"
 msgstr "อนุมัติแล้ว"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:203
+#: packages/admin/src/components/comments/CommentInbox.tsx:176
 msgid "Approved"
 msgstr "อนุมัติแล้ว"
 
@@ -1120,7 +1124,7 @@ msgstr "อนุมัติแล้ว"
 msgid "Arbitrary JSON data"
 msgstr "ข้อมูล JSON ตามต้องการ"
 
-#: packages/admin/src/components/ContentList.tsx:835
+#: packages/admin/src/components/ContentList.tsx:854
 #: packages/admin/src/components/ContentStatusBadge.tsx:65
 msgid "Archived"
 msgstr ""
@@ -1166,7 +1170,7 @@ msgid "Astro"
 msgstr ""
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:69
-#: packages/admin/src/components/MediaLibrary.tsx:965
+#: packages/admin/src/components/MediaLibrary.tsx:991
 msgid "Audio"
 msgstr "เสียง"
 
@@ -1194,7 +1198,7 @@ msgid "Authentication was cancelled or timed out. Please try again."
 msgstr "การยืนยันตัวตนถูกยกเลิกหรือหมดเวลา โปรดลองอีกครั้ง"
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
-#: packages/admin/src/components/comments/CommentInbox.tsx:288
+#: packages/admin/src/components/comments/CommentInbox.tsx:279
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1225
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
@@ -1305,7 +1309,7 @@ msgstr "กลับไปยังประเภทเนื้อหา"
 msgid "Back to login"
 msgstr "กลับไปเข้าสู่ระบบ"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1105
+#: packages/admin/src/components/MediaLibrary.tsx:1099
 msgid "Back to Main library"
 msgstr ""
 
@@ -1443,7 +1447,7 @@ msgstr ""
 msgid "Byline Schema"
 msgstr ""
 
-#: packages/admin/src/components/BylineFilter.tsx:135
+#: packages/admin/src/components/BylineFilter.tsx:145
 #: packages/admin/src/components/ContentSettingsPanel.tsx:670
 #: packages/admin/src/components/ContentSettingsPanel.tsx:673
 #: packages/admin/src/components/Sidebar.tsx:285
@@ -1482,9 +1486,9 @@ msgstr "สามารถดูเนื้อหาได้"
 #: packages/admin/src/components/BylineFieldEditor.tsx:315
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:192
 #: packages/admin/src/components/ConfirmDialog.tsx:83
-#: packages/admin/src/components/ContentList.tsx:525
-#: packages/admin/src/components/ContentList.tsx:1251
-#: packages/admin/src/components/ContentList.tsx:1419
+#: packages/admin/src/components/ContentList.tsx:544
+#: packages/admin/src/components/ContentList.tsx:1363
+#: packages/admin/src/components/ContentList.tsx:1531
 #: packages/admin/src/components/ContentPickerModal.tsx:240
 #: packages/admin/src/components/ContentSettingsPanel.tsx:99
 #: packages/admin/src/components/ContentSettingsPanel.tsx:591
@@ -1664,6 +1668,11 @@ msgstr "กำลังตรวจสอบการยืนยันตัว
 msgid "Checking how many stored values reference \"{0}\"…"
 msgstr ""
 
+#: packages/admin/src/components/ContentList.tsx:1037
+#: packages/admin/src/components/ContentList.tsx:1043
+msgid "Choose a date range"
+msgstr ""
+
 #: packages/admin/src/components/SetupWizard.tsx:288
 msgid "Choose how to sign in"
 msgstr "เลือกวิธีเข้าสู่ระบบ"
@@ -1676,7 +1685,8 @@ msgstr ""
 msgid "Choose your preferred admin language"
 msgstr "เลือกภาษาผู้ดูแลระบบที่คุณต้องการ"
 
-#: packages/admin/src/components/ContentList.tsx:551
+#: packages/admin/src/components/ContentList.tsx:570
+#: packages/admin/src/components/ContentList.tsx:1051
 msgid "Clear"
 msgstr ""
 
@@ -1684,14 +1694,14 @@ msgstr ""
 msgid "Clear completed"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:947
-#: packages/admin/src/components/MediaLibrary.tsx:1094
-#: packages/admin/src/components/users/UserList.tsx:129
+#: packages/admin/src/components/ContentList.tsx:956
+#: packages/admin/src/components/MediaLibrary.tsx:1088
+#: packages/admin/src/components/users/UserList.tsx:122
 msgid "Clear filters"
 msgstr "ล้างตัวกรอง"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1094
-#: packages/admin/src/components/MediaLibrary.tsx:1129
+#: packages/admin/src/components/MediaLibrary.tsx:1088
+#: packages/admin/src/components/MediaLibrary.tsx:1123
 msgid "Clear search"
 msgstr ""
 
@@ -1839,7 +1849,7 @@ msgid "Comma-separated keywords for search."
 msgstr "คำสำคัญสำหรับการค้นหา คั่นด้วยเครื่องหมายจุลภาค"
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:95
-#: packages/admin/src/components/comments/CommentInbox.tsx:291
+#: packages/admin/src/components/comments/CommentInbox.tsx:282
 msgid "Comment"
 msgstr "ความคิดเห็น"
 
@@ -1847,7 +1857,7 @@ msgstr "ความคิดเห็น"
 msgid "Comment Detail"
 msgstr "รายละเอียดความคิดเห็น"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:147
+#: packages/admin/src/components/comments/CommentInbox.tsx:148
 #: packages/admin/src/components/ContentTypeEditor.tsx:500
 #: packages/admin/src/components/Sidebar.tsx:261
 msgid "Comments"
@@ -1906,7 +1916,7 @@ msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:378
 #: packages/admin/src/components/comments/CommentDetail.tsx:103
-#: packages/admin/src/components/comments/CommentInbox.tsx:294
+#: packages/admin/src/components/comments/CommentInbox.tsx:285
 #: packages/admin/src/components/Dashboard.tsx:269
 #: packages/admin/src/components/PortableTextEditor.tsx:2746
 #: packages/admin/src/components/SectionEditor.tsx:215
@@ -2251,7 +2261,7 @@ msgstr ""
 msgid "Create your first navigation menu to get started"
 msgstr "สร้างเมนูนำทางแรกของคุณเพื่อเริ่มต้น"
 
-#: packages/admin/src/components/ContentList.tsx:645
+#: packages/admin/src/components/ContentList.tsx:664
 msgid "Create your first one"
 msgstr "สร้างรายการแรกของคุณ"
 
@@ -2281,7 +2291,7 @@ msgstr "สร้าง อัปเดต และลบเทอมอนุ�
 msgid "Create, update, delete content"
 msgstr "สร้าง อัปเดต ลบเนื้อหา"
 
-#: packages/admin/src/components/ContentList.tsx:841
+#: packages/admin/src/components/ContentList.tsx:860
 #: packages/admin/src/components/ContentSettingsPanel.tsx:642
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
@@ -2377,8 +2387,8 @@ msgstr "มืด"
 msgid "Dashboard"
 msgstr "แดชบอร์ด"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:297
-#: packages/admin/src/components/ContentList.tsx:606
+#: packages/admin/src/components/comments/CommentInbox.tsx:288
+#: packages/admin/src/components/ContentList.tsx:625
 msgid "Date"
 msgstr "วันที่"
 
@@ -2391,13 +2401,17 @@ msgstr "วันที่และเวลา"
 msgid "Date and time picker"
 msgstr "ตัวเลือกวันที่และเวลา"
 
-#: packages/admin/src/components/ContentList.tsx:912
+#: packages/admin/src/components/ContentList.tsx:933
 msgid "Date field to filter on"
 msgstr ""
 
 #: packages/admin/src/components/settings/GeneralSettings.tsx:324
 msgid "Date Format"
 msgstr "รูปแบบวันที่"
+
+#: packages/admin/src/components/ContentList.tsx:983
+msgid "Date range"
+msgstr ""
 
 #: packages/admin/src/components/FieldEditor.tsx:192
 msgid "Decimal number"
@@ -2440,8 +2454,8 @@ msgstr "กำหนดโครงสร้างของเนื้อหา
 msgid "Defined in code"
 msgstr "กำหนดไว้ในโค้ด"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:268
-#: packages/admin/src/components/comments/CommentInbox.tsx:408
+#: packages/admin/src/components/comments/CommentInbox.tsx:259
+#: packages/admin/src/components/comments/CommentInbox.tsx:399
 #: packages/admin/src/components/ContentTypeEditor.tsx:687
 #: packages/admin/src/components/ContentTypeList.tsx:236
 #: packages/admin/src/components/editor/BlockMenu.tsx:318
@@ -2522,7 +2536,7 @@ msgstr "ลบชื่อผู้เขียนหรือไม่?"
 msgid "Delete column"
 msgstr "ลบคอลัมน์"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:406
+#: packages/admin/src/components/comments/CommentInbox.tsx:397
 msgid "Delete Comment?"
 msgstr "ลบความคิดเห็นหรือไม่?"
 
@@ -2566,16 +2580,16 @@ msgstr "ลบมีเดียหรือไม่?"
 msgid "Delete Menu"
 msgstr "ลบเมนู"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:526
+#: packages/admin/src/components/comments/CommentInbox.tsx:517
 msgid "Delete permanently"
 msgstr "ลบถาวร"
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:182
-#: packages/admin/src/components/ContentList.tsx:1430
+#: packages/admin/src/components/ContentList.tsx:1542
 msgid "Delete Permanently"
 msgstr "ลบถาวร"
 
-#: packages/admin/src/components/ContentList.tsx:1410
+#: packages/admin/src/components/ContentList.tsx:1522
 msgid "Delete Permanently?"
 msgstr "ลบถาวรหรือไม่?"
 
@@ -2608,7 +2622,7 @@ msgstr "ลบตาราง"
 msgid "Delete Widget Area?"
 msgstr "ลบพื้นที่วิดเจ็ตหรือไม่?"
 
-#: packages/admin/src/components/ContentList.tsx:740
+#: packages/admin/src/components/ContentList.tsx:759
 msgid "Deleted"
 msgstr "ลบแล้ว"
 
@@ -2618,7 +2632,7 @@ msgstr "ลบแล้ว"
 msgid "Deleting \"{0}\" will also remove {1, plural, one {# stored value} other {# stored values}} across all bylines. This cannot be undone."
 msgstr ""
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:409
+#: packages/admin/src/components/comments/CommentInbox.tsx:400
 #: packages/admin/src/components/ContentTypeEditor.tsx:688
 #: packages/admin/src/components/ContentTypeList.tsx:237
 #: packages/admin/src/components/MediaDetailPanel.tsx:919
@@ -2759,7 +2773,7 @@ msgstr "ปิดใช้งานผู้ใช้หรือไม่?"
 #: packages/admin/src/components/PluginManager.tsx:389
 #: packages/admin/src/components/Redirects.tsx:426
 #: packages/admin/src/components/users/UserDetail.tsx:201
-#: packages/admin/src/components/users/UserList.tsx:212
+#: packages/admin/src/components/users/UserList.tsx:205
 msgid "Disabled"
 msgstr "ปิดใช้งานแล้ว"
 
@@ -2859,7 +2873,7 @@ msgid "Dockerfile"
 msgstr ""
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:66
-#: packages/admin/src/components/MediaLibrary.tsx:966
+#: packages/admin/src/components/MediaLibrary.tsx:992
 msgid "Documents"
 msgstr "เอกสาร"
 
@@ -2883,6 +2897,7 @@ msgstr "อัปเดตโดเมนแล้ว"
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "ยังไม่มีบัญชี? <0>สมัครใช้งาน</0>"
 
+#: packages/admin/src/components/ContentList.tsx:1059
 #: packages/admin/src/components/MediaUploadDialog.tsx:512
 #: packages/admin/src/components/users/InviteUserModal.tsx:142
 #: packages/admin/src/components/WordPressImport.tsx:2144
@@ -2923,7 +2938,7 @@ msgstr "ดาวน์โหลด SBOM"
 msgid "Downloading"
 msgstr "กำลังดาวน์โหลด"
 
-#: packages/admin/src/components/ContentList.tsx:833
+#: packages/admin/src/components/ContentList.tsx:852
 #: packages/admin/src/components/ContentStatusBadge.tsx:61
 msgid "Draft"
 msgstr "ฉบับร่าง"
@@ -2997,7 +3012,7 @@ msgstr "วางไฟล์ส่งออก WordPress ของคุณท�
 msgid "Duplicate"
 msgstr "ทำสำเนา"
 
-#: packages/admin/src/components/ContentList.tsx:1224
+#: packages/admin/src/components/ContentList.tsx:1336
 msgid "Duplicate {title}"
 msgstr "ทำสำเนา {title}"
 
@@ -3049,7 +3064,7 @@ msgstr "แก้ไขฟิลด์ {0}"
 msgid "Edit {itemLabel}"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1216
+#: packages/admin/src/components/ContentList.tsx:1328
 msgid "Edit {title}"
 msgstr "แก้ไข {title}"
 
@@ -3074,8 +3089,8 @@ msgid "Edit folder"
 msgstr ""
 
 #. placeholder {0}: folder.name
-#: packages/admin/src/components/MediaLibrary.tsx:1464
-#: packages/admin/src/components/MediaLibrary.tsx:1531
+#: packages/admin/src/components/MediaLibrary.tsx:1458
+#: packages/admin/src/components/MediaLibrary.tsx:1525
 msgid "Edit folder {0}"
 msgstr ""
 
@@ -4076,7 +4091,7 @@ msgstr "ไฟล์จากคลังมีเดีย"
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:666
 #: packages/admin/src/components/MediaDetailPanel.tsx:683
-#: packages/admin/src/components/MediaLibrary.tsx:1213
+#: packages/admin/src/components/MediaLibrary.tsx:1207
 msgid "Filename"
 msgstr "ชื่อไฟล์"
 
@@ -4088,11 +4103,11 @@ msgstr "ชื่อไฟล์ไม่สามารถเปลี่ยน
 msgid "Files upload as soon as you add them."
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:887
+#: packages/admin/src/components/ContentList.tsx:907
 msgid "Filter by author"
 msgstr ""
 
-#: packages/admin/src/components/BylineFilter.tsx:111
+#: packages/admin/src/components/BylineFilter.tsx:116
 msgid "Filter by byline"
 msgstr ""
 
@@ -4100,11 +4115,15 @@ msgstr ""
 msgid "Filter by capability"
 msgstr "กรองตามความสามารถ"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:178
+#: packages/admin/src/components/comments/CommentInbox.tsx:211
 msgid "Filter by collection"
 msgstr "กรองตามคอลเลกชัน"
 
-#: packages/admin/src/components/users/UserList.tsx:82
+#: packages/admin/src/components/ContentList.tsx:1029
+msgid "Filter by date range: {rangeLabel}"
+msgstr ""
+
+#: packages/admin/src/components/users/UserList.tsx:75
 msgid "Filter by role"
 msgstr "กรองตามบทบาท"
 
@@ -4112,12 +4131,12 @@ msgstr "กรองตามบทบาท"
 msgid "Filter by source"
 msgstr "กรองตามแหล่งที่มา"
 
-#: packages/admin/src/components/ContentList.tsx:869
+#: packages/admin/src/components/ContentList.tsx:889
 #: packages/admin/src/components/Redirects.tsx:427
 msgid "Filter by status"
 msgstr "กรองตามสถานะ"
 
-#: packages/admin/src/components/MediaLibrary.tsx:968
+#: packages/admin/src/components/MediaLibrary.tsx:994
 #: packages/admin/src/components/Redirects.tsx:433
 msgid "Filter by type"
 msgstr "กรองตามประเภท"
@@ -4130,7 +4149,7 @@ msgstr "กรองตามประเภทชื่อผู้เขีย
 msgid "Finish any current edits."
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:1319
+#: packages/admin/src/components/MediaLibrary.tsx:1313
 msgid "First page"
 msgstr ""
 
@@ -4173,13 +4192,13 @@ msgstr ""
 msgid "Folder unavailable"
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:1027
+#: packages/admin/src/components/MediaLibrary.tsx:1021
 msgid "Folders"
 msgstr ""
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:772
-#: packages/admin/src/components/MediaLibrary.tsx:1037
-#: packages/admin/src/components/MediaLibrary.tsx:1561
+#: packages/admin/src/components/MediaLibrary.tsx:1031
+#: packages/admin/src/components/MediaLibrary.tsx:1555
 msgid "Folders could not be loaded."
 msgstr ""
 
@@ -4203,8 +4222,9 @@ msgstr ""
 msgid "Format:"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:928
-msgid "From date"
+#. placeholder {0}: formatter.format(from)
+#: packages/admin/src/components/ContentList.tsx:980
+msgid "From {0}"
 msgstr ""
 
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:164
@@ -4272,7 +4292,7 @@ msgstr "การยืนยัน Google"
 msgid "GraphQL"
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:986
+#: packages/admin/src/components/MediaLibrary.tsx:950
 msgid "Grid view"
 msgstr "มุมมองตาราง"
 
@@ -4472,7 +4492,7 @@ msgstr "URL ของรูปภาพ"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:64
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:196
-#: packages/admin/src/components/MediaLibrary.tsx:963
+#: packages/admin/src/components/MediaLibrary.tsx:989
 msgid "Images"
 msgstr "รูปภาพ"
 
@@ -4574,7 +4594,8 @@ msgstr ""
 msgid "In trash"
 msgstr ""
 
-#: packages/admin/src/components/BylineFilter.tsx:172
+#: packages/admin/src/components/BylineFilter.tsx:187
+#: packages/admin/src/components/BylineFilter.tsx:193
 msgid "Include inferred bylines"
 msgstr ""
 
@@ -4758,11 +4779,11 @@ msgid "Invite Link Created"
 msgstr "สร้างลิงก์คำเชิญแล้ว"
 
 #: packages/admin/src/components/users/InviteUserModal.tsx:79
-#: packages/admin/src/components/users/UserList.tsx:56
+#: packages/admin/src/components/users/UserList.tsx:57
 msgid "Invite User"
 msgstr "เชิญผู้ใช้"
 
-#: packages/admin/src/components/users/UserList.tsx:140
+#: packages/admin/src/components/users/UserList.tsx:133
 msgid "Invite your first team member"
 msgstr "เชิญสมาชิกทีมคนแรกของคุณ"
 
@@ -4905,11 +4926,11 @@ msgstr "เปิดใช้งานล่าสุด:"
 msgid "Last login"
 msgstr "เข้าสู่ระบบล่าสุด"
 
-#: packages/admin/src/components/users/UserList.tsx:107
+#: packages/admin/src/components/users/UserList.tsx:100
 msgid "Last Login"
 msgstr "เข้าสู่ระบบล่าสุด"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1322
+#: packages/admin/src/components/MediaLibrary.tsx:1316
 msgid "Last page"
 msgstr ""
 
@@ -4950,7 +4971,7 @@ msgstr ""
 #: packages/admin/src/components/MediaLibrary.tsx:330
 #: packages/admin/src/components/MediaLibrary.tsx:489
 #: packages/admin/src/components/MediaLibrary.tsx:762
-#: packages/admin/src/components/MediaLibrary.tsx:1363
+#: packages/admin/src/components/MediaLibrary.tsx:1357
 #: packages/admin/src/components/MediaPickerModal.tsx:212
 #: packages/admin/src/components/MediaPickerModal.tsx:510
 msgid "Library"
@@ -5001,7 +5022,7 @@ msgstr "LinkedIn"
 msgid "Links"
 msgstr "ลิงก์"
 
-#: packages/admin/src/components/MediaLibrary.tsx:995
+#: packages/admin/src/components/MediaLibrary.tsx:959
 msgid "List view"
 msgstr "มุมมองรายการ"
 
@@ -5021,17 +5042,17 @@ msgstr "มุมมองสด"
 msgid "Load more"
 msgstr "โหลดเพิ่มเติม"
 
-#: packages/admin/src/components/ContentList.tsx:724
-#: packages/admin/src/components/ContentList.tsx:782
-#: packages/admin/src/components/MediaLibrary.tsx:1356
+#: packages/admin/src/components/ContentList.tsx:743
+#: packages/admin/src/components/ContentList.tsx:801
+#: packages/admin/src/components/MediaLibrary.tsx:1350
 #: packages/admin/src/components/MediaPickerModal.tsx:776
-#: packages/admin/src/components/users/UserList.tsx:169
+#: packages/admin/src/components/users/UserList.tsx:162
 msgid "Load More"
 msgstr "โหลดเพิ่มเติม"
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:791
-#: packages/admin/src/components/MediaLibrary.tsx:1067
-#: packages/admin/src/components/MediaLibrary.tsx:1257
+#: packages/admin/src/components/MediaLibrary.tsx:1061
+#: packages/admin/src/components/MediaLibrary.tsx:1251
 msgid "Load more folders"
 msgstr ""
 
@@ -5047,7 +5068,7 @@ msgstr ""
 msgid "Loading collections..."
 msgstr "กำลังโหลดคอลเลกชัน..."
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:308
+#: packages/admin/src/components/comments/CommentInbox.tsx:299
 msgid "Loading comments..."
 msgstr "กำลังโหลดความคิดเห็น..."
 
@@ -5064,8 +5085,8 @@ msgstr "กำลังโหลดเนื้อหา..."
 msgid "Loading editor..."
 msgstr "กำลังโหลดตัวแก้ไข..."
 
-#: packages/admin/src/components/MediaLibrary.tsx:1011
-#: packages/admin/src/components/MediaLibrary.tsx:1225
+#: packages/admin/src/components/MediaLibrary.tsx:1005
+#: packages/admin/src/components/MediaLibrary.tsx:1219
 msgid "Loading folders"
 msgstr ""
 
@@ -5121,16 +5142,16 @@ msgstr ""
 msgid "Loading widgets..."
 msgstr "กำลังโหลดวิดเจ็ต..."
 
-#: packages/admin/src/components/ContentList.tsx:627
-#: packages/admin/src/components/ContentList.tsx:724
-#: packages/admin/src/components/ContentList.tsx:753
-#: packages/admin/src/components/ContentList.tsx:782
+#: packages/admin/src/components/ContentList.tsx:646
+#: packages/admin/src/components/ContentList.tsx:743
+#: packages/admin/src/components/ContentList.tsx:772
+#: packages/admin/src/components/ContentList.tsx:801
 #: packages/admin/src/components/ContentPickerModal.tsx:225
 #: packages/admin/src/components/MarketplaceBrowse.tsx:200
 #: packages/admin/src/components/MediaDetailPanel.tsx:271
 #: packages/admin/src/components/MediaDetailPanel.tsx:287
 #: packages/admin/src/components/MediaDetailPanel.tsx:289
-#: packages/admin/src/components/MediaLibrary.tsx:1356
+#: packages/admin/src/components/MediaLibrary.tsx:1350
 #: packages/admin/src/components/MediaPickerModal.tsx:776
 #: packages/admin/src/components/MediaUsedIn.tsx:195
 #: packages/admin/src/components/PortableTextEditor.tsx:2431
@@ -5145,16 +5166,16 @@ msgstr "กำลังโหลดวิดเจ็ต..."
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
-#: packages/admin/src/components/users/UserList.tsx:156
+#: packages/admin/src/components/users/UserList.tsx:149
 #: packages/admin/src/routes/bylines.tsx:468
 msgid "Loading..."
 msgstr "กำลังโหลด..."
 
-#: packages/admin/src/components/BylineFilter.tsx:136
+#: packages/admin/src/components/BylineFilter.tsx:147
 msgid "Loading…"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:599
+#: packages/admin/src/components/ContentList.tsx:618
 #: packages/admin/src/components/LocaleSwitcher.tsx:60
 msgid "Locale"
 msgstr "ภาษา"
@@ -5298,7 +5319,7 @@ msgstr ""
 msgid "Mark as Gone (410) — tells search engines it was permanently deleted"
 msgstr ""
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:502
+#: packages/admin/src/components/comments/CommentInbox.tsx:493
 msgid "Mark as spam"
 msgstr "ทำเครื่องหมายเป็นสแปม"
 
@@ -5374,7 +5395,7 @@ msgstr ""
 msgid "Media Library"
 msgstr "คลังมีเดีย"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1318
+#: packages/admin/src/components/MediaLibrary.tsx:1312
 msgid "Media pagination"
 msgstr ""
 
@@ -5550,7 +5571,7 @@ msgstr ""
 msgid "Move \"{0}\" up"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1245
+#: packages/admin/src/components/ContentList.tsx:1357
 msgid "Move \"{title}\" to trash? You can restore it later."
 msgstr "ย้าย \"{title}\" ไปยังถังขยะ? คุณสามารถกู้คืนได้ภายหลัง"
 
@@ -5574,7 +5595,7 @@ msgstr ""
 msgid "Move {0} up — unavailable, its parent has no translation in this locale"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1236
+#: packages/admin/src/components/ContentList.tsx:1348
 msgid "Move {title} to trash"
 msgstr "ย้าย {title} ไปยังถังขยะ"
 
@@ -5582,23 +5603,23 @@ msgstr "ย้าย {title} ไปยังถังขยะ"
 msgid "Move down"
 msgstr "เลื่อนลง"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1102
+#: packages/admin/src/components/MediaLibrary.tsx:1096
 msgid "Move media here from Media Details."
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:509
+#: packages/admin/src/components/ContentList.tsx:528
 msgid "Move to trash"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:536
-#: packages/admin/src/components/ContentList.tsx:1258
+#: packages/admin/src/components/ContentList.tsx:555
+#: packages/admin/src/components/ContentList.tsx:1370
 #: packages/admin/src/components/ContentSettingsPanel.tsx:813
 #: packages/admin/src/components/ContentSettingsPanel.tsx:833
 msgid "Move to Trash"
 msgstr "ย้ายไปยังถังขยะ"
 
-#: packages/admin/src/components/ContentList.tsx:514
-#: packages/admin/src/components/ContentList.tsx:1243
+#: packages/admin/src/components/ContentList.tsx:533
+#: packages/admin/src/components/ContentList.tsx:1355
 #: packages/admin/src/components/ContentSettingsPanel.tsx:818
 msgid "Move to Trash?"
 msgstr "ย้ายไปยังถังขยะ?"
@@ -5673,7 +5694,7 @@ msgid "Needs attention"
 msgstr ""
 
 #: packages/admin/src/components/users/UserDetail.tsx:231
-#: packages/admin/src/components/users/UserList.tsx:185
+#: packages/admin/src/components/users/UserList.tsx:178
 msgid "Never"
 msgstr "ไม่เลย"
 
@@ -5760,9 +5781,9 @@ msgstr "ข่าวสาร"
 msgid "Next"
 msgstr "ถัดไป"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:372
-#: packages/admin/src/components/ContentList.tsx:712
-#: packages/admin/src/components/MediaLibrary.tsx:1321
+#: packages/admin/src/components/comments/CommentInbox.tsx:363
+#: packages/admin/src/components/ContentList.tsx:731
+#: packages/admin/src/components/MediaLibrary.tsx:1315
 msgid "Next page"
 msgstr "หน้าถัดไป"
 
@@ -5770,7 +5791,7 @@ msgstr "หน้าถัดไป"
 msgid "Next screenshot"
 msgstr "ภาพหน้าจอถัดไป"
 
-#: packages/admin/src/components/ContentList.tsx:1281
+#: packages/admin/src/components/ContentList.tsx:1393
 #: packages/admin/src/components/users/UserDetail.tsx:236
 #: packages/admin/src/routes/byline-schema.tsx:422
 msgid "No"
@@ -5786,7 +5807,7 @@ msgid "No {0} available."
 msgstr "ไม่มี{0}ให้ใช้งาน"
 
 #. placeholder {0}: collectionLabel.toLowerCase()
-#: packages/admin/src/components/ContentList.tsx:638
+#: packages/admin/src/components/ContentList.tsx:657
 msgid "No {0} yet."
 msgstr "ยังไม่มี{0}"
 
@@ -5799,8 +5820,8 @@ msgstr "ยังไม่มี{0} สร้างขึ้นมาเพื�
 msgid "No 404 errors recorded yet."
 msgstr "ยังไม่มีการบันทึกข้อผิดพลาด 404"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1823
-#: packages/admin/src/components/MediaLibrary.tsx:1880
+#: packages/admin/src/components/MediaLibrary.tsx:1817
+#: packages/admin/src/components/MediaLibrary.tsx:1874
 msgid "No alt text"
 msgstr "ไม่มี alt text"
 
@@ -5808,15 +5829,15 @@ msgstr "ไม่มี alt text"
 msgid "No API tokens yet. Create one to get started."
 msgstr "ยังไม่มี API token สร้างขึ้นมาเพื่อเริ่มต้นใช้งาน"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:548
+#: packages/admin/src/components/comments/CommentInbox.tsx:539
 msgid "No approved comments yet."
 msgstr "ยังไม่มีความคิดเห็นที่อนุมัติแล้ว"
 
-#: packages/admin/src/components/BylineFilter.tsx:99
+#: packages/admin/src/components/BylineFilter.tsx:101
 msgid "No byline"
 msgstr ""
 
-#: packages/admin/src/components/BylineFilter.tsx:131
+#: packages/admin/src/components/BylineFilter.tsx:138
 msgid "No byline assigned"
 msgstr ""
 
@@ -5828,7 +5849,7 @@ msgstr ""
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
 msgstr "ไม่มีชื่อผู้เขียนให้ใช้งานใน {entryLocale} สร้างรูปแบบจากหน้าชื่อผู้เขียนก่อนที่จะระบุเครดิตในรายการนี้"
 
-#: packages/admin/src/components/BylineFilter.tsx:139
+#: packages/admin/src/components/BylineFilter.tsx:150
 #: packages/admin/src/routes/bylines.tsx:452
 msgid "No bylines found"
 msgstr "ไม่พบชื่อผู้เขียน"
@@ -5841,11 +5862,11 @@ msgstr "ยังไม่ได้เลือกชื่อผู้เขี
 msgid "No collections configured"
 msgstr "ยังไม่ได้กำหนดค่าคอลเลกชัน"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:547
+#: packages/admin/src/components/comments/CommentInbox.tsx:538
 msgid "No comments awaiting moderation."
 msgstr "ไม่มีความคิดเห็นที่รอการตรวจสอบ"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:543
+#: packages/admin/src/components/comments/CommentInbox.tsx:534
 msgid "No comments match your search."
 msgstr "ไม่มีความคิดเห็นที่ตรงกับการค้นหาของคุณ"
 
@@ -5947,8 +5968,8 @@ msgstr "ไม่พบรายการที่ตรงกัน"
 msgid "No matching bylines."
 msgstr "ไม่พบผู้เขียนที่ตรงกัน"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1086
-#: packages/admin/src/components/MediaLibrary.tsx:1125
+#: packages/admin/src/components/MediaLibrary.tsx:1080
+#: packages/admin/src/components/MediaLibrary.tsx:1119
 msgid "No matching media"
 msgstr ""
 
@@ -5965,11 +5986,11 @@ msgstr "ไม่มีค่าสูงสุด"
 msgid "No media available from this provider"
 msgstr "ไม่มีมีเดียจากผู้ให้บริการนี้"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1148
+#: packages/admin/src/components/MediaLibrary.tsx:1142
 msgid "No media available from this provider."
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:1147
+#: packages/admin/src/components/MediaLibrary.tsx:1141
 #: packages/admin/src/components/MediaPickerModal.tsx:689
 msgid "No media found"
 msgstr "ไม่พบมีเดีย"
@@ -6040,8 +6061,8 @@ msgstr "ยังไม่มีการเปลี่ยนเส้นทา
 msgid "No results"
 msgstr "ไม่มีผลลัพธ์"
 
-#: packages/admin/src/components/ContentList.tsx:635
 #: packages/admin/src/components/ContentList.tsx:654
+#: packages/admin/src/components/ContentList.tsx:673
 msgid "No results for \"{activeSearch}\""
 msgstr "ไม่พบผลลัพธ์สำหรับ \"{activeSearch}\""
 
@@ -6072,7 +6093,7 @@ msgstr "ไม่พบส่วน"
 msgid "No sections yet"
 msgstr "ยังไม่มีส่วน"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:549
+#: packages/admin/src/components/comments/CommentInbox.tsx:540
 msgid "No spam comments."
 msgstr "ไม่มีความคิดเห็นที่เป็นสแปม"
 
@@ -6084,11 +6105,11 @@ msgstr "ไม่พบธีม"
 msgid "No usage found in EmDash-managed content fields."
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:120
+#: packages/admin/src/components/users/UserList.tsx:113
 msgid "No users found matching your filters."
 msgstr "ไม่พบผู้ใช้ที่ตรงกับตัวกรองของคุณ"
 
-#: packages/admin/src/components/users/UserList.tsx:134
+#: packages/admin/src/components/users/UserList.tsx:127
 msgid "No users yet."
 msgstr "ยังไม่มีผู้ใช้"
 
@@ -6109,7 +6130,7 @@ msgstr "ไม่มี (ระดับบนสุด)"
 msgid "Not compatible with this environment"
 msgstr "ไม่รองรับกับสภาพแวดล้อมนี้"
 
-#: packages/admin/src/components/ContentList.tsx:1280
+#: packages/admin/src/components/ContentList.tsx:1392
 #: packages/admin/src/components/PluginSettings.tsx:341
 msgid "Not set"
 msgstr ""
@@ -6166,8 +6187,8 @@ msgid "Oops!"
 msgstr "อุ๊ปส์!"
 
 #. placeholder {0}: folder.name
-#: packages/admin/src/components/MediaLibrary.tsx:1448
-#: packages/admin/src/components/MediaLibrary.tsx:1519
+#: packages/admin/src/components/MediaLibrary.tsx:1442
+#: packages/admin/src/components/MediaLibrary.tsx:1513
 msgid "Open folder {0}"
 msgstr ""
 
@@ -6287,11 +6308,11 @@ msgstr "แพ็กเกจ"
 msgid "Page Not Found"
 msgstr "ไม่พบหน้า"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1323
+#: packages/admin/src/components/MediaLibrary.tsx:1317
 msgid "Page number"
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:1324
+#: packages/admin/src/components/MediaLibrary.tsx:1318
 msgid "Page size"
 msgstr ""
 
@@ -6348,7 +6369,7 @@ msgid "Passkey renamed"
 msgstr "เปลี่ยนชื่อ Passkey แล้ว"
 
 #: packages/admin/src/components/settings/SecuritySettings.tsx:135
-#: packages/admin/src/components/users/UserList.tsx:110
+#: packages/admin/src/components/users/UserList.tsx:103
 msgid "Passkeys"
 msgstr "Passkey"
 
@@ -6413,7 +6434,7 @@ msgstr "PDF"
 msgid "pending"
 msgstr "รอดำเนินการ"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:198
+#: packages/admin/src/components/comments/CommentInbox.tsx:171
 msgid "Pending"
 msgstr "รอดำเนินการ"
 
@@ -6421,15 +6442,15 @@ msgstr "รอดำเนินการ"
 msgid "Pending changes"
 msgstr "การเปลี่ยนแปลงที่รอดำเนินการ"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1338
+#: packages/admin/src/components/MediaLibrary.tsx:1332
 msgid "Per page"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1413
+#: packages/admin/src/components/ContentList.tsx:1525
 msgid "Permanently delete \"{title}\"? This cannot be undone."
 msgstr "ลบ \"{title}\" อย่างถาวร? การดำเนินการนี้ไม่สามารถยกเลิกได้"
 
-#: packages/admin/src/components/ContentList.tsx:1402
+#: packages/admin/src/components/ContentList.tsx:1514
 msgid "Permanently delete {title}"
 msgstr "ลบ {title} อย่างถาวร"
 
@@ -6624,7 +6645,7 @@ msgstr "กำลังเตรียม..."
 #: packages/admin/src/components/ContentSettingsPanel.tsx:167
 #: packages/admin/src/components/ContentTypeEditor.tsx:81
 #: packages/admin/src/components/MediaDetailPanel.tsx:880
-#: packages/admin/src/components/MediaLibrary.tsx:1212
+#: packages/admin/src/components/MediaLibrary.tsx:1206
 msgid "Preview"
 msgstr "ดูตัวอย่าง"
 
@@ -6640,9 +6661,9 @@ msgstr "ดูตัวอย่างฉบับร่าง"
 msgid "Previous"
 msgstr "ก่อนหน้า"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:353
-#: packages/admin/src/components/ContentList.tsx:700
-#: packages/admin/src/components/MediaLibrary.tsx:1320
+#: packages/admin/src/components/comments/CommentInbox.tsx:344
+#: packages/admin/src/components/ContentList.tsx:719
+#: packages/admin/src/components/MediaLibrary.tsx:1314
 msgid "Previous page"
 msgstr "หน้าก่อนหน้า"
 
@@ -6662,7 +6683,7 @@ msgstr ""
 msgid "Provider:"
 msgstr "ผู้ให้บริการ:"
 
-#: packages/admin/src/components/ContentList.tsx:485
+#: packages/admin/src/components/ContentList.tsx:504
 #: packages/admin/src/components/ContentSettingsPanel.tsx:198
 #: packages/admin/src/components/ContentSettingsPanel.tsx:205
 #: packages/admin/src/components/ContentSettingsPanel.tsx:484
@@ -6674,8 +6695,8 @@ msgstr "เผยแพร่"
 msgid "Publish date"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:832
-#: packages/admin/src/components/ContentList.tsx:843
+#: packages/admin/src/components/ContentList.tsx:851
+#: packages/admin/src/components/ContentList.tsx:862
 #: packages/admin/src/components/ContentStatusBadge.tsx:59
 #: packages/admin/src/components/Dashboard.tsx:297
 #: packages/admin/src/router.tsx:1085
@@ -7072,7 +7093,7 @@ msgstr ""
 msgid "Restore"
 msgstr "กู้คืน"
 
-#: packages/admin/src/components/ContentList.tsx:1390
+#: packages/admin/src/components/ContentList.tsx:1502
 msgid "Restore {title}"
 msgstr "กู้คืน {title}"
 
@@ -7100,8 +7121,8 @@ msgstr "กำลังกู้คืน..."
 
 #: packages/admin/src/components/MarketplaceBrowse.tsx:143
 #: packages/admin/src/components/MediaDetailPanel.tsx:778
-#: packages/admin/src/components/MediaLibrary.tsx:1031
-#: packages/admin/src/components/MediaLibrary.tsx:1564
+#: packages/admin/src/components/MediaLibrary.tsx:1025
+#: packages/admin/src/components/MediaLibrary.tsx:1558
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
 #: packages/admin/src/lib/content-editor-panels.tsx:201
@@ -7211,7 +7232,7 @@ msgstr ""
 #: packages/admin/src/components/users/InviteUserModal.tsx:164
 #: packages/admin/src/components/users/UserDetail.tsx:169
 #: packages/admin/src/components/users/UserDetail.tsx:181
-#: packages/admin/src/components/users/UserList.tsx:101
+#: packages/admin/src/components/users/UserList.tsx:94
 msgid "Role"
 msgstr "บทบาท"
 
@@ -7343,7 +7364,7 @@ msgstr "กำหนดเวลาสำหรับ"
 msgid "Schedule for later"
 msgstr "กำหนดเวลาสำหรับภายหลัง"
 
-#: packages/admin/src/components/ContentList.tsx:834
+#: packages/admin/src/components/ContentList.tsx:853
 #: packages/admin/src/components/ContentStatusBadge.tsx:63
 #: packages/admin/src/router.tsx:1143
 msgid "Scheduled"
@@ -7420,25 +7441,25 @@ msgid "Search"
 msgstr "ค้นหา"
 
 #. placeholder {0}: collectionLabel.toLowerCase()
-#: packages/admin/src/components/ContentList.tsx:419
+#: packages/admin/src/components/ContentList.tsx:465
 msgid "Search {0}"
 msgstr "ค้นหา {0}"
 
 #. placeholder {0}: collectionLabel.toLowerCase()
-#: packages/admin/src/components/ContentList.tsx:418
+#: packages/admin/src/components/ContentList.tsx:464
 msgid "Search {0}..."
 msgstr "ค้นหา {0}..."
 
-#: packages/admin/src/components/MediaLibrary.tsx:944
+#: packages/admin/src/components/MediaLibrary.tsx:970
 #: packages/admin/src/components/MediaPickerModal.tsx:627
 msgid "Search by filename..."
 msgstr "ค้นหาตามชื่อไฟล์..."
 
-#: packages/admin/src/components/users/UserList.tsx:69
+#: packages/admin/src/components/users/UserList.tsx:63
 msgid "Search by name or email..."
 msgstr "ค้นหาตามชื่อหรืออีเมล..."
 
-#: packages/admin/src/components/BylineFilter.tsx:121
+#: packages/admin/src/components/BylineFilter.tsx:128
 #: packages/admin/src/components/ContentSettingsPanel.tsx:997
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
@@ -7448,15 +7469,15 @@ msgstr "ค้นหาชื่อผู้เขียน"
 msgid "Search bylines to add..."
 msgstr "ค้นหาผู้เขียนเพื่อเพิ่ม..."
 
-#: packages/admin/src/components/BylineFilter.tsx:122
+#: packages/admin/src/components/BylineFilter.tsx:129
 msgid "Search bylines…"
 msgstr ""
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:164
+#: packages/admin/src/components/comments/CommentInbox.tsx:201
 msgid "Search comments"
 msgstr "ค้นหาความคิดเห็น"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:163
+#: packages/admin/src/components/comments/CommentInbox.tsx:200
 msgid "Search comments..."
 msgstr "ค้นหาความคิดเห็น..."
 
@@ -7482,7 +7503,7 @@ msgstr ""
 msgid "Search form"
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:945
+#: packages/admin/src/components/MediaLibrary.tsx:971
 #: packages/admin/src/components/MediaPickerModal.tsx:628
 msgid "Search media"
 msgstr "ค้นหามีเดีย"
@@ -7518,15 +7539,15 @@ msgstr "ค้นหาธีม"
 msgid "Search themes..."
 msgstr "ค้นหาธีม..."
 
-#: packages/admin/src/components/BylineFilter.tsx:158
+#: packages/admin/src/components/BylineFilter.tsx:169
 msgid "Search to narrow the list"
 msgstr ""
 
-#: packages/admin/src/components/users/UserList.tsx:73
+#: packages/admin/src/components/users/UserList.tsx:66
 msgid "Search users"
 msgstr "ค้นหาผู้ใช้"
 
-#: packages/admin/src/components/MediaLibrary.tsx:944
+#: packages/admin/src/components/MediaLibrary.tsx:970
 #: packages/admin/src/components/MediaPickerModal.tsx:627
 msgid "Search..."
 msgstr "ค้นหา..."
@@ -7638,7 +7659,7 @@ msgstr "เลือก"
 msgid "Select {label}"
 msgstr "เลือก {label}"
 
-#: packages/admin/src/components/ContentList.tsx:1141
+#: packages/admin/src/components/ContentList.tsx:1253
 msgid "Select {title}"
 msgstr ""
 
@@ -7654,16 +7675,16 @@ msgstr ""
 msgid "Select a menu..."
 msgstr "เลือกเมนู..."
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:284
+#: packages/admin/src/components/comments/CommentInbox.tsx:275
 msgid "Select all"
 msgstr "เลือกทั้งหมด"
 
-#: packages/admin/src/components/ContentList.tsx:567
+#: packages/admin/src/components/ContentList.tsx:586
 msgid "Select all on this page"
 msgstr ""
 
 #. placeholder {0}: comment.authorName
-#: packages/admin/src/components/comments/CommentInbox.tsx:457
+#: packages/admin/src/components/comments/CommentInbox.tsx:448
 msgid "Select comment by {0}"
 msgstr "เลือกความคิดเห็นโดย {0}"
 
@@ -7825,7 +7846,7 @@ msgstr "ตั้งค่าภาษา (ปัจจุบัน: {label})"
 msgid "Set to 0 to never close comments automatically."
 msgstr "ตั้งค่าเป็น 0 เพื่อไม่ปิดความคิดเห็นโดยอัตโนมัติ"
 
-#: packages/admin/src/components/ContentList.tsx:495
+#: packages/admin/src/components/ContentList.tsx:514
 msgid "Set to draft"
 msgstr ""
 
@@ -7922,7 +7943,7 @@ msgid "Show token"
 msgstr "แสดงโทเค็น"
 
 #. placeholder {0}: totalCount ?? 0
-#: packages/admin/src/components/MediaLibrary.tsx:1329
+#: packages/admin/src/components/MediaLibrary.tsx:1323
 msgid "Showing {pageShowingRange} of {0}"
 msgstr ""
 
@@ -8025,11 +8046,11 @@ msgstr "URL เว็บไซต์"
 msgid "Sites on Cloudflare D1 can additionally restore the database to any minute within the last 30 days using D1 Time Travel — always on, no setup required."
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:1215
+#: packages/admin/src/components/MediaLibrary.tsx:1209
 msgid "Size"
 msgstr "ขนาด"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1545
+#: packages/admin/src/components/MediaLibrary.tsx:1539
 msgid "Size is not applicable to folders"
 msgstr ""
 
@@ -8140,8 +8161,8 @@ msgid "spam"
 msgstr "สแปม"
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:159
-#: packages/admin/src/components/comments/CommentInbox.tsx:208
-#: packages/admin/src/components/comments/CommentInbox.tsx:248
+#: packages/admin/src/components/comments/CommentInbox.tsx:181
+#: packages/admin/src/components/comments/CommentInbox.tsx:239
 msgid "Spam"
 msgstr "สแปม"
 
@@ -8171,14 +8192,14 @@ msgstr "เริ่มการนำเข้า"
 msgid "Start writing, or type '/' for commands"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:592
+#: packages/admin/src/components/ContentList.tsx:611
 #: packages/admin/src/components/ContentSettingsPanel.tsx:526
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:382
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:615
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:641
-#: packages/admin/src/components/users/UserList.tsx:104
+#: packages/admin/src/components/users/UserList.tsx:97
 msgid "Status"
 msgstr "สถานะ"
 
@@ -8465,7 +8486,7 @@ msgstr "ฟิลด์นี้ไม่รองรับไฟล์ {sniffed
 msgid "This field is required"
 msgstr "ฟิลด์นี้ต้องระบุ"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1101
+#: packages/admin/src/components/MediaLibrary.tsx:1095
 msgid "This folder is empty"
 msgstr ""
 
@@ -8561,7 +8582,7 @@ msgstr "การดำเนินการนี้จะลบ \"{0}\" อย
 msgid "This will permanently delete \"{0}\". This action cannot be undone."
 msgstr "การดำเนินการนี้จะลบ \"{0}\" อย่างถาวร ไม่สามารถยกเลิกการดำเนินการนี้ได้"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:407
+#: packages/admin/src/components/comments/CommentInbox.tsx:398
 msgid "This will permanently delete this comment. This action cannot be undone."
 msgstr "การดำเนินการนี้จะลบความคิดเห็นนี้อย่างถาวร ไม่สามารถยกเลิกการดำเนินการนี้ได้"
 
@@ -8585,8 +8606,8 @@ msgstr "เขตเวลา"
 msgid "Timezone for displaying dates (e.g., America/New_York)"
 msgstr "เขตเวลาสำหรับการแสดงวันที่ (เช่น America/New_York)"
 
-#: packages/admin/src/components/ContentList.tsx:577
-#: packages/admin/src/components/ContentList.tsx:737
+#: packages/admin/src/components/ContentList.tsx:596
+#: packages/admin/src/components/ContentList.tsx:756
 #: packages/admin/src/components/SectionEditor.tsx:272
 #: packages/admin/src/components/Sections.tsx:170
 #: packages/admin/src/components/Widgets.tsx:891
@@ -8602,17 +8623,9 @@ msgstr "ชื่อ (Tooltip)"
 msgid "Title Separator"
 msgstr "ตัวคั่นชื่อ"
 
-#: packages/admin/src/components/ContentList.tsx:933
-msgid "to"
-msgstr ""
-
 #: packages/admin/src/components/AdminCommandPalette.tsx:483
 msgid "to close"
 msgstr "เพื่อปิด"
-
-#: packages/admin/src/components/ContentList.tsx:937
-msgid "To date"
-msgstr ""
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:473
 msgid "to select"
@@ -8695,18 +8708,18 @@ msgid "trash"
 msgstr "ถังขยะ"
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:170
-#: packages/admin/src/components/comments/CommentInbox.tsx:217
-#: packages/admin/src/components/comments/CommentInbox.tsx:258
-#: packages/admin/src/components/comments/CommentInbox.tsx:514
-#: packages/admin/src/components/ContentList.tsx:441
+#: packages/admin/src/components/comments/CommentInbox.tsx:190
+#: packages/admin/src/components/comments/CommentInbox.tsx:249
+#: packages/admin/src/components/comments/CommentInbox.tsx:505
+#: packages/admin/src/components/ContentList.tsx:449
 msgid "Trash"
 msgstr "ถังขยะ"
 
-#: packages/admin/src/components/ContentList.tsx:760
+#: packages/admin/src/components/ContentList.tsx:779
 msgid "Trash is empty"
 msgstr "ถังขยะว่างเปล่า"
 
-#: packages/admin/src/components/comments/CommentInbox.tsx:550
+#: packages/admin/src/components/comments/CommentInbox.tsx:541
 msgid "Trash is empty."
 msgstr "ถังขยะว่างเปล่า"
 
@@ -8714,7 +8727,7 @@ msgstr "ถังขยะว่างเปล่า"
 msgid "True/false toggle"
 msgstr "สวิตช์จริง/เท็จ"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1090
+#: packages/admin/src/components/MediaLibrary.tsx:1084
 msgid "Try a broader media type or clear your filters."
 msgstr ""
 
@@ -8752,11 +8765,11 @@ msgstr ""
 msgid "Try another code"
 msgstr "ลองรหัสอื่น"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1126
+#: packages/admin/src/components/MediaLibrary.tsx:1120
 msgid "Try another filename or clear your search."
 msgstr ""
 
-#: packages/admin/src/components/MediaLibrary.tsx:1089
+#: packages/admin/src/components/MediaLibrary.tsx:1083
 msgid "Try another filename, or clear your search and filters."
 msgstr ""
 
@@ -8796,7 +8809,7 @@ msgstr "Twitter"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:260
 #: packages/admin/src/components/FieldEditor.tsx:600
-#: packages/admin/src/components/MediaLibrary.tsx:1214
+#: packages/admin/src/components/MediaLibrary.tsx:1208
 #: packages/admin/src/routes/byline-schema.tsx:240
 msgid "Type"
 msgstr "ประเภท"
@@ -8806,7 +8819,7 @@ msgstr "ประเภท"
 msgid "Type mismatch ({0})"
 msgstr "ประเภทไม่ตรงกัน ({0})"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1541
+#: packages/admin/src/components/MediaLibrary.tsx:1535
 msgid "Type: Folder"
 msgstr ""
 
@@ -8910,6 +8923,11 @@ msgstr "ยกเลิกการกำหนดเวลาแล้ว"
 msgid "Unsupported widget element type: {0}"
 msgstr "ประเภทองค์ประกอบวิดเจ็ตที่ไม่รองรับ: {0}"
 
+#. placeholder {0}: formatter.format(to)
+#: packages/admin/src/components/ContentList.tsx:982
+msgid "Until {0}"
+msgstr ""
+
 #: packages/admin/src/components/Dashboard.tsx:368
 #: packages/admin/src/components/MediaUsedIn.tsx:246
 msgid "Untitled"
@@ -8928,7 +8946,7 @@ msgstr "วิดเจ็ตไม่มีชื่อ"
 msgid "Up"
 msgstr "ขึ้น"
 
-#: packages/admin/src/components/BylineFilter.tsx:164
+#: packages/admin/src/components/BylineFilter.tsx:175
 msgid "Up to {MAX_SELECTED} bylines can be selected"
 msgstr ""
 
@@ -8967,7 +8985,7 @@ msgstr "อัปเดตกฎการเปลี่ยนเส้นทา
 msgid "Update to v{0}"
 msgstr "อัปเดตเป็น v{0}"
 
-#: packages/admin/src/components/ContentList.tsx:842
+#: packages/admin/src/components/ContentList.tsx:861
 #: packages/admin/src/components/ContentSettingsPanel.tsx:646
 #: packages/admin/src/components/RegistryPluginDetail.tsx:538
 msgid "Updated"
@@ -9038,8 +9056,8 @@ msgid "Upload File"
 msgstr "อัปโหลดไฟล์"
 
 #: packages/admin/src/components/MediaLibrary.tsx:761
-#: packages/admin/src/components/MediaLibrary.tsx:1116
-#: packages/admin/src/components/MediaLibrary.tsx:1140
+#: packages/admin/src/components/MediaLibrary.tsx:1110
+#: packages/admin/src/components/MediaLibrary.tsx:1134
 msgid "Upload Files"
 msgstr "อัปโหลดไฟล์"
 
@@ -9047,7 +9065,7 @@ msgstr "อัปโหลดไฟล์"
 msgid "Upload Image"
 msgstr "อัปโหลดรูปภาพ"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1113
+#: packages/admin/src/components/MediaLibrary.tsx:1107
 msgid "Upload images, videos, and documents to keep reusable assets in one place."
 msgstr ""
 
@@ -9055,7 +9073,7 @@ msgstr ""
 msgid "Upload Media"
 msgstr "อัปโหลดมีเดีย"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1137
+#: packages/admin/src/components/MediaLibrary.tsx:1131
 msgid "Upload media to keep reusable assets in one place."
 msgstr ""
 
@@ -9149,6 +9167,10 @@ msgstr ""
 msgid "Use [param] or [...rest] in paths for pattern matching."
 msgstr "ใช้ [param] หรือ [...rest] ในเส้นทางเพื่อจับคู่รูปแบบ"
 
+#: packages/admin/src/components/ContentList.tsx:1056
+msgid "Use as end date"
+msgstr ""
+
 #: packages/admin/src/components/auth/PasskeyLogin.tsx:356
 msgid "Use your device's biometric authentication, security key, or PIN to sign in."
 msgstr "ใช้การยืนยันตัวตนด้วยข้อมูลชีวมาตรของอุปกรณ์ คีย์รักษาความปลอดภัย หรือ PIN เพื่อเข้าสู่ระบบ"
@@ -9189,7 +9211,7 @@ msgstr "ใช้เพื่อระบุส่วนนี้ ใช้ไ�
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:223
 #: packages/admin/src/components/Header.tsx:43
 #: packages/admin/src/components/Header.tsx:83
-#: packages/admin/src/components/users/UserList.tsx:98
+#: packages/admin/src/components/users/UserList.tsx:91
 msgid "User"
 msgstr "ผู้ใช้"
 
@@ -9208,7 +9230,7 @@ msgstr "ไม่พบผู้ใช้"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:210
 #: packages/admin/src/components/Sidebar.tsx:296
-#: packages/admin/src/components/users/UserList.tsx:54
+#: packages/admin/src/components/users/UserList.tsx:55
 msgid "Users"
 msgstr "ผู้ใช้"
 
@@ -9254,7 +9276,7 @@ msgid "Version {0}"
 msgstr "เวอร์ชัน {0}"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:70
-#: packages/admin/src/components/MediaLibrary.tsx:964
+#: packages/admin/src/components/MediaLibrary.tsx:990
 msgid "Video"
 msgstr "วิดีโอ"
 
@@ -9267,11 +9289,11 @@ msgstr "ดูสถานะผู้ให้บริการอีเมล
 msgid "View in Marketplace"
 msgstr "ดูใน Marketplace"
 
-#: packages/admin/src/components/MediaLibrary.tsx:973
+#: packages/admin/src/components/MediaLibrary.tsx:937
 msgid "View mode"
 msgstr "โหมดการแสดงผล"
 
-#: packages/admin/src/components/ContentList.tsx:1208
+#: packages/admin/src/components/ContentList.tsx:1320
 msgid "View published {title}"
 msgstr "ดู {title} ที่เผยแพร่แล้ว"
 
@@ -9481,7 +9503,7 @@ msgstr ""
 msgid "WordPress Username"
 msgstr "ชื่อผู้ใช้ WordPress"
 
-#: packages/admin/src/components/ContentList.tsx:473
+#: packages/admin/src/components/ContentList.tsx:492
 msgid "Working on {selectedCount} items…"
 msgstr ""
 
@@ -9509,7 +9531,7 @@ msgstr ""
 msgid "Yearly"
 msgstr ""
 
-#: packages/admin/src/components/ContentList.tsx:1283
+#: packages/admin/src/components/ContentList.tsx:1395
 #: packages/admin/src/components/users/UserDetail.tsx:236
 #: packages/admin/src/routes/byline-schema.tsx:420
 #: packages/admin/src/routes/byline-schema.tsx:422
@@ -9641,8 +9663,8 @@ msgstr "ชื่อผู้ใช้ Instagram ของคุณ"
 msgid "Your LinkedIn profile username"
 msgstr "ชื่อผู้ใช้โปรไฟล์ LinkedIn ของคุณ"
 
-#: packages/admin/src/components/MediaLibrary.tsx:1112
-#: packages/admin/src/components/MediaLibrary.tsx:1136
+#: packages/admin/src/components/MediaLibrary.tsx:1106
+#: packages/admin/src/components/MediaLibrary.tsx:1130
 msgid "Your media library is empty"
 msgstr ""
 
