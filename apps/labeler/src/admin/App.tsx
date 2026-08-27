@@ -582,7 +582,13 @@ function ListingPreviewCard({ preview, runKey }: { preview: ListingPreview; runK
 				<div className="min-w-0">
 					<h3 className="font-semibold">{preview.name}</h3>
 					<p className="mt-1 text-xs text-kumo-subtle">
-						{preview.publisher ? t`By ${preview.publisher}` : t`Publisher`}
+						{preview.publisher && preview.publisherHandle
+							? t`By ${preview.publisher} · @${preview.publisherHandle}`
+							: preview.publisher
+								? t`By ${preview.publisher}`
+								: preview.publisherHandle
+									? `@${preview.publisherHandle}`
+									: t`Publisher`}
 					</p>
 					<Badge className="mt-2" variant="outline">
 						{previewType}
@@ -1373,6 +1379,7 @@ function currentBrowserLocation(): string {
 interface ListingPreview {
 	name: string;
 	publisher?: string;
+	publisherHandle?: string;
 	kind: "profile" | "release";
 	slug: string;
 	version?: string;
@@ -1404,6 +1411,7 @@ function listingPreview(detail: AssessmentDetail): ListingPreview {
 	return {
 		name,
 		publisher,
+		publisherHandle: detail.publisherHandle ?? undefined,
 		kind,
 		slug,
 		version,

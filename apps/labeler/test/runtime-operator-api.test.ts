@@ -501,6 +501,40 @@ describe("operator rerun idempotency", () => {
 	});
 });
 
+describe("operator assessment detail", () => {
+	it("includes the resolved publisher handle", async () => {
+		const resolvePublisherHandle = vi.fn(async () => "publisher.example");
+		const response = await handleOperatorApi(
+			new Request(`https://labels.example/_admin/api/assessments/${RUN.runKey}`),
+			{} as Env,
+			{
+				...dependencies(REVIEWER),
+				resolvePublisherHandle,
+			},
+		);
+
+		expect(response.status).toBe(200);
+		expect(await response.json()).toMatchObject({ publisherHandle: "publisher.example" });
+		expect(resolvePublisherHandle).toHaveBeenCalledWith("did:plc:fixture");
+	});
+
+	it("keeps assessment detail available when handle resolution fails", async () => {
+		const response = await handleOperatorApi(
+			new Request(`https://labels.example/_admin/api/assessments/${RUN.runKey}`),
+			{} as Env,
+			{
+				...dependencies(REVIEWER),
+				resolvePublisherHandle: async () => {
+					throw new Error("resolver unavailable");
+				},
+			},
+		);
+
+		expect(response.status).toBe(200);
+		expect(await response.json()).toMatchObject({ publisherHandle: null });
+	});
+});
+
 function operatorRequest(path: string, body: Record<string, unknown>): Request {
 	return new Request(`https://labels.example${path}`, {
 		method: "POST",

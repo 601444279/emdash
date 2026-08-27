@@ -16,8 +16,11 @@ import {
 } from "../access.js";
 import { createAggregatorReconciliationClient } from "../aggregator-reconciliation.js";
 import { createD1AssessmentLifecycleStore } from "../assessment/lifecycle.js";
-import { createAssessmentWorkflowParams } from "../assessment/run-key.js";
-import { createProductionListingLabelIssuer } from "../assessment/runtime.js";
+import { createAssessmentWorkflowParams, parseSubjectUri } from "../assessment/run-key.js";
+import {
+	createProductionListingLabelIssuer,
+	resolveProductionPublisherHandle,
+} from "../assessment/runtime.js";
 import type { AssessmentRunSnapshot } from "../assessment/types.js";
 import { setIssuancePaused } from "../issuance-control.js";
 import type { ListingLabelIssuer } from "../labels/issuer.js";
@@ -122,6 +125,7 @@ export interface OperatorApiDependencies {
 	getManualDecision?(
 		subject: AssessmentRunSnapshot["subject"],
 	): Promise<OperatorManualDecisionSummary | null>;
+	resolvePublisherHandle?(publisherDid: string): Promise<string | null>;
 	issuer: Pick<ListingLabelIssuer, "approve" | "block" | "issue">;
 	rerun(input: {
 		run: AssessmentRunSnapshot;
@@ -444,7 +448,13 @@ async function handleOperatorRead(
 			const manualDecision = dependencies.getManualDecision
 				? await dependencies.getManualDecision(run.subject)
 				: null;
-			return mutationResponse({ assessment: run, manualDecision });
+			const publisherHandle = dependencies.resolvePublisherHandle
+				? await resolveAssessmentPublisherHandle(
+						run.subject.uri,
+						dependencies.resolvePublisherHandle,
+					)
+				: null;
+			return mutationResponse({ assessment: run, manualDecision, publisherHandle });
 		}
 		const row = await env.DB.prepare(
 			`SELECT run_key, subject_uri, subject_cid, subject_kind, state, state_version,
@@ -473,6 +483,13 @@ async function handleOperatorRead(
 			row["subject_kind"] === "release"
 				? await readOperatorRelatedProfile(env.DB, canonicalInput)
 				: null;
+		const publisherHandle =
+			typeof row["subject_uri"] === "string"
+				? await resolveAssessmentPublisherHandle(
+						row["subject_uri"],
+						resolveProductionPublisherHandle,
+					)
+				: null;
 		return mutationResponse({
 			assessment: {
 				...row,
@@ -490,6 +507,7 @@ async function handleOperatorRead(
 			})),
 			manualDecision,
 			relatedProfile,
+			publisherHandle,
 		});
 	}
 	if (url.pathname !== "/_admin/api/assessments") {
@@ -522,6 +540,17 @@ async function handleOperatorRead(
 			return apiError("INVALID_REQUEST", "Assessment cursor is invalid", 400);
 		}
 		throw error;
+	}
+}
+
+async function resolveAssessmentPublisherHandle(
+	subjectUri: string,
+	resolvePublisherHandle: (publisherDid: string) => Promise<string | null>,
+): Promise<string | null> {
+	try {
+		return await resolvePublisherHandle(parseSubjectUri(subjectUri).publisherDid);
+	} catch {
+		return null;
 	}
 }
 

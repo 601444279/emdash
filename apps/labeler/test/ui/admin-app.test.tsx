@@ -155,6 +155,7 @@ describe("labeler admin application", () => {
 			},
 			findings: [],
 			manualDecision: null,
+			publisherHandle: "justin.example",
 		});
 
 		render(
@@ -166,7 +167,7 @@ describe("labeler admin application", () => {
 		);
 
 		expect((await screen.findAllByText("EmDash to Buffer")).length).toBeGreaterThan(0);
-		expect(screen.getByText("By Justin Thompson")).toBeTruthy();
+		expect(screen.getByText("By Justin Thompson · @justin.example")).toBeTruthy();
 		expect(screen.getByText("Queue newly published EmDash posts to Buffer channels.")).toBeTruthy();
 		expect(screen.getByText("No model findings")).toBeTruthy();
 		expect(screen.queryByText(item.subject_uri)).toBeNull();

@@ -66,6 +66,7 @@ export interface AssessmentDetail {
 		createdAt: string;
 	};
 	relatedProfile?: unknown;
+	publisherHandle?: string | null;
 }
 
 export interface IssuanceStatus {
