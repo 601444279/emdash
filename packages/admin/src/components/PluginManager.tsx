@@ -8,7 +8,7 @@
 
 import { Badge, Button, Checkbox, Switch, Toast } from "@cloudflare/kumo";
 import { plural } from "@lingui/core/macro";
-import { useLingui } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import {
 	Gear,
 	FileText,
@@ -55,6 +55,18 @@ import { CaretNext } from "./ArrowIcons.js";
 import { CapabilityConsentDialog } from "./CapabilityConsentDialog.js";
 import { DialogError, getMutationError } from "./DialogError.js";
 import { RouterLinkButton } from "./RouterLinkButton.js";
+
+export function MarketplaceInstallMessage() {
+	return (
+		<Trans>
+			Browse the{" "}
+			<Link to="/plugins/marketplace" className="text-kumo-link hover:underline">
+				marketplace
+			</Link>{" "}
+			to install plugins, or add them to your astro.config.mjs.
+		</Trans>
+	);
+}
 
 export interface PluginManagerProps {
 	/** Admin manifest — used to check if marketplace is configured */
@@ -136,7 +148,7 @@ export function PluginManager({ manifest }: PluginManagerProps) {
 	if (isLoading) {
 		return (
 			<div className="space-y-6">
-				<h1 className="text-3xl font-bold">{t`Plugins`}</h1>
+				<h1 className="text-2xl font-semibold leading-tight">{t`Plugins`}</h1>
 				<div className="text-kumo-subtle">{t`Loading plugins...`}</div>
 			</div>
 		);
@@ -145,7 +157,7 @@ export function PluginManager({ manifest }: PluginManagerProps) {
 	if (error) {
 		return (
 			<div className="space-y-6">
-				<h1 className="text-3xl font-bold">{t`Plugins`}</h1>
+				<h1 className="text-2xl font-semibold leading-tight">{t`Plugins`}</h1>
 				<div className="text-kumo-danger">{t`Failed to load plugins: ${error.message}`}</div>
 			</div>
 		);
@@ -153,9 +165,14 @@ export function PluginManager({ manifest }: PluginManagerProps) {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<h1 className="text-3xl font-bold">{t`Plugins`}</h1>
-				<div className="flex items-center gap-3">
+			<div className="flex flex-wrap items-start justify-between gap-4">
+				<div className="min-w-0">
+					<h1 className="text-2xl font-semibold leading-tight">{t`Plugins`}</h1>
+					<p className="mt-1 text-sm leading-5 text-pretty text-kumo-subtle">
+						{t`Manage installed plugins. Enable or disable plugins to control their functionality.`}
+					</p>
+				</div>
+				<div className="flex flex-wrap items-center gap-3">
 					{hasUpdatableSources && (
 						<Button
 							variant="ghost"
@@ -174,10 +191,6 @@ export function PluginManager({ manifest }: PluginManagerProps) {
 					<span className="text-sm text-kumo-subtle">{t`${plugins?.length ?? 0} plugins`}</span>
 				</div>
 			</div>
-
-			<p className="text-kumo-subtle">
-				{t`Manage installed plugins. Enable or disable plugins to control their functionality.`}
-			</p>
 
 			<div className="grid gap-4">
 				{plugins?.map((plugin) => (
@@ -199,13 +212,7 @@ export function PluginManager({ manifest }: PluginManagerProps) {
 					<h3 className="mt-4 text-lg font-medium">{t`No plugins configured`}</h3>
 					<p className="mt-2 text-sm text-kumo-subtle">
 						{hasMarketplace ? (
-							<>
-								{t`Browse the`}{" "}
-								<Link to="/plugins/marketplace" className="text-kumo-brand hover:underline">
-									{t`marketplace`}
-								</Link>{" "}
-								{t`to install plugins, or add them to your astro.config.mjs.`}
-							</>
+							<MarketplaceInstallMessage />
 						) : (
 							t`Add plugins to your astro.config.mjs to extend EmDash functionality.`
 						)}
@@ -369,7 +376,7 @@ function PluginCard({
 							)}
 						>
 							<ADMIN_NAV_ICONS.plugins
-								className={cn("h-5 w-5", plugin.enabled ? "text-kumo-brand" : "text-kumo-subtle")}
+								className={cn("h-5 w-5", plugin.enabled ? "text-kumo-link" : "text-kumo-subtle")}
 							/>
 						</div>
 					)}
@@ -382,7 +389,7 @@ function PluginCard({
 							{!plugin.enabled && <Badge variant="secondary">{t`Disabled`}</Badge>}
 							{isMarketplace && <Badge variant="secondary">{t`Marketplace`}</Badge>}
 							{hasUpdate && (
-								<Badge variant="outline" className="border-kumo-brand text-kumo-brand">
+								<Badge variant="outline" className="border-kumo-brand text-kumo-link">
 									{t`v${updateInfo.latest} available`}
 								</Badge>
 							)}
@@ -501,9 +508,7 @@ function PluginCard({
 							aria-expanded={expanded}
 						>
 							{expanded ? <CaretDown className="h-4 w-4" /> : <CaretNext className="h-4 w-4" />}
-							<span className="sr-only">
-								{expanded ? t`Collapse` : t`Expand`} {t`details`}
-							</span>
+							<span className="sr-only">{expanded ? t`Collapse details` : t`Expand details`}</span>
 						</Button>
 					</div>
 				</div>

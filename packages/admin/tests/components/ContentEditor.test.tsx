@@ -1,3 +1,4 @@
+import { i18n } from "@lingui/core";
 import * as React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { userEvent } from "vitest/browser";
@@ -202,6 +203,15 @@ function installMatchMedia(initialMatches: boolean) {
 			const event = { matches, media: mediaQuery.media } as MediaQueryListEvent;
 			for (const listener of listeners) listener(event);
 		},
+		async setMatchesSequentially(nextMatches: boolean) {
+			matches = nextMatches;
+			const event = { matches, media: mediaQuery.media } as MediaQueryListEvent;
+			const callbacks = [...listeners];
+			for (const listener of callbacks) {
+				listener(event);
+				await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+			}
+		},
 		restore() {
 			spy.mockRestore();
 		},
@@ -224,6 +234,48 @@ describe("ContentEditor", () => {
 		});
 
 		expect(portableTextProps.current?.placeholder).toBe("Start writing, or type '/' for commands");
+	});
+
+	it("blocks manual save and autosave while a Portable Text field has unsupported marks", async () => {
+		vi.useFakeTimers();
+		try {
+			const onSave = vi.fn();
+			const onAutosave = vi.fn();
+			const item = makeItem({
+				data: {
+					title: "My Post",
+					content: [
+						{
+							_type: "block",
+							_key: "b1",
+							style: "normal",
+							children: [{ _type: "span", _key: "s1", text: "Unsafe", marks: ["accent"] }],
+						},
+					],
+				},
+			});
+			const screen = await renderEditor({
+				isNew: false,
+				item,
+				fields: {
+					title: { kind: "string", label: "Title" },
+					content: { kind: "portableText", label: "Content" },
+				},
+				onSave,
+				onAutosave,
+			});
+
+			await screen.getByLabelText("Title").fill("Changed title");
+			const saveButton = screen.getByRole("button", { name: "Save" }).first();
+
+			await expect.element(saveButton).toBeDisabled();
+			await vi.advanceTimersByTimeAsync(2500);
+			expect(onAutosave).not.toHaveBeenCalled();
+			saveButton.element().click();
+			expect(onSave).not.toHaveBeenCalled();
+		} finally {
+			vi.useRealTimers();
+		}
 	});
 
 	it("uses one label and spacing rhythm across editor field types", async () => {
@@ -710,6 +762,61 @@ describe("ContentEditor", () => {
 			await expect.element(link2).toHaveAttribute("href", "/_emdash/api/media/file/file-fallback");
 		});
 
+		it("renders a legacy external file URL when src is absent", async () => {
+			const item = makeItem({
+				data: {
+					title: "Test",
+					body: "",
+					attachment: {
+						id: "external-file",
+						provider: "external",
+						url: "https://files.example.com/report.pdf",
+						filename: "report.pdf",
+						mimeType: "application/pdf",
+					},
+				},
+			});
+			const screen = await renderEditor({
+				isNew: false,
+				item,
+				fields: {
+					title: { kind: "string", label: "Title", required: true },
+					attachment: { kind: "file", label: "Attachment" },
+				},
+			});
+
+			await expect
+				.element(screen.getByRole("link", { name: "report.pdf" }))
+				.toHaveAttribute("href", "https://files.example.com/report.pdf");
+		});
+
+		it("does not trust external URLs on local file snapshots", async () => {
+			const item = makeItem({
+				data: {
+					title: "Test",
+					body: "",
+					attachment: {
+						id: "local-file",
+						provider: "local",
+						url: "https://attacker.example/file.pdf",
+						filename: "report.pdf",
+					},
+				},
+			});
+			const screen = await renderEditor({
+				isNew: false,
+				item,
+				fields: {
+					title: { kind: "string", label: "Title", required: true },
+					attachment: { kind: "file", label: "Attachment" },
+				},
+			});
+
+			await expect
+				.element(screen.getByRole("link", { name: "report.pdf" }))
+				.toHaveAttribute("href", "/_emdash/api/media/file/local-file");
+		});
+
 		it("does not render data: or javascript: URLs from external providers as links", async () => {
 			// A hostile external provider plugin could return src: "javascript:..." or
 			// "data:..."; the file field must not surface either as a clickable <a href>.
@@ -1087,6 +1194,93 @@ describe("ContentEditor", () => {
 	});
 
 	describe("publish actions", () => {
+		describe("settings panel resizing", () => {
+			it("resizes through its bounded keyboard separator without collapsing", async () => {
+				const screen = await renderEditor({ isNew: false, item: makeItem() });
+				const panel = screen.getByRole("complementary", { name: "Settings" }).element();
+				const separator = screen.getByRole("separator", { name: "Settings" }).element();
+
+				expect(panel.getBoundingClientRect().width).toBeCloseTo(368);
+				expect(separator).toHaveAttribute("aria-valuemin", "320");
+				expect(separator).toHaveAttribute("aria-valuemax", "480");
+				expect(separator).toHaveAttribute("aria-valuenow", "368");
+				expect(separator).toHaveAttribute("aria-controls", panel.id);
+
+				separator.focus();
+				await userEvent.keyboard("{End}");
+				await vi.waitFor(() => expect(panel.getBoundingClientRect().width).toBeCloseTo(480));
+				expect(separator).toHaveAttribute("aria-valuenow", "480");
+
+				await userEvent.keyboard("{ArrowLeft}");
+				expect(panel.getBoundingClientRect().width).toBeCloseTo(480);
+
+				await userEvent.keyboard("{Home}");
+				await vi.waitFor(() => expect(panel.getBoundingClientRect().width).toBeCloseTo(320));
+				expect(separator).toHaveAttribute("aria-valuenow", "320");
+				await userEvent.keyboard("{ArrowLeft}");
+				await vi.waitFor(() => expect(panel.getBoundingClientRect().width).toBeCloseTo(330));
+			});
+
+			it.each([
+				{ locale: "en", dir: "ltr", growKey: "ArrowLeft", shrinkKey: "ArrowRight" },
+				{ locale: "ar", dir: "rtl", growKey: "ArrowRight", shrinkKey: "ArrowLeft" },
+			])("uses the physical growth key for $dir", async (testCase) => {
+				const previousLocale = i18n.locale;
+				const previousDir = document.documentElement.dir;
+				i18n.load(testCase.locale, {});
+				i18n.activate(testCase.locale);
+				document.documentElement.dir = testCase.dir;
+
+				try {
+					const screen = await renderEditor({ isNew: false, item: makeItem() });
+					const panel = screen.getByRole("complementary", { name: "Settings" }).element();
+					const separator = screen.getByRole("separator", { name: "Settings" }).element();
+					const before = panel.getBoundingClientRect();
+
+					separator.focus();
+					await userEvent.keyboard(`{${testCase.growKey}}`);
+					await vi.waitFor(() =>
+						expect(panel.getBoundingClientRect().width).toBeCloseTo(before.width + 10),
+					);
+					await userEvent.keyboard(`{${testCase.shrinkKey}}`);
+					await vi.waitFor(() =>
+						expect(panel.getBoundingClientRect().width).toBeCloseTo(before.width),
+					);
+				} finally {
+					document.documentElement.dir = previousDir;
+					i18n.activate(previousLocale);
+				}
+			});
+
+			it("hides resizing across a mobile round trip without losing the desktop width", async () => {
+				const media = installMatchMedia(false);
+				try {
+					const screen = await renderEditor({ isNew: false, item: makeItem() });
+					const separator = screen.getByRole("separator", { name: "Settings" });
+					separator.element().focus();
+					await userEvent.keyboard("{ArrowLeft}");
+					await expect.element(separator).toHaveAttribute("aria-valuenow", "378");
+
+					await media.setMatchesSequentially(true);
+					await expect
+						.element(screen.getByRole("separator", { name: "Settings" }))
+						.not.toBeInTheDocument();
+					await screen.getByRole("button", { name: "Settings" }).click();
+					await expect
+						.element(screen.getByRole("navigation", { name: "Settings" }))
+						.toBeInTheDocument();
+					await screen.getByRole("button", { name: "Close settings" }).click();
+
+					await media.setMatchesSequentially(false);
+					await expect
+						.element(screen.getByRole("separator", { name: "Settings" }))
+						.toHaveAttribute("aria-valuenow", "378");
+				} finally {
+					media.restore();
+				}
+			});
+		});
+
 		it("uses the elevated surface for the full-bleed canvas and settings panel", async () => {
 			await renderEditor({ isNew: false, item: makeItem() });
 			const form = document.querySelector("form");
@@ -1101,7 +1295,7 @@ describe("ContentEditor", () => {
 			const item = makeItem({ status: "draft" });
 			const onPublish = vi.fn();
 			const screen = await renderEditor({ isNew: false, item, onPublish });
-			const publishBtn = screen.getByRole("button", { name: "Publish Post", exact: true });
+			const publishBtn = screen.getByRole("button", { name: "Publish", exact: true });
 			await expect.element(publishBtn).toBeInTheDocument();
 		});
 
@@ -1109,7 +1303,7 @@ describe("ContentEditor", () => {
 			const item = makeItem({ status: "draft" });
 			const onPublish = vi.fn();
 			const screen = await renderEditor({ isNew: false, item, onPublish });
-			const publishBtn = screen.getByRole("button", { name: "Publish Post", exact: true });
+			const publishBtn = screen.getByRole("button", { name: "Publish", exact: true });
 			await publishBtn.click();
 			expect(onPublish).toHaveBeenCalled();
 		});
@@ -1129,9 +1323,7 @@ describe("ContentEditor", () => {
 
 				await expect.element(screen.getByRole("button", { name: "Settings" })).toBeInTheDocument();
 				await expect.element(screen.getByRole("button", { name: "Save" }).first()).toBeDisabled();
-				const publishButtons = screen
-					.getByRole("button", { name: "Publish Post", exact: true })
-					.all();
+				const publishButtons = screen.getByRole("button", { name: "Publish", exact: true }).all();
 				expect(publishButtons).toHaveLength(1);
 				await expect.element(publishButtons[0]!).toBeVisible();
 			} finally {
@@ -1337,7 +1529,7 @@ describe("ContentEditor", () => {
 					.element(screen.getByRole("button", { name: "Settings" }))
 					.not.toBeInTheDocument();
 				await expect
-					.element(screen.getByRole("button", { name: "Publish Post", exact: true }))
+					.element(screen.getByRole("button", { name: "Publish", exact: true }))
 					.toBeVisible();
 			} finally {
 				media.restore();
@@ -1565,7 +1757,7 @@ describe("ContentEditor", () => {
 			const onPublish = vi.fn();
 			const screen = await renderEditor({ isNew: false, item, onPublish });
 
-			const publishBtn = screen.getByRole("button", { name: "Publish Post", exact: true });
+			const publishBtn = screen.getByRole("button", { name: "Publish", exact: true });
 			await expect.element(publishBtn).toBeInTheDocument();
 		});
 
@@ -1574,7 +1766,7 @@ describe("ContentEditor", () => {
 			const onPublish = vi.fn();
 			const screen = await renderEditor({ isNew: false, item, onPublish });
 
-			const publishBtn = screen.getByRole("button", { name: "Publish Post", exact: true });
+			const publishBtn = screen.getByRole("button", { name: "Publish", exact: true });
 			await publishBtn.click();
 			expect(onPublish).toHaveBeenCalled();
 		});

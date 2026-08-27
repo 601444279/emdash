@@ -60,6 +60,13 @@ export {
 	type MediaListResponse,
 	type MediaResponse,
 } from "./media.js";
+export {
+	handleMediaFolderList,
+	handleMediaFolderGet,
+	handleMediaFolderCreate,
+	handleMediaFolderUpdate,
+	handleMediaFolderDelete,
+} from "./media-folders.js";
 
 export {
 	aggregateMediaUsageCoverageStatus,
@@ -76,6 +83,16 @@ export {
 	type MediaUsageSourceDetail,
 	type MediaUsageSummary,
 } from "./media-usage.js";
+
+export {
+	handleMediaUsageWorkList,
+	handleMediaUsageWorkRetry,
+	type MediaUsageWorkItem,
+	type MediaUsageWorkListQuery,
+	type MediaUsageWorkListResponse,
+	type MediaUsageWorkRetryRequest,
+	type MediaUsageWorkRetryResponse,
+} from "./media-usage-work.js";
 
 // Schema handlers
 export {
@@ -162,6 +179,10 @@ export { handleSettingsGet, handleSettingsUpdate } from "./settings.js";
 // Taxonomy handlers
 export {
 	handleTaxonomyList,
+	handleTaxonomyGet,
+	handleTaxonomyUpdate,
+	handleTaxonomyDelete,
+	handleTaxonomyDefTranslations,
 	handleTermList,
 	handleTermCreate,
 	handleTermGet,
@@ -169,6 +190,8 @@ export {
 	handleTermDelete,
 	type TaxonomyDef,
 	type TaxonomyListResponse,
+	type TaxonomyResponse,
+	type TaxonomyDefTranslationsResponse,
 	type TermData,
 	type TermWithCount,
 	type TermListResponse,
