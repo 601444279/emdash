@@ -39,16 +39,6 @@ msgstr " (kijelölve)"
 msgid "-- Select --"
 msgstr "-- Válassz --"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:308
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:307
-msgid ", or open the admin at"
-msgstr "kapcsolatot, vagy nyisd meg az adminfelületet itt:"
-
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:307
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:306
-msgid ": use"
-msgstr "szükséges: használj"
-
 #. placeholder {0}: providers?.find((p) => p.id === selectedItem.providerId)?.name
 #: packages/admin/src/components/MediaPickerModal.tsx:799
 msgid "(from {0})"
@@ -65,11 +55,6 @@ msgstr "(szinkronizált)"
 #: packages/admin/src/components/RegistryPluginDetail.tsx:573
 msgid "(too new)"
 msgstr "(túl új)"
-
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:310
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:309
-msgid "(with your dev port)."
-msgstr "(a dev portoddal)."
 
 #. placeholder {0}: items.length
 #. placeholder {0}: orphan.rowCount
@@ -91,7 +76,7 @@ msgid "{0, plural, one {# collection} other {# collections}}"
 msgstr "{0, plural, one {# gyűjtemény} other {# gyűjtemény}}"
 
 #. placeholder {0}: result.comments.imported
-#: packages/admin/src/components/WordPressImport.tsx:2263
+#: packages/admin/src/components/WordPressImport.tsx:2279
 msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr ""
 
@@ -106,12 +91,12 @@ msgid "{0, plural, one {# comment} other {# comments}}"
 msgstr "{0, plural, one {# hozzászólás} other {# hozzászólás}}"
 
 #. placeholder {0}: result.errors.length
-#: packages/admin/src/components/WordPressImport.tsx:2274
+#: packages/admin/src/components/WordPressImport.tsx:2290
 msgid "{0, plural, one {# content error} other {# content errors}}"
 msgstr "{0, plural, one {# tartalmi hiba} other {# tartalmi hiba}}"
 
 #. placeholder {0}: result.imported
-#: packages/admin/src/components/WordPressImport.tsx:2215
+#: packages/admin/src/components/WordPressImport.tsx:2231
 msgid "{0, plural, one {# content item imported} other {# content items imported}}"
 msgstr "{0, plural, one {# tartalmi elem importálva} other {# tartalmi elem importálva}}"
 
@@ -135,38 +120,38 @@ msgid "{0, plural, one {# item} other {# items}}"
 msgstr "{0, plural, one {# elem} other {# elem}}"
 
 #. placeholder {0}: mcpTools.length
-#: packages/admin/src/components/PluginManager.tsx:420
+#: packages/admin/src/components/PluginManager.tsx:426
 msgid "{0, plural, one {# MCP tool} other {# MCP tools}}"
 msgstr ""
 
 #. placeholder {0}: mediaResult.failed.length
-#: packages/admin/src/components/WordPressImport.tsx:2279
+#: packages/admin/src/components/WordPressImport.tsx:2295
 msgid "{0, plural, one {# media error} other {# media errors}}"
 msgstr "{0, plural, one {# médiahiba} other {# médiahiba}}"
 
 #. placeholder {0}: mediaResult.imported.length
-#: packages/admin/src/components/WordPressImport.tsx:2231
+#: packages/admin/src/components/WordPressImport.tsx:2247
 msgid "{0, plural, one {# media file imported} other {# media files imported}}"
 msgstr "{0, plural, one {# médiafájl importálva} other {# médiafájl importálva}}"
 
 #. placeholder {0}: result.menus.created
-#: packages/admin/src/components/WordPressImport.tsx:2255
+#: packages/admin/src/components/WordPressImport.tsx:2271
 msgid "{0, plural, one {# menu imported} other {# menus imported}}"
 msgstr ""
 
 #. placeholder {0}: navMenus.length
-#: packages/admin/src/components/WordPressImport.tsx:1903
+#: packages/admin/src/components/WordPressImport.tsx:1919
 msgid "{0, plural, one {# menu will be imported} other {# menus will be imported}}"
 msgstr "{0, plural, one {# menü importálva lesz} other {# menü importálva lesz}}"
 
 #. placeholder {0}: plugin.capabilities.length
 #: packages/admin/src/components/MarketplaceBrowse.tsx:290
-#: packages/admin/src/components/PluginManager.tsx:434
+#: packages/admin/src/components/PluginManager.tsx:440
 msgid "{0, plural, one {# permission} other {# permissions}}"
 msgstr "{0, plural, one {# engedély} other {# engedély}}"
 
 #. placeholder {0}: mapping.postCount
-#: packages/admin/src/components/WordPressImport.tsx:2486
+#: packages/admin/src/components/WordPressImport.tsx:2502
 msgid "{0, plural, one {# post} other {# posts}}"
 msgstr "{0, plural, one {# bejegyzés} other {# bejegyzés}}"
 
@@ -181,17 +166,17 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# kijelölve} other {# kijelölve}}"
 
 #. placeholder {0}: result.skipped
-#: packages/admin/src/components/WordPressImport.tsx:2223
+#: packages/admin/src/components/WordPressImport.tsx:2239
 msgid "{0, plural, one {# skipped (already exists)} other {# skipped (already exist)}}"
 msgstr "{0, plural, one {# kihagyva (már létezik)} other {# kihagyva (már létezik)}}"
 
 #. placeholder {0}: result.taxonomyAssignments
-#: packages/admin/src/components/WordPressImport.tsx:2247
+#: packages/admin/src/components/WordPressImport.tsx:2263
 msgid "{0, plural, one {# taxonomy assignment} other {# taxonomy assignments}}"
 msgstr ""
 
 #. placeholder {0}: result.taxonomiesCreated.length
-#: packages/admin/src/components/WordPressImport.tsx:2239
+#: packages/admin/src/components/WordPressImport.tsx:2255
 msgid "{0, plural, one {# taxonomy created} other {# taxonomies created}}"
 msgstr ""
 
@@ -229,12 +214,12 @@ msgid "{0} banner"
 msgstr "{0} banner"
 
 #. placeholder {0}: term.label
-#: packages/admin/src/components/TaxonomyManager.tsx:228
+#: packages/admin/src/components/TaxonomyManager.tsx:233
 msgid "{0} can't be moved here — its parent has no translation in this locale, so this list isn't the group it belongs to."
 msgstr ""
 
 #. placeholder {0}: bestMatch?.detected.siteTitle || "WordPress site"
-#: packages/admin/src/components/WordPressImport.tsx:1303
+#: packages/admin/src/components/WordPressImport.tsx:1319
 msgid "{0} detected"
 msgstr "{0} észlelve"
 
@@ -244,12 +229,12 @@ msgid "{0} fallback"
 msgstr ""
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/PluginManager.tsx:115
+#: packages/admin/src/components/PluginManager.tsx:127
 msgid "{0} has been deactivated"
 msgstr "{0} deaktiválva"
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/PluginManager.tsx:324
+#: packages/admin/src/components/PluginManager.tsx:330
 msgid "{0} has been removed"
 msgstr "{0} eltávolítva"
 
@@ -264,18 +249,18 @@ msgid "{0} installs"
 msgstr "{0} telepítés"
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/PluginManager.tsx:96
+#: packages/admin/src/components/PluginManager.tsx:108
 msgid "{0} is now active"
 msgstr "{0} mostantól aktív"
 
 #. placeholder {0}: postType.count
 #. placeholder {1}: postType.suggestedCollection
-#: packages/admin/src/components/WordPressImport.tsx:1973
+#: packages/admin/src/components/WordPressImport.tsx:1989
 msgid "{0} items → {1}"
 msgstr "{0} elem → {1}"
 
 #. placeholder {0}: analysis.postTypes .filter((pt) => selections[pt.name]?.enabled) .reduce((sum, pt) => sum + pt.count, 0)
-#: packages/admin/src/components/WordPressImport.tsx:1896
+#: packages/admin/src/components/WordPressImport.tsx:1912
 msgid "{0} items will be imported"
 msgstr "{0} elem importálva lesz"
 
@@ -295,7 +280,7 @@ msgid "{0} of {total} could not be updated"
 msgstr ""
 
 #. placeholder {0}: plugins?.length ?? 0
-#: packages/admin/src/components/PluginManager.tsx:179
+#: packages/admin/src/components/PluginManager.tsx:191
 msgid "{0} plugins"
 msgstr "{0} plugin"
 
@@ -318,7 +303,7 @@ msgstr "{0} frissítve"
 
 #. placeholder {0}: plugin.name
 #. placeholder {1}: updateInfo?.latest
-#: packages/admin/src/components/PluginManager.tsx:270
+#: packages/admin/src/components/PluginManager.tsx:276
 msgid "{0} updated to v{1}"
 msgstr "{0} frissítve erre: v{1}"
 
@@ -357,15 +342,15 @@ msgstr ""
 msgid "{completedCount} of {0} uploads complete"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:2072
+#: packages/admin/src/components/WordPressImport.tsx:2088
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# fájl} other {# fájl}}"
 
-#: packages/admin/src/components/WordPressImport.tsx:2351
+#: packages/admin/src/components/WordPressImport.tsx:2367
 msgid "{count, plural, one {# item} other {# items}}"
 msgstr "{count, plural, one {# elem} other {# elem}}"
 
-#: packages/admin/src/components/WordPressImport.tsx:2143
+#: packages/admin/src/components/WordPressImport.tsx:2159
 msgid "{current} of {total}"
 msgstr "{current}/{total}"
 
@@ -379,6 +364,10 @@ msgstr ""
 msgid "{filteredCount, plural, one {#{0} item} other {#{1} items}}"
 msgstr "{filteredCount, plural, one {#{0} elem} other {#{1} elem}}"
 
+#: packages/admin/src/components/MediaImportSummary.tsx:9
+msgid "{importedFiles, plural, one {<count>#</count> file imported} other {<count>#</count> files imported}}"
+msgstr ""
+
 #: packages/admin/src/components/LocaleSwitcher.tsx:107
 msgid "{label} — no translation"
 msgstr "{label} — nincs fordítás"
@@ -391,19 +380,19 @@ msgstr "{label} — fordítás megtekintése"
 msgid "{matchCount, plural, one {# item matching \"{searchQuery}\"} other {# items matching \"{searchQuery}\"}}"
 msgstr "{matchCount, plural, one {# elem egyezik ezzel: \"{searchQuery}\"} other {# elem egyezik ezzel: \"{searchQuery}\"}}"
 
-#: packages/admin/src/components/WordPressImport.tsx:2473
+#: packages/admin/src/components/WordPressImport.tsx:2489
 msgid "{matchedCount} of {totalCount} assigned"
 msgstr "{matchedCount}/{totalCount} hozzárendelve"
 
-#: packages/admin/src/components/WordPressImport.tsx:2461
+#: packages/admin/src/components/WordPressImport.tsx:2477
 msgid "{matchedCount} of {totalCount} authors matched by email"
 msgstr "{matchedCount}/{totalCount} szerző e-mail alapján megfeleltetve"
 
-#: packages/admin/src/components/WordPressImport.tsx:1879
+#: packages/admin/src/components/WordPressImport.tsx:1895
 msgid "{needsNewCollections, plural, one {# new collection will be created} other {# new collections will be created}}"
 msgstr "{needsNewCollections, plural, one {# új gyűjtemény jön létre} other {# új gyűjtemény jön létre}}"
 
-#: packages/admin/src/components/WordPressImport.tsx:1888
+#: packages/admin/src/components/WordPressImport.tsx:1904
 msgid "{needsNewFields, plural, one {Fields will be added to # existing collection} other {Fields will be added to # existing collections}}"
 msgstr "{needsNewFields, plural, one {Mezők lesznek hozzáadva # meglévő gyűjteményhez} other {Mezők lesznek hozzáadva # meglévő gyűjteményhez}}"
 
@@ -435,6 +424,10 @@ msgstr ""
 
 #: packages/admin/src/components/PortableTextEditor.tsx:2527
 msgid "{readingTime, plural, one {# min read} other {# min read}}"
+msgstr ""
+
+#: packages/admin/src/components/MediaImportSummary.tsx:11
+msgid "{rewrittenUrls, plural, one {<rewrittenCount>#</rewrittenCount> image URL updated in {updatedContentItems, plural, one {<contentCount>#</contentCount> content item} other {<contentCount>#</contentCount> content items}}} other {<rewrittenCount>#</rewrittenCount> image URLs updated in {updatedContentItems, plural, one {<contentCount>#</contentCount> content item} other {<contentCount>#</contentCount> content items}}}}"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:474
@@ -481,22 +474,22 @@ msgstr "/uj-oldal vagy /cikkek/[slug]"
 msgid "/old-page or /blog/[slug]"
 msgstr "/regi-oldal vagy /blog/[slug]"
 
-#: packages/admin/src/components/WordPressImport.tsx:2093
+#: packages/admin/src/components/WordPressImport.tsx:2109
 msgid "• Files are downloaded from your WordPress site"
 msgstr "• A fájlok letöltődnek a WordPress weboldaledről"
 
-#: packages/admin/src/components/WordPressImport.tsx:2094
+#: packages/admin/src/components/WordPressImport.tsx:2110
 msgid "• Uploaded to your EmDash media storage"
 msgstr "• Feltöltés az EmDash médiatáradba"
 
-#: packages/admin/src/components/WordPressImport.tsx:2095
+#: packages/admin/src/components/WordPressImport.tsx:2111
 msgid "• URLs in your content are updated automatically"
 msgstr "• A tartalomban lévő URL-ek automatikusan frissülnek"
 
 #: packages/admin/src/components/SetupWizard.tsx:225
 #: packages/admin/src/components/SetupWizard.tsx:277
 #: packages/admin/src/components/SetupWizard.tsx:332
-#: packages/admin/src/components/WordPressImport.tsx:1601
+#: packages/admin/src/components/WordPressImport.tsx:1617
 msgid "← Back"
 msgstr "← Vissza"
 
@@ -504,27 +497,27 @@ msgstr "← Vissza"
 msgid "1 year"
 msgstr "1 év"
 
-#: packages/admin/src/components/WordPressImport.tsx:1522
+#: packages/admin/src/components/WordPressImport.tsx:1538
 msgid "1. Log into your WordPress admin"
 msgstr "1. Jelentkezz be a WordPress adminfelületére"
 
-#: packages/admin/src/components/WordPressImport.tsx:1275
+#: packages/admin/src/components/WordPressImport.tsx:1291
 msgid "1. Log into your WordPress admin dashboard"
 msgstr "1. Jelentkezz be a WordPress admin vezérlőpultjára"
 
-#: packages/admin/src/components/WordPressImport.tsx:1277
-msgid "2. Go to"
-msgstr "2. Lépj ide:"
+#: packages/admin/src/components/WordPressImport.tsx:76
+msgid "2. Go to <0>Tools → Export</0>"
+msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1523
+#: packages/admin/src/components/WordPressImport.tsx:1539
 msgid "2. Go to Users → Profile"
 msgstr "2. Lépj a Felhasználók (Users) → Adatlap (Profile) menüpontra"
 
-#: packages/admin/src/components/WordPressImport.tsx:1524
+#: packages/admin/src/components/WordPressImport.tsx:1540
 msgid "3. Scroll to \"Application Passwords\""
 msgstr "3. Görgess le az \"Alkalmazás jelszavak\" (Application Passwords) szakaszig"
 
-#: packages/admin/src/components/WordPressImport.tsx:1279
+#: packages/admin/src/components/WordPressImport.tsx:1295
 msgid "3. Select \"All content\""
 msgstr "3. Válaszd az \"Összes tartalom\" (All content) lehetőséget"
 
@@ -548,11 +541,11 @@ msgstr "307 ideiglenes (szigorú)"
 msgid "308 Permanent (Strict)"
 msgstr "308 végleges (szigorú)"
 
-#: packages/admin/src/components/WordPressImport.tsx:1280
+#: packages/admin/src/components/WordPressImport.tsx:1296
 msgid "4. Click \"Download Export File\""
 msgstr "4. Kattints az \"Exportfájl letöltése\" gombra"
 
-#: packages/admin/src/components/WordPressImport.tsx:1525
+#: packages/admin/src/components/WordPressImport.tsx:1541
 msgid "4. Enter \"EmDash\" and click \"Add New\""
 msgstr "4. Írd be, hogy \"EmDash\", majd kattints az \"Alkalmazás-jelszó hozzáadása\" gombra"
 
@@ -568,11 +561,11 @@ msgstr "410 tartalom törölve (eltűnt)"
 msgid "451 Unavailable for legal reasons"
 msgstr "451 jogi okokból nem elérhető"
 
-#: packages/admin/src/components/WordPressImport.tsx:1526
+#: packages/admin/src/components/WordPressImport.tsx:1542
 msgid "5. Copy the generated password"
 msgstr "5. Másold ki a generált jelszót"
 
-#: packages/admin/src/components/WordPressImport.tsx:1281
+#: packages/admin/src/components/WordPressImport.tsx:1297
 msgid "5. Upload the file here"
 msgstr "5. Töltsd fel itt a fájlt"
 
@@ -637,7 +630,7 @@ msgstr "Fiók"
 msgid "Account already exists"
 msgstr "A fiók már létezik"
 
-#: packages/admin/src/components/SignupPage.tsx:262
+#: packages/admin/src/components/SignupPage.tsx:277
 msgid "Account exists"
 msgstr "A fiók létezik"
 
@@ -645,7 +638,7 @@ msgstr "A fiók létezik"
 msgid "Account Info"
 msgstr "Fiókadatok"
 
-#: packages/admin/src/components/WordPressImport.tsx:1158
+#: packages/admin/src/components/WordPressImport.tsx:1176
 msgid "ACF Fields"
 msgstr ""
 
@@ -653,7 +646,7 @@ msgstr ""
 #: packages/admin/src/components/ContentList.tsx:617
 #: packages/admin/src/components/ContentList.tsx:743
 #: packages/admin/src/components/ContentTypeList.tsx:190
-#: packages/admin/src/components/TaxonomyManager.tsx:1050
+#: packages/admin/src/components/TaxonomyManager.tsx:1055
 #: packages/admin/src/routes/byline-schema.tsx:249
 msgid "Actions"
 msgstr "Műveletek"
@@ -673,8 +666,8 @@ msgstr "Hozzáadás"
 #. placeholder {0}: field.item_label
 #. placeholder {0}: taxonomyDef.labelSingular || t`Term`
 #: packages/admin/src/components/PortableTextEditor.tsx:2138
-#: packages/admin/src/components/TaxonomyManager.tsx:540
-#: packages/admin/src/components/TaxonomyManager.tsx:1041
+#: packages/admin/src/components/TaxonomyManager.tsx:545
+#: packages/admin/src/components/TaxonomyManager.tsx:1046
 msgid "Add {0}"
 msgstr "{0} hozzáadása"
 
@@ -709,8 +702,8 @@ msgstr "Tartalom hozzáadása"
 msgid "Add Custom Link"
 msgstr "Egyéni link hozzáadása"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:211
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:306
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:220
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:315
 msgid "Add Domain"
 msgstr "Domain hozzáadása"
 
@@ -720,7 +713,7 @@ msgstr "Domain hozzáadása"
 msgid "Add Field"
 msgstr "Mező hozzáadása"
 
-#: packages/admin/src/components/WordPressImport.tsx:1984
+#: packages/admin/src/components/WordPressImport.tsx:2000
 msgid "Add fields"
 msgstr "Mezők hozzáadása"
 
@@ -791,7 +784,7 @@ msgstr "noindex meta tag hozzáadása"
 msgid "Add Passkey"
 msgstr "Passkey hozzáadása"
 
-#: packages/admin/src/components/PluginManager.tsx:211
+#: packages/admin/src/components/PluginManager.tsx:217
 msgid "Add plugins to your astro.config.mjs to extend EmDash functionality."
 msgstr "Adj hozzá plugineket az astro.config.mjs fájlhoz az EmDash funkcióinak bővítéséhez."
 
@@ -824,15 +817,15 @@ msgid "Add your social media profiles. These are available to your site's theme 
 msgstr "Add meg a közösségimédia-profiljaidat. Ezek elérhetők a weboldal témája számára, és megjeleníthetők a fejlécben, a láblécben vagy a szerzői bemutatkozásokban."
 
 #: packages/admin/src/components/MenuEditor.tsx:441
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:306
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:315
 msgid "Adding..."
 msgstr "Hozzáadás..."
 
-#: packages/admin/src/components/WordPressImport.tsx:1753
+#: packages/admin/src/components/WordPressImport.tsx:1769
 msgid "Additional data to import."
 msgstr "További importálandó adatok."
 
-#: packages/admin/src/components/WordPressImport.tsx:1483
+#: packages/admin/src/components/WordPressImport.tsx:1499
 msgid "admin"
 msgstr ""
 
@@ -854,12 +847,12 @@ msgstr "Adminisztrátor"
 msgid "After send:"
 msgstr "Küldés után:"
 
-#: packages/admin/src/components/PluginManager.tsx:543
+#: packages/admin/src/components/PluginManager.tsx:547
 msgid "Agent access"
 msgstr ""
 
 #. placeholder {0}: plugin.name
-#: packages/admin/src/components/PluginManager.tsx:335
+#: packages/admin/src/components/PluginManager.tsx:341
 msgid "Agent access for {0} has been updated"
 msgstr ""
 
@@ -910,7 +903,7 @@ msgstr "Összes tartalom"
 msgid "All comments require approval"
 msgstr "Minden hozzászóláshoz jóváhagyás szükséges"
 
-#: packages/admin/src/components/WordPressImport.tsx:2518
+#: packages/admin/src/components/WordPressImport.tsx:2534
 msgid "All imported content will be unassigned. You can reassign authors later from the content editor."
 msgstr "Minden importált tartalom hozzárendelés nélkül marad. A szerzőket később a tartalomszerkesztőben újra hozzárendelheted."
 
@@ -941,12 +934,12 @@ msgstr "Összes típus"
 msgid "All uploads finished"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:545
+#: packages/admin/src/components/PluginManager.tsx:549
 msgid "Allow MCP tokens with plugin-tool scope to invoke these routes."
 msgstr ""
 
 #: packages/admin/src/components/Settings.tsx:77
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:150
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:159
 msgid "Allow users from specific domains to sign up"
 msgstr "Felhasználók regisztrációjának engedélyezése adott domainekből"
 
@@ -954,7 +947,7 @@ msgstr "Felhasználók regisztrációjának engedélyezése adott domainekből"
 msgid "Allow visitors to leave comments on this collection's content"
 msgstr "Látogatói hozzászólások engedélyezése ennek a gyűjteménynek a tartalmainál"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:195
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:204
 msgid "Allowed Domains"
 msgstr "Engedélyezett domainek"
 
@@ -962,11 +955,11 @@ msgstr "Engedélyezett domainek"
 msgid "Allowed types"
 msgstr "Engedélyezett típusok"
 
-#: packages/admin/src/components/SignupPage.tsx:439
+#: packages/admin/src/components/SignupPage.tsx:454
 msgid "Already have an account?"
 msgstr "Már van fiókod?"
 
-#: packages/admin/src/components/PluginManager.tsx:719
+#: packages/admin/src/components/PluginManager.tsx:723
 msgid "Also delete plugin storage data"
 msgstr "A plugin tárolt adatainak törlése is"
 
@@ -996,18 +989,18 @@ msgstr ""
 msgid "Alt text set"
 msgstr "Alternatív szöveg beállítva"
 
-#: packages/admin/src/components/WordPressImport.tsx:1395
+#: packages/admin/src/components/WordPressImport.tsx:1411
 msgid "Alternatively, you can export from WordPress (Tools → Export) and upload the file."
 msgstr "Másik lehetőségként exportálhatsz WordPressből (Eszközök → Exportálás), majd feltöltheted a fájlt."
 
 #: packages/admin/src/components/DialogError.tsx:14
 #: packages/admin/src/components/MarketplaceBrowse.tsx:135
-#: packages/admin/src/components/PluginManager.tsx:102
-#: packages/admin/src/components/PluginManager.tsx:121
+#: packages/admin/src/components/PluginManager.tsx:114
+#: packages/admin/src/components/PluginManager.tsx:133
 #: packages/admin/src/components/PluginSettings.tsx:75
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:76
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:99
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:116
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:85
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:108
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:125
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:217
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:218
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:476
@@ -1063,11 +1056,11 @@ msgstr "Váratlan hiba történt."
 msgid "An unknown error occurred"
 msgstr "Ismeretlen hiba történt"
 
-#: packages/admin/src/components/WordPressImport.tsx:1575
+#: packages/admin/src/components/WordPressImport.tsx:1591
 msgid "Analyzing export file..."
 msgstr "Exportfájl elemzése..."
 
-#: packages/admin/src/components/WordPressImport.tsx:810
+#: packages/admin/src/components/WordPressImport.tsx:828
 msgid "Analyzing WordPress site..."
 msgstr "WordPress weboldal elemzése..."
 
@@ -1086,7 +1079,7 @@ msgstr "API tokenek"
 msgid "Appears on posts and pages"
 msgstr "Bejegyzéseken és oldalakon jelenik meg"
 
-#: packages/admin/src/components/WordPressImport.tsx:1490
+#: packages/admin/src/components/WordPressImport.tsx:1506
 msgid "Application Password"
 msgstr "Alkalmazásjelszó"
 
@@ -1155,7 +1148,7 @@ msgstr "Biztosan törlöd ezt a menüt? Ez az összes menüelemet is törli. A m
 msgid "As an administrator, you can invite other users from the Users section."
 msgstr "Adminisztrátorként a Felhasználók szakaszból hívhatsz meg további felhasználókat."
 
-#: packages/admin/src/components/WordPressImport.tsx:2456
+#: packages/admin/src/components/WordPressImport.tsx:2472
 msgid "Assign WordPress authors to EmDash users. Posts will be attributed to the selected user."
 msgstr "Rendeld hozzá a WordPress szerzőket EmDash-felhasználókhoz. A bejegyzések a kiválasztott felhasználóhoz lesznek társítva."
 
@@ -1169,8 +1162,8 @@ msgid "Audio"
 msgstr "Hang"
 
 #. placeholder {0}: error.message
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:277
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:278
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:278
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:279
 msgid "Authentication error: {0}"
 msgstr "Hitelesítési hiba: {0}"
 
@@ -1178,7 +1171,7 @@ msgstr "Hitelesítési hiba: {0}"
 msgid "Authentication error: {error}"
 msgstr "Hitelesítési hiba: {error}"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:254
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:255
 msgid "Authentication failed"
 msgstr "A hitelesítés sikertelen"
 
@@ -1187,7 +1180,7 @@ msgstr "A hitelesítés sikertelen"
 msgid "Authentication is managed by an external provider ({0}). Passkey settings are not available when using external authentication."
 msgstr "A hitelesítést külső szolgáltató kezeli ({0}). Külső hitelesítés használatakor a passkey-beállítások nem érhetők el."
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:261
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:262
 msgid "Authentication was cancelled or timed out. Please try again."
 msgstr "A hitelesítés megszakadt vagy időtúllépés történt. Próbáld újra."
 
@@ -1199,7 +1192,7 @@ msgstr "A hitelesítés megszakadt vagy időtúllépés történt. Próbáld új
 msgid "Author"
 msgstr "Szerző"
 
-#: packages/admin/src/components/WordPressImport.tsx:2471
+#: packages/admin/src/components/WordPressImport.tsx:2487
 msgid "Author Mapping"
 msgstr "Szerzők megfeleltetése"
 
@@ -1239,7 +1232,7 @@ msgstr "Automatikus (slug módosítás)"
 msgid "Auto-approve authenticated users"
 msgstr "Hitelesített felhasználók automatikus jóváhagyása"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:586
+#: packages/admin/src/components/TaxonomyManager.tsx:591
 msgid "Auto-generated from name (you can edit)"
 msgstr "A névből automatikusan generálva (szerkeszthető)"
 
@@ -1282,8 +1275,8 @@ msgstr "Avatár"
 #: packages/admin/src/components/editor/BlockMenu.tsx:266
 #: packages/admin/src/components/MediaLibrary.tsx:778
 #: packages/admin/src/components/MenuEditor.tsx:362
-#: packages/admin/src/components/WordPressImport.tsx:1510
-#: packages/admin/src/components/WordPressImport.tsx:2527
+#: packages/admin/src/components/WordPressImport.tsx:1526
+#: packages/admin/src/components/WordPressImport.tsx:2543
 msgid "Back"
 msgstr "Vissza"
 
@@ -1299,7 +1292,7 @@ msgstr "Vissza a tartalomtípusokhoz"
 #: packages/admin/src/components/LoginPage.tsx:118
 #: packages/admin/src/components/LoginPage.tsx:154
 #: packages/admin/src/components/LoginPage.tsx:313
-#: packages/admin/src/components/SignupPage.tsx:282
+#: packages/admin/src/components/SignupPage.tsx:297
 msgid "Back to login"
 msgstr "Vissza a bejelentkezéshez"
 
@@ -1405,8 +1398,8 @@ msgstr "Pluginek böngészése és telepítése a weboldal bővítéséhez."
 msgid "Browse files"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1124
-#: packages/admin/src/components/WordPressImport.tsx:1594
+#: packages/admin/src/components/WordPressImport.tsx:1142
+#: packages/admin/src/components/WordPressImport.tsx:1610
 msgid "Browse Files"
 msgstr "Fájlok böngészése"
 
@@ -1414,9 +1407,9 @@ msgstr "Fájlok böngészése"
 msgid "Browse files to upload"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:204
-msgid "Browse the"
-msgstr "Böngészés:"
+#: packages/admin/src/components/PluginManager.tsx:61
+msgid "Browse the <0>marketplace</0> to install plugins, or add them to your astro.config.mjs."
+msgstr ""
 
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:79
 msgid "Browse themes and preview them with your own content."
@@ -1498,20 +1491,20 @@ msgstr "Tartalmat tekinthet meg"
 #: packages/admin/src/components/MenuEditor.tsx:438
 #: packages/admin/src/components/MenuEditor.tsx:623
 #: packages/admin/src/components/MenuList.tsx:175
-#: packages/admin/src/components/PluginManager.tsx:725
+#: packages/admin/src/components/PluginManager.tsx:729
 #: packages/admin/src/components/PortableTextEditor.tsx:4223
 #: packages/admin/src/components/Redirects.tsx:183
 #: packages/admin/src/components/SectionPickerModal.tsx:131
 #: packages/admin/src/components/Sections.tsx:209
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:207
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:216
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:234
 #: packages/admin/src/components/settings/SecuritySettings.tsx:166
-#: packages/admin/src/components/TaxonomyManager.tsx:369
-#: packages/admin/src/components/TaxonomyManager.tsx:656
-#: packages/admin/src/components/TaxonomyManager.tsx:870
+#: packages/admin/src/components/TaxonomyManager.tsx:374
+#: packages/admin/src/components/TaxonomyManager.tsx:661
+#: packages/admin/src/components/TaxonomyManager.tsx:875
 #: packages/admin/src/components/users/InviteUserModal.tsx:198
 #: packages/admin/src/components/Widgets.tsx:451
-#: packages/admin/src/components/WordPressImport.tsx:1917
+#: packages/admin/src/components/WordPressImport.tsx:1933
 msgid "Cancel"
 msgstr "Mégse"
 
@@ -1545,7 +1538,7 @@ msgstr "Nem állapítható meg a MIME-típus az URL-ből. Olyan URL-t használj,
 msgid "Canonical URL"
 msgstr "Kanonikus URL"
 
-#: packages/admin/src/components/PluginManager.tsx:519
+#: packages/admin/src/components/PluginManager.tsx:523
 msgid "Capabilities"
 msgstr "Engedélyek"
 
@@ -1570,11 +1563,11 @@ msgid "Categories"
 msgstr "Kategóriák"
 
 #. placeholder {0}: analysis.categories
-#: packages/admin/src/components/WordPressImport.tsx:1785
+#: packages/admin/src/components/WordPressImport.tsx:1801
 msgid "Categories ({0})"
 msgstr "Kategóriák ({0})"
 
-#: packages/admin/src/components/WordPressImport.tsx:1146
+#: packages/admin/src/components/WordPressImport.tsx:1164
 msgid "Categories & Tags"
 msgstr ""
 
@@ -1623,21 +1616,21 @@ msgstr "Módosítások elvetve"
 msgid "Character between page title and site name (e.g., \"My Post | My Site\")"
 msgstr "Az oldal címe és a weboldal neve közötti karakter (pl. \"Saját bejegyzés | Saját weboldal\")"
 
-#: packages/admin/src/components/PluginManager.tsx:171
+#: packages/admin/src/components/PluginManager.tsx:183
 msgid "Check for updates"
 msgstr "Frissítések keresése"
 
-#: packages/admin/src/components/WordPressImport.tsx:1095
+#: packages/admin/src/components/WordPressImport.tsx:1113
 msgid "Check Site"
 msgstr "Weboldal ellenőrzése"
 
 #: packages/admin/src/components/LoginPage.tsx:102
-#: packages/admin/src/components/SignupPage.tsx:131
-#: packages/admin/src/components/SignupPage.tsx:402
+#: packages/admin/src/components/SignupPage.tsx:148
+#: packages/admin/src/components/SignupPage.tsx:417
 msgid "Check your email"
 msgstr "Ellenőrizd az e-mailjeidet"
 
-#: packages/admin/src/components/WordPressImport.tsx:776
+#: packages/admin/src/components/WordPressImport.tsx:794
 msgid "Checking {urlInput}..."
 msgstr "{urlInput} ellenőrzése..."
 
@@ -1689,7 +1682,7 @@ msgstr ""
 msgid "Clear stored value for {fieldKey}"
 msgstr ""
 
-#: packages/admin/src/components/SignupPage.tsx:139
+#: packages/admin/src/components/SignupPage.tsx:155
 msgid "Click the link in the email to continue setting up your account."
 msgstr "A fiók beállításának folytatásához kattints az e-mailben lévő linkre."
 
@@ -1738,16 +1731,16 @@ msgstr "A bejelentkezéshez kattints az e-mailben lévő linkre."
 #: packages/admin/src/components/Sections.tsx:153
 #: packages/admin/src/components/Sections.tsx:159
 #: packages/admin/src/components/Sections.tsx:163
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:328
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:334
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:338
-#: packages/admin/src/components/TaxonomyManager.tsx:346
-#: packages/admin/src/components/TaxonomyManager.tsx:549
-#: packages/admin/src/components/TaxonomyManager.tsx:555
-#: packages/admin/src/components/TaxonomyManager.tsx:559
-#: packages/admin/src/components/TaxonomyManager.tsx:789
-#: packages/admin/src/components/TaxonomyManager.tsx:795
-#: packages/admin/src/components/TaxonomyManager.tsx:799
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:337
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:343
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:347
+#: packages/admin/src/components/TaxonomyManager.tsx:351
+#: packages/admin/src/components/TaxonomyManager.tsx:554
+#: packages/admin/src/components/TaxonomyManager.tsx:560
+#: packages/admin/src/components/TaxonomyManager.tsx:564
+#: packages/admin/src/components/TaxonomyManager.tsx:794
+#: packages/admin/src/components/TaxonomyManager.tsx:800
+#: packages/admin/src/components/TaxonomyManager.tsx:804
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:298
 #: packages/admin/src/components/users/InviteUserModal.tsx:88
 #: packages/admin/src/components/users/InviteUserModal.tsx:94
@@ -1788,10 +1781,7 @@ msgid "Code Block"
 msgstr "Kódblokk"
 
 #: packages/admin/src/components/PluginManager.tsx:506
-msgid "Collapse"
-msgstr "Összecsukás"
-
-#: packages/admin/src/components/PluginManager.tsx:500
+#: packages/admin/src/components/PluginManager.tsx:511
 msgid "Collapse details"
 msgstr "Részletek összecsukása"
 
@@ -1807,11 +1797,11 @@ msgstr "Gyűjtemény"
 msgid "Collection:"
 msgstr "Gyűjtemény:"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:840
+#: packages/admin/src/components/TaxonomyManager.tsx:845
 msgid "Collections"
 msgstr "Gyűjtemények"
 
-#: packages/admin/src/components/WordPressImport.tsx:2327
+#: packages/admin/src/components/WordPressImport.tsx:2343
 msgid "Collections created:"
 msgstr "Létrehozott gyűjtemények:"
 
@@ -1846,7 +1836,7 @@ msgstr "A bejelentkezett CMS-felhasználók hozzászólásai automatikusan jóv�
 msgid "Complete"
 msgstr ""
 
-#: packages/admin/src/components/SignupPage.tsx:403
+#: packages/admin/src/components/SignupPage.tsx:418
 msgid "Complete signup"
 msgstr "Regisztráció befejezése"
 
@@ -1862,21 +1852,21 @@ msgstr "Mező beállítása"
 msgid "Confirm"
 msgstr "Megerősítés"
 
-#: packages/admin/src/components/WordPressImport.tsx:701
-#: packages/admin/src/components/WordPressImport.tsx:1054
+#: packages/admin/src/components/WordPressImport.tsx:719
+#: packages/admin/src/components/WordPressImport.tsx:1072
 msgid "Connect"
 msgstr "Kapcsolódás"
 
-#: packages/admin/src/components/WordPressImport.tsx:1507
+#: packages/admin/src/components/WordPressImport.tsx:1523
 msgid "Connect & Analyze"
 msgstr "Kapcsolódás és elemzés"
 
 #. placeholder {0}: siteTitle || "WordPress"
-#: packages/admin/src/components/WordPressImport.tsx:1457
+#: packages/admin/src/components/WordPressImport.tsx:1473
 msgid "Connect to {0}"
 msgstr "Kapcsolódás ehhez: {0}"
 
-#: packages/admin/src/components/WordPressImport.tsx:1373
+#: packages/admin/src/components/WordPressImport.tsx:1389
 msgid "Connect with WordPress"
 msgstr "Kapcsolódás WordPress-szel"
 
@@ -1905,11 +1895,11 @@ msgid "Content Block"
 msgstr "Tartalomblokk"
 
 #. placeholder {0}: result.errors.length
-#: packages/admin/src/components/WordPressImport.tsx:2382
+#: packages/admin/src/components/WordPressImport.tsx:2398
 msgid "Content Errors ({0})"
 msgstr "Tartalmi hibák ({0})"
 
-#: packages/admin/src/components/WordPressImport.tsx:1317
+#: packages/admin/src/components/WordPressImport.tsx:1333
 msgid "Content found:"
 msgstr "Talált tartalom:"
 
@@ -1928,10 +1918,6 @@ msgstr "Tartalom ID:"
 #: packages/admin/src/router.tsx:1084
 msgid "Content is now live"
 msgstr "A tartalom élesítve"
-
-#: packages/admin/src/components/WordPressImport.tsx:2371
-msgid "content items"
-msgstr "tartalmi elemek"
 
 #: packages/admin/src/components/ContentSettingsPanel.tsx:498
 msgid "Content locale"
@@ -1953,7 +1939,7 @@ msgstr "A tartalom visszaállítva vázlatra"
 msgid "Content snapshot:"
 msgstr "Tartalom-pillanatkép:"
 
-#: packages/admin/src/components/WordPressImport.tsx:1731
+#: packages/admin/src/components/WordPressImport.tsx:1747
 msgid "Content to Import"
 msgstr "Importálandó tartalom"
 
@@ -1963,7 +1949,7 @@ msgstr "Importálandó tartalom"
 msgid "Content Types"
 msgstr "Tartalomtípusok"
 
-#: packages/admin/src/components/WordPressImport.tsx:2310
+#: packages/admin/src/components/WordPressImport.tsx:2326
 msgid "Content was skipped because it already exists"
 msgstr "A tartalom kihagyva, mert már létezik"
 
@@ -1971,7 +1957,7 @@ msgstr "A tartalom kihagyva, mert már létezik"
 msgid "Content Write"
 msgstr "Tartalom írása"
 
-#: packages/admin/src/components/SignupPage.tsx:92
+#: packages/admin/src/components/SignupPage.tsx:109
 msgid "Continue"
 msgstr "Folytatás"
 
@@ -1980,7 +1966,7 @@ msgstr "Folytatás"
 msgid "Continue →"
 msgstr "Folytatás →"
 
-#: packages/admin/src/components/WordPressImport.tsx:2529
+#: packages/admin/src/components/WordPressImport.tsx:2545
 msgid "Continue Import"
 msgstr "Import folytatása"
 
@@ -2046,7 +2032,7 @@ msgstr "Nem sikerült betölteni a képet az URL-ről"
 msgid "Couldn’t confirm whether the media item or selected folder still exists. Try again."
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1264
+#: packages/admin/src/components/WordPressImport.tsx:1280
 msgid "Couldn't detect WordPress"
 msgstr "Nem sikerült felismerni a WordPresst"
 
@@ -2075,7 +2061,7 @@ msgstr "Nem sikerült keresni a szerzők között. Próbáld újra."
 msgid "Couldn't verify how many values reference \"{0}\". Deleting will still remove every stored value for this field — but the count above could not be checked."
 msgstr "Nem sikerült ellenőrizni, hány érték hivatkozik erre: \"{0}\". A törlés így is eltávolít minden ehhez a mezőhöz tartozó tárolt értéket — de a fenti darabszámot nem sikerült ellenőrizni."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1049
+#: packages/admin/src/components/TaxonomyManager.tsx:1054
 msgid "Count"
 msgstr "Darab"
 
@@ -2084,7 +2070,7 @@ msgstr "Darab"
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
 #: packages/admin/src/components/Sections.tsx:212
-#: packages/admin/src/components/TaxonomyManager.tsx:663
+#: packages/admin/src/components/TaxonomyManager.tsx:668
 #: packages/admin/src/components/Widgets.tsx:454
 #: packages/admin/src/routes/bylines.tsx:579
 msgid "Create"
@@ -2104,7 +2090,7 @@ msgid "Create a bullet list"
 msgstr "Felsorolás létrehozása"
 
 #. placeholder {0}: taxonomyDef.labelSingular?.toLowerCase() || "term"
-#: packages/admin/src/components/TaxonomyManager.tsx:545
+#: packages/admin/src/components/TaxonomyManager.tsx:550
 msgid "Create a new {0}"
 msgstr "Új {0} létrehozása"
 
@@ -2113,11 +2099,11 @@ msgid "Create a numbered list"
 msgstr "Számozott lista létrehozása"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:84
-#: packages/admin/src/components/SignupPage.tsx:221
+#: packages/admin/src/components/SignupPage.tsx:236
 msgid "Create Account"
 msgstr "Fiók létrehozása"
 
-#: packages/admin/src/components/SignupPage.tsx:401
+#: packages/admin/src/components/SignupPage.tsx:416
 msgid "Create an account"
 msgstr "Fiók létrehozása"
 
@@ -2147,7 +2133,7 @@ msgstr "Új menü létrehozása"
 msgid "Create New Token"
 msgstr "Új token létrehozása"
 
-#: packages/admin/src/components/WordPressImport.tsx:1501
+#: packages/admin/src/components/WordPressImport.tsx:1517
 msgid "Create one in WordPress: Users → Profile → Application Passwords"
 msgstr "Hozz létre egyet WordPressben: Felhasználók → Profil → Alkalmazásjelszavak"
 
@@ -2175,7 +2161,7 @@ msgstr "Átirányítás létrehozása ehhez az útvonalhoz"
 msgid "Create redirect rules to manage URL changes."
 msgstr "Átirányítási szabályok létrehozása az URL-változások kezeléséhez."
 
-#: packages/admin/src/components/WordPressImport.tsx:1921
+#: packages/admin/src/components/WordPressImport.tsx:1937
 msgid "Create Schema & Import"
 msgstr "Séma létrehozása és importálás"
 
@@ -2188,8 +2174,8 @@ msgstr "Szakasz létrehozása"
 msgid "Create sections in the Sections library to use them here"
 msgstr "Hozz létre szakaszokat a Szakaszok könyvtárban, hogy itt használhasd őket"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:782
-#: packages/admin/src/components/TaxonomyManager.tsx:873
+#: packages/admin/src/components/TaxonomyManager.tsx:787
+#: packages/admin/src/components/TaxonomyManager.tsx:878
 msgid "Create Taxonomy"
 msgstr "Taxonómia létrehozása"
 
@@ -2206,12 +2192,15 @@ msgstr "Widgetterület létrehozása"
 msgid "Create your account"
 msgstr "Fiók létrehozása"
 
+#: packages/admin/src/components/ContentTypeList.tsx:206
+msgid "Create your first content type"
+msgstr ""
+
 #: packages/admin/src/components/MenuList.tsx:190
 msgid "Create your first navigation menu to get started"
 msgstr "Első navigációs menü létrehozása a kezdéshez"
 
 #: packages/admin/src/components/ContentList.tsx:645
-#: packages/admin/src/components/ContentTypeList.tsx:206
 msgid "Create your first one"
 msgstr "Hozd létre az elsőt"
 
@@ -2220,7 +2209,7 @@ msgid "Create your first reusable content section to get started."
 msgstr "Hozd létre az első újrahasznosítható tartalomszakaszt a kezdéshez."
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:75
-#: packages/admin/src/components/SignupPage.tsx:212
+#: packages/admin/src/components/SignupPage.tsx:227
 msgid "Create your passkey"
 msgstr "Passkey létrehozása"
 
@@ -2267,7 +2256,7 @@ msgstr "{0} fordítás létrehozva"
 msgid "Created At"
 msgstr "Létrehozva"
 
-#: packages/admin/src/components/WordPressImport.tsx:887
+#: packages/admin/src/components/WordPressImport.tsx:905
 msgid "Creating collections and fields..."
 msgstr "Gyűjtemények és mezők létrehozása..."
 
@@ -2276,7 +2265,7 @@ msgstr "Gyűjtemények és mezők létrehozása..."
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
-#: packages/admin/src/components/TaxonomyManager.tsx:873
+#: packages/admin/src/components/TaxonomyManager.tsx:878
 #: packages/admin/src/components/TaxonomySidebar.tsx:339
 msgid "Creating..."
 msgstr "Létrehozás..."
@@ -2313,7 +2302,7 @@ msgstr "Egyéni robots.txt tartalom. Hagyd üresen az alapértelmezett használa
 msgid "Custom Section"
 msgstr "Egyéni szakasz"
 
-#: packages/admin/src/components/WordPressImport.tsx:1147
+#: packages/admin/src/components/WordPressImport.tsx:1165
 msgid "Custom Taxonomies"
 msgstr ""
 
@@ -2367,12 +2356,12 @@ msgstr "Tizedes szám"
 msgid "Declared permissions"
 msgstr "Deklarált engedélyek"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:290
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:345
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:299
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:354
 msgid "Default Role"
 msgstr "Alapértelmezett szerepkör"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:241
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:250
 msgid "Default role:"
 msgstr "Alapértelmezett szerepkör:"
 
@@ -2384,7 +2373,7 @@ msgstr "Alapértelmezett közösségi kép"
 msgid "Default Social Image"
 msgstr "Alapértelmezett közösségi kép"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:785
+#: packages/admin/src/components/TaxonomyManager.tsx:790
 msgid "Define a new taxonomy for classifying content"
 msgstr "Új taxonómia meghatározása a tartalom osztályozásához"
 
@@ -2415,7 +2404,7 @@ msgstr "Kódban definiálva"
 #: packages/admin/src/components/Sections.tsx:308
 #: packages/admin/src/components/Sections.tsx:407
 #: packages/admin/src/components/settings/BackupSettings.tsx:352
-#: packages/admin/src/components/TaxonomyManager.tsx:1112
+#: packages/admin/src/components/TaxonomyManager.tsx:1117
 #: packages/admin/src/components/Widgets.tsx:716
 #: packages/admin/src/routes/byline-schema.tsx:378
 #: packages/admin/src/routes/bylines.tsx:588
@@ -2438,9 +2427,9 @@ msgstr "Törlöd ezt: \"{0}\"? Ez nem vonható vissza."
 #. placeholder {0}: domain.domain
 #: packages/admin/src/components/ContentTypeList.tsx:341
 #: packages/admin/src/components/Sections.tsx:408
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:266
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:275
 #: packages/admin/src/components/settings/BackupSettings.tsx:312
-#: packages/admin/src/components/TaxonomyManager.tsx:280
+#: packages/admin/src/components/TaxonomyManager.tsx:285
 #: packages/admin/src/components/Widgets.tsx:817
 #: packages/admin/src/routes/byline-schema.tsx:458
 msgid "Delete {0}"
@@ -2462,7 +2451,7 @@ msgid "Delete {0} widget area"
 msgstr "{0} widgetterület törlése"
 
 #. placeholder {0}: taxonomyDef.labelSingular || "Term"
-#: packages/admin/src/components/TaxonomyManager.tsx:1108
+#: packages/admin/src/components/TaxonomyManager.tsx:1113
 msgid "Delete {0}?"
 msgstr "{0} törlése?"
 
@@ -2588,7 +2577,7 @@ msgstr "\"{0}\" törlése az összes szerzői leírásból eltávolítja a hozz�
 #: packages/admin/src/components/Redirects.tsx:604
 #: packages/admin/src/components/Sections.tsx:309
 #: packages/admin/src/components/settings/BackupSettings.tsx:353
-#: packages/admin/src/components/TaxonomyManager.tsx:1113
+#: packages/admin/src/components/TaxonomyManager.tsx:1118
 #: packages/admin/src/components/Widgets.tsx:717
 #: packages/admin/src/routes/bylines.tsx:625
 msgid "Deleting..."
@@ -2642,7 +2631,7 @@ msgstr "Írd le, mire való ez a szakasz..."
 msgid "Description"
 msgstr "Leírás"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:618
+#: packages/admin/src/components/TaxonomyManager.tsx:623
 msgid "Description (optional)"
 msgstr "Leírás (opcionális)"
 
@@ -2655,13 +2644,9 @@ msgid "Destination path"
 msgstr "Célútvonal"
 
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:153
-#: packages/admin/src/components/PluginManager.tsx:564
+#: packages/admin/src/components/PluginManager.tsx:568
 msgid "Destructive"
 msgstr ""
-
-#: packages/admin/src/components/PluginManager.tsx:506
-msgid "details"
-msgstr "részletek"
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:470
 #: packages/admin/src/components/MediaDetailPanel.tsx:486
@@ -2684,7 +2669,7 @@ msgstr "Eszközhöz kötött"
 msgid "Device-bound passkey"
 msgstr "Eszközhöz kötött passkey"
 
-#: packages/admin/src/components/SignupPage.tsx:144
+#: packages/admin/src/components/SignupPage.tsx:160
 msgid "Didn't receive the email?"
 msgstr "Nem kaptad meg az e-mailt?"
 
@@ -2700,11 +2685,11 @@ msgstr "Méretek:"
 msgid "Disable"
 msgstr "Letiltás"
 
-#: packages/admin/src/components/PluginManager.tsx:494
+#: packages/admin/src/components/PluginManager.tsx:500
 msgid "Disable plugin"
 msgstr "Plugin letiltása"
 
-#: packages/admin/src/components/PluginManager.tsx:554
+#: packages/admin/src/components/PluginManager.tsx:558
 msgid "Disable plugin MCP tools"
 msgstr ""
 
@@ -2720,14 +2705,14 @@ msgstr "Felhasználó letiltása"
 msgid "Disable User?"
 msgstr "Letiltod a felhasználót?"
 
-#: packages/admin/src/components/PluginManager.tsx:383
+#: packages/admin/src/components/PluginManager.tsx:389
 #: packages/admin/src/components/Redirects.tsx:426
 #: packages/admin/src/components/users/UserDetail.tsx:201
 #: packages/admin/src/components/users/UserList.tsx:212
 msgid "Disabled"
 msgstr "Letiltva"
 
-#: packages/admin/src/components/PluginManager.tsx:614
+#: packages/admin/src/components/PluginManager.tsx:618
 msgid "Disabled:"
 msgstr "Letiltva:"
 
@@ -2827,19 +2812,19 @@ msgstr "Dockerfile"
 msgid "Documents"
 msgstr "Dokumentumok"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:284
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:293
 msgid "Domain"
 msgstr "Domain"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:71
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:80
 msgid "Domain added successfully"
 msgstr "Domain sikeresen hozzáadva"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:111
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:120
 msgid "Domain removed"
 msgstr "Domain eltávolítva"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:94
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:103
 msgid "Domain updated"
 msgstr "Domain frissítve"
 
@@ -2849,7 +2834,7 @@ msgstr "Nincs még fiókod? <0>Regisztráció</0>"
 
 #: packages/admin/src/components/MediaUploadDialog.tsx:512
 #: packages/admin/src/components/users/InviteUserModal.tsx:142
-#: packages/admin/src/components/WordPressImport.tsx:2128
+#: packages/admin/src/components/WordPressImport.tsx:2144
 msgid "Done"
 msgstr "Kész"
 
@@ -2883,7 +2868,7 @@ msgstr ""
 msgid "Download SBOM"
 msgstr "SBOM letöltése"
 
-#: packages/admin/src/components/WordPressImport.tsx:2126
+#: packages/admin/src/components/WordPressImport.tsx:2142
 msgid "Downloading"
 msgstr "Letöltés"
 
@@ -2901,7 +2886,7 @@ msgstr "vázlat, publikált vagy archivált"
 msgid "Drafts"
 msgstr "Vázlatok"
 
-#: packages/admin/src/components/WordPressImport.tsx:1166
+#: packages/admin/src/components/WordPressImport.tsx:1184
 msgid "Drafts & Private"
 msgstr ""
 
@@ -2909,7 +2894,7 @@ msgstr ""
 msgid "Drag and drop files here"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1119
+#: packages/admin/src/components/WordPressImport.tsx:1137
 msgid "Drag and drop or click to browse (.xml)"
 msgstr "Húzd ide, vagy kattints a tallózáshoz (.xml)"
 
@@ -2953,7 +2938,7 @@ msgstr ""
 msgid "Drop to add widget"
 msgstr "Engedd el a widget hozzáadásához"
 
-#: packages/admin/src/components/WordPressImport.tsx:1588
+#: packages/admin/src/components/WordPressImport.tsx:1604
 msgid "Drop your WordPress export file here"
 msgstr "Húzd ide a WordPress exportfájlt"
 
@@ -2977,7 +2962,7 @@ msgstr "pl. import, blog"
 msgid "e.g., CI/CD Pipeline"
 msgstr "pl. CI/CD Pipeline"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:333
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:325
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "pl. MacBook Pro, iPhone"
 
@@ -2996,9 +2981,9 @@ msgstr "Szerkesztés"
 #. placeholder {0}: domain.domain
 #: packages/admin/src/components/ContentTypeList.tsx:332
 #: packages/admin/src/components/PortableTextEditor.tsx:1919
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:254
-#: packages/admin/src/components/TaxonomyManager.tsx:272
-#: packages/admin/src/components/TaxonomyManager.tsx:539
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:263
+#: packages/admin/src/components/TaxonomyManager.tsx:277
+#: packages/admin/src/components/TaxonomyManager.tsx:544
 #: packages/admin/src/routes/byline-schema.tsx:449
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Edit {0}"
@@ -3025,7 +3010,7 @@ msgstr "Szerző szerkesztése"
 msgid "Edit byline field"
 msgstr "Szerző mezőjének szerkesztése"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:321
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:330
 msgid "Edit Domain"
 msgstr "Domain szerkesztése"
 
@@ -3093,29 +3078,29 @@ msgstr ""
 "Riporter\n"
 "Fotós"
 
-#: packages/admin/src/components/WordPressImport.tsx:1044
+#: packages/admin/src/components/WordPressImport.tsx:1062
 msgid "em1.…"
 msgstr ""
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:62
 #: packages/admin/src/components/Settings.tsx:95
-#: packages/admin/src/components/SignupPage.tsx:198
+#: packages/admin/src/components/SignupPage.tsx:213
 #: packages/admin/src/components/users/UserDetail.tsx:154
 msgid "Email"
 msgstr "E-mail"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:330
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:322
 msgid "Email (optional)"
 msgstr "E-mail (opcionális)"
 
 #: packages/admin/src/components/LoginPage.tsx:127
-#: packages/admin/src/components/SignupPage.tsx:67
+#: packages/admin/src/components/SignupPage.tsx:84
 #: packages/admin/src/components/users/InviteUserModal.tsx:152
 msgid "Email address"
 msgstr "E-mail cím"
 
 #: packages/admin/src/components/SetupWizard.tsx:179
-#: packages/admin/src/components/SignupPage.tsx:50
+#: packages/admin/src/components/SignupPage.tsx:67
 msgid "Email is required"
 msgstr "Az e-mail cím kötelező"
 
@@ -3140,7 +3125,7 @@ msgstr "E-mail beállítások"
 msgid "Email verified"
 msgstr "E-mail ellenőrizve"
 
-#: packages/admin/src/components/SignupPage.tsx:190
+#: packages/admin/src/components/SignupPage.tsx:206
 msgid "Email verified!"
 msgstr "E-mail ellenőrizve!"
 
@@ -3153,11 +3138,7 @@ msgstr "{0} beágyazása"
 msgid "Embeds"
 msgstr "Beágyazások"
 
-#: packages/admin/src/components/WordPressImport.tsx:1208
-msgid "EmDash Exporter"
-msgstr "EmDash Exporter"
-
-#: packages/admin/src/components/WordPressImport.tsx:1307
+#: packages/admin/src/components/WordPressImport.tsx:1323
 msgid "EmDash Exporter plugin detected! You can import directly."
 msgstr "EmDash Exporter plugin észlelve. Közvetlenül importálhatsz."
 
@@ -3177,11 +3158,11 @@ msgstr "Hozzászólások engedélyezése"
 msgid "Enable full-text search on this collection"
 msgstr "Teljes szövegű keresés engedélyezése ebben a gyűjteményben"
 
-#: packages/admin/src/components/PluginManager.tsx:494
+#: packages/admin/src/components/PluginManager.tsx:500
 msgid "Enable plugin"
 msgstr "Plugin engedélyezése"
 
-#: packages/admin/src/components/PluginManager.tsx:555
+#: packages/admin/src/components/PluginManager.tsx:559
 msgid "Enable plugin MCP tools"
 msgstr ""
 
@@ -3207,7 +3188,7 @@ msgstr "Adj meg egy URL-t (https://…) vagy relatív útvonalat (/…)"
 msgid "Enter a valid URL (e.g. https://example.com)"
 msgstr "Adj meg érvényes URL-t (pl. https://example.com)"
 
-#: packages/admin/src/components/WordPressImport.tsx:1380
+#: packages/admin/src/components/WordPressImport.tsx:1396
 msgid "Enter credentials manually"
 msgstr "Hitelesítő adatok megadása kézzel"
 
@@ -3244,11 +3225,11 @@ msgstr "URL megadása..."
 msgid "Enter your handle to sign in."
 msgstr "Add meg a felhasználóneved a bejelentkezéshez."
 
-#: packages/admin/src/components/WordPressImport.tsx:1459
+#: packages/admin/src/components/WordPressImport.tsx:1475
 msgid "Enter your WordPress credentials to import content directly."
 msgstr "Add meg a WordPress hitelesítő adataidat a közvetlen importhoz."
 
-#: packages/admin/src/components/WordPressImport.tsx:1082
+#: packages/admin/src/components/WordPressImport.tsx:1100
 msgid "Enter your WordPress site URL"
 msgstr "Add meg a WordPress weboldal URL-jét"
 
@@ -3256,7 +3237,7 @@ msgstr "Add meg a WordPress weboldal URL-jét"
 #: packages/admin/src/components/MenuEditor.tsx:193
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
-#: packages/admin/src/components/TaxonomyManager.tsx:941
+#: packages/admin/src/components/TaxonomyManager.tsx:946
 #: packages/admin/src/components/Widgets.tsx:769
 #: packages/admin/src/router.tsx:2508
 msgid "Error"
@@ -3287,11 +3268,11 @@ msgstr "A plugin minden közzétett kiadását visszavonták, vagy nem sikerült
 msgid "Example: {0} → January 23, 2026"
 msgstr ""
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:285
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:294
 msgid "example.com"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:2010
+#: packages/admin/src/components/WordPressImport.tsx:2026
 msgid "Exists"
 msgstr "Létezik"
 
@@ -3304,10 +3285,7 @@ msgid "Exit Spotlight Mode"
 msgstr "Kilépés a Spotlight módból"
 
 #: packages/admin/src/components/PluginManager.tsx:506
-msgid "Expand"
-msgstr "Kibontás"
-
-#: packages/admin/src/components/PluginManager.tsx:500
+#: packages/admin/src/components/PluginManager.tsx:511
 msgid "Expand details"
 msgstr "Részletek kibontása"
 
@@ -3316,11 +3294,11 @@ msgstr "Részletek kibontása"
 msgid "Expiry"
 msgstr "Lejárat"
 
-#: packages/admin/src/components/WordPressImport.tsx:1273
+#: packages/admin/src/components/WordPressImport.tsx:1289
 msgid "Export from WordPress manually"
 msgstr "Kézi exportálás WordPressből"
 
-#: packages/admin/src/components/WordPressImport.tsx:1397
+#: packages/admin/src/components/WordPressImport.tsx:1413
 msgid "Export your content from WordPress to import everything including drafts."
 msgstr "Exportáld a tartalmaidat WordPressből, hogy mindent importálhass, a vázlatokat is beleértve."
 
@@ -3332,7 +3310,7 @@ msgstr "Facebook"
 msgid "Fail"
 msgstr "Sikertelen"
 
-#: packages/admin/src/components/WordPressImport.tsx:2130
+#: packages/admin/src/components/WordPressImport.tsx:2146
 msgid "Failed"
 msgstr "Sikertelen"
 
@@ -3340,7 +3318,7 @@ msgstr "Sikertelen"
 msgid "Failed security audit"
 msgstr "Sikertelen biztonsági audit"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:75
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:84
 msgid "Failed to add domain"
 msgstr "Nem sikerült domain hozzáadása"
 
@@ -3348,7 +3326,7 @@ msgstr "Nem sikerült domain hozzáadása"
 msgid "Failed to add passkey"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:413
+#: packages/admin/src/components/WordPressImport.tsx:431
 msgid "Failed to analyze WordPress site"
 msgstr "Nem sikerült WordPress weboldal elemzése"
 
@@ -3389,7 +3367,7 @@ msgstr ""
 msgid "Failed to create section"
 msgstr "Nem sikerült szakaszt létrehozni"
 
-#: packages/admin/src/components/WordPressImport.tsx:1714
+#: packages/admin/src/components/WordPressImport.tsx:1730
 msgid "Failed to create some collections"
 msgstr "Nem sikerült néhány gyűjteményt létrehozni"
 
@@ -3487,7 +3465,7 @@ msgstr "Nem sikerült widgetet törölni"
 msgid "Failed to delete widget area"
 msgstr "Nem sikerült widgetterületet törölni"
 
-#: packages/admin/src/components/PluginManager.tsx:120
+#: packages/admin/src/components/PluginManager.tsx:132
 #: packages/admin/src/lib/api/plugins.ts:160
 msgid "Failed to disable plugin"
 msgstr "Nem sikerült plugint letiltani"
@@ -3512,7 +3490,7 @@ msgstr "Nem sikerült üdvözlést bezárni"
 msgid "Failed to duplicate"
 msgstr "Nem sikerült duplikálni"
 
-#: packages/admin/src/components/PluginManager.tsx:101
+#: packages/admin/src/components/PluginManager.tsx:113
 #: packages/admin/src/lib/api/plugins.ts:146
 msgid "Failed to enable plugin"
 msgstr "Nem sikerült plugint engedélyezni"
@@ -3525,7 +3503,7 @@ msgstr "Nem sikerült keresést engedélyezni"
 msgid "Failed to enable user"
 msgstr "Nem sikerült felhasználót engedélyezni"
 
-#: packages/admin/src/components/WordPressImport.tsx:340
+#: packages/admin/src/components/WordPressImport.tsx:358
 msgid "Failed to execute import"
 msgstr "Nem sikerült importot végrehajtani"
 
@@ -3636,11 +3614,11 @@ msgstr "Nem sikerült előnézetet generálni"
 msgid "Failed to generate preview URL"
 msgstr "Nem sikerült előnézeti URL-t generálni"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:176
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:177
 msgid "Failed to get authentication options"
 msgstr "Nem sikerült hitelesítési opciókat lekérni"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:180
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:181
 msgid "Failed to get registration options"
 msgstr "Nem sikerült regisztrációs opciókat lekérni"
 
@@ -3648,11 +3626,11 @@ msgstr "Nem sikerült regisztrációs opciókat lekérni"
 msgid "Failed to get upload URL"
 msgstr "Nem sikerült feltöltési URL-t lekérni"
 
-#: packages/admin/src/components/WordPressImport.tsx:436
+#: packages/admin/src/components/WordPressImport.tsx:454
 msgid "Failed to import from WordPress"
 msgstr "Nem sikerült WordPressből importálni"
 
-#: packages/admin/src/components/WordPressImport.tsx:365
+#: packages/admin/src/components/WordPressImport.tsx:383
 #: packages/admin/src/lib/api/import.ts:422
 msgid "Failed to import media"
 msgstr "Nem sikerült médiát importálni"
@@ -3670,8 +3648,8 @@ msgstr "Nem sikerült a szerző mezőit listázni"
 msgid "Failed to load admin"
 msgstr "Nem sikerült admint betölteni"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:184
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:185
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:193
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:194
 msgid "Failed to load allowed domains"
 msgstr "Nem sikerült engedélyezett domaineket betölteni"
 
@@ -3706,7 +3684,7 @@ msgid "Failed to load plugin settings"
 msgstr ""
 
 #. placeholder {0}: error.message
-#: packages/admin/src/components/PluginManager.tsx:149
+#: packages/admin/src/components/PluginManager.tsx:161
 msgid "Failed to load plugins: {0}"
 msgstr "Nem sikerült betölteni a plugineket: {0}"
 
@@ -3743,7 +3721,7 @@ msgstr "Nem sikerült tömeges műveletet végrehajtani"
 msgid "Failed to permanently delete content"
 msgstr "Nem sikerült tartalmat véglegesen törölni"
 
-#: packages/admin/src/components/WordPressImport.tsx:321
+#: packages/admin/src/components/WordPressImport.tsx:339
 msgid "Failed to prepare import"
 msgstr "Nem sikerült importot előkészíteni"
 
@@ -3756,7 +3734,7 @@ msgstr "Nem sikerült publikálni"
 msgid "Failed to read byline field usage"
 msgstr "Nem sikerült a szerző mezőhasználatát olvasni"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:115
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:124
 msgid "Failed to remove domain"
 msgstr "Nem sikerült domaint eltávolítani"
 
@@ -3807,7 +3785,7 @@ msgstr "Nem sikerült a verzió visszaállítása"
 msgid "Failed to revoke API token"
 msgstr "Az API tokent nem sikerült visszavonni"
 
-#: packages/admin/src/components/WordPressImport.tsx:378
+#: packages/admin/src/components/WordPressImport.tsx:396
 msgid "Failed to rewrite URLs"
 msgstr "URL-ek átírása nem sikerült"
 
@@ -3850,7 +3828,7 @@ msgstr "Nem sikerült a helyreállítási link elküldése"
 msgid "Failed to send test email"
 msgstr "Nem sikerült teszt e-mailt küldeni"
 
-#: packages/admin/src/components/SignupPage.tsx:351
+#: packages/admin/src/components/SignupPage.tsx:366
 msgid "Failed to send verification email"
 msgstr "Nem sikerült ellenőrző e-mailt küldeni"
 
@@ -3892,7 +3870,7 @@ msgstr "Nem sikerült a szerzőt frissíteni"
 msgid "Failed to update byline field"
 msgstr "Nem sikerült a szerzői sor mezőjét frissíteni"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:98
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:107
 msgid "Failed to update domain"
 msgstr "Domain frissítése nem sikerült"
 
@@ -3937,11 +3915,11 @@ msgstr "Média feltöltése sikertelen"
 msgid "Failed to upload to provider"
 msgstr "Nem sikerült feltölteni a szolgáltatóhoz"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:248
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:249
 msgid "Failed to verify authentication"
 msgstr "Nem sikerült a hitelesítést ellenőrizni"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:253
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:254
 msgid "Failed to verify registration"
 msgstr "Nem sikerült a regisztrációt ellenőrizni"
 
@@ -3954,11 +3932,11 @@ msgstr "GYIK"
 msgid "Favicon"
 msgstr "Favicon"
 
-#: packages/admin/src/components/WordPressImport.tsx:1180
+#: packages/admin/src/components/WordPressImport.tsx:1198
 msgid "Feature"
 msgstr "Funkció"
 
-#: packages/admin/src/components/WordPressImport.tsx:1148
+#: packages/admin/src/components/WordPressImport.tsx:1166
 msgid "Featured Images"
 msgstr ""
 
@@ -3967,7 +3945,7 @@ msgstr ""
 msgid "Features"
 msgstr "Funkciók"
 
-#: packages/admin/src/components/WordPressImport.tsx:811
+#: packages/admin/src/components/WordPressImport.tsx:829
 msgid "Fetching content from the EmDash Exporter API."
 msgstr "Tartalom lekérése az EmDash Exporter API-ból."
 
@@ -4003,7 +3981,7 @@ msgstr "Mező frissítve"
 msgid "Fields"
 msgstr "Mezők"
 
-#: packages/admin/src/components/WordPressImport.tsx:2333
+#: packages/admin/src/components/WordPressImport.tsx:2349
 msgid "Fields created:"
 msgstr "Létrehozott mezők:"
 
@@ -4012,7 +3990,7 @@ msgid "File"
 msgstr "Fájl"
 
 #. placeholder {0}: progress.current
-#: packages/admin/src/components/WordPressImport.tsx:2158
+#: packages/admin/src/components/WordPressImport.tsx:2174
 msgid "File {0}"
 msgstr "Fájl {0}"
 
@@ -4029,10 +4007,6 @@ msgstr "Fájlnév"
 #: packages/admin/src/components/MediaDetailPanel.tsx:200
 msgid "Filename cannot be changed after upload"
 msgstr "A fájlnév feltöltés után nem módosítható"
-
-#: packages/admin/src/components/WordPressImport.tsx:2366
-msgid "files imported"
-msgstr "fájl importálva"
 
 #: packages/admin/src/components/MediaUploadDialog.tsx:405
 msgid "Files upload as soon as you add them."
@@ -4137,13 +4111,13 @@ msgstr ""
 msgid "Fonts"
 msgstr "Betűtípusok"
 
-#: packages/admin/src/components/WordPressImport.tsx:1398
+#: packages/admin/src/components/WordPressImport.tsx:1414
 msgid "For a complete import including drafts and all content, export from WordPress."
 msgstr "A vázlatokat és minden tartalmat tartalmazó teljes importhoz exportálj WordPressből."
 
-#: packages/admin/src/components/WordPressImport.tsx:1207
-msgid "For the best import experience, install the"
-msgstr "A legjobb importálási élményhez telepítsd a"
+#: packages/admin/src/components/WordPressImport.tsx:67
+msgid "For the best import experience, install the <0>EmDash Exporter</0> plugin on your WordPress site."
+msgstr ""
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:584
 msgid "Format:"
@@ -4154,7 +4128,7 @@ msgid "From date"
 msgstr "Kezdő dátum"
 
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:164
-#: packages/admin/src/components/WordPressImport.tsx:1155
+#: packages/admin/src/components/WordPressImport.tsx:1173
 msgid "Full"
 msgstr "Teljes"
 
@@ -4184,7 +4158,7 @@ msgstr "Általános"
 msgid "General Settings"
 msgstr "Általános beállítások"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:810
+#: packages/admin/src/components/TaxonomyManager.tsx:815
 msgid "Genres"
 msgstr "Műfajok"
 
@@ -4196,7 +4170,7 @@ msgstr "Kezdés"
 msgid "GitHub"
 msgstr "GitHub"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:337
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:329
 msgid "Give this passkey a name to help you identify it later."
 msgstr "Adj nevet ennek a passkeynek, hogy később könnyebben azonosíthasd."
 
@@ -4204,7 +4178,7 @@ msgstr "Adj nevet ennek a passkeynek, hogy később könnyebben azonosíthasd."
 msgid "Go"
 msgstr "Go"
 
-#: packages/admin/src/components/WordPressImport.tsx:2418
+#: packages/admin/src/components/WordPressImport.tsx:2434
 #: packages/admin/src/router.tsx:2528
 msgid "Go to Dashboard"
 msgstr "Ugrás a vezérlőpultra"
@@ -4302,7 +4276,7 @@ msgstr "Elrejtés a keresők elől"
 msgid "Hide token"
 msgstr "Token elrejtése"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:833
+#: packages/admin/src/components/TaxonomyManager.tsx:838
 msgid "Hierarchical (like categories, with parent/child relationships)"
 msgstr "Hierarchikus (mint a kategóriák, szülő-gyermek kapcsolatokkal)"
 
@@ -4319,7 +4293,7 @@ msgstr "Kezdőlap"
 msgid "Homepage"
 msgstr "Kezdőlap"
 
-#: packages/admin/src/components/PluginManager.tsx:414
+#: packages/admin/src/components/PluginManager.tsx:420
 msgid "Hooks"
 msgstr "Hookok"
 
@@ -4329,7 +4303,7 @@ msgstr "Hookok"
 msgid "Horizontal {0}%, vertical {1}%"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1520
+#: packages/admin/src/components/WordPressImport.tsx:1536
 msgid "How to create an Application Password"
 msgstr "Alkalmazásjelszó létrehozása"
 
@@ -4356,7 +4330,7 @@ msgstr "https://example.com vagy /about"
 msgid "https://example.com/image.jpg"
 msgstr "https://example.com/image.jpg"
 
-#: packages/admin/src/components/WordPressImport.tsx:1089
+#: packages/admin/src/components/WordPressImport.tsx:1107
 msgid "https://yoursite.com"
 msgstr ""
 
@@ -4412,10 +4386,6 @@ msgstr "A közösségi médiás megosztáskor megjelenő kép"
 msgid "Image URL"
 msgstr "Kép URL"
 
-#: packages/admin/src/components/WordPressImport.tsx:2370
-msgid "image URLs updated in"
-msgstr "kép URL frissítve ebben:"
-
 #: packages/admin/src/components/AllowedTypesEditor.tsx:64
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:196
 #: packages/admin/src/components/MediaLibrary.tsx:903
@@ -4424,60 +4394,60 @@ msgstr "Képek"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:226
 #: packages/admin/src/components/Sidebar.tsx:333
-#: packages/admin/src/components/WordPressImport.tsx:738
+#: packages/admin/src/components/WordPressImport.tsx:756
 msgid "Import"
 msgstr "Importálás"
 
 #. placeholder {0}: postType.name
-#: packages/admin/src/components/WordPressImport.tsx:1958
+#: packages/admin/src/components/WordPressImport.tsx:1974
 msgid "Import {0}"
 msgstr "{0} importálása"
 
-#: packages/admin/src/components/WordPressImport.tsx:1366
+#: packages/admin/src/components/WordPressImport.tsx:1382
 msgid "Import all content directly including drafts, custom post types, ACF fields, and SEO data. No file download needed."
 msgstr "Importálj közvetlenül minden tartalmat, beleértve a vázlatokat, egyéni bejegyzéstípusokat, ACF mezőket és SEO-adatokat. Nincs szükség fájlletöltésre."
 
-#: packages/admin/src/components/WordPressImport.tsx:2416
+#: packages/admin/src/components/WordPressImport.tsx:2432
 msgid "Import Another File"
 msgstr "Másik fájl importálása"
 
-#: packages/admin/src/components/WordPressImport.tsx:1174
+#: packages/admin/src/components/WordPressImport.tsx:1192
 msgid "Import Capabilities"
 msgstr "Importálási lehetőségek"
 
-#: packages/admin/src/components/WordPressImport.tsx:2304
+#: packages/admin/src/components/WordPressImport.tsx:2320
 msgid "Import Complete"
 msgstr "Import kész"
 
-#: packages/admin/src/components/WordPressImport.tsx:2305
+#: packages/admin/src/components/WordPressImport.tsx:2321
 msgid "Import Completed with Errors"
 msgstr "Az import hibákkal fejeződött be"
 
-#: packages/admin/src/components/WordPressImport.tsx:1699
+#: packages/admin/src/components/WordPressImport.tsx:1715
 msgid "Import failed"
 msgstr "Az import sikertelen"
 
-#: packages/admin/src/components/WordPressImport.tsx:691
+#: packages/admin/src/components/WordPressImport.tsx:709
 msgid "Import from WordPress"
 msgstr "Importálás WordPressből"
 
-#: packages/admin/src/components/WordPressImport.tsx:2107
+#: packages/admin/src/components/WordPressImport.tsx:2123
 msgid "Import Media"
 msgstr "Média importálása"
 
-#: packages/admin/src/components/WordPressImport.tsx:2060
+#: packages/admin/src/components/WordPressImport.tsx:2076
 msgid "Import Media Files"
 msgstr "Médiafájlok importálása"
 
-#: packages/admin/src/components/WordPressImport.tsx:693
+#: packages/admin/src/components/WordPressImport.tsx:711
 msgid "Import posts, pages, and custom post types from WordPress."
 msgstr "Bejegyzések, oldalak és egyéni bejegyzéstípusok importálása WordPressből."
 
-#: packages/admin/src/components/WordPressImport.tsx:1814
+#: packages/admin/src/components/WordPressImport.tsx:1830
 msgid "Import site configuration from WordPress."
 msgstr "Weboldalkonfiguráció importálása WordPressből."
 
-#: packages/admin/src/components/WordPressImport.tsx:1364
+#: packages/admin/src/components/WordPressImport.tsx:1380
 msgid "Import via EmDash Exporter"
 msgstr "Importálás EmDash Exporteren keresztül"
 
@@ -4485,34 +4455,34 @@ msgstr "Importálás EmDash Exporteren keresztül"
 msgid "Imported"
 msgstr "Importálva"
 
-#: packages/admin/src/components/WordPressImport.tsx:2344
+#: packages/admin/src/components/WordPressImport.tsx:2360
 msgid "Imported by Collection"
 msgstr "Importálva gyűjtemény szerint"
 
 #. placeholder {0}: wpImportProgress.comments
-#: packages/admin/src/components/WordPressImport.tsx:903
+#: packages/admin/src/components/WordPressImport.tsx:921
 msgid "Importing comments... {0}"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:920
+#: packages/admin/src/components/WordPressImport.tsx:938
 msgid "Importing content..."
 msgstr "Tartalom importálása..."
 
 #. placeholder {0}: wpImportProgress.processed
-#: packages/admin/src/components/WordPressImport.tsx:901
+#: packages/admin/src/components/WordPressImport.tsx:919
 msgid "Importing content... {0}"
 msgstr ""
 
 #. placeholder {0}: wpImportProgress.processed
-#: packages/admin/src/components/WordPressImport.tsx:900
+#: packages/admin/src/components/WordPressImport.tsx:918
 msgid "Importing content... {0} of {totalSelectedPosts}"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:2139
+#: packages/admin/src/components/WordPressImport.tsx:2155
 msgid "Importing Media"
 msgstr "Média importálása"
 
-#: packages/admin/src/components/WordPressImport.tsx:904
+#: packages/admin/src/components/WordPressImport.tsx:922
 msgid "Importing menus and site settings..."
 msgstr ""
 
@@ -4524,7 +4494,7 @@ msgstr ""
 msgid "Include sample content (recommended for new sites)"
 msgstr "Minta tartalom hozzáadása (új weboldalekhez ajánlott)"
 
-#: packages/admin/src/components/WordPressImport.tsx:1980
+#: packages/admin/src/components/WordPressImport.tsx:1996
 msgid "Incompatible"
 msgstr "Nem kompatibilis"
 
@@ -4630,7 +4600,7 @@ msgstr "Telepíts és aktiválj egy e-mail szolgáltató plugint az olyan e-mail
 msgid "Install blocked"
 msgstr "Telepítés blokkolva"
 
-#: packages/admin/src/components/WordPressImport.tsx:1039
+#: packages/admin/src/components/WordPressImport.tsx:1057
 msgid "Install the EmDash Exporter plugin on your WordPress site and generate a key under Tools → EmDash Migration."
 msgstr ""
 
@@ -4646,11 +4616,11 @@ msgid "Installed"
 msgstr "Telepítve"
 
 #. placeholder {0}: plugin.marketplaceVersion || plugin.version
-#: packages/admin/src/components/PluginManager.tsx:583
+#: packages/admin/src/components/PluginManager.tsx:587
 msgid "Installed from marketplace (v{0})"
 msgstr "Piactérről telepítve (v{0})"
 
-#: packages/admin/src/components/PluginManager.tsx:602
+#: packages/admin/src/components/PluginManager.tsx:606
 msgid "Installed:"
 msgstr "Telepítve:"
 
@@ -4671,7 +4641,7 @@ msgstr "Érvénytelen meghívólink"
 msgid "Invalid JSON"
 msgstr "Érvénytelen JSON"
 
-#: packages/admin/src/components/SignupPage.tsx:260
+#: packages/admin/src/components/SignupPage.tsx:275
 msgid "Invalid link"
 msgstr "Érvénytelen link"
 
@@ -4732,7 +4702,7 @@ msgid "Its listing has not been approved for display. Check back later."
 msgstr ""
 
 #: packages/admin/src/components/SetupWizard.tsx:213
-#: packages/admin/src/components/SignupPage.tsx:206
+#: packages/admin/src/components/SignupPage.tsx:221
 msgid "Jane Doe"
 msgstr "Jane Doe"
 
@@ -4761,7 +4731,7 @@ msgstr "JSON"
 msgid "JSX"
 msgstr "JSX"
 
-#: packages/admin/src/components/WordPressImport.tsx:916
+#: packages/admin/src/components/WordPressImport.tsx:934
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr ""
 
@@ -4785,7 +4755,7 @@ msgstr "Kotlin"
 #: packages/admin/src/components/MenuEditor.tsx:416
 #: packages/admin/src/components/MenuEditor.tsx:593
 #: packages/admin/src/components/MenuList.tsx:169
-#: packages/admin/src/components/TaxonomyManager.tsx:807
+#: packages/admin/src/components/TaxonomyManager.tsx:812
 #: packages/admin/src/components/Widgets.tsx:436
 #: packages/admin/src/routes/byline-schema.tsx:234
 msgid "Label"
@@ -4815,7 +4785,7 @@ msgstr "Nyelv"
 msgid "Large section heading"
 msgstr "Nagy szakaszcím"
 
-#: packages/admin/src/components/PluginManager.tsx:608
+#: packages/admin/src/components/PluginManager.tsx:612
 msgid "Last enabled:"
 msgstr "Utoljára engedélyezve:"
 
@@ -4853,11 +4823,11 @@ msgstr "Utoljára használva: {0}"
 msgid "Learn more"
 msgstr ""
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:339
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:331
 msgid "Leave blank to use a discoverable passkey."
 msgstr "Hagyd üresen a felfedezhető passkey használatához."
 
-#: packages/admin/src/components/WordPressImport.tsx:2497
+#: packages/admin/src/components/WordPressImport.tsx:2513
 msgid "Leave unassigned"
 msgstr "Maradjon hozzárendelés nélkül"
 
@@ -4890,7 +4860,7 @@ msgstr "Világos"
 msgid "Limit"
 msgstr ""
 
-#: packages/admin/src/components/SignupPage.tsx:258
+#: packages/admin/src/components/SignupPage.tsx:273
 msgid "Link expired"
 msgstr "A link lejárt"
 
@@ -4998,7 +4968,7 @@ msgstr "Menü betöltése..."
 msgid "Loading menus..."
 msgstr "Menük betöltése..."
 
-#: packages/admin/src/components/PluginManager.tsx:140
+#: packages/admin/src/components/PluginManager.tsx:152
 msgid "Loading plugins..."
 msgstr "Pluginek betöltése..."
 
@@ -5022,7 +4992,7 @@ msgstr "Beállítások betöltése..."
 msgid "Loading setup..."
 msgstr "Beállítás betöltése..."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1054
+#: packages/admin/src/components/TaxonomyManager.tsx:1059
 msgid "Loading terms..."
 msgstr "Kifejezések betöltése..."
 
@@ -5044,12 +5014,12 @@ msgstr "Widgetek betöltése..."
 #: packages/admin/src/components/PortableTextEditor.tsx:2427
 #: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:165
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:160
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:169
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:206
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:69
 #: packages/admin/src/components/settings/SecuritySettings.tsx:99
-#: packages/admin/src/components/TaxonomyManager.tsx:1008
+#: packages/admin/src/components/TaxonomyManager.tsx:1013
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
@@ -5098,7 +5068,7 @@ msgstr "Kijelentkezés"
 msgid "Logo"
 msgstr "Logó"
 
-#: packages/admin/src/components/WordPressImport.tsx:1832
+#: packages/admin/src/components/WordPressImport.tsx:1848
 msgid "Logo & favicon"
 msgstr "Logó és favicon"
 
@@ -5115,7 +5085,7 @@ msgstr "Hosszú szöveg"
 msgid "Lowercase letters, numbers, and hyphens only"
 msgstr "Csak kisbetűk, számok és kötőjelek"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:825
+#: packages/admin/src/components/TaxonomyManager.tsx:830
 msgid "Lowercase letters, numbers, and underscores only, starting with a letter"
 msgstr "Csak kisbetűk, számok és aláhúzások, betűvel kezdve"
 
@@ -5143,7 +5113,7 @@ msgstr "Kezelés"
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
 #. placeholder {1}: taxonomyDef.collections.join(", ")
-#: packages/admin/src/components/TaxonomyManager.tsx:1025
+#: packages/admin/src/components/TaxonomyManager.tsx:1030
 msgid "Manage {0} for {1}"
 msgstr "{0} kezelése ehhez: {1}"
 
@@ -5155,7 +5125,7 @@ msgstr "Szerzői sorok kezelése ezen a nyelven: {entryLocale}"
 msgid "Manage content widgets in your widget areas"
 msgstr "Tartalmi widgetek kezelése a widgetterületeken"
 
-#: packages/admin/src/components/PluginManager.tsx:160
+#: packages/admin/src/components/PluginManager.tsx:172
 msgid "Manage installed plugins. Enable or disable plugins to control their functionality."
 msgstr "Telepített pluginek kezelése. A működésük szabályozásához engedélyezd vagy tiltsd le őket."
 
@@ -5184,12 +5154,12 @@ msgstr ""
 msgid "Manual"
 msgstr "Kézi"
 
-#: packages/admin/src/components/WordPressImport.tsx:2454
+#: packages/admin/src/components/WordPressImport.tsx:2470
 msgid "Map Authors"
 msgstr "Szerzők megfeleltetése"
 
 #. placeholder {0}: mapping.wpLogin
-#: packages/admin/src/components/WordPressImport.tsx:2502
+#: packages/admin/src/components/WordPressImport.tsx:2518
 msgid "Map WordPress user {0} to EmDash user"
 msgstr "WordPress-felhasználó ({0}) megfeleltetése EmDash-felhasználónak"
 
@@ -5210,13 +5180,9 @@ msgstr "Megjelölés spamként"
 msgid "Markdown"
 msgstr "Markdown"
 
-#: packages/admin/src/components/PluginManager.tsx:206
-msgid "marketplace"
-msgstr "piactér"
-
 #: packages/admin/src/components/MarketplaceBrowse.tsx:87
-#: packages/admin/src/components/PluginManager.tsx:176
-#: packages/admin/src/components/PluginManager.tsx:384
+#: packages/admin/src/components/PluginManager.tsx:188
+#: packages/admin/src/components/PluginManager.tsx:390
 #: packages/admin/src/components/Sidebar.tsx:315
 msgid "Marketplace"
 msgstr "Piactér"
@@ -5244,9 +5210,9 @@ msgstr "MDX"
 #: packages/admin/src/components/PortableTextEditor.tsx:2712
 #: packages/admin/src/components/PortableTextEditor.tsx:2727
 #: packages/admin/src/components/Sidebar.tsx:256
-#: packages/admin/src/components/WordPressImport.tsx:752
-#: packages/admin/src/components/WordPressImport.tsx:1145
-#: packages/admin/src/components/WordPressImport.tsx:1334
+#: packages/admin/src/components/WordPressImport.tsx:770
+#: packages/admin/src/components/WordPressImport.tsx:1163
+#: packages/admin/src/components/WordPressImport.tsx:1350
 msgid "Media"
 msgstr "Média"
 
@@ -5255,19 +5221,19 @@ msgid "Media Details"
 msgstr "Média részletei"
 
 #. placeholder {0}: mediaResult.failed.length
-#: packages/admin/src/components/WordPressImport.tsx:2400
+#: packages/admin/src/components/WordPressImport.tsx:2416
 msgid "Media Errors ({0})"
 msgstr "Médiahibák ({0})"
 
-#: packages/admin/src/components/WordPressImport.tsx:2362
+#: packages/admin/src/components/WordPressImport.tsx:2378
 msgid "Media Import"
 msgstr "Média importálása"
 
-#: packages/admin/src/components/WordPressImport.tsx:2303
+#: packages/admin/src/components/WordPressImport.tsx:2319
 msgid "Media Import Complete"
 msgstr "Médiaimport kész"
 
-#: packages/admin/src/components/WordPressImport.tsx:2314
+#: packages/admin/src/components/WordPressImport.tsx:2330
 msgid "Media import was skipped"
 msgstr "A médiaimport kihagyva"
 
@@ -5344,12 +5310,12 @@ msgstr "A menü sorrendje frissítve."
 #: packages/admin/src/components/AdminCommandPalette.tsx:160
 #: packages/admin/src/components/MenuList.tsx:104
 #: packages/admin/src/components/Sidebar.tsx:266
-#: packages/admin/src/components/WordPressImport.tsx:1149
+#: packages/admin/src/components/WordPressImport.tsx:1167
 msgid "Menus"
 msgstr "Menük"
 
 #. placeholder {0}: navMenus.length
-#: packages/admin/src/components/WordPressImport.tsx:1767
+#: packages/admin/src/components/WordPressImport.tsx:1783
 msgid "Menus ({0})"
 msgstr "Menük ({0})"
 
@@ -5370,11 +5336,11 @@ msgstr "Meta tag tartalma a Bing Webmaster Tools ellenőrzéshez"
 msgid "Meta tag content for Google Search Console verification"
 msgstr "Meta tag tartalma a Google Search Console ellenőrzéshez"
 
-#: packages/admin/src/components/WordPressImport.tsx:1845
+#: packages/admin/src/components/WordPressImport.tsx:1861
 msgid "Meta titles, descriptions, and social images"
 msgstr "Metaadatok: címek, leírások és közösségi képek"
 
-#: packages/admin/src/components/WordPressImport.tsx:1051
+#: packages/admin/src/components/WordPressImport.tsx:1069
 msgid "Migration key"
 msgstr ""
 
@@ -5437,22 +5403,22 @@ msgid "Move \"{title}\" to trash? You can restore it later."
 msgstr "Áthelyezed a kukába ezt: \"{title}\"? Később visszaállíthatod."
 
 #. placeholder {0}: term.label
-#: packages/admin/src/components/TaxonomyManager.tsx:251
+#: packages/admin/src/components/TaxonomyManager.tsx:256
 msgid "Move {0} down"
 msgstr ""
 
 #. placeholder {0}: term.label
-#: packages/admin/src/components/TaxonomyManager.tsx:250
+#: packages/admin/src/components/TaxonomyManager.tsx:255
 msgid "Move {0} down — unavailable, its parent has no translation in this locale"
 msgstr ""
 
 #. placeholder {0}: term.label
-#: packages/admin/src/components/TaxonomyManager.tsx:238
+#: packages/admin/src/components/TaxonomyManager.tsx:243
 msgid "Move {0} up"
 msgstr ""
 
 #. placeholder {0}: term.label
-#: packages/admin/src/components/TaxonomyManager.tsx:237
+#: packages/admin/src/components/TaxonomyManager.tsx:242
 msgid "Move {0} up — unavailable, its parent has no translation in this locale"
 msgstr ""
 
@@ -5522,20 +5488,20 @@ msgstr "My Awesome Blog"
 #: packages/admin/src/components/MarketplaceBrowse.tsx:45
 #: packages/admin/src/components/MediaFolderDialog.tsx:131
 #: packages/admin/src/components/MenuList.tsx:157
-#: packages/admin/src/components/TaxonomyManager.tsx:567
-#: packages/admin/src/components/TaxonomyManager.tsx:816
-#: packages/admin/src/components/TaxonomyManager.tsx:1048
+#: packages/admin/src/components/TaxonomyManager.tsx:572
+#: packages/admin/src/components/TaxonomyManager.tsx:821
+#: packages/admin/src/components/TaxonomyManager.tsx:1053
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:37
 #: packages/admin/src/components/users/UserDetail.tsx:148
 #: packages/admin/src/components/Widgets.tsx:430
 msgid "Name"
 msgstr "Név"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:742
+#: packages/admin/src/components/TaxonomyManager.tsx:747
 msgid "Name and label are required"
 msgstr "A név és a címke kötelező"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:748
+#: packages/admin/src/components/TaxonomyManager.tsx:753
 msgid "Name must start with a letter and contain only lowercase letters, numbers, and underscores"
 msgstr "A névnek betűvel kell kezdődnie, és csak kisbetűket, számokat és aláhúzásokat tartalmazhat"
 
@@ -5573,7 +5539,7 @@ msgstr ""
 msgid "New byline field"
 msgstr "Új szerzői sor mező"
 
-#: packages/admin/src/components/WordPressImport.tsx:1982
+#: packages/admin/src/components/WordPressImport.tsx:1998
 msgid "New collection"
 msgstr "Új gyűjtemény"
 
@@ -5607,7 +5573,7 @@ msgstr "Új szakasz"
 msgid "new tab"
 msgstr "új lap"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1038
+#: packages/admin/src/components/TaxonomyManager.tsx:1043
 msgid "New Taxonomy"
 msgstr "Új taxonómia"
 
@@ -5623,7 +5589,7 @@ msgstr "Új ablak"
 msgid "Newest"
 msgstr "Legújabb"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:570
+#: packages/admin/src/components/TaxonomyManager.tsx:575
 msgid "News"
 msgstr "Hírek"
 
@@ -5662,7 +5628,7 @@ msgid "No {0} yet."
 msgstr "Még nincs {0}."
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:1057
+#: packages/admin/src/components/TaxonomyManager.tsx:1062
 msgid "No {0} yet. Create one to get started."
 msgstr "Még nincs {0}. Hozz létre egyet a kezdéshez."
 
@@ -5744,7 +5710,7 @@ msgstr "Még nincsenek egyedi mezők"
 msgid "No detailed description available."
 msgstr "Nem érhető el részletes leírás."
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:276
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:285
 msgid "No domains configured. Users must be invited individually."
 msgstr "Nincsenek beállított domainek. A felhasználókat egyenként kell meghívni."
 
@@ -5756,7 +5722,7 @@ msgstr "Nincs beállított e-mail szolgáltató"
 msgid "No email provider configured. Share this link manually."
 msgstr "Nincs beállított e-mail szolgáltató. Oszd meg ezt a linket kézzel."
 
-#: packages/admin/src/components/WordPressImport.tsx:2516
+#: packages/admin/src/components/WordPressImport.tsx:2532
 msgid "No EmDash users found"
 msgstr "Nem találhatók EmDash-felhasználók"
 
@@ -5819,7 +5785,7 @@ msgstr "Nincs megfelelő szerző."
 msgid "No matching media"
 msgstr ""
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:264
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:265
 msgid "No matching passkey found for this account."
 msgstr "Nem található megfelelő passkey ehhez a fiókhoz."
 
@@ -5870,7 +5836,7 @@ msgstr "Nincs regisztrált passkey"
 msgid "No passkeys registered yet."
 msgstr "Még nincs regisztrált passkey."
 
-#: packages/admin/src/components/PluginManager.tsx:200
+#: packages/admin/src/components/PluginManager.tsx:212
 msgid "No plugins configured"
 msgstr "Nincsenek beállított pluginek"
 
@@ -5963,8 +5929,8 @@ msgstr "Még nincsenek widgetterületek. Hozz létre egyet a kezdéshez."
 msgid "None"
 msgstr "Nincs"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:596
-#: packages/admin/src/components/TaxonomyManager.tsx:605
+#: packages/admin/src/components/TaxonomyManager.tsx:601
+#: packages/admin/src/components/TaxonomyManager.tsx:610
 msgid "None (top level)"
 msgstr "Nincs (felső szint)"
 
@@ -5996,7 +5962,7 @@ msgstr "Listanézetben oldalanként megjelenő bejegyzések száma"
 msgid "Numbered List"
 msgstr "Számozott lista"
 
-#: packages/admin/src/components/WordPressImport.tsx:494
+#: packages/admin/src/components/WordPressImport.tsx:512
 msgid "OAuth authorization requires HTTPS. Please use manual credentials."
 msgstr ""
 
@@ -6004,16 +5970,11 @@ msgstr ""
 msgid "OG Image"
 msgstr "OG Image"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:312
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:311
-msgid "on a custom hostname is not treated as secure, even on loopback."
-msgstr "egyéni hosztnéven nem számít biztonságosnak, még loopback esetén sem."
-
 #: packages/admin/src/components/DeviceAuthorizePage.tsx:278
 msgid "Only authorize codes you recognize."
 msgstr "Csak olyan kódokat engedélyezz, amelyeket felismeresz."
 
-#: packages/admin/src/components/SignupPage.tsx:97
+#: packages/admin/src/components/SignupPage.tsx:114
 msgid "Only email addresses from allowed domains can sign up."
 msgstr "Csak engedélyezett domainekhez tartozó e-mail címekkel lehet regisztrálni."
 
@@ -6025,7 +5986,7 @@ msgstr "Csak kisbetűk, számok és kötőjelek"
 msgid "Only the listed MIME types will be accepted for this field."
 msgstr "Ehhez a mezőhöz csak a felsorolt MIME-típusok fogadhatók el."
 
-#: packages/admin/src/components/SignupPage.tsx:404
+#: packages/admin/src/components/SignupPage.tsx:419
 msgid "Oops!"
 msgstr "Hoppá!"
 
@@ -6044,7 +6005,7 @@ msgstr ""
 msgid "Open in new tab"
 msgstr "Megnyitás új lapon"
 
-#: packages/admin/src/components/WordPressImport.tsx:1534
+#: packages/admin/src/components/WordPressImport.tsx:1550
 msgid "Open WordPress Profile"
 msgstr "WordPress profil megnyitása"
 
@@ -6071,7 +6032,7 @@ msgstr "Opcionális képaláírás a kép alatt"
 msgid "Optional caption for display"
 msgstr "Opcionális megjelenített képaláírás"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:621
+#: packages/admin/src/components/TaxonomyManager.tsx:626
 msgid "Optional description"
 msgstr "Opcionális leírás"
 
@@ -6093,11 +6054,11 @@ msgstr ""
 msgid "or choose from library"
 msgstr "vagy válassz a könyvtárból"
 
-#: packages/admin/src/components/WordPressImport.tsx:1590
+#: packages/admin/src/components/WordPressImport.tsx:1606
 msgid "Or click to browse. Accepts .xml files exported from WordPress."
 msgstr "Vagy kattints a tallózáshoz. WordPressből exportált .xml fájlokat fogad."
 
-#: packages/admin/src/components/WordPressImport.tsx:1071
+#: packages/admin/src/components/WordPressImport.tsx:1089
 msgid "or connect by URL"
 msgstr ""
 
@@ -6107,11 +6068,11 @@ msgstr ""
 msgid "Or continue with"
 msgstr "Vagy folytatás ezzel"
 
-#: packages/admin/src/components/WordPressImport.tsx:1391
+#: packages/admin/src/components/WordPressImport.tsx:1407
 msgid "Or upload an export file"
 msgstr "Vagy tölts fel egy exportfájlt"
 
-#: packages/admin/src/components/WordPressImport.tsx:1107
+#: packages/admin/src/components/WordPressImport.tsx:1125
 msgid "or upload directly"
 msgstr "vagy töltsd fel közvetlenül"
 
@@ -6139,7 +6100,7 @@ msgstr "Felülírja az oldal címét a keresési találatokban"
 msgid "Ownership"
 msgstr "Tulajdonjog"
 
-#: packages/admin/src/components/PluginManager.tsx:592
+#: packages/admin/src/components/PluginManager.tsx:596
 msgid "Package"
 msgstr "Csomag"
 
@@ -6155,8 +6116,8 @@ msgstr ""
 msgid "Page size"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:402
-#: packages/admin/src/components/WordPressImport.tsx:1328
+#: packages/admin/src/components/PluginManager.tsx:408
+#: packages/admin/src/components/WordPressImport.tsx:1344
 msgid "Pages"
 msgstr "Oldalak"
 
@@ -6165,7 +6126,7 @@ msgid "Paragraph"
 msgstr "Bekezdés"
 
 #: packages/admin/src/components/MenuEditor.tsx:615
-#: packages/admin/src/components/TaxonomyManager.tsx:592
+#: packages/admin/src/components/TaxonomyManager.tsx:597
 msgid "Parent"
 msgstr "Szülő"
 
@@ -6174,7 +6135,7 @@ msgstr "Szülő"
 msgid "Part of a redirect loop"
 msgstr "Átirányítási hurok része"
 
-#: packages/admin/src/components/WordPressImport.tsx:1153
+#: packages/admin/src/components/WordPressImport.tsx:1171
 msgid "Partial"
 msgstr ""
 
@@ -6191,11 +6152,11 @@ msgstr "Passkey sikeresen hozzáadva"
 msgid "Passkey name"
 msgstr "Passkey neve"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:329
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:321
 msgid "Passkey Name (optional)"
 msgstr "Passkey neve (opcionális)"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:352
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:344
 msgid "Passkey registered successfully!"
 msgstr "Passkey sikeresen regisztrálva!"
 
@@ -6222,25 +6183,24 @@ msgid "Passkeys are a secure, passwordless way to sign in to your account. You c
 msgstr "A passkey biztonságos, jelszó nélküli bejelentkezési mód. Több passkeyt is regisztrálhatsz különböző eszközökhöz."
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:77
-#: packages/admin/src/components/SignupPage.tsx:214
+#: packages/admin/src/components/SignupPage.tsx:229
 msgid "Passkeys are a secure, passwordless way to sign in using your device's biometrics, PIN, or security key."
 msgstr "A passkey biztonságos, jelszó nélküli bejelentkezési mód az eszköz biometrikus azonosításával, PIN-kódjával vagy biztonsági kulcsával."
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:301
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:300
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:302
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:301
 msgid "Passkeys Not Available Here"
 msgstr "A passkeyek itt nem érhetők el"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:305
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:304
-msgid "Passkeys require a"
-msgstr "A passkey használatához"
+#: packages/admin/src/components/auth/PasskeyContextMessage.tsx:5
+msgid "Passkeys require a <0>secure context</0>: use <1>HTTPS</1>, or open the admin at <2>http://localhost</2> (with your dev port). Plain <3>http://</3> on a custom hostname is not treated as secure, even on loopback."
+msgstr ""
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:158
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:159
 msgid "Passkeys require HTTPS or http://localhost (with your port); this hostname is not a secure browser context."
 msgstr "A passkey használatához HTTPS vagy http://localhost szükséges (a saját portoddal); ez a hosztnév nem biztonságos böngészőkörnyezet."
 
-#: packages/admin/src/components/WordPressImport.tsx:1037
+#: packages/admin/src/components/WordPressImport.tsx:1055
 msgid "Paste your migration key"
 msgstr ""
 
@@ -6306,11 +6266,6 @@ msgstr "Válassz bármelyik módszert az adminfiók létrehozásához."
 msgid "Placeholder text"
 msgstr ""
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:311
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:310
-msgid "Plain"
-msgstr "Egyszerű"
-
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:27
 #: packages/admin/src/components/editor/codeBlockLanguages.ts:120
 msgid "Plain text"
@@ -6324,7 +6279,7 @@ msgstr "Kérd meg az adminisztrátort, hogy küldjön új meghívót."
 msgid "Please enter a valid email"
 msgstr "Adj meg érvényes e-mail címet"
 
-#: packages/admin/src/components/SignupPage.tsx:55
+#: packages/admin/src/components/SignupPage.tsx:72
 msgid "Please enter a valid email address"
 msgstr "Adj meg érvényes e-mail címet"
 
@@ -6332,7 +6287,7 @@ msgstr "Adj meg érvényes e-mail címet"
 msgid "Please enter a valid URL"
 msgstr "Adj meg érvényes URL-t"
 
-#: packages/admin/src/components/WordPressImport.tsx:1182
+#: packages/admin/src/components/WordPressImport.tsx:1200
 msgid "Plugin"
 msgstr "Plugin"
 
@@ -6348,11 +6303,11 @@ msgstr ""
 msgid "Plugin details"
 msgstr "Plugin részletei"
 
-#: packages/admin/src/components/PluginManager.tsx:114
+#: packages/admin/src/components/PluginManager.tsx:126
 msgid "Plugin disabled"
 msgstr "Plugin letiltva"
 
-#: packages/admin/src/components/PluginManager.tsx:95
+#: packages/admin/src/components/PluginManager.tsx:107
 msgid "Plugin enabled"
 msgstr "Plugin engedélyezve"
 
@@ -6365,7 +6320,7 @@ msgstr "Pluginhiba"
 msgid "Plugin error ({0})"
 msgstr "Pluginhiba ({0})"
 
-#: packages/admin/src/components/PluginManager.tsx:334
+#: packages/admin/src/components/PluginManager.tsx:340
 msgid "Plugin MCP access updated"
 msgstr ""
 
@@ -6385,11 +6340,7 @@ msgstr "A plugin nem található"
 msgid "Plugin not found. The publisher or slug may be incorrect."
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1209
-msgid "plugin on your WordPress site."
-msgstr "plugint a WordPress weboldaleden."
-
-#: packages/admin/src/components/PluginManager.tsx:483
+#: packages/admin/src/components/PluginManager.tsx:489
 msgid "Plugin pages"
 msgstr ""
 
@@ -6416,7 +6367,7 @@ msgstr "A plugin válasza: {0}: {text}"
 msgid "Plugin tools: {0}"
 msgstr ""
 
-#: packages/admin/src/components/PluginManager.tsx:323
+#: packages/admin/src/components/PluginManager.tsx:329
 msgid "Plugin uninstalled"
 msgstr "Plugin eltávolítva"
 
@@ -6424,7 +6375,7 @@ msgstr "Plugin eltávolítva"
 msgid "Plugin update requires re-consent"
 msgstr "A plugin frissítéséhez újra jóvá kell hagyni az engedélyeket"
 
-#: packages/admin/src/components/PluginManager.tsx:269
+#: packages/admin/src/components/PluginManager.tsx:275
 msgid "Plugin updated"
 msgstr "Plugin frissítve"
 
@@ -6433,9 +6384,9 @@ msgid "Plugin widget error"
 msgstr "Plugin widgethiba"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:218
-#: packages/admin/src/components/PluginManager.tsx:139
-#: packages/admin/src/components/PluginManager.tsx:148
-#: packages/admin/src/components/PluginManager.tsx:158
+#: packages/admin/src/components/PluginManager.tsx:151
+#: packages/admin/src/components/PluginManager.tsx:160
+#: packages/admin/src/components/PluginManager.tsx:170
 #: packages/admin/src/components/Sidebar.tsx:299
 #: packages/admin/src/components/Sidebar.tsx:434
 msgid "Plugins"
@@ -6458,11 +6409,11 @@ msgid "Post"
 msgstr "Bejegyzés"
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:396
-#: packages/admin/src/components/WordPressImport.tsx:1322
+#: packages/admin/src/components/WordPressImport.tsx:1338
 msgid "Posts"
 msgstr "Bejegyzések"
 
-#: packages/admin/src/components/WordPressImport.tsx:1144
+#: packages/admin/src/components/WordPressImport.tsx:1162
 msgid "Posts & Pages"
 msgstr ""
 
@@ -6474,15 +6425,15 @@ msgstr "Bejegyzések oldalanként"
 msgid "Pre-release"
 msgstr "Előzetes kiadás"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:170
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:171
 msgid "Preparing registration..."
 msgstr "Regisztráció előkészítése..."
 
-#: packages/admin/src/components/WordPressImport.tsx:2179
+#: packages/admin/src/components/WordPressImport.tsx:2195
 msgid "Preparing to download files from WordPress..."
 msgstr "WordPress-fájlok letöltésének előkészítése..."
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:166
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:167
 #: packages/admin/src/components/SetupWizard.tsx:233
 msgid "Preparing..."
 msgstr "Előkészítés..."
@@ -6588,7 +6539,7 @@ msgstr "Alternatív szöveg gyors szerkesztése"
 msgid "Quote"
 msgstr "Idézet"
 
-#: packages/admin/src/components/WordPressImport.tsx:1162
+#: packages/admin/src/components/WordPressImport.tsx:1180
 msgid "Raw meta"
 msgstr ""
 
@@ -6626,7 +6577,7 @@ msgstr ""
 msgid "Reading"
 msgstr "Olvasás"
 
-#: packages/admin/src/components/WordPressImport.tsx:1986
+#: packages/admin/src/components/WordPressImport.tsx:2002
 msgid "Ready"
 msgstr "Kész"
 
@@ -6686,7 +6637,7 @@ msgstr ""
 msgid "Register"
 msgstr "Regisztráció"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:146
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:147
 #: packages/admin/src/components/settings/SecuritySettings.tsx:182
 msgid "Register Passkey"
 msgstr "Passkey regisztrálása"
@@ -6695,11 +6646,11 @@ msgstr "Passkey regisztrálása"
 msgid "Registered user"
 msgstr "Regisztrált felhasználó"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:259
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:260
 msgid "Registration failed"
 msgstr "A regisztráció sikertelen"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:266
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:267
 msgid "Registration was cancelled or timed out. Please try again."
 msgstr "A regisztráció megszakadt vagy időtúllépés történt. Próbáld újra."
 
@@ -6746,11 +6697,11 @@ msgstr "{label} eltávolítása"
 msgid "Remove assignment"
 msgstr ""
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:379
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:383
 msgid "Remove Domain"
 msgstr "Domain eltávolítása"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:372
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:381
 msgid "Remove Domain?"
 msgstr "Eltávolítod a domaint?"
 
@@ -6803,7 +6754,7 @@ msgid "Remove this image from the document?"
 msgstr "Eltávolítod ezt a képet a dokumentumból?"
 
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:200
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:380
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:384
 #: packages/admin/src/components/settings/PasskeyItem.tsx:203
 msgid "Removing..."
 msgstr "Eltávolítás..."
@@ -6861,7 +6812,7 @@ msgstr "Válasz címzettje:"
 msgid "Repository"
 msgstr "Tároló"
 
-#: packages/admin/src/components/SignupPage.tsx:274
+#: packages/admin/src/components/SignupPage.tsx:289
 msgid "Request a new link"
 msgstr "Új link kérése"
 
@@ -6881,7 +6832,7 @@ msgstr ""
 msgid "Required"
 msgstr "Kötelező"
 
-#: packages/admin/src/components/WordPressImport.tsx:1999
+#: packages/admin/src/components/WordPressImport.tsx:2015
 msgid "Required fields:"
 msgstr "Kötelező mezők:"
 
@@ -6895,11 +6846,11 @@ msgstr "Akadálymentességhez kötelező. Leírja a képet a képernyőolvasók 
 msgid "Requires EmDash {0}"
 msgstr "EmDash {0} szükséges"
 
-#: packages/admin/src/components/SignupPage.tsx:155
+#: packages/admin/src/components/SignupPage.tsx:171
 msgid "Resend email"
 msgstr "E-mail újraküldése"
 
-#: packages/admin/src/components/SignupPage.tsx:154
+#: packages/admin/src/components/SignupPage.tsx:170
 msgid "Resend in {resendCooldown}s"
 msgstr "Újraküldés {resendCooldown} mp múlva"
 
@@ -6979,7 +6930,7 @@ msgstr "Bármely tartalomba beszúrható újrahasznosítható tartalomblokkok"
 msgid "Reverted to published version"
 msgstr "Visszaállítva a publikált verzióra"
 
-#: packages/admin/src/components/WordPressImport.tsx:724
+#: packages/admin/src/components/WordPressImport.tsx:742
 msgid "Review"
 msgstr "Áttekintés"
 
@@ -7064,7 +7015,7 @@ msgstr ""
 #. placeholder {0}: tool.route
 #. placeholder {1}: tool.permission
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:149
-#: packages/admin/src/components/PluginManager.tsx:568
+#: packages/admin/src/components/PluginManager.tsx:572
 msgid "Route: {0} · Permission: {1}"
 msgstr ""
 
@@ -7145,7 +7096,7 @@ msgstr "\"{0}\" mentve."
 #: packages/admin/src/components/PluginSettings.tsx:209
 #: packages/admin/src/components/Redirects.tsx:188
 #: packages/admin/src/components/SaveButton.tsx:33
-#: packages/admin/src/components/TaxonomyManager.tsx:660
+#: packages/admin/src/components/TaxonomyManager.tsx:665
 #: packages/admin/src/components/users/UserDetail.tsx:311
 #: packages/admin/src/components/Widgets.tsx:983
 #: packages/admin/src/routes/bylines.tsx:579
@@ -7192,11 +7143,11 @@ msgstr "Ütemezve ekkorra: {0}"
 msgid "Scheduled publishing needs attention"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:2322
+#: packages/admin/src/components/WordPressImport.tsx:2338
 msgid "Schema Changes"
 msgstr "Sémamódosítások"
 
-#: packages/admin/src/components/WordPressImport.tsx:1699
+#: packages/admin/src/components/WordPressImport.tsx:1715
 msgid "Schema preparation failed"
 msgstr "A séma előkészítése sikertelen"
 
@@ -7408,11 +7359,6 @@ msgstr "Szakasz címe"
 msgid "Sections"
 msgstr "Szakaszok"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:306
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:305
-msgid "secure context"
-msgstr "biztonságos kontextus"
-
 #: packages/admin/src/components/SetupWizard.tsx:561
 msgid "Secure your account"
 msgstr "Fiók biztonságossá tétele"
@@ -7450,8 +7396,8 @@ msgstr "A biztonsági audit sikeres"
 msgid "Security contacts"
 msgstr "Biztonsági kapcsolattartók"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:270
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:275
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:271
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:276
 msgid "Security error. Make sure you're on a secure connection."
 msgstr "Biztonsági hiba. Ellenőrizd, hogy biztonságos kapcsolaton vagy-e."
 
@@ -7558,7 +7504,7 @@ msgstr "OG kép kiválasztása"
 msgid "Select OG Image"
 msgstr "OG kép kiválasztása"
 
-#: packages/admin/src/components/WordPressImport.tsx:1732
+#: packages/admin/src/components/WordPressImport.tsx:1748
 msgid "Select which content types to import."
 msgstr "Válaszd ki, mely tartalomtípusokat szeretnéd importálni."
 
@@ -7581,8 +7527,8 @@ msgid "Selected:"
 msgstr "Kiválasztva:"
 
 #: packages/admin/src/components/Settings.tsx:76
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:149
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:171
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:158
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:180
 msgid "Self-Signup Domains"
 msgstr "Engedélyezett regisztrációs domainek"
 
@@ -7616,8 +7562,8 @@ msgstr "Teszt e-mail küldése"
 
 #: packages/admin/src/components/LoginPage.tsx:150
 #: packages/admin/src/components/settings/EmailSettings.tsx:122
-#: packages/admin/src/components/SignupPage.tsx:89
-#: packages/admin/src/components/SignupPage.tsx:152
+#: packages/admin/src/components/SignupPage.tsx:106
+#: packages/admin/src/components/SignupPage.tsx:168
 #: packages/admin/src/components/users/InviteUserModal.tsx:201
 #: packages/admin/src/components/users/UserDetail.tsx:332
 msgid "Sending..."
@@ -7634,7 +7580,7 @@ msgstr "SEO"
 msgid "SEO Settings"
 msgstr "SEO beállítások"
 
-#: packages/admin/src/components/WordPressImport.tsx:1843
+#: packages/admin/src/components/WordPressImport.tsx:1859
 msgid "SEO settings (Yoast)"
 msgstr "SEO beállítások (Yoast)"
 
@@ -7682,10 +7628,10 @@ msgstr "Beállítás..."
 #: packages/admin/src/components/ContentEditor.tsx:1128
 #: packages/admin/src/components/ContentTypeEditor.tsx:382
 #: packages/admin/src/components/Header.tsx:101
-#: packages/admin/src/components/PluginManager.tsx:472
+#: packages/admin/src/components/PluginManager.tsx:478
 #: packages/admin/src/components/Settings.tsx:40
 #: packages/admin/src/components/Sidebar.tsx:337
-#: packages/admin/src/components/WordPressImport.tsx:1811
+#: packages/admin/src/components/WordPressImport.tsx:1827
 msgid "Settings"
 msgstr "Beállítások"
 
@@ -7758,7 +7704,7 @@ msgstr ""
 msgid "Shown when hovering over the image."
 msgstr "A kép fölé húzva jelenik meg."
 
-#: packages/admin/src/components/SignupPage.tsx:441
+#: packages/admin/src/components/SignupPage.tsx:456
 msgid "Sign in"
 msgstr "Bejelentkezés"
 
@@ -7767,7 +7713,7 @@ msgid "Sign In"
 msgstr "Bejelentkezés"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:162
-#: packages/admin/src/components/SignupPage.tsx:270
+#: packages/admin/src/components/SignupPage.tsx:285
 msgid "Sign in instead"
 msgstr "Inkább bejelentkezés"
 
@@ -7790,7 +7736,7 @@ msgstr "Bejelentkezés e-maillel"
 msgid "Sign in with email link"
 msgstr "Bejelentkezés e-mailes linkkel"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:136
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:137
 #: packages/admin/src/components/LoginPage.tsx:254
 msgid "Sign in with Passkey"
 msgstr "Bejelentkezés passkeyjel"
@@ -7817,7 +7763,7 @@ msgstr "Weboldal"
 msgid "Site Identity"
 msgstr "Weboldal adatai"
 
-#: packages/admin/src/components/WordPressImport.tsx:2270
+#: packages/admin/src/components/WordPressImport.tsx:2286
 msgid "site identity applied (title, tagline, logo)"
 msgstr ""
 
@@ -7827,7 +7773,7 @@ msgid "Site identity, logo, favicon, and reading preferences"
 msgstr "Weboldal adatai, logó, favicon és olvasási beállítások"
 
 #: packages/admin/src/components/SetupWizard.tsx:351
-#: packages/admin/src/components/WordPressImport.tsx:1151
+#: packages/admin/src/components/WordPressImport.tsx:1169
 msgid "Site Settings"
 msgstr "Weboldalbeállítások"
 
@@ -7836,7 +7782,7 @@ msgstr "Weboldalbeállítások"
 msgid "Site Title"
 msgstr "Weboldal címe"
 
-#: packages/admin/src/components/WordPressImport.tsx:1823
+#: packages/admin/src/components/WordPressImport.tsx:1839
 msgid "Site title & tagline"
 msgstr "Weboldal címe és alcíme"
 
@@ -7864,11 +7810,11 @@ msgstr ""
 msgid "Size:"
 msgstr "Méret:"
 
-#: packages/admin/src/components/WordPressImport.tsx:2104
+#: packages/admin/src/components/WordPressImport.tsx:2120
 msgid "Skip Media Import"
 msgstr "Médiaimport kihagyása"
 
-#: packages/admin/src/components/WordPressImport.tsx:2129
+#: packages/admin/src/components/WordPressImport.tsx:2145
 msgid "Skipped"
 msgstr "Kihagyva"
 
@@ -7883,7 +7829,7 @@ msgstr "Kihagyva"
 #: packages/admin/src/components/FieldEditor.tsx:444
 #: packages/admin/src/components/SectionEditor.tsx:280
 #: packages/admin/src/components/Sections.tsx:184
-#: packages/admin/src/components/TaxonomyManager.tsx:576
+#: packages/admin/src/components/TaxonomyManager.tsx:581
 #: packages/admin/src/routes/byline-schema.tsx:237
 #: packages/admin/src/routes/bylines.tsx:486
 msgid "Slug"
@@ -7927,12 +7873,12 @@ msgstr "Közösségimédia-profil linkek"
 msgid "Social Profiles"
 msgstr "Közösségi profilok"
 
-#: packages/admin/src/components/WordPressImport.tsx:1860
+#: packages/admin/src/components/WordPressImport.tsx:1876
 msgid "Some content types cannot be imported"
 msgstr "Egyes tartalomtípusok nem importálhatók"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:155
-#: packages/admin/src/components/SignupPage.tsx:263
+#: packages/admin/src/components/SignupPage.tsx:278
 msgid "Something went wrong"
 msgstr "Valami hiba történt"
 
@@ -7948,7 +7894,7 @@ msgstr "Témák rendezése"
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:371
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:560
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:225
-#: packages/admin/src/components/PluginManager.tsx:580
+#: packages/admin/src/components/PluginManager.tsx:584
 #: packages/admin/src/components/Redirects.tsx:475
 #: packages/admin/src/components/SectionEditor.tsx:315
 msgid "Source"
@@ -7984,7 +7930,7 @@ msgstr "SQL"
 msgid "Square"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1922
+#: packages/admin/src/components/WordPressImport.tsx:1938
 msgid "Start Import"
 msgstr "Import indítása"
 
@@ -8027,11 +7973,11 @@ msgstr "Nyelvi változatonként tárolva — a szerzői sor minden fordítása s
 msgid "Strikethrough"
 msgstr "Áthúzott"
 
-#: packages/admin/src/components/WordPressImport.tsx:1752
+#: packages/admin/src/components/WordPressImport.tsx:1768
 msgid "Structure"
 msgstr "Szerkezet"
 
-#: packages/admin/src/components/WordPressImport.tsx:1164
+#: packages/admin/src/components/WordPressImport.tsx:1182
 msgid "Structured"
 msgstr ""
 
@@ -8099,7 +8045,7 @@ msgid "Tags"
 msgstr "Címkék"
 
 #. placeholder {0}: analysis.tags
-#: packages/admin/src/components/WordPressImport.tsx:1797
+#: packages/admin/src/components/WordPressImport.tsx:1813
 msgid "Tags ({0})"
 msgstr "Címkék ({0})"
 
@@ -8108,7 +8054,7 @@ msgstr "Címkék ({0})"
 msgid "Target"
 msgstr "Cél"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:354
+#: packages/admin/src/components/TaxonomyManager.tsx:359
 msgid "Target locale"
 msgstr "Célnyelv"
 
@@ -8121,15 +8067,15 @@ msgstr "Taxonómiák"
 msgid "Taxonomies Manage"
 msgstr "Taxonómiák kezelése"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1124
+#: packages/admin/src/components/TaxonomyManager.tsx:1129
 msgid "Taxonomy created"
 msgstr "Taxonómia létrehozva"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1014
-msgid "Taxonomy not found:"
-msgstr "Taxonómia nem található:"
+#: packages/admin/src/components/TaxonomyManager.tsx:35
+msgid "Taxonomy not found: {taxonomyName}"
+msgstr ""
 
-#: packages/admin/src/components/TaxonomyManager.tsx:341
+#: packages/admin/src/components/TaxonomyManager.tsx:346
 msgid "Taxonomy: {taxonomyName}"
 msgstr "Taxonómia: {taxonomyName}"
 
@@ -8137,19 +8083,19 @@ msgstr "Taxonómia: {taxonomyName}"
 msgid "Template:"
 msgstr "Sablon:"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:539
-#: packages/admin/src/components/TaxonomyManager.tsx:540
-#: packages/admin/src/components/TaxonomyManager.tsx:1041
+#: packages/admin/src/components/TaxonomyManager.tsx:544
+#: packages/admin/src/components/TaxonomyManager.tsx:545
+#: packages/admin/src/components/TaxonomyManager.tsx:1046
 msgid "Term"
 msgstr "Kifejezés"
 
 #. placeholder {0}: term.label
 #. placeholder {1}: term.locale.toUpperCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:988
+#: packages/admin/src/components/TaxonomyManager.tsx:993
 msgid "Term \"{0}\" created in {1}."
 msgstr "\"{0}\" kifejezés létrehozva itt: {1}."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:928
+#: packages/admin/src/components/TaxonomyManager.tsx:933
 msgid "Term deleted"
 msgstr "Kifejezés törölve"
 
@@ -8165,7 +8111,7 @@ msgstr "Szövegformázás"
 msgid "The device will not be granted access."
 msgstr "Az eszköz nem kap hozzáférést."
 
-#: packages/admin/src/components/WordPressImport.tsx:1862
+#: packages/admin/src/components/WordPressImport.tsx:1878
 msgid "The existing collection has fields with incompatible types."
 msgstr "A meglévő gyűjtemény inkompatibilis típusú mezőket tartalmaz."
 
@@ -8182,7 +8128,7 @@ msgid "The invited user will have this role once they complete registration."
 msgstr "A meghívott felhasználó ezt a szerepkört kapja, miután befejezi a regisztrációt."
 
 #: packages/admin/src/components/LoginPage.tsx:114
-#: packages/admin/src/components/SignupPage.tsx:140
+#: packages/admin/src/components/SignupPage.tsx:156
 msgid "The link will expire in 15 minutes."
 msgstr "A link 15 perc múlva lejár."
 
@@ -8268,7 +8214,7 @@ msgstr "Ez a gyűjtemény kódban van definiálva. Egyes beállítások itt nem 
 msgid "This content cannot be edited safely"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1059
+#: packages/admin/src/components/WordPressImport.tsx:1077
 msgid "This doesn't look like a valid migration key. Generate a new one in the plugin and paste the full string starting with \"em1.\"."
 msgstr ""
 
@@ -8293,7 +8239,7 @@ msgstr ""
 msgid "This is a custom section."
 msgstr "Ez egy egyéni szakasz."
 
-#: packages/admin/src/components/WordPressImport.tsx:1308
+#: packages/admin/src/components/WordPressImport.tsx:1324
 msgid "This is a WordPress site."
 msgstr "Ez egy WordPress weboldal."
 
@@ -8301,7 +8247,7 @@ msgstr "Ez egy WordPress weboldal."
 msgid "This link expires in 7 days and can only be used once."
 msgstr "Ez a link 7 nap múlva lejár, és csak egyszer használható."
 
-#: packages/admin/src/components/WordPressImport.tsx:921
+#: packages/admin/src/components/WordPressImport.tsx:939
 msgid "This may take a while for large exports."
 msgstr "Nagy exportok esetén ez eltarthat egy ideig."
 
@@ -8309,7 +8255,7 @@ msgstr "Nagy exportok esetén ez eltarthat egy ideig."
 msgid "This media item no longer exists."
 msgstr ""
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:269
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:270
 msgid "This passkey is already registered on this device."
 msgstr "Ez a passkey már regisztrálva van ezen az eszközön."
 
@@ -8372,7 +8318,7 @@ msgid "This will move the item to trash. You can restore it later from the trash
 msgstr "Ez az elemet a kukába helyezi. Később visszaállíthatod a kukából."
 
 #. placeholder {0}: deleteTarget?.label
-#: packages/admin/src/components/TaxonomyManager.tsx:1110
+#: packages/admin/src/components/TaxonomyManager.tsx:1115
 msgid "This will permanently delete \"{0}\" and remove it from all content."
 msgstr "Ez véglegesen törli ezt: \"{0}\", és eltávolítja minden tartalomból."
 
@@ -8385,7 +8331,7 @@ msgstr "Ez véglegesen törli ezt: \"{0}\". A művelet nem vonható vissza."
 msgid "This will permanently delete this comment. This action cannot be undone."
 msgstr "Ez véglegesen törli ezt a hozzászólást. A művelet nem vonható vissza."
 
-#: packages/admin/src/components/PluginManager.tsx:714
+#: packages/admin/src/components/PluginManager.tsx:718
 msgid "This will remove the plugin and its bundle from your site."
 msgstr "Ez eltávolítja a plugint és a csomagját a weboldalről."
 
@@ -8434,10 +8380,6 @@ msgstr "bezár"
 msgid "To date"
 msgstr "Záró dátum"
 
-#: packages/admin/src/components/PluginManager.tsx:208
-msgid "to install plugins, or add them to your astro.config.mjs."
-msgstr "pluginek telepítéséhez, vagy add hozzá őket az astro.config.mjs fájlhoz."
-
 #: packages/admin/src/components/AdminCommandPalette.tsx:473
 msgid "to select"
 msgstr "kiválaszt"
@@ -8464,10 +8406,6 @@ msgstr "Token neve"
 msgid "TOML"
 msgstr "TOML"
 
-#: packages/admin/src/components/WordPressImport.tsx:1277
-msgid "Tools → Export"
-msgstr "Eszközök → Exportálás"
-
 #: packages/admin/src/components/ContentTypeEditor.tsx:77
 msgid "Track content history"
 msgstr "Tartalomtörténet követése"
@@ -8477,29 +8415,29 @@ msgstr "Tartalomtörténet követése"
 msgid "Translatable"
 msgstr "Fordítható"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:266
-#: packages/admin/src/components/TaxonomyManager.tsx:376
+#: packages/admin/src/components/TaxonomyManager.tsx:271
+#: packages/admin/src/components/TaxonomyManager.tsx:381
 #: packages/admin/src/components/TranslationsPanel.tsx:104
 msgid "Translate"
 msgstr "Fordítás"
 
 #. placeholder {0}: term.label
-#: packages/admin/src/components/TaxonomyManager.tsx:338
+#: packages/admin/src/components/TaxonomyManager.tsx:343
 msgid "Translate \"{0}\""
 msgstr "\"{0}\" fordítása"
 
 #. placeholder {0}: term.label
-#: packages/admin/src/components/TaxonomyManager.tsx:263
+#: packages/admin/src/components/TaxonomyManager.tsx:268
 msgid "Translate {0}"
 msgstr "{0} fordítása"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:376
+#: packages/admin/src/components/TaxonomyManager.tsx:381
 #: packages/admin/src/components/TranslationsPanel.tsx:104
 msgid "Translating..."
 msgstr "Fordítás..."
 
 #: packages/admin/src/components/MenuEditor.tsx:143
-#: packages/admin/src/components/TaxonomyManager.tsx:987
+#: packages/admin/src/components/TaxonomyManager.tsx:992
 #: packages/admin/src/components/TaxonomySidebar.tsx:471
 #: packages/admin/src/router.tsx:1194
 msgid "Translation created"
@@ -8555,7 +8493,7 @@ msgstr "Próbáld módosítani a keresést vagy a szűrőket."
 msgid "Try again"
 msgstr "Próbáld újra"
 
-#: packages/admin/src/components/WordPressImport.tsx:1582
+#: packages/admin/src/components/WordPressImport.tsx:1598
 msgid "Try Again"
 msgstr "Próbáld újra"
 
@@ -8575,8 +8513,8 @@ msgstr ""
 msgid "Try another filename, or clear your search and filters."
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1286
-#: packages/admin/src/components/WordPressImport.tsx:1408
+#: packages/admin/src/components/WordPressImport.tsx:1302
+#: packages/admin/src/components/WordPressImport.tsx:1424
 msgid "Try Another URL"
 msgstr "Próbálj másik URL-t"
 
@@ -8605,7 +8543,7 @@ msgid "Type"
 msgstr "Típus"
 
 #. placeholder {0}: status.existingType
-#: packages/admin/src/components/WordPressImport.tsx:2018
+#: packages/admin/src/components/WordPressImport.tsx:2034
 msgid "Type mismatch ({0})"
 msgstr "Típuseltérés ({0})"
 
@@ -8637,20 +8575,20 @@ msgid "Undo"
 msgstr "Visszavonás"
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:191
-#: packages/admin/src/components/PluginManager.tsx:630
-#: packages/admin/src/components/PluginManager.tsx:728
+#: packages/admin/src/components/PluginManager.tsx:634
+#: packages/admin/src/components/PluginManager.tsx:732
 msgid "Uninstall"
 msgstr "Eltávolítás"
 
-#: packages/admin/src/components/PluginManager.tsx:712
+#: packages/admin/src/components/PluginManager.tsx:716
 msgid "Uninstall {pluginName}?"
 msgstr "Eltávolítod ezt: {pluginName}?"
 
-#: packages/admin/src/components/PluginManager.tsx:707
+#: packages/admin/src/components/PluginManager.tsx:711
 msgid "Uninstall confirmation"
 msgstr "Eltávolítás megerősítése"
 
-#: packages/admin/src/components/PluginManager.tsx:728
+#: packages/admin/src/components/PluginManager.tsx:732
 msgid "Uninstalling..."
 msgstr "Eltávolítás..."
 
@@ -8734,7 +8672,7 @@ msgstr "Fel"
 msgid "Up to {MAX_SELECTED} bylines can be selected"
 msgstr ""
 
-#: packages/admin/src/components/TaxonomyManager.tsx:662
+#: packages/admin/src/components/TaxonomyManager.tsx:667
 msgid "Update"
 msgstr "Frissítés"
 
@@ -8747,7 +8685,7 @@ msgid "Update publish date"
 msgstr ""
 
 #. placeholder {0}: editingDomain?.domain
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:324
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:333
 msgid "Update settings for {0}"
 msgstr "{0} beállításainak frissítése"
 
@@ -8756,7 +8694,7 @@ msgid "Update site settings"
 msgstr "Weboldalbeállítások frissítése"
 
 #. placeholder {0}: taxonomyDef.labelSingular?.toLowerCase() || "term"
-#: packages/admin/src/components/TaxonomyManager.tsx:544
+#: packages/admin/src/components/TaxonomyManager.tsx:549
 msgid "Update the {0} details"
 msgstr "{0} adatainak frissítése"
 
@@ -8765,7 +8703,7 @@ msgid "Update this redirect rule."
 msgstr "Átirányítási szabály frissítése."
 
 #. placeholder {0}: updateInfo.latest
-#: packages/admin/src/components/PluginManager.tsx:452
+#: packages/admin/src/components/PluginManager.tsx:458
 msgid "Update to v{0}"
 msgstr "Frissítés erre: v{0}"
 
@@ -8779,12 +8717,12 @@ msgstr "Frissítve"
 msgid "Updated At"
 msgstr "Frissítve"
 
-#: packages/admin/src/components/WordPressImport.tsx:946
+#: packages/admin/src/components/WordPressImport.tsx:964
 msgid "Updating content URLs..."
 msgstr "Tartalom URL-jeinek frissítése..."
 
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:197
-#: packages/admin/src/components/PluginManager.tsx:452
+#: packages/admin/src/components/PluginManager.tsx:458
 msgid "Updating..."
 msgstr "Frissítés..."
 
@@ -8797,7 +8735,7 @@ msgstr "Feltöltés"
 msgid "Upload a file to get started"
 msgstr "Tölts fel egy fájlt a kezdéshez"
 
-#: packages/admin/src/components/WordPressImport.tsx:1391
+#: packages/admin/src/components/WordPressImport.tsx:1407
 msgid "Upload an export file"
 msgstr "Exportfájl feltöltése"
 
@@ -8814,8 +8752,8 @@ msgstr "Média feltöltése és törlése"
 msgid "Upload and manage media"
 msgstr "Média feltöltése és kezelése"
 
-#: packages/admin/src/components/WordPressImport.tsx:1284
-#: packages/admin/src/components/WordPressImport.tsx:1405
+#: packages/admin/src/components/WordPressImport.tsx:1300
+#: packages/admin/src/components/WordPressImport.tsx:1421
 msgid "Upload Export File"
 msgstr "Exportfájl feltöltése"
 
@@ -8866,7 +8804,7 @@ msgstr "Feltöltés ide: {0}"
 msgid "Upload to {providerName}"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1118
+#: packages/admin/src/components/WordPressImport.tsx:1136
 msgid "Upload WordPress export file"
 msgstr "WordPress exportfájl feltöltése"
 
@@ -8875,7 +8813,7 @@ msgid "Uploaded:"
 msgstr "Feltöltve:"
 
 #: packages/admin/src/components/MediaUploadDialog.tsx:86
-#: packages/admin/src/components/WordPressImport.tsx:2127
+#: packages/admin/src/components/WordPressImport.tsx:2143
 msgid "Uploading"
 msgstr "Feltöltés"
 
@@ -8915,7 +8853,7 @@ msgstr "URL:"
 msgid "Use [param] or [...rest] in paths for pattern matching."
 msgstr "Használj [param] vagy [...rest] mintát az útvonalakban a mintaillesztéshez."
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:364
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:356
 msgid "Use your device's biometric authentication, security key, or PIN to sign in."
 msgstr "A bejelentkezéshez használd az eszköz biometrikus azonosítását, biztonsági kulcsát vagy PIN-kódját."
 
@@ -8927,7 +8865,7 @@ msgstr "Használd a regisztrált passkeyedet a biztonságos bejelentkezéshez."
 msgid "Used as the fallback Open Graph image when a page has none. Recommended size: 1200×630."
 msgstr "Tartalék Open Graph képként használatos, ha az oldalhoz nincs kép megadva. Ajánlott méret: 1200×630."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:828
+#: packages/admin/src/components/TaxonomyManager.tsx:833
 msgid "Used as the identifier. Lowercase letters, numbers, and underscores only."
 msgstr "Azonosítóként használatos. Csak kisbetűk, számok és aláhúzások."
 
@@ -8956,7 +8894,7 @@ msgid "User"
 msgstr "Felhasználó"
 
 #. placeholder {0}: manifest?.authMode
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:172
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:181
 msgid "User access is managed by an external provider ({0}). Self-signup domain settings are not available when using external authentication."
 msgstr "A felhasználói hozzáférést külső szolgáltató kezeli ({0}). Külső hitelesítés használatakor az önregisztrációs domainbeállítások nem érhetők el."
 
@@ -8974,16 +8912,16 @@ msgstr "A felhasználó nem található"
 msgid "Users"
 msgstr "Felhasználók"
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:375
-msgid "Users from"
-msgstr "Felhasználók innen:"
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:38
+msgid "Users from <0>{domain}</0> will no longer be able to sign up without an invite. Existing users are not affected."
+msgstr ""
 
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:196
+#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:205
 msgid "Users with email addresses from these domains can sign up without an invite. They will be assigned the specified role automatically."
 msgstr "Az ezekhez a domainekhez tartozó e-mail címmel rendelkező felhasználók meghívó nélkül regisztrálhatnak. Automatikusan a megadott szerepkört kapják."
 
 #. placeholder {0}: updateInfo.latest
-#: packages/admin/src/components/PluginManager.tsx:387
+#: packages/admin/src/components/PluginManager.tsx:393
 msgid "v{0} available"
 msgstr "v{0} elérhető"
 
@@ -8996,12 +8934,12 @@ msgstr "Érvényesítés"
 msgid "Verifying your invite..."
 msgstr "Meghívó ellenőrzése..."
 
-#: packages/admin/src/components/SignupPage.tsx:388
+#: packages/admin/src/components/SignupPage.tsx:403
 msgid "Verifying your link..."
 msgstr "Link ellenőrzése..."
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:211
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:215
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:212
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:216
 msgid "Verifying..."
 msgstr "Ellenőrzés..."
 
@@ -9025,7 +8963,7 @@ msgstr "Videó"
 msgid "View email provider status and send test emails"
 msgstr "E-mail szolgáltató állapotának megtekintése és teszt e-mailek küldése"
 
-#: packages/admin/src/components/PluginManager.tsx:464
+#: packages/admin/src/components/PluginManager.tsx:470
 msgid "View in Marketplace"
 msgstr "Megtekintés a piactéren"
 
@@ -9057,8 +8995,8 @@ msgstr "Az ezekre az útvonalakra érkező látogatók hibát fognak látni."
 msgid "Vue"
 msgstr "Vue"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:180
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:184
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:181
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:185
 msgid "Waiting for passkey..."
 msgstr "Várakozás a passkeyre..."
 
@@ -9067,11 +9005,11 @@ msgid "Warn"
 msgstr "Figyelmeztetés"
 
 #. placeholder {0}: result.url
-#: packages/admin/src/components/WordPressImport.tsx:1266
+#: packages/admin/src/components/WordPressImport.tsx:1282
 msgid "We couldn't connect to a WordPress site at {0}. This could mean the site isn't WordPress, the REST API is disabled, or the site isn't accessible."
 msgstr "Nem sikerült WordPress weboldalhez kapcsolódni itt: {0}. Ez azt jelentheti, hogy a weboldal nem WordPress, a REST API le van tiltva, vagy a weboldal nem elérhető."
 
-#: packages/admin/src/components/WordPressImport.tsx:1084
+#: packages/admin/src/components/WordPressImport.tsx:1102
 msgid "We'll check what import options are available for your site."
 msgstr "Ellenőrizzük, milyen importálási lehetőségek érhetők el a weboldaledhez."
 
@@ -9079,16 +9017,16 @@ msgstr "Ellenőrizzük, milyen importálási lehetőségek érhetők el a webold
 msgid "We'll send you a link to sign in without a password."
 msgstr "Küldünk egy linket, amellyel jelszó nélkül bejelentkezhetsz."
 
-#: packages/admin/src/components/SignupPage.tsx:133
-msgid "We've sent a verification link to"
-msgstr "Ellenőrző linket küldtünk ide:"
+#: packages/admin/src/components/SignupPage.tsx:26
+msgid "We've sent a verification link to <0>{email}</0>"
+msgstr ""
 
 #: packages/admin/src/components/FieldEditor.tsx:264
 msgid "Web address"
 msgstr "Webcím"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:159
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:163
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:160
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:164
 msgid "WebAuthn is not supported in this browser"
 msgstr "Ez a böngésző nem támogatja a WebAuthn-t"
 
@@ -9109,11 +9047,11 @@ msgstr "Üdv az EmDashben, {firstName}!"
 msgid "Welcome to EmDash!"
 msgstr "Üdv az EmDashben!"
 
-#: packages/admin/src/components/WordPressImport.tsx:2091
+#: packages/admin/src/components/WordPressImport.tsx:2107
 msgid "What happens when you import:"
 msgstr "Mi történik importáláskor:"
 
-#: packages/admin/src/components/WordPressImport.tsx:1874
+#: packages/admin/src/components/WordPressImport.tsx:1890
 msgid "What will happen when you import"
 msgstr "Mi fog történni importáláskor"
 
@@ -9129,7 +9067,7 @@ msgstr "A bejegyzés utolsó módosításának ideje"
 msgid "When the entry was published"
 msgstr "A bejegyzés publikálásának ideje"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:842
+#: packages/admin/src/components/TaxonomyManager.tsx:847
 msgid "Which content types can use this taxonomy"
 msgstr "Mely tartalomtípusok használhatják ezt a taxonómiát"
 
@@ -9203,10 +9141,10 @@ msgid "Widget updated"
 msgstr "Widget frissítve"
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:168
-#: packages/admin/src/components/PluginManager.tsx:408
+#: packages/admin/src/components/PluginManager.tsx:414
 #: packages/admin/src/components/Sidebar.tsx:273
 #: packages/admin/src/components/Widgets.tsx:388
-#: packages/admin/src/components/WordPressImport.tsx:1157
+#: packages/admin/src/components/WordPressImport.tsx:1175
 msgid "Widgets"
 msgstr "Widgetek"
 
@@ -9219,23 +9157,19 @@ msgstr "Szélesség"
 msgid "Will be cleared on save"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:2014
+#: packages/admin/src/components/WordPressImport.tsx:2030
 msgid "Will create"
 msgstr "Létrehozza"
-
-#: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:376
-msgid "will no longer be able to sign up without an invite. Existing users are not affected."
-msgstr "többé nem fog tudni meghívó nélkül regisztrálni. A meglévő felhasználókat ez nem érinti."
 
 #: packages/admin/src/components/settings/EmailSettings.tsx:148
 msgid "Without an email provider, invite links must be shared manually."
 msgstr "E-mail szolgáltató nélkül a meghívólinkeket kézzel kell megosztani."
 
-#: packages/admin/src/components/WordPressImport.tsx:210
+#: packages/admin/src/components/WordPressImport.tsx:228
 msgid "WordPress authorization was rejected"
 msgstr ""
 
-#: packages/admin/src/components/WordPressImport.tsx:1476
+#: packages/admin/src/components/WordPressImport.tsx:1492
 msgid "WordPress Username"
 msgstr "WordPress felhasználónév"
 
@@ -9247,7 +9181,7 @@ msgstr ""
 msgid "Write widget content..."
 msgstr "Widgettartalom írása..."
 
-#: packages/admin/src/components/WordPressImport.tsx:1181
+#: packages/admin/src/components/WordPressImport.tsx:1199
 msgid "WXR File"
 msgstr "WXR-fájl"
 
@@ -9255,7 +9189,7 @@ msgstr "WXR-fájl"
 msgid "XML"
 msgstr "XML"
 
-#: packages/admin/src/components/WordPressImport.tsx:1497
+#: packages/admin/src/components/WordPressImport.tsx:1513
 msgid "xxxx xxxx xxxx xxxx xxxx xxxx"
 msgstr ""
 
@@ -9274,7 +9208,7 @@ msgstr ""
 msgid "Yes"
 msgstr "Igen"
 
-#: packages/admin/src/components/WordPressImport.tsx:1160
+#: packages/admin/src/components/WordPressImport.tsx:1178
 msgid "Yoast/RankMath"
 msgstr ""
 
@@ -9332,17 +9266,17 @@ msgstr "Többé nem fogod tudni ezt a passkeyt bejelentkezéshez használni. A m
 msgid "You'll be joining as <0>{0}</0>"
 msgstr "Ezzel a szereppel fogsz csatlakozni: <0>{0}</0>"
 
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:369
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:361
 msgid "You'll be prompted to use your device's biometric authentication, security key, or PIN."
 msgstr "A rendszer kérni fogja az eszköz biometrikus azonosításának, biztonsági kulcsának vagy PIN-kódjának használatát."
 
-#: packages/admin/src/components/WordPressImport.tsx:1369
+#: packages/admin/src/components/WordPressImport.tsx:1385
 msgid "You'll be redirected to WordPress to authorize the connection."
 msgstr "A kapcsolat engedélyezéséhez átirányítunk a WordPresshez."
 
-#: packages/admin/src/components/SignupPage.tsx:192
-msgid "You'll be signing up as"
-msgstr "Ezzel a szereppel regisztrálsz:"
+#: packages/admin/src/components/SignupPage.tsx:35
+msgid "You'll be signing up as <0>{roleName}</0>"
+msgstr ""
 
 #: packages/admin/src/components/SetupWizard.tsx:564
 msgid "You're signed in via Cloudflare Access"
@@ -9352,11 +9286,11 @@ msgstr "Cloudflare Accessen keresztül vagy bejelentkezve"
 msgid "You've been invited!"
 msgstr "Meghívást kaptál!"
 
-#: packages/admin/src/components/SignupPage.tsx:71
+#: packages/admin/src/components/SignupPage.tsx:88
 msgid "you@company.com"
 msgstr "you@company.com"
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:334
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:326
 #: packages/admin/src/components/SetupWizard.tsx:201
 msgid "you@example.com"
 msgstr "you@example.com"
@@ -9365,13 +9299,13 @@ msgstr "you@example.com"
 msgid "Your account has been created successfully."
 msgstr "A fiókod sikeresen létrejött."
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:316
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:315
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:308
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:307
 msgid "Your browser doesn't support passkeys. Please use a modern browser like Chrome, Safari, Firefox, or Edge."
 msgstr "A böngésződ nem támogatja a passkeyeket. Használj modern böngészőt, például Chrome-ot, Safarit, Firefoxot vagy Edge-et."
 
-#: packages/admin/src/components/auth/PasskeyLogin.tsx:267
-#: packages/admin/src/components/auth/PasskeyRegistration.tsx:272
+#: packages/admin/src/components/auth/PasskeyLogin.tsx:268
+#: packages/admin/src/components/auth/PasskeyRegistration.tsx:273
 msgid "Your device doesn't support the required security features."
 msgstr "Az eszközöd nem támogatja a szükséges biztonsági funkciókat."
 
@@ -9405,7 +9339,7 @@ msgid "Your Name"
 msgstr "Neved"
 
 #: packages/admin/src/components/InviteAcceptPage.tsx:65
-#: packages/admin/src/components/SignupPage.tsx:202
+#: packages/admin/src/components/SignupPage.tsx:217
 msgid "Your name (optional)"
 msgstr "Neved (opcionális)"
 
@@ -9427,7 +9361,7 @@ msgid "Your unsaved media changes will be lost."
 msgstr ""
 
 #. placeholder {0}: attachments.count
-#: packages/admin/src/components/WordPressImport.tsx:2062
+#: packages/admin/src/components/WordPressImport.tsx:2078
 msgid "Your WordPress export contains {0} media files."
 msgstr "A WordPress exportod {0} médiafájlt tartalmaz."
 
