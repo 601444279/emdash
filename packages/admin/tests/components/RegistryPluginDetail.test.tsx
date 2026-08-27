@@ -3,6 +3,7 @@ import * as React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type {
+	DidHandleResolution,
 	RegistryClientConfig,
 	RegistryInstallResult,
 	RegistryPackageView,
@@ -29,6 +30,10 @@ const mockResolveRegistryPackageStatus = vi.fn();
 const mockListRegistryReleases = vi.fn();
 const mockVerifyRegistryPlugin = vi.fn();
 const mockInstallRegistryPlugin = vi.fn();
+const mockResolveDidToHandle = vi.fn<(did: string) => Promise<DidHandleResolution>>(async () => ({
+	status: "ok",
+	handle: "acme.dev",
+}));
 
 vi.mock("../../src/lib/api/registry", async () => {
 	const actual = await vi.importActual<typeof import("../../src/lib/api/registry")>(
@@ -41,7 +46,7 @@ vi.mock("../../src/lib/api/registry", async () => {
 		listRegistryReleases: (...a: unknown[]) => mockListRegistryReleases(...a),
 		verifyRegistryPlugin: (...a: unknown[]) => mockVerifyRegistryPlugin(...a),
 		installRegistryPlugin: (...a: unknown[]) => mockInstallRegistryPlugin(...a),
-		resolveDidToHandle: vi.fn(async () => ({ status: "ok", handle: "acme.dev" })),
+		resolveDidToHandle: (did: string) => mockResolveDidToHandle(did),
 	};
 });
 
@@ -367,6 +372,22 @@ describe("RegistryPluginDetail independent install consent", () => {
 
 		await expect.element(screen.getByRole("alert")).toHaveTextContent("Repository proof invalid");
 		expect(screen.getByRole("dialog").query()).toBeNull();
+	});
+
+	it("blocks install when the publisher's claimed handle does not resolve back to its DID", async () => {
+		mockResolveDidToHandle.mockResolvedValueOnce({ status: "invalid" });
+		setup(makePackage(), [makeRelease()]);
+		const screen = await render(
+			<Wrapper>
+				<RegistryPluginDetail pluginId="acme.dev/myplugin" config={CONFIG} />
+			</Wrapper>,
+		);
+
+		await expect
+			.element(screen.getByText("We couldn't verify this publisher's identity"))
+			.toBeInTheDocument();
+		await expect.element(screen.getByRole("button", { name: "Install" })).toBeDisabled();
+		expect(mockVerifyRegistryPlugin).not.toHaveBeenCalled();
 	});
 });
 

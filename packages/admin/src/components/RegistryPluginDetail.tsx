@@ -45,6 +45,7 @@ import {
 	registryQueryPolicyKey,
 	releasePassesPolicy,
 	resolveRegistryPackageStatus,
+	resolveDidToHandle,
 	sbomDownloadHref,
 	verifyRegistryPlugin,
 	type RegistryClientConfig,
@@ -138,6 +139,13 @@ export function RegistryPluginDetail({ pluginId, config }: RegistryPluginDetailP
 		isPackageFetchedAfterMount && !packageQueryError ? cachedPackageStatus : undefined;
 	const pkg = packageStatus?.status === "passed" ? packageStatus.value : undefined;
 	const listingUnavailable = packageStatus?.status === "unavailable";
+	const { data: publisherHandleResolution } = useQuery({
+		queryKey: ["registry", "publisher-handle", pkg?.did],
+		queryFn: () => resolveDidToHandle(pkg!.did),
+		enabled: Boolean(pkg?.did),
+	});
+	const publisherHandlePending = Boolean(pkg?.did) && publisherHandleResolution === undefined;
+	const publisherHandleInvalid = publisherHandleResolution?.status === "invalid";
 
 	// `listReleases` returns releases in descending semver order. The aggregator
 	// contains only the aggregator's approved projection. Lexicon-invalid records
@@ -600,7 +608,8 @@ export function RegistryPluginDetail({ pluginId, config }: RegistryPluginDetailP
 								!release ||
 								!policyOk ||
 								!envOk ||
-								handleResult.status === "invalid" ||
+								publisherHandlePending ||
+								publisherHandleInvalid ||
 								verificationMutation.isPending
 							}
 							onClick={() => verificationMutation.mutate()}
@@ -619,7 +628,7 @@ export function RegistryPluginDetail({ pluginId, config }: RegistryPluginDetailP
 				</div>
 			) : null}
 
-			{handleResult.status === "invalid" ? (
+			{publisherHandleInvalid ? (
 				<div
 					className="flex items-start gap-3 rounded-md border border-kumo-error bg-kumo-error/10 p-4 text-kumo-error"
 					role="alert"

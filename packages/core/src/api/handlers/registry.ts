@@ -752,6 +752,20 @@ export async function handleRegistryInstall(
 		}
 		const records = authoritative.value;
 		const { profile, release } = records.inspection.value;
+		if (
+			packageView.uri !== records.profile.uri ||
+			packageView.cid !== records.profile.cid ||
+			releaseView.uri !== records.release.uri ||
+			releaseView.cid !== records.release.cid
+		) {
+			return {
+				success: false,
+				error: {
+					code: "AGGREGATOR_RECORD_MISMATCH",
+					message: "Aggregator metadata does not match the publisher's signed records.",
+				},
+			};
+		}
 		if (!opts?.verifyOnly) {
 			const consentError = recordConsentError(
 				{
@@ -766,15 +780,7 @@ export async function handleRegistryInstall(
 		const packageYanked =
 			hasCurrentRecordLabel(packageView.labels ?? [], "security:yanked", records.profile) ||
 			hasCurrentRecordLabel(packageView.labels ?? [], "security-yanked", records.profile);
-		const authoritativeReleaseWithdrawal = evaluateRegistryReleaseWithdrawal(
-			{
-				uri: records.release.uri,
-				cid: records.release.cid,
-				labels: releaseView.labels,
-			},
-			discovery.labelerPolicy,
-		);
-		if (packageYanked || authoritativeReleaseWithdrawal.withdrawn) {
+		if (packageYanked) {
 			return {
 				success: false,
 				error: {
@@ -1454,6 +1460,15 @@ export async function handleRegistryUpdate(
 		}
 		const records = authoritative.value;
 		const { profile, release } = records.inspection.value;
+		if (releaseView.uri !== records.release.uri || releaseView.cid !== records.release.cid) {
+			return {
+				success: false,
+				error: {
+					code: "AGGREGATOR_RECORD_MISMATCH",
+					message: "Aggregator metadata does not match the publisher's signed release.",
+				},
+			};
+		}
 		if (
 			opts?.confirmCapabilityChanges ||
 			opts?.confirmRouteVisibilityChanges ||
@@ -1468,22 +1483,6 @@ export async function handleRegistryUpdate(
 			);
 			if (consentError) return consentError;
 		}
-
-		const authoritativeReleaseWithdrawal = evaluateRegistryReleaseWithdrawal(
-			{
-				uri: records.release.uri,
-				cid: records.release.cid,
-				labels: releaseView.labels,
-			},
-			discovery.labelerPolicy,
-		);
-		if (authoritativeReleaseWithdrawal.withdrawn) {
-			return {
-				success: false,
-				error: { code: "YANKED", message: "Release has been withdrawn" },
-			};
-		}
-
 		// Environment compatibility remains independent from listing approval.
 		// An ungated update could otherwise
 		// land a version whose `requires` the host doesn't satisfy. Same

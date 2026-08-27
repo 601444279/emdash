@@ -12,6 +12,7 @@ import { runMigrations } from "../../../src/database/migrations/runner.js";
 import type { Database } from "../../../src/database/types.js";
 import type { SandboxRunner } from "../../../src/plugins/sandbox/types.js";
 import { PluginStateRepository } from "../../../src/plugins/state.js";
+import { setDefaultRegistryArtifactTransport } from "../../../src/registry/artifact-fetch.js";
 import type { AuthoritativeRecordReader } from "../../../src/registry/authoritative-records.js";
 import { setDefaultDnsResolver } from "../../../src/security/ssrf.js";
 import type { Storage } from "../../../src/storage/types.js";
@@ -30,10 +31,15 @@ const listReleases = vi.fn();
 
 vi.mock("@emdash-cms/registry-client/discovery", () => ({
 	DiscoveryClient: class {
+		labelerPolicy = { enforcement: "required" as const };
 		getPackage = getPackage;
 		getLatestRelease = getLatestRelease;
 		listReleases = listReleases;
 	},
+	registryLabelerPolicy: (acceptLabelers?: string) => ({
+		enforcement: "required",
+		acceptLabelers,
+	}),
 }));
 
 function file(name: string, body: string): TarEntry {
@@ -127,6 +133,7 @@ async function authoritativeReader(checksum: string): Promise<AuthoritativeRecor
 describe("handleRegistryInstall verifyOnly", () => {
 	let db: Kysely<Database>;
 	let previousResolver: ReturnType<typeof setDefaultDnsResolver>;
+	let previousTransport: ReturnType<typeof setDefaultRegistryArtifactTransport>;
 
 	beforeEach(async () => {
 		db = new Kysely<Database>({
@@ -134,6 +141,12 @@ describe("handleRegistryInstall verifyOnly", () => {
 		});
 		await runMigrations(db);
 		previousResolver = setDefaultDnsResolver(async () => ["93.184.216.34"]);
+		previousTransport = setDefaultRegistryArtifactTransport({
+			async fetch({ url, allowedAddresses, signal }) {
+				const response = await globalThis.fetch(url.href, { redirect: "manual", signal });
+				return { response, connectedAddress: allowedAddresses[0] ?? "93.184.216.34" };
+			},
+		});
 		getPackage.mockReset();
 		getLatestRelease.mockReset();
 		listReleases.mockReset();
@@ -141,6 +154,7 @@ describe("handleRegistryInstall verifyOnly", () => {
 
 	afterEach(async () => {
 		setDefaultDnsResolver(previousResolver);
+		setDefaultRegistryArtifactTransport(previousTransport);
 		vi.unstubAllGlobals();
 		await db.destroy();
 	});
@@ -150,12 +164,16 @@ describe("handleRegistryInstall verifyOnly", () => {
 		const checksum = await computeMultihash(bytes);
 		if (!checksum.success) throw new Error(checksum.error.message);
 		getPackage.mockResolvedValue({
+			uri: `at://${PUBLISHER_DID}/${PROFILE_NSID}/${SLUG}`,
+			cid: "bafy-profile",
 			did: PUBLISHER_DID,
 			slug: SLUG,
 			labels: [],
 			profile: { name: "Untrusted aggregator copy" },
 		});
 		const releaseView = {
+			uri: `at://${PUBLISHER_DID}/${RELEASE_NSID}/${SLUG}:${VERSION}`,
+			cid: "bafy-release",
 			did: PUBLISHER_DID,
 			package: SLUG,
 			version: VERSION,
@@ -209,6 +227,55 @@ describe("handleRegistryInstall verifyOnly", () => {
 		expect(await new PluginStateRepository(db).get(result.data.pluginId)).toBeNull();
 	});
 
+	it("rejects an aggregator CID that differs from the publisher's signed release", async () => {
+		const bytes = await pluginBundle();
+		const checksum = await computeMultihash(bytes);
+		if (!checksum.success) throw new Error(checksum.error.message);
+		getPackage.mockResolvedValue({
+			uri: `at://${PUBLISHER_DID}/${PROFILE_NSID}/${SLUG}`,
+			cid: "bafy-profile",
+			did: PUBLISHER_DID,
+			slug: SLUG,
+			labels: [],
+			profile: null,
+		});
+		const releaseView = {
+			uri: `at://${PUBLISHER_DID}/${RELEASE_NSID}/${SLUG}:${VERSION}`,
+			cid: "bafy-stale-release",
+			did: PUBLISHER_DID,
+			package: SLUG,
+			version: VERSION,
+			indexedAt: "2026-01-01T00:00:00.000Z",
+			labels: [],
+			mirrors: [],
+			release: null,
+		};
+		getLatestRelease.mockResolvedValue(releaseView);
+		listReleases.mockResolvedValue({ releases: [releaseView] });
+		const fetch = vi.fn(() => {
+			throw new Error("artifact fetch must not run for mismatched record metadata");
+		});
+		vi.stubGlobal("fetch", fetch);
+
+		const result = await handleRegistryInstall(
+			db,
+			{} as Storage,
+			{ isAvailable: () => true } as unknown as SandboxRunner,
+			{ aggregatorUrl: "https://aggregator.test" },
+			{ did: PUBLISHER_DID, slug: SLUG, version: VERSION },
+			{
+				verifyOnly: true,
+				readAuthoritativeRecords: await authoritativeReader(checksum.value),
+			},
+		);
+
+		expect(result).toMatchObject({
+			success: false,
+			error: { code: "AGGREGATOR_RECORD_MISMATCH" },
+		});
+		expect(fetch).not.toHaveBeenCalled();
+	});
+
 	it.each([
 		["missing", {}, "RECORD_CONSENT_REQUIRED"],
 		[
@@ -220,6 +287,8 @@ describe("handleRegistryInstall verifyOnly", () => {
 		"rejects %s record consent before fetching artifact bytes",
 		async (_case, cids, code) => {
 			const releaseView = {
+				uri: `at://${PUBLISHER_DID}/${RELEASE_NSID}/${SLUG}:${VERSION}`,
+				cid: "bafy-release",
 				did: PUBLISHER_DID,
 				package: SLUG,
 				version: VERSION,
@@ -229,6 +298,8 @@ describe("handleRegistryInstall verifyOnly", () => {
 				release: null,
 			};
 			getPackage.mockResolvedValue({
+				uri: `at://${PUBLISHER_DID}/${PROFILE_NSID}/${SLUG}`,
+				cid: "bafy-profile",
 				did: PUBLISHER_DID,
 				slug: SLUG,
 				labels: [],

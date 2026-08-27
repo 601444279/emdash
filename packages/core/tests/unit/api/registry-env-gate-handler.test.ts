@@ -142,7 +142,7 @@ function authoritativeReader(requires: Record<string, string>): AuthoritativeRec
 				},
 				release: {
 					uri: "at://" + publisherDid + "/com.emdashcms.experimental.package.release/" + rkey,
-					cid: "bafy-release",
+					cid: `bafyrei${"a".repeat(52)}`,
 					rkey,
 					value: release,
 				},

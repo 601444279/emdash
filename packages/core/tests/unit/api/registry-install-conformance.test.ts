@@ -4,6 +4,7 @@ import {
 	type FakePublisher,
 	type FakePublisherFixture,
 } from "@emdash-cms/atproto-test-utils";
+import { DirectPdsClient } from "@emdash-cms/registry-client/direct-pds";
 import BetterSqlite3 from "better-sqlite3";
 import { Kysely, SqliteDialect } from "kysely";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -18,6 +19,7 @@ import { runMigrations } from "../../../src/database/migrations/runner.js";
 import type { Database } from "../../../src/database/types.js";
 import type { SandboxRunner } from "../../../src/plugins/sandbox/types.js";
 import { PluginStateRepository } from "../../../src/plugins/state.js";
+import { setDefaultRegistryArtifactTransport } from "../../../src/registry/artifact-fetch.js";
 import type { AuthoritativeRecordReadOptions } from "../../../src/registry/authoritative-records.js";
 import { setDefaultDnsResolver } from "../../../src/security/ssrf.js";
 import type {
@@ -34,10 +36,15 @@ const listReleases = vi.fn();
 
 vi.mock("@emdash-cms/registry-client/discovery", () => ({
 	DiscoveryClient: class {
+		labelerPolicy = { enforcement: "required" as const };
 		getPackage = getPackage;
 		getLatestRelease = getLatestRelease;
 		listReleases = listReleases;
 	},
+	registryLabelerPolicy: (acceptLabelers?: string) => ({
+		enforcement: "required",
+		acceptLabelers,
+	}),
 }));
 
 interface ConformanceContext {
@@ -135,8 +142,22 @@ function pdsFetch(network: FakePublisherFixture): typeof fetch {
 	};
 }
 
-function mockAggregator(fixture: DelegatedReleaseConformanceFixture): void {
+async function mockAggregator(
+	fixture: DelegatedReleaseConformanceFixture,
+	context: ConformanceContext,
+): Promise<void> {
+	const direct = new DirectPdsClient({
+		did: fixture.publisherDid,
+		fetch: context.options.fetch,
+		didDocumentResolver: context.options.didDocumentResolver,
+	});
+	const [profile, release] = await Promise.all([
+		direct.getPackageProfile(fixture.packageSlug),
+		direct.getPackageRelease(fixture.packageSlug, fixture.version),
+	]);
 	const releaseView = {
+		uri: release.uri,
+		cid: release.cid,
 		did: fixture.publisherDid,
 		package: fixture.packageSlug,
 		version: fixture.version,
@@ -155,6 +176,8 @@ function mockAggregator(fixture: DelegatedReleaseConformanceFixture): void {
 		},
 	};
 	getPackage.mockResolvedValue({
+		uri: profile.uri,
+		cid: profile.cid,
 		did: fixture.publisherDid,
 		slug: fixture.packageSlug,
 		labels: [],
@@ -177,6 +200,7 @@ describe("registry delegated-release conformance", () => {
 	let db: Kysely<Database>;
 	let storage: ReturnType<typeof createMemoryStorage>;
 	let previousResolver: ReturnType<typeof setDefaultDnsResolver>;
+	let previousTransport: ReturnType<typeof setDefaultRegistryArtifactTransport>;
 
 	beforeEach(async () => {
 		db = new Kysely<Database>({
@@ -185,6 +209,12 @@ describe("registry delegated-release conformance", () => {
 		await runMigrations(db);
 		storage = createMemoryStorage();
 		previousResolver = setDefaultDnsResolver(async () => ["93.184.216.34"]);
+		previousTransport = setDefaultRegistryArtifactTransport({
+			async fetch({ url, allowedAddresses, signal }) {
+				const response = await globalThis.fetch(url.href, { redirect: "manual", signal });
+				return { response, connectedAddress: allowedAddresses[0] ?? "93.184.216.34" };
+			},
+		});
 		getPackage.mockReset();
 		getLatestRelease.mockReset();
 		listReleases.mockReset();
@@ -192,6 +222,7 @@ describe("registry delegated-release conformance", () => {
 
 	afterEach(async () => {
 		setDefaultDnsResolver(previousResolver);
+		setDefaultRegistryArtifactTransport(previousTransport);
 		vi.unstubAllGlobals();
 		await db.destroy();
 	});
@@ -199,7 +230,7 @@ describe("registry delegated-release conformance", () => {
 	it("previews and installs one valid delegated release without trusting aggregator records", async () => {
 		const fixture = await createDelegatedReleaseConformanceFixture();
 		const context = await createContext(fixture);
-		mockAggregator(fixture);
+		await mockAggregator(fixture, context);
 		const fetch = artifactFetch(fixture.artifactBytes);
 
 		const preview = await handleRegistryInstall(
@@ -268,7 +299,7 @@ describe("registry delegated-release conformance", () => {
 	it("updates with the same verification and CID-bound re-consent", async () => {
 		const initial = await createDelegatedReleaseConformanceFixture();
 		const context = await createContext(initial);
-		mockAggregator(initial);
+		await mockAggregator(initial, context);
 		artifactFetch(initial.artifactBytes);
 		const preview = await handleRegistryInstall(
 			db,
@@ -311,7 +342,7 @@ describe("registry delegated-release conformance", () => {
 			provenanceFetch: async () => new Response(next.provenanceDocument),
 			provenanceVerifier: next.provenanceVerifier,
 		};
-		mockAggregator(next);
+		await mockAggregator(next, context);
 		artifactFetch(next.artifactBytes);
 
 		const preflight = await handleRegistryUpdate(
@@ -410,7 +441,7 @@ describe("registry delegated-release conformance", () => {
 		async (_name, fixtureOptions, code, verificationCode) => {
 			const fixture = await createDelegatedReleaseConformanceFixture(fixtureOptions);
 			const context = await createContext(fixture);
-			mockAggregator(fixture);
+			await mockAggregator(fixture, context);
 			artifactFetch(fixture.artifactBytes);
 
 			const result = await handleRegistryInstall(
@@ -435,7 +466,7 @@ describe("registry delegated-release conformance", () => {
 	it("rejects artifact bytes substituted behind the signed URL", async () => {
 		const fixture = await createDelegatedReleaseConformanceFixture();
 		const context = await createContext(fixture);
-		mockAggregator(fixture);
+		await mockAggregator(fixture, context);
 		artifactFetch(new TextEncoder().encode("substituted"));
 
 		await expect(
@@ -464,7 +495,7 @@ describe("registry delegated-release conformance", () => {
 			signingKeyMultibase: attacker.repo.didKey().replace(/^did:key:/, ""),
 			pdsEndpoint: context.network.pdsBaseUrl,
 		});
-		mockAggregator(fixture);
+		await mockAggregator(fixture, context);
 		artifactFetch(fixture.artifactBytes);
 
 		await expect(
