@@ -646,7 +646,7 @@ msgstr "Bidang ACF"
 #: packages/admin/src/components/ContentList.tsx:617
 #: packages/admin/src/components/ContentList.tsx:743
 #: packages/admin/src/components/ContentTypeList.tsx:190
-#: packages/admin/src/components/TaxonomyManager.tsx:1055
+#: packages/admin/src/components/TaxonomyManager.tsx:1056
 #: packages/admin/src/routes/byline-schema.tsx:249
 msgid "Actions"
 msgstr "Aksi"
@@ -667,7 +667,7 @@ msgstr "Tambah"
 #. placeholder {0}: taxonomyDef.labelSingular || t`Term`
 #: packages/admin/src/components/PortableTextEditor.tsx:2138
 #: packages/admin/src/components/TaxonomyManager.tsx:545
-#: packages/admin/src/components/TaxonomyManager.tsx:1046
+#: packages/admin/src/components/TaxonomyManager.tsx:1047
 msgid "Add {0}"
 msgstr "Tambah {0}"
 
@@ -1501,7 +1501,7 @@ msgstr "Dapat melihat konten"
 #: packages/admin/src/components/settings/SecuritySettings.tsx:166
 #: packages/admin/src/components/TaxonomyManager.tsx:374
 #: packages/admin/src/components/TaxonomyManager.tsx:661
-#: packages/admin/src/components/TaxonomyManager.tsx:875
+#: packages/admin/src/components/TaxonomyManager.tsx:876
 #: packages/admin/src/components/users/InviteUserModal.tsx:198
 #: packages/admin/src/components/Widgets.tsx:451
 #: packages/admin/src/components/WordPressImport.tsx:1933
@@ -1738,9 +1738,9 @@ msgstr "Klik tautan di email untuk masuk."
 #: packages/admin/src/components/TaxonomyManager.tsx:554
 #: packages/admin/src/components/TaxonomyManager.tsx:560
 #: packages/admin/src/components/TaxonomyManager.tsx:564
-#: packages/admin/src/components/TaxonomyManager.tsx:794
-#: packages/admin/src/components/TaxonomyManager.tsx:800
-#: packages/admin/src/components/TaxonomyManager.tsx:804
+#: packages/admin/src/components/TaxonomyManager.tsx:795
+#: packages/admin/src/components/TaxonomyManager.tsx:801
+#: packages/admin/src/components/TaxonomyManager.tsx:805
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:298
 #: packages/admin/src/components/users/InviteUserModal.tsx:88
 #: packages/admin/src/components/users/InviteUserModal.tsx:94
@@ -1797,7 +1797,7 @@ msgstr "Koleksi"
 msgid "Collection:"
 msgstr "Koleksi:"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:845
+#: packages/admin/src/components/TaxonomyManager.tsx:846
 msgid "Collections"
 msgstr "Koleksi"
 
@@ -2061,7 +2061,7 @@ msgstr "Tidak dapat mencari byline. Silakan coba lagi."
 msgid "Couldn't verify how many values reference \"{0}\". Deleting will still remove every stored value for this field — but the count above could not be checked."
 msgstr "Tidak dapat memverifikasi berapa banyak nilai yang merujuk ke \"{0}\". Penghapusan tetap akan menghapus semua nilai tersimpan untuk bidang ini, tetapi jumlah di atas tidak dapat diperiksa."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1054
+#: packages/admin/src/components/TaxonomyManager.tsx:1055
 msgid "Count"
 msgstr "Jumlah"
 
@@ -2174,8 +2174,8 @@ msgstr "Buat Bagian"
 msgid "Create sections in the Sections library to use them here"
 msgstr "Buat bagian di pustaka Bagian untuk digunakan di sini"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:787
-#: packages/admin/src/components/TaxonomyManager.tsx:878
+#: packages/admin/src/components/TaxonomyManager.tsx:788
+#: packages/admin/src/components/TaxonomyManager.tsx:879
 msgid "Create Taxonomy"
 msgstr "Buat Taksonomi"
 
@@ -2265,7 +2265,7 @@ msgstr "Membuat koleksi dan field..."
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
-#: packages/admin/src/components/TaxonomyManager.tsx:878
+#: packages/admin/src/components/TaxonomyManager.tsx:879
 #: packages/admin/src/components/TaxonomySidebar.tsx:339
 msgid "Creating..."
 msgstr "Membuat..."
@@ -2373,7 +2373,7 @@ msgstr "Gambar sosial bawaan"
 msgid "Default Social Image"
 msgstr "Gambar Sosial Bawaan"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:790
+#: packages/admin/src/components/TaxonomyManager.tsx:791
 msgid "Define a new taxonomy for classifying content"
 msgstr "Tentukan taksonomi baru untuk mengklasifikasikan konten"
 
@@ -2404,7 +2404,7 @@ msgstr "Ditetapkan dalam kode"
 #: packages/admin/src/components/Sections.tsx:308
 #: packages/admin/src/components/Sections.tsx:407
 #: packages/admin/src/components/settings/BackupSettings.tsx:352
-#: packages/admin/src/components/TaxonomyManager.tsx:1117
+#: packages/admin/src/components/TaxonomyManager.tsx:1118
 #: packages/admin/src/components/Widgets.tsx:716
 #: packages/admin/src/routes/byline-schema.tsx:378
 #: packages/admin/src/routes/bylines.tsx:588
@@ -2451,7 +2451,7 @@ msgid "Delete {0} widget area"
 msgstr "Hapus area widget {0}"
 
 #. placeholder {0}: taxonomyDef.labelSingular || "Term"
-#: packages/admin/src/components/TaxonomyManager.tsx:1113
+#: packages/admin/src/components/TaxonomyManager.tsx:1114
 msgid "Delete {0}?"
 msgstr "Hapus {0}?"
 
@@ -2577,7 +2577,7 @@ msgstr "Menghapus \"{0}\" juga akan menghapus {1, plural, one {# nilai tersimpan
 #: packages/admin/src/components/Redirects.tsx:604
 #: packages/admin/src/components/Sections.tsx:309
 #: packages/admin/src/components/settings/BackupSettings.tsx:353
-#: packages/admin/src/components/TaxonomyManager.tsx:1118
+#: packages/admin/src/components/TaxonomyManager.tsx:1119
 #: packages/admin/src/components/Widgets.tsx:717
 #: packages/admin/src/routes/bylines.tsx:625
 msgid "Deleting..."
@@ -3237,7 +3237,7 @@ msgstr "Masukkan URL situs WordPress Anda"
 #: packages/admin/src/components/MenuEditor.tsx:193
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
-#: packages/admin/src/components/TaxonomyManager.tsx:946
+#: packages/admin/src/components/TaxonomyManager.tsx:947
 #: packages/admin/src/components/Widgets.tsx:769
 #: packages/admin/src/router.tsx:2508
 msgid "Error"
@@ -4158,7 +4158,7 @@ msgstr "Umum"
 msgid "General Settings"
 msgstr "Pengaturan Umum"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:815
+#: packages/admin/src/components/TaxonomyManager.tsx:816
 msgid "Genres"
 msgstr "Genre"
 
@@ -4276,7 +4276,7 @@ msgstr "Sembunyikan dari mesin pencari"
 msgid "Hide token"
 msgstr "Sembunyikan token"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:838
+#: packages/admin/src/components/TaxonomyManager.tsx:839
 msgid "Hierarchical (like categories, with parent/child relationships)"
 msgstr "Hierarkis (seperti kategori, dengan hubungan induk/anak)"
 
@@ -4755,7 +4755,7 @@ msgstr "Kotlin"
 #: packages/admin/src/components/MenuEditor.tsx:416
 #: packages/admin/src/components/MenuEditor.tsx:593
 #: packages/admin/src/components/MenuList.tsx:169
-#: packages/admin/src/components/TaxonomyManager.tsx:812
+#: packages/admin/src/components/TaxonomyManager.tsx:813
 #: packages/admin/src/components/Widgets.tsx:436
 #: packages/admin/src/routes/byline-schema.tsx:234
 msgid "Label"
@@ -4992,7 +4992,7 @@ msgstr "Memuat pengaturan..."
 msgid "Loading setup..."
 msgstr "Memuat pengaturan..."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1059
+#: packages/admin/src/components/TaxonomyManager.tsx:1060
 msgid "Loading terms..."
 msgstr "Memuat istilah..."
 
@@ -5019,7 +5019,7 @@ msgstr "Memuat widget..."
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:69
 #: packages/admin/src/components/settings/SecuritySettings.tsx:99
-#: packages/admin/src/components/TaxonomyManager.tsx:1013
+#: packages/admin/src/components/TaxonomyManager.tsx:1014
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
@@ -5085,7 +5085,7 @@ msgstr "Teks Panjang"
 msgid "Lowercase letters, numbers, and hyphens only"
 msgstr "Hanya huruf kecil, angka, dan tanda hubung"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:830
+#: packages/admin/src/components/TaxonomyManager.tsx:831
 msgid "Lowercase letters, numbers, and underscores only, starting with a letter"
 msgstr "Hanya huruf kecil, angka, dan garis bawah, dimulai dengan huruf"
 
@@ -5113,7 +5113,7 @@ msgstr "Kelola"
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
 #. placeholder {1}: taxonomyDef.collections.join(", ")
-#: packages/admin/src/components/TaxonomyManager.tsx:1030
+#: packages/admin/src/components/TaxonomyManager.tsx:1031
 msgid "Manage {0} for {1}"
 msgstr "Kelola {0} untuk {1}"
 
@@ -5489,19 +5489,19 @@ msgstr "Blog Menarik Saya"
 #: packages/admin/src/components/MediaFolderDialog.tsx:131
 #: packages/admin/src/components/MenuList.tsx:157
 #: packages/admin/src/components/TaxonomyManager.tsx:572
-#: packages/admin/src/components/TaxonomyManager.tsx:821
-#: packages/admin/src/components/TaxonomyManager.tsx:1053
+#: packages/admin/src/components/TaxonomyManager.tsx:822
+#: packages/admin/src/components/TaxonomyManager.tsx:1054
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:37
 #: packages/admin/src/components/users/UserDetail.tsx:148
 #: packages/admin/src/components/Widgets.tsx:430
 msgid "Name"
 msgstr "Nama"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:747
+#: packages/admin/src/components/TaxonomyManager.tsx:748
 msgid "Name and label are required"
 msgstr "Nama dan label wajib diisi"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:753
+#: packages/admin/src/components/TaxonomyManager.tsx:754
 msgid "Name must start with a letter and contain only lowercase letters, numbers, and underscores"
 msgstr "Nama harus dimulai dengan huruf dan hanya berisi huruf kecil, angka, dan garis bawah"
 
@@ -5573,7 +5573,7 @@ msgstr "Bagian Baru"
 msgid "new tab"
 msgstr "tab baru"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1043
+#: packages/admin/src/components/TaxonomyManager.tsx:1044
 msgid "New Taxonomy"
 msgstr "Taksonomi Baru"
 
@@ -5628,7 +5628,7 @@ msgid "No {0} yet."
 msgstr "Belum ada {0}."
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:1062
+#: packages/admin/src/components/TaxonomyManager.tsx:1063
 msgid "No {0} yet. Create one to get started."
 msgstr "Belum ada {0}. Buat satu untuk memulai."
 
@@ -8067,7 +8067,7 @@ msgstr "Taksonomi"
 msgid "Taxonomies Manage"
 msgstr "Kelola Taksonomi"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1129
+#: packages/admin/src/components/TaxonomyManager.tsx:1130
 msgid "Taxonomy created"
 msgstr "Taksonomi dibuat"
 
@@ -8085,17 +8085,17 @@ msgstr "Templat:"
 
 #: packages/admin/src/components/TaxonomyManager.tsx:544
 #: packages/admin/src/components/TaxonomyManager.tsx:545
-#: packages/admin/src/components/TaxonomyManager.tsx:1046
+#: packages/admin/src/components/TaxonomyManager.tsx:1047
 msgid "Term"
 msgstr "Istilah"
 
 #. placeholder {0}: term.label
 #. placeholder {1}: term.locale.toUpperCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:993
+#: packages/admin/src/components/TaxonomyManager.tsx:994
 msgid "Term \"{0}\" created in {1}."
 msgstr "Istilah \"{0}\" dibuat di {1}."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:933
+#: packages/admin/src/components/TaxonomyManager.tsx:934
 msgid "Term deleted"
 msgstr "Istilah dihapus"
 
@@ -8318,7 +8318,7 @@ msgid "This will move the item to trash. You can restore it later from the trash
 msgstr "Ini akan memindahkan item ke tempat sampah. Anda dapat memulihkannya nanti."
 
 #. placeholder {0}: deleteTarget?.label
-#: packages/admin/src/components/TaxonomyManager.tsx:1115
+#: packages/admin/src/components/TaxonomyManager.tsx:1116
 msgid "This will permanently delete \"{0}\" and remove it from all content."
 msgstr "Ini akan menghapus permanen \"{0}\" dan menghapusnya dari semua konten."
 
@@ -8437,7 +8437,7 @@ msgid "Translating..."
 msgstr "Menerjemahkan..."
 
 #: packages/admin/src/components/MenuEditor.tsx:143
-#: packages/admin/src/components/TaxonomyManager.tsx:992
+#: packages/admin/src/components/TaxonomyManager.tsx:993
 #: packages/admin/src/components/TaxonomySidebar.tsx:471
 #: packages/admin/src/router.tsx:1194
 msgid "Translation created"
@@ -8865,7 +8865,7 @@ msgstr "Gunakan passkey terdaftar Anda untuk masuk dengan aman."
 msgid "Used as the fallback Open Graph image when a page has none. Recommended size: 1200×630."
 msgstr "Digunakan sebagai gambar Open Graph cadangan saat halaman tidak memilikinya. Ukuran yang direkomendasikan: 1200×630."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:833
+#: packages/admin/src/components/TaxonomyManager.tsx:834
 msgid "Used as the identifier. Lowercase letters, numbers, and underscores only."
 msgstr "Digunakan sebagai pengenal. Hanya huruf kecil, angka, dan garis bawah."
 
@@ -9067,7 +9067,7 @@ msgstr "Saat entri terakhir diubah"
 msgid "When the entry was published"
 msgstr "Saat entri dipublikasikan"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:847
+#: packages/admin/src/components/TaxonomyManager.tsx:848
 msgid "Which content types can use this taxonomy"
 msgstr "Tipe konten mana yang dapat menggunakan taksonomi ini"
 

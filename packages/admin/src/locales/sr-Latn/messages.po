@@ -646,7 +646,7 @@ msgstr "ACF polja"
 #: packages/admin/src/components/ContentList.tsx:617
 #: packages/admin/src/components/ContentList.tsx:743
 #: packages/admin/src/components/ContentTypeList.tsx:190
-#: packages/admin/src/components/TaxonomyManager.tsx:1055
+#: packages/admin/src/components/TaxonomyManager.tsx:1056
 #: packages/admin/src/routes/byline-schema.tsx:249
 msgid "Actions"
 msgstr "Akcije"
@@ -667,7 +667,7 @@ msgstr "Dodaj"
 #. placeholder {0}: taxonomyDef.labelSingular || t`Term`
 #: packages/admin/src/components/PortableTextEditor.tsx:2138
 #: packages/admin/src/components/TaxonomyManager.tsx:545
-#: packages/admin/src/components/TaxonomyManager.tsx:1046
+#: packages/admin/src/components/TaxonomyManager.tsx:1047
 msgid "Add {0}"
 msgstr "Dodaj {0}"
 
@@ -1501,7 +1501,7 @@ msgstr "Može pregledati sadržaj"
 #: packages/admin/src/components/settings/SecuritySettings.tsx:166
 #: packages/admin/src/components/TaxonomyManager.tsx:374
 #: packages/admin/src/components/TaxonomyManager.tsx:661
-#: packages/admin/src/components/TaxonomyManager.tsx:875
+#: packages/admin/src/components/TaxonomyManager.tsx:876
 #: packages/admin/src/components/users/InviteUserModal.tsx:198
 #: packages/admin/src/components/Widgets.tsx:451
 #: packages/admin/src/components/WordPressImport.tsx:1933
@@ -1738,9 +1738,9 @@ msgstr "Kliknite na link u email-u da se prijavite."
 #: packages/admin/src/components/TaxonomyManager.tsx:554
 #: packages/admin/src/components/TaxonomyManager.tsx:560
 #: packages/admin/src/components/TaxonomyManager.tsx:564
-#: packages/admin/src/components/TaxonomyManager.tsx:794
-#: packages/admin/src/components/TaxonomyManager.tsx:800
-#: packages/admin/src/components/TaxonomyManager.tsx:804
+#: packages/admin/src/components/TaxonomyManager.tsx:795
+#: packages/admin/src/components/TaxonomyManager.tsx:801
+#: packages/admin/src/components/TaxonomyManager.tsx:805
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:298
 #: packages/admin/src/components/users/InviteUserModal.tsx:88
 #: packages/admin/src/components/users/InviteUserModal.tsx:94
@@ -1797,7 +1797,7 @@ msgstr "Kolekcija"
 msgid "Collection:"
 msgstr "Kolekcija:"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:845
+#: packages/admin/src/components/TaxonomyManager.tsx:846
 msgid "Collections"
 msgstr "Kolekcije"
 
@@ -2061,7 +2061,7 @@ msgstr "Nije moguće pretražiti potpise autora. Pokušajte ponovo."
 msgid "Couldn't verify how many values reference \"{0}\". Deleting will still remove every stored value for this field — but the count above could not be checked."
 msgstr "Nije moguće proveriti koliko vrednosti referencira \"{0}\". Brisanje će i dalje ukloniti svaku sačuvanu vrednost za ovo polje — ali gornji broj nije mogao biti proveren."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1054
+#: packages/admin/src/components/TaxonomyManager.tsx:1055
 msgid "Count"
 msgstr "Broj"
 
@@ -2174,8 +2174,8 @@ msgstr "Kreiraj sekciju"
 msgid "Create sections in the Sections library to use them here"
 msgstr "Kreirajte sekcije u biblioteci sekcija da ih koristite ovde"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:787
-#: packages/admin/src/components/TaxonomyManager.tsx:878
+#: packages/admin/src/components/TaxonomyManager.tsx:788
+#: packages/admin/src/components/TaxonomyManager.tsx:879
 msgid "Create Taxonomy"
 msgstr "Kreiraj taksonomiju"
 
@@ -2265,7 +2265,7 @@ msgstr "Kreiranje kolekcija i polja..."
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:540
-#: packages/admin/src/components/TaxonomyManager.tsx:878
+#: packages/admin/src/components/TaxonomyManager.tsx:879
 #: packages/admin/src/components/TaxonomySidebar.tsx:339
 msgid "Creating..."
 msgstr "Kreiranje..."
@@ -2373,7 +2373,7 @@ msgstr "Podrazumevana slika za društvene mreže"
 msgid "Default Social Image"
 msgstr "Podrazumevana slika za društvene mreže"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:790
+#: packages/admin/src/components/TaxonomyManager.tsx:791
 msgid "Define a new taxonomy for classifying content"
 msgstr "Definišite novu taksonomiju za klasifikaciju sadržaja"
 
@@ -2404,7 +2404,7 @@ msgstr "Definisano u kodu"
 #: packages/admin/src/components/Sections.tsx:308
 #: packages/admin/src/components/Sections.tsx:407
 #: packages/admin/src/components/settings/BackupSettings.tsx:352
-#: packages/admin/src/components/TaxonomyManager.tsx:1117
+#: packages/admin/src/components/TaxonomyManager.tsx:1118
 #: packages/admin/src/components/Widgets.tsx:716
 #: packages/admin/src/routes/byline-schema.tsx:378
 #: packages/admin/src/routes/bylines.tsx:588
@@ -2451,7 +2451,7 @@ msgid "Delete {0} widget area"
 msgstr "Obriši oblast vidžeta {0}"
 
 #. placeholder {0}: taxonomyDef.labelSingular || "Term"
-#: packages/admin/src/components/TaxonomyManager.tsx:1113
+#: packages/admin/src/components/TaxonomyManager.tsx:1114
 msgid "Delete {0}?"
 msgstr "Obrisati {0}?"
 
@@ -2577,7 +2577,7 @@ msgstr "Brisanje \"{0}\" će takođe ukloniti {1, plural, one {# sačuvanu vredn
 #: packages/admin/src/components/Redirects.tsx:604
 #: packages/admin/src/components/Sections.tsx:309
 #: packages/admin/src/components/settings/BackupSettings.tsx:353
-#: packages/admin/src/components/TaxonomyManager.tsx:1118
+#: packages/admin/src/components/TaxonomyManager.tsx:1119
 #: packages/admin/src/components/Widgets.tsx:717
 #: packages/admin/src/routes/bylines.tsx:625
 msgid "Deleting..."
@@ -3237,7 +3237,7 @@ msgstr "Unesite URL WordPress sajta"
 #: packages/admin/src/components/MenuEditor.tsx:193
 #: packages/admin/src/components/MenuEditor.tsx:233
 #: packages/admin/src/components/SetupWizard.tsx:539
-#: packages/admin/src/components/TaxonomyManager.tsx:946
+#: packages/admin/src/components/TaxonomyManager.tsx:947
 #: packages/admin/src/components/Widgets.tsx:769
 #: packages/admin/src/router.tsx:2508
 msgid "Error"
@@ -4158,7 +4158,7 @@ msgstr "Opšte"
 msgid "General Settings"
 msgstr "Opšta podešavanja"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:815
+#: packages/admin/src/components/TaxonomyManager.tsx:816
 msgid "Genres"
 msgstr "Žanrovi"
 
@@ -4276,7 +4276,7 @@ msgstr "Sakrij od pretraživača"
 msgid "Hide token"
 msgstr "Sakrij token"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:838
+#: packages/admin/src/components/TaxonomyManager.tsx:839
 msgid "Hierarchical (like categories, with parent/child relationships)"
 msgstr "Hijerarhijski (kao kategorije, sa roditelj/dete odnosima)"
 
@@ -4755,7 +4755,7 @@ msgstr "Kotlin"
 #: packages/admin/src/components/MenuEditor.tsx:416
 #: packages/admin/src/components/MenuEditor.tsx:593
 #: packages/admin/src/components/MenuList.tsx:169
-#: packages/admin/src/components/TaxonomyManager.tsx:812
+#: packages/admin/src/components/TaxonomyManager.tsx:813
 #: packages/admin/src/components/Widgets.tsx:436
 #: packages/admin/src/routes/byline-schema.tsx:234
 msgid "Label"
@@ -4992,7 +4992,7 @@ msgstr "Učitavanje podešavanja..."
 msgid "Loading setup..."
 msgstr "Učitavanje podešavanja..."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1059
+#: packages/admin/src/components/TaxonomyManager.tsx:1060
 msgid "Loading terms..."
 msgstr "Učitavanje termina..."
 
@@ -5019,7 +5019,7 @@ msgstr "Učitavanje vidžeta..."
 #: packages/admin/src/components/settings/BackupSettings.tsx:154
 #: packages/admin/src/components/settings/EmailSettings.tsx:69
 #: packages/admin/src/components/settings/SecuritySettings.tsx:99
-#: packages/admin/src/components/TaxonomyManager.tsx:1013
+#: packages/admin/src/components/TaxonomyManager.tsx:1014
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:170
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:244
 #: packages/admin/src/components/ThemeMarketplaceDetail.tsx:143
@@ -5085,7 +5085,7 @@ msgstr "Dugačak tekst"
 msgid "Lowercase letters, numbers, and hyphens only"
 msgstr "Samo mala slova, brojevi i crtice"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:830
+#: packages/admin/src/components/TaxonomyManager.tsx:831
 msgid "Lowercase letters, numbers, and underscores only, starting with a letter"
 msgstr "Samo mala slova, brojevi i donje crte, počevši slovom"
 
@@ -5113,7 +5113,7 @@ msgstr "Upravljaj"
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
 #. placeholder {1}: taxonomyDef.collections.join(", ")
-#: packages/admin/src/components/TaxonomyManager.tsx:1030
+#: packages/admin/src/components/TaxonomyManager.tsx:1031
 msgid "Manage {0} for {1}"
 msgstr "Upravljaj {0} za {1}"
 
@@ -5489,19 +5489,19 @@ msgstr "Moj sjajan blog"
 #: packages/admin/src/components/MediaFolderDialog.tsx:131
 #: packages/admin/src/components/MenuList.tsx:157
 #: packages/admin/src/components/TaxonomyManager.tsx:572
-#: packages/admin/src/components/TaxonomyManager.tsx:821
-#: packages/admin/src/components/TaxonomyManager.tsx:1053
+#: packages/admin/src/components/TaxonomyManager.tsx:822
+#: packages/admin/src/components/TaxonomyManager.tsx:1054
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:37
 #: packages/admin/src/components/users/UserDetail.tsx:148
 #: packages/admin/src/components/Widgets.tsx:430
 msgid "Name"
 msgstr "Naziv"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:747
+#: packages/admin/src/components/TaxonomyManager.tsx:748
 msgid "Name and label are required"
 msgstr "Naziv i oznaka su obavezni"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:753
+#: packages/admin/src/components/TaxonomyManager.tsx:754
 msgid "Name must start with a letter and contain only lowercase letters, numbers, and underscores"
 msgstr "Naziv mora početi slovom i sadržati samo mala slova, brojeve i donje crte"
 
@@ -5573,7 +5573,7 @@ msgstr "Nova sekcija"
 msgid "new tab"
 msgstr "novi tab"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1043
+#: packages/admin/src/components/TaxonomyManager.tsx:1044
 msgid "New Taxonomy"
 msgstr "Nova taksonomija"
 
@@ -5628,7 +5628,7 @@ msgid "No {0} yet."
 msgstr "Još nema {0}."
 
 #. placeholder {0}: taxonomyDef.label.toLowerCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:1062
+#: packages/admin/src/components/TaxonomyManager.tsx:1063
 msgid "No {0} yet. Create one to get started."
 msgstr "Još nema {0}. Kreirajte jedan da biste počeli."
 
@@ -8067,7 +8067,7 @@ msgstr "Taksonomije"
 msgid "Taxonomies Manage"
 msgstr "Upravljanje taksonomijama"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:1129
+#: packages/admin/src/components/TaxonomyManager.tsx:1130
 msgid "Taxonomy created"
 msgstr "Taksonomija kreirana"
 
@@ -8085,17 +8085,17 @@ msgstr "Šablon:"
 
 #: packages/admin/src/components/TaxonomyManager.tsx:544
 #: packages/admin/src/components/TaxonomyManager.tsx:545
-#: packages/admin/src/components/TaxonomyManager.tsx:1046
+#: packages/admin/src/components/TaxonomyManager.tsx:1047
 msgid "Term"
 msgstr "Pojam"
 
 #. placeholder {0}: term.label
 #. placeholder {1}: term.locale.toUpperCase()
-#: packages/admin/src/components/TaxonomyManager.tsx:993
+#: packages/admin/src/components/TaxonomyManager.tsx:994
 msgid "Term \"{0}\" created in {1}."
 msgstr "Pojam \"{0}\" kreiran u {1}."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:933
+#: packages/admin/src/components/TaxonomyManager.tsx:934
 msgid "Term deleted"
 msgstr "Pojam obrisan"
 
@@ -8318,7 +8318,7 @@ msgid "This will move the item to trash. You can restore it later from the trash
 msgstr "Ovo će premestiti stavku u korpu. Možeš je kasnije vratiti iz korpe."
 
 #. placeholder {0}: deleteTarget?.label
-#: packages/admin/src/components/TaxonomyManager.tsx:1115
+#: packages/admin/src/components/TaxonomyManager.tsx:1116
 msgid "This will permanently delete \"{0}\" and remove it from all content."
 msgstr "Ovo će trajno obrisati \"{0}\" i ukloniti ga iz celog sadržaja."
 
@@ -8437,7 +8437,7 @@ msgid "Translating..."
 msgstr "Prevodi se..."
 
 #: packages/admin/src/components/MenuEditor.tsx:143
-#: packages/admin/src/components/TaxonomyManager.tsx:992
+#: packages/admin/src/components/TaxonomyManager.tsx:993
 #: packages/admin/src/components/TaxonomySidebar.tsx:471
 #: packages/admin/src/router.tsx:1194
 msgid "Translation created"
@@ -8865,7 +8865,7 @@ msgstr "Koristi registrovani Passkey za bezbednu prijavu."
 msgid "Used as the fallback Open Graph image when a page has none. Recommended size: 1200×630."
 msgstr "Koristi se kao rezervna Open Graph slika kada stranica nema svoju. Preporučena veličina: 1200×630."
 
-#: packages/admin/src/components/TaxonomyManager.tsx:833
+#: packages/admin/src/components/TaxonomyManager.tsx:834
 msgid "Used as the identifier. Lowercase letters, numbers, and underscores only."
 msgstr "Koristi se kao identifikator. Samo mala slova, brojevi i donje crte."
 
@@ -9067,7 +9067,7 @@ msgstr "Kada je stavka poslednji put izmenjena"
 msgid "When the entry was published"
 msgstr "Kada je stavka objavljena"
 
-#: packages/admin/src/components/TaxonomyManager.tsx:847
+#: packages/admin/src/components/TaxonomyManager.tsx:848
 msgid "Which content types can use this taxonomy"
 msgstr "Koji tipovi sadržaja mogu koristiti ovu taksonomiju"
 
