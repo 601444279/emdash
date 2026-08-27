@@ -5,6 +5,10 @@ import { afterAll, beforeAll, expect, it } from "vitest";
 
 import { EmDashD1Dialect, RawBindingD1Dialect } from "../../../cloudflare/src/db/d1-dialect.js";
 import { GET, POST } from "../../src/astro/routes/api/admin/media-usage/activation.js";
+import {
+	GET as GET_PROGRESS,
+	POST as POST_PROGRESS,
+} from "../../src/astro/routes/api/admin/media-usage/progress.js";
 import { runMigrations } from "../../src/database/migrations/runner.js";
 import type { Database } from "../../src/database/types.js";
 import { MEDIA_USAGE_ACTIVATION_RUNTIME_GENERATION } from "../../src/media/usage/activation.js";
@@ -58,6 +62,9 @@ it("keeps complete authenticated activation route costs within the D1 envelope",
 	await record("get-activating", "session", GET, activationGet(), 200, evidence);
 	await record("final-collection", "session", POST, activationPost(), 200, evidence);
 	await record("get-active", "raw", GET, activationGet(), 200, evidence);
+	await record("progress-indexing", "session", GET_PROGRESS, progressGet(), 200, evidence);
+	expect(evidence.at(-1)).toEqual(expect.objectContaining({ queries: 1, rowsWritten: 0 }));
+	await record("progress-step", "session", POST_PROGRESS, progressPost(), 200, evidence);
 	await record("active-idempotent", "session", POST, activationPost(), 200, evidence);
 
 	await adminDb
@@ -139,7 +146,18 @@ function activationPost(): Request {
 	return new Request("http://localhost/_emdash/api/admin/media-usage/activation", {
 		method: "POST",
 		headers: { "Content-Type": "application/json", "X-EmDash-Request": "1" },
-		body: JSON.stringify({ writersDrained: true, maintenanceReady: true }),
+		body: JSON.stringify({ writersDrained: true }),
+	});
+}
+
+function progressGet(): Request {
+	return new Request("http://localhost/_emdash/api/admin/media-usage/progress");
+}
+
+function progressPost(): Request {
+	return new Request("http://localhost/_emdash/api/admin/media-usage/progress", {
+		method: "POST",
+		headers: { "X-EmDash-Request": "1" },
 	});
 }
 

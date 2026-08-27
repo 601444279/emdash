@@ -1,4 +1,5 @@
 import {
+	Banner,
 	Breadcrumbs,
 	Button,
 	Grid,
@@ -56,6 +57,13 @@ import {
 	fetchProviderMedia,
 	uploadToProvider,
 } from "../lib/api";
+import { useCurrentUser } from "../lib/api/current-user.js";
+import {
+	MEDIA_USAGE_ACTIVATION_QUERY_KEY,
+	MEDIA_USAGE_PROGRESS_QUERY_KEY,
+	fetchMediaUsageActivationStatus,
+	fetchMediaUsageProgress,
+} from "../lib/api/media-usage-activation.js";
 import { useDebouncedValue } from "../lib/hooks.js";
 import {
 	providerItemToMediaItem,
@@ -217,11 +225,43 @@ export function MediaLibrary({
 	onMoveMedia,
 }: MediaLibraryProps) {
 	const { t } = useLingui();
+	const isAdmin = (useCurrentUser().data?.role ?? 0) >= 50;
+	const [activeProvider, setActiveProvider] = React.useState<string>("local");
+	const activationQuery = useQuery({
+		queryKey: MEDIA_USAGE_ACTIVATION_QUERY_KEY,
+		queryFn: fetchMediaUsageActivationStatus,
+		enabled: isAdmin && activeProvider === "local",
+		retry: false,
+		staleTime: 60_000,
+		refetchOnMount: "always",
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+	});
+	const setupStatus = isAdmin && !activationQuery.isError ? activationQuery.data : undefined;
+	const progressQuery = useQuery({
+		queryKey: MEDIA_USAGE_PROGRESS_QUERY_KEY,
+		queryFn: fetchMediaUsageProgress,
+		enabled:
+			isAdmin &&
+			activeProvider === "local" &&
+			!activationQuery.isError &&
+			setupStatus?.state === "active",
+		retry: false,
+		staleTime: 60_000,
+		refetchOnMount: "always",
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+	});
+	const setupProgress = progressQuery.data;
+	const setupIncomplete =
+		setupStatus &&
+		(setupStatus.state !== "active" ||
+			progressQuery.isError ||
+			(progressQuery.isSuccess && setupProgress?.status !== "ready"));
 	const [toastManager] = React.useState(createKumoToastManager);
 	const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
 	const [detailItem, setDetailItem] = React.useState<MediaItem | null>(null);
 	const [isDetailOpen, setIsDetailOpen] = React.useState(false);
-	const [activeProvider, setActiveProvider] = React.useState<string>("local");
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [localTypeFilter, setLocalTypeFilter] = React.useState("all");
 	const mediaHeadingRef = React.useRef<HTMLHeadingElement>(null);
@@ -836,6 +876,26 @@ export function MediaLibrary({
 					)}
 				</div>
 			</div>
+			{activeProvider === "local" && setupIncomplete ? (
+				<Banner
+					variant="alert"
+					title={
+						setupStatus.state === "expanded"
+							? t`Set up media usage tracking`
+							: progressQuery.isError || setupProgress?.status === "needs_attention"
+								? t`Media usage tracking needs attention`
+								: setupStatus.state === "active"
+									? t`Media usage tracking is indexing existing content`
+									: t`Media usage tracking is setting up`
+					}
+					description={t`Index existing content and keep Used in results up to date.`}
+					action={
+						<RouterLinkButton to="/settings/media-usage" size="sm" variant="secondary">
+							{setupStatus.state === "expanded" ? t`Open setup` : t`View setup`}
+						</RouterLinkButton>
+					}
+				/>
+			) : null}
 
 			{/* Provider tabs (only when an external provider is configured) */}
 			{providerTabs.length > 1 && (

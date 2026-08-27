@@ -244,6 +244,18 @@ export interface MediaUsageRepairResponse {
 	collections: MediaUsageRepairCollectionSummary[];
 }
 
+export interface MediaUsageProgress {
+	status: "indexing" | "ready" | "needs_attention";
+	readyCollections: number;
+	totalCollections: number;
+}
+
+export interface MediaUsageProgressAdvanceResponse {
+	activation: MediaUsageActivationStatus;
+	progress: MediaUsageProgress | null;
+	nextRequestInMs: 0 | 30_000 | null;
+}
+
 /** Durable media usage entry-work state */
 export type MediaUsageWorkState = "pending" | "retry" | "leased" | "failed";
 
@@ -301,7 +313,6 @@ export interface MediaUsageActivationStatus {
 
 export interface MediaUsageActivationAdvanceInput {
 	writersDrained: true;
-	maintenanceReady: true;
 }
 
 export interface MediaUsageActivationAdvanceResponse {
@@ -993,6 +1004,16 @@ export class EmDashClient {
 	/** Repair content media usage indexes for one collection or all collections */
 	async mediaRepairUsage(input: MediaUsageRepairInput): Promise<MediaUsageRepairResponse> {
 		return this.request<MediaUsageRepairResponse>("POST", "/admin/media-usage/repair", input);
+	}
+
+	/** Read aggregate Media Usage indexing progress */
+	async mediaGetUsageProgress(): Promise<MediaUsageProgress> {
+		return this.request<MediaUsageProgress>("GET", "/admin/media-usage/progress");
+	}
+
+	/** Advance exactly one Media Usage maintenance step */
+	async mediaAdvanceUsageProgress(): Promise<MediaUsageProgressAdvanceResponse> {
+		return this.request<MediaUsageProgressAdvanceResponse>("POST", "/admin/media-usage/progress");
 	}
 
 	/** Read the redacted controlled-activation status */
