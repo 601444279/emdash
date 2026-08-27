@@ -328,7 +328,7 @@ msgstr "{base} na: {0}"
 msgid "{changedCount, plural, one {# change from next revision} other {# changes from next revision}}"
 msgstr "{changedCount, plural, one {# promena iz sledeće revizije} few {# promene iz sledeće revizije} other {# promena iz sledeće revizije}}"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2526
+#: packages/admin/src/components/PortableTextEditor.tsx:2530
 msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr ""
 
@@ -422,7 +422,7 @@ msgstr "{pluginName} zahteva sledeće dozvole:"
 msgid "{pluginName} Settings"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2527
+#: packages/admin/src/components/PortableTextEditor.tsx:2531
 msgid "{readingTime, plural, one {# min read} other {# min read}}"
 msgstr ""
 
@@ -462,7 +462,7 @@ msgstr "{unchangedCount, plural, one {Sakrij # nepromenjeno} few {Sakrij # nepro
 msgid "{unchangedCount, plural, one {Show # unchanged} other {Show # unchanged}}"
 msgstr "{unchangedCount, plural, one {Prikaži # nepromenjeno} few {Prikaži # nepromenjena} other {Prikaži # nepromenjenih}}"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2525
+#: packages/admin/src/components/PortableTextEditor.tsx:2529
 msgid "{words, plural, one {# word} other {# words}}"
 msgstr ""
 
@@ -670,7 +670,7 @@ msgstr "Dodaj"
 
 #. placeholder {0}: field.item_label
 #. placeholder {0}: taxonomyDef.labelSingular || t`Term`
-#: packages/admin/src/components/PortableTextEditor.tsx:2138
+#: packages/admin/src/components/PortableTextEditor.tsx:2142
 #: packages/admin/src/components/TaxonomyManager.tsx:545
 #: packages/admin/src/components/TaxonomyManager.tsx:1047
 msgid "Add {0}"
@@ -688,11 +688,11 @@ msgstr "Dodaj novi passkey"
 msgid "Add at least one sub-field to define the repeater structure."
 msgstr "Dodajte bar jedno podpolje da definišete strukturu ponavljača."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3753
+#: packages/admin/src/components/PortableTextEditor.tsx:3757
 msgid "Add column after"
 msgstr "Dodaj kolonu posle"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3747
+#: packages/admin/src/components/PortableTextEditor.tsx:3751
 msgid "Add column before"
 msgstr "Dodaj kolonu pre"
 
@@ -746,7 +746,7 @@ msgstr ""
 msgid "Add images to gallery"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2138
+#: packages/admin/src/components/PortableTextEditor.tsx:2142
 msgid "Add item"
 msgstr "Dodaj stavku"
 
@@ -754,7 +754,7 @@ msgstr "Dodaj stavku"
 msgid "Add Item"
 msgstr "Dodaj stavku"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3682
+#: packages/admin/src/components/PortableTextEditor.tsx:3686
 msgid "Add link"
 msgstr "Dodaj link"
 
@@ -793,11 +793,11 @@ msgstr "Dodaj Passkey"
 msgid "Add plugins to your astro.config.mjs to extend EmDash functionality."
 msgstr "Dodajte dodatke u astro.config.mjs da proširite EmDash funkcionalnost."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3774
+#: packages/admin/src/components/PortableTextEditor.tsx:3778
 msgid "Add row after"
 msgstr "Dodaj red posle"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3768
+#: packages/admin/src/components/PortableTextEditor.tsx:3772
 msgid "Add row before"
 msgstr "Dodaj red pre"
 
@@ -865,15 +865,15 @@ msgstr ""
 msgid "Agent-callable MCP tools"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4150
+#: packages/admin/src/components/PortableTextEditor.tsx:4154
 msgid "Align Center"
 msgstr "Poravnaj po centru"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4143
+#: packages/admin/src/components/PortableTextEditor.tsx:4147
 msgid "Align Left"
 msgstr "Poravnaj levo"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4157
+#: packages/admin/src/components/PortableTextEditor.tsx:4161
 msgid "Align Right"
 msgstr "Poravnaj desno"
 
@@ -1088,17 +1088,17 @@ msgstr "Pojavljuje se na objavama i stranicama"
 msgid "Application Password"
 msgstr "Lozinka za aplikaciju"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4239
+#: packages/admin/src/components/PortableTextEditor.tsx:4243
 msgid "Apply"
 msgstr "Primeni"
 
-#: packages/admin/src/components/editor/CodeBlockNode.tsx:181
-#: packages/admin/src/components/editor/CodeBlockNode.tsx:182
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:299
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:300
 msgid "Apply language"
 msgstr "Primeni jezik"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3608
-#: packages/admin/src/components/PortableTextEditor.tsx:3609
+#: packages/admin/src/components/PortableTextEditor.tsx:3612
+#: packages/admin/src/components/PortableTextEditor.tsx:3613
 msgid "Apply link"
 msgstr "Primeni link"
 
@@ -1161,7 +1161,7 @@ msgstr ""
 msgid "Assign WordPress authors to EmDash users. Posts will be attributed to the selected user."
 msgstr "Dodelite WordPress autore EmDash korisnicima. Objave će biti pripisane izabranom korisniku."
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:28
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:27
 msgid "Astro"
 msgstr "Astro"
 
@@ -1359,7 +1359,7 @@ msgstr "Rezervne kopije"
 msgid "Backups to keep"
 msgstr "Rezervne kopije za zadržavanje"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:29
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:28
 msgid "Bash"
 msgstr "Bash"
 
@@ -1384,8 +1384,8 @@ msgstr "Biografija"
 msgid "Block actions - drag to reorder, click for menu"
 msgstr "Akcije bloka — prevucite za preuređivanje, kliknite za meni"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3632
-#: packages/admin/src/components/PortableTextEditor.tsx:4037
+#: packages/admin/src/components/PortableTextEditor.tsx:3636
+#: packages/admin/src/components/PortableTextEditor.tsx:4041
 msgid "Bold"
 msgstr "Podebljano"
 
@@ -1429,8 +1429,8 @@ msgid "Browse themes and preview them with your own content."
 msgstr "Pregledajte teme i pregledajte ih sa sopstvenim sadržajem."
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:127
-#: packages/admin/src/components/PortableTextEditor.tsx:1454
-#: packages/admin/src/components/PortableTextEditor.tsx:4085
+#: packages/admin/src/components/PortableTextEditor.tsx:1458
+#: packages/admin/src/components/PortableTextEditor.tsx:4089
 msgid "Bullet List"
 msgstr "Lista sa tačkama"
 
@@ -1451,15 +1451,15 @@ msgstr "Šema potpisa autora"
 msgid "Bylines"
 msgstr "Potpisi autora"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:30
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:29
 msgid "C"
 msgstr "C"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:32
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:31
 msgid "C#"
 msgstr "C#"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:31
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:30
 msgid "C++"
 msgstr "C++"
 
@@ -1491,8 +1491,8 @@ msgstr "Može pregledati sadržaj"
 #: packages/admin/src/components/ContentSettingsPanel.tsx:826
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1129
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1182
-#: packages/admin/src/components/editor/CodeBlockNode.tsx:193
-#: packages/admin/src/components/editor/CodeBlockNode.tsx:194
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:311
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:312
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
 #: packages/admin/src/components/editor/ImageNode.tsx:265
 #: packages/admin/src/components/editor/ImageNode.tsx:266
@@ -1505,7 +1505,7 @@ msgstr "Može pregledati sadržaj"
 #: packages/admin/src/components/MenuEditor.tsx:623
 #: packages/admin/src/components/MenuList.tsx:175
 #: packages/admin/src/components/PluginManager.tsx:729
-#: packages/admin/src/components/PortableTextEditor.tsx:4223
+#: packages/admin/src/components/PortableTextEditor.tsx:4227
 #: packages/admin/src/components/Redirects.tsx:183
 #: packages/admin/src/components/SectionPickerModal.tsx:131
 #: packages/admin/src/components/Sections.tsx:209
@@ -1741,9 +1741,9 @@ msgstr "Kliknite na link u email-u da se prijavite."
 #: packages/admin/src/components/MenuList.tsx:139
 #: packages/admin/src/components/MenuList.tsx:145
 #: packages/admin/src/components/MenuList.tsx:149
-#: packages/admin/src/components/PortableTextEditor.tsx:1922
-#: packages/admin/src/components/PortableTextEditor.tsx:1928
+#: packages/admin/src/components/PortableTextEditor.tsx:1926
 #: packages/admin/src/components/PortableTextEditor.tsx:1932
+#: packages/admin/src/components/PortableTextEditor.tsx:1936
 #: packages/admin/src/components/Redirects.tsx:115
 #: packages/admin/src/components/Redirects.tsx:121
 #: packages/admin/src/components/SectionPickerModal.tsx:61
@@ -1790,16 +1790,20 @@ msgid "Close settings"
 msgstr "Zatvori podešavanja"
 
 #: packages/admin/src/components/ContentTypeList.tsx:356
-#: packages/admin/src/components/PortableTextEditor.tsx:3674
+#: packages/admin/src/components/PortableTextEditor.tsx:3678
 #: packages/admin/src/components/Redirects.tsx:478
 msgid "Code"
 msgstr "Kod"
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:119
-#: packages/admin/src/components/PortableTextEditor.tsx:1484
-#: packages/admin/src/components/PortableTextEditor.tsx:4124
+#: packages/admin/src/components/PortableTextEditor.tsx:1488
+#: packages/admin/src/components/PortableTextEditor.tsx:4128
 msgid "Code Block"
 msgstr "Blok koda"
+
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:229
+msgid "Code block actions"
+msgstr ""
 
 #: packages/admin/src/components/PluginManager.tsx:506
 #: packages/admin/src/components/PluginManager.tsx:511
@@ -1904,7 +1908,7 @@ msgstr ""
 #: packages/admin/src/components/comments/CommentDetail.tsx:103
 #: packages/admin/src/components/comments/CommentInbox.tsx:294
 #: packages/admin/src/components/Dashboard.tsx:269
-#: packages/admin/src/components/PortableTextEditor.tsx:2742
+#: packages/admin/src/components/PortableTextEditor.tsx:2746
 #: packages/admin/src/components/SectionEditor.tsx:215
 #: packages/admin/src/components/Sidebar.tsx:408
 #: packages/admin/src/components/Widgets.tsx:899
@@ -1991,7 +1995,7 @@ msgstr "Nastavi →"
 msgid "Continue Import"
 msgstr "Nastavi uvoz"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4101
+#: packages/admin/src/components/PortableTextEditor.tsx:4105
 msgid "Continue numbering"
 msgstr ""
 
@@ -1999,6 +2003,11 @@ msgstr ""
 #: packages/admin/src/components/WelcomeModal.tsx:28
 msgid "Contributor"
 msgstr "Saradnik"
+
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:246
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:270
+msgid "Copied"
+msgstr ""
 
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:305
 #: packages/admin/src/components/users/InviteUserModal.tsx:133
@@ -2009,6 +2018,15 @@ msgstr "Kopirano u clipboard"
 #: packages/admin/src/components/Sections.tsx:399
 msgid "Copy {0} to clipboard"
 msgstr "Kopiraj {0} u clipboard"
+
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:246
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:253
+msgid "Copy code"
+msgstr ""
+
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:270
+msgid "Copy failed"
+msgstr ""
 
 #: packages/admin/src/components/users/InviteUserModal.tsx:124
 msgid "Copy invite link"
@@ -2037,7 +2055,7 @@ msgstr "Kopiraj URL"
 msgid "Could not copy automatically. Please select the URL above and copy manually."
 msgstr "Nije moguće automatski kopirati. Izaberite URL iznad i kopirajte ručno."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3371
+#: packages/admin/src/components/PortableTextEditor.tsx:3375
 msgid "Could not insert section"
 msgstr ""
 
@@ -2118,7 +2136,7 @@ msgstr "Kreiraj \"{trimmedInput}\""
 msgid "Create {0} translation"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1455
+#: packages/admin/src/components/PortableTextEditor.tsx:1459
 msgid "Create a bullet list"
 msgstr "Kreiraj listu sa tačkama"
 
@@ -2127,7 +2145,7 @@ msgstr "Kreiraj listu sa tačkama"
 msgid "Create a new {0}"
 msgstr "Kreiraj novi {0}"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1465
+#: packages/admin/src/components/PortableTextEditor.tsx:1469
 msgid "Create a numbered list"
 msgstr "Kreiraj numerisanu listu"
 
@@ -2303,7 +2321,7 @@ msgstr "Kreiranje kolekcija i polja..."
 msgid "Creating..."
 msgstr "Kreiranje..."
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:33
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:32
 msgid "CSS"
 msgstr "CSS"
 
@@ -2500,7 +2518,7 @@ msgstr "Obrisati polje potpisa autora?"
 msgid "Delete Byline?"
 msgstr "Obrisati potpis autora?"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3759
+#: packages/admin/src/components/PortableTextEditor.tsx:3763
 msgid "Delete column"
 msgstr "Obriši kolonu"
 
@@ -2574,7 +2592,7 @@ msgstr "Obriši preusmeravanje {0}"
 msgid "Delete Redirect?"
 msgstr "Obrisati preusmeravanje?"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3778
+#: packages/admin/src/components/PortableTextEditor.tsx:3782
 msgid "Delete row"
 msgstr "Obriši red"
 
@@ -2582,7 +2600,7 @@ msgstr "Obriši red"
 msgid "Delete Section?"
 msgstr "Obrisati sekciju?"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3793
+#: packages/admin/src/components/PortableTextEditor.tsx:3797
 msgid "Delete table"
 msgstr "Obriši tabelu"
 
@@ -2706,7 +2724,7 @@ msgstr "Passkey vezan za uređaj"
 msgid "Didn't receive the email?"
 msgstr "Niste primili e-poštu?"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:34
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:33
 msgid "Diff"
 msgstr "Diff"
 
@@ -2788,7 +2806,7 @@ msgstr "Odbaci"
 msgid "Dismiss completed {0}"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3385
+#: packages/admin/src/components/PortableTextEditor.tsx:3389
 msgid "Dismiss section error"
 msgstr ""
 
@@ -2832,11 +2850,11 @@ msgstr "Prikazano ispod slike kao vidljiv opis."
 msgid "Distraction-free mode (⌘⇧\\)"
 msgstr "Režim bez ometanja (⌘⇧\\)"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1502
+#: packages/admin/src/components/PortableTextEditor.tsx:1506
 msgid "Divider"
 msgstr "Razdelnik"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:35
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:34
 msgid "Dockerfile"
 msgstr "Dockerfile"
 
@@ -2935,7 +2953,7 @@ msgstr "Prevucite i otpustite ili kliknite za pregled (.xml)"
 msgid "Drag here to add"
 msgstr "Prevucite ovde da dodate"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2314
+#: packages/admin/src/components/PortableTextEditor.tsx:2318
 msgid "Drag to reorder"
 msgstr "Prevucite za promenu redosleda"
 
@@ -3013,7 +3031,7 @@ msgstr "Uredi"
 #. placeholder {0}: collection.label
 #. placeholder {0}: domain.domain
 #: packages/admin/src/components/ContentTypeList.tsx:332
-#: packages/admin/src/components/PortableTextEditor.tsx:1919
+#: packages/admin/src/components/PortableTextEditor.tsx:1923
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:263
 #: packages/admin/src/components/TaxonomyManager.tsx:277
 #: packages/admin/src/components/TaxonomyManager.tsx:544
@@ -3066,7 +3084,7 @@ msgstr ""
 msgid "Edit image {0}"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3682
+#: packages/admin/src/components/PortableTextEditor.tsx:3686
 msgid "Edit link"
 msgstr "Uredi link"
 
@@ -3163,11 +3181,11 @@ msgid "Email verified!"
 msgstr "E-pošta verifikovana!"
 
 #. placeholder {0}: block.label
-#: packages/admin/src/components/PortableTextEditor.tsx:2756
+#: packages/admin/src/components/PortableTextEditor.tsx:2760
 msgid "Embed a {0}"
 msgstr "Ugradi {0}"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2759
+#: packages/admin/src/components/PortableTextEditor.tsx:2763
 msgid "Embeds"
 msgstr "Ugradnje"
 
@@ -3337,7 +3355,7 @@ msgstr "Postoji"
 msgid "Exit distraction-free mode"
 msgstr "Izađi iz režima bez ometanja"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4275
+#: packages/admin/src/components/PortableTextEditor.tsx:4279
 msgid "Exit Spotlight Mode"
 msgstr "Izađi iz Spotlight režima"
 
@@ -4206,7 +4224,7 @@ msgid "Full admin access"
 msgstr "Pun admin pristup"
 
 #: packages/admin/src/components/editor/GalleryDetailPanel.tsx:175
-#: packages/admin/src/components/PortableTextEditor.tsx:2723
+#: packages/admin/src/components/PortableTextEditor.tsx:2727
 msgid "Gallery"
 msgstr ""
 
@@ -4239,7 +4257,7 @@ msgstr "GitHub"
 msgid "Give this passkey a name to help you identify it later."
 msgstr "Dajte ovom passkey-u ime da biste ga kasnije lakše prepoznali."
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:36
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:35
 msgid "Go"
 msgstr "Idi"
 
@@ -4253,7 +4271,7 @@ msgstr "Idi na kontrolnu tablu"
 msgid "Google Verification"
 msgstr "Google verifikacija"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:37
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:36
 msgid "GraphQL"
 msgstr "GraphQL"
 
@@ -4279,37 +4297,37 @@ msgstr "Samo gost"
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:63
 #: packages/admin/src/components/editor/HeadingDropdownMenu.tsx:32
-#: packages/admin/src/components/PortableTextEditor.tsx:1394
+#: packages/admin/src/components/PortableTextEditor.tsx:1398
 msgid "Heading 1"
 msgstr "Naslov 1"
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:71
 #: packages/admin/src/components/editor/HeadingDropdownMenu.tsx:33
-#: packages/admin/src/components/PortableTextEditor.tsx:1404
+#: packages/admin/src/components/PortableTextEditor.tsx:1408
 msgid "Heading 2"
 msgstr "Naslov 2"
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:79
 #: packages/admin/src/components/editor/HeadingDropdownMenu.tsx:34
-#: packages/admin/src/components/PortableTextEditor.tsx:1414
+#: packages/admin/src/components/PortableTextEditor.tsx:1418
 msgid "Heading 3"
 msgstr "Naslov 3"
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:87
 #: packages/admin/src/components/editor/HeadingDropdownMenu.tsx:35
-#: packages/admin/src/components/PortableTextEditor.tsx:1424
+#: packages/admin/src/components/PortableTextEditor.tsx:1428
 msgid "Heading 4"
 msgstr "Naslov 4"
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:95
 #: packages/admin/src/components/editor/HeadingDropdownMenu.tsx:36
-#: packages/admin/src/components/PortableTextEditor.tsx:1434
+#: packages/admin/src/components/PortableTextEditor.tsx:1438
 msgid "Heading 5"
 msgstr "Naslov 5"
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:103
 #: packages/admin/src/components/editor/HeadingDropdownMenu.tsx:37
-#: packages/admin/src/components/PortableTextEditor.tsx:1444
+#: packages/admin/src/components/PortableTextEditor.tsx:1448
 msgid "Heading 6"
 msgstr "Naslov 6"
 
@@ -4372,9 +4390,9 @@ msgstr ""
 msgid "How to create an Application Password"
 msgstr "Kako kreirati Application Password"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:38
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:37
 #: packages/admin/src/components/editor/HtmlBlockNode.tsx:114
-#: packages/admin/src/components/PortableTextEditor.tsx:1494
+#: packages/admin/src/components/PortableTextEditor.tsx:1498
 msgid "HTML"
 msgstr "HTML"
 
@@ -4382,8 +4400,8 @@ msgstr "HTML"
 msgid "HTML source"
 msgstr "HTML izvor"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3595
-#: packages/admin/src/components/PortableTextEditor.tsx:4205
+#: packages/admin/src/components/PortableTextEditor.tsx:3599
+#: packages/admin/src/components/PortableTextEditor.tsx:4209
 msgid "https://..."
 msgstr "https://..."
 
@@ -4418,7 +4436,7 @@ msgstr "Ako nalog postoji za <0>{email}</0>, poslali smo link za prijavu."
 
 #: packages/admin/src/components/FieldEditor.tsx:233
 #: packages/admin/src/components/FieldEditor.tsx:616
-#: packages/admin/src/components/PortableTextEditor.tsx:2708
+#: packages/admin/src/components/PortableTextEditor.tsx:2712
 msgid "Image"
 msgstr "Slika"
 
@@ -4588,7 +4606,7 @@ msgstr ""
 msgid "Indexing existing content"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4065
+#: packages/admin/src/components/PortableTextEditor.tsx:4069
 msgid "Inline Code"
 msgstr "Ugrađeni kod"
 
@@ -4598,44 +4616,44 @@ msgid "Insert"
 msgstr "Umetni"
 
 #. placeholder {0}: block?.label || ""
-#: packages/admin/src/components/PortableTextEditor.tsx:1919
+#: packages/admin/src/components/PortableTextEditor.tsx:1923
 msgid "Insert {0}"
 msgstr "Umetni {0}"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1475
+#: packages/admin/src/components/PortableTextEditor.tsx:1479
 msgid "Insert a blockquote"
 msgstr "Umetni citat"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1485
+#: packages/admin/src/components/PortableTextEditor.tsx:1489
 msgid "Insert a code block"
 msgstr "Umetni blok koda"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1503
+#: packages/admin/src/components/PortableTextEditor.tsx:1507
 msgid "Insert a horizontal rule"
 msgstr "Umetni horizontalnu liniju"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2739
+#: packages/admin/src/components/PortableTextEditor.tsx:2743
 msgid "Insert a reusable section"
 msgstr "Umetni ponovo upotrebljivu sekciju"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1513
+#: packages/admin/src/components/PortableTextEditor.tsx:1517
 msgid "Insert a table"
 msgstr "Umetni tabelu"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2709
+#: packages/admin/src/components/PortableTextEditor.tsx:2713
 msgid "Insert an image"
 msgstr "Umetni sliku"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2724
+#: packages/admin/src/components/PortableTextEditor.tsx:2728
 msgid "Insert an image gallery"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1747
+#: packages/admin/src/components/PortableTextEditor.tsx:1751
 msgid "Insert block"
 msgstr "Umetni blok"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4017
-#: packages/admin/src/components/PortableTextEditor.tsx:4027
+#: packages/admin/src/components/PortableTextEditor.tsx:4021
+#: packages/admin/src/components/PortableTextEditor.tsx:4031
 msgid "Insert block after current block"
 msgstr "Umetni blok posle trenutnog bloka"
 
@@ -4647,20 +4665,20 @@ msgstr "Umetni blok ispod"
 msgid "Insert from URL"
 msgstr "Umetni sa URL-a"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4131
+#: packages/admin/src/components/PortableTextEditor.tsx:4135
 msgid "Insert HTML"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4128
+#: packages/admin/src/components/PortableTextEditor.tsx:4132
 msgid "Insert Image"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4175
-#: packages/admin/src/components/PortableTextEditor.tsx:4189
+#: packages/admin/src/components/PortableTextEditor.tsx:4179
+#: packages/admin/src/components/PortableTextEditor.tsx:4193
 msgid "Insert Link"
 msgstr "Umetni link"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1495
+#: packages/admin/src/components/PortableTextEditor.tsx:1499
 msgid "Insert raw HTML"
 msgstr "Umetni sirovi HTML"
 
@@ -4759,13 +4777,13 @@ msgstr ""
 msgid "Invoke only this plugin's enabled MCP tools"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3639
-#: packages/admin/src/components/PortableTextEditor.tsx:4044
+#: packages/admin/src/components/PortableTextEditor.tsx:3643
+#: packages/admin/src/components/PortableTextEditor.tsx:4048
 msgid "Italic"
 msgstr "Kurziv"
 
 #. placeholder {0}: index + 1
-#: packages/admin/src/components/PortableTextEditor.tsx:2300
+#: packages/admin/src/components/PortableTextEditor.tsx:2304
 #: packages/admin/src/components/RepeaterField.tsx:239
 msgid "Item {0}"
 msgstr "Stavka {0}"
@@ -4791,11 +4809,11 @@ msgstr ""
 msgid "Jane Doe"
 msgstr "Jane Doe"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:39
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:38
 msgid "Java"
 msgstr "Java"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:40
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:39
 msgid "JavaScript"
 msgstr "JavaScript"
 
@@ -4807,12 +4825,12 @@ msgstr "Radno mesto"
 msgid "job_title"
 msgstr "job_title"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:41
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:40
 #: packages/admin/src/components/FieldEditor.tsx:251
 msgid "JSON"
 msgstr "JSON"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:42
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:41
 msgid "JSX"
 msgstr "JSX"
 
@@ -4842,7 +4860,7 @@ msgstr "Nastavite da kucate da suzite potpise autora."
 msgid "Keywords"
 msgstr "Ključne reči"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:43
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:42
 msgid "Kotlin"
 msgstr "Kotlin"
 
@@ -4870,7 +4888,7 @@ msgstr "Oznaka (jednina)"
 msgid "Landscape"
 msgstr ""
 
-#: packages/admin/src/components/editor/CodeBlockNode.tsx:162
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:280
 #: packages/admin/src/components/LoginPage.tsx:347
 #: packages/admin/src/components/Settings.tsx:122
 #: packages/admin/src/components/Settings.tsx:132
@@ -4878,7 +4896,7 @@ msgstr ""
 msgid "Language"
 msgstr "Jezik"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1395
+#: packages/admin/src/components/PortableTextEditor.tsx:1399
 msgid "Large section heading"
 msgstr "Veliki naslov sekcije"
 
@@ -5045,7 +5063,7 @@ msgstr "Učitavanje konfiguracije..."
 msgid "Loading content..."
 msgstr "Učitavanje sadržaja..."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3358
+#: packages/admin/src/components/PortableTextEditor.tsx:3362
 msgid "Loading editor..."
 msgstr "Učitavanje editora..."
 
@@ -5118,7 +5136,7 @@ msgstr "Učitavanje vidžeta..."
 #: packages/admin/src/components/MediaLibrary.tsx:1356
 #: packages/admin/src/components/MediaPickerModal.tsx:776
 #: packages/admin/src/components/MediaUsedIn.tsx:195
-#: packages/admin/src/components/PortableTextEditor.tsx:2427
+#: packages/admin/src/components/PortableTextEditor.tsx:2431
 #: packages/admin/src/components/Redirects.tsx:560
 #: packages/admin/src/components/RegistryBrowse.tsx:165
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:169
@@ -5195,6 +5213,10 @@ msgstr "Samo mala slova, brojevi i crtice"
 #: packages/admin/src/components/TaxonomyManager.tsx:831
 msgid "Lowercase letters, numbers, and underscores only, starting with a letter"
 msgstr "Samo mala slova, brojevi i donje crte, počevši slovom"
+
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:43
+msgid "Lua"
+msgstr ""
 
 #: packages/admin/src/components/MediaDetailPanel.tsx:240
 msgid "Main library"
@@ -5314,8 +5336,8 @@ msgstr "Maksimalno oznaka"
 msgid "MDX"
 msgstr "MDX"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2712
-#: packages/admin/src/components/PortableTextEditor.tsx:2727
+#: packages/admin/src/components/PortableTextEditor.tsx:2716
+#: packages/admin/src/components/PortableTextEditor.tsx:2731
 #: packages/admin/src/components/Settings.tsx:70
 #: packages/admin/src/components/Sidebar.tsx:256
 #: packages/admin/src/components/WordPressImport.tsx:770
@@ -5392,7 +5414,7 @@ msgstr ""
 msgid "Media Write"
 msgstr "Pisanje medija"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1405
+#: packages/admin/src/components/PortableTextEditor.tsx:1409
 msgid "Medium section heading"
 msgstr "Srednji naslov sekcije"
 
@@ -5489,7 +5511,7 @@ msgstr "Min. dužina"
 msgid "Min Value"
 msgstr "Min. vrednost"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1435
+#: packages/admin/src/components/PortableTextEditor.tsx:1439
 msgid "Minor section heading"
 msgstr ""
 
@@ -5906,7 +5928,7 @@ msgstr "Nema verzija za instalaciju"
 msgid "No invite token provided"
 msgstr "Nije prosleđen token za pozivnicu"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2223
+#: packages/admin/src/components/PortableTextEditor.tsx:2227
 #: packages/admin/src/components/RepeaterField.tsx:165
 #: packages/admin/src/components/settings/BackupSettings.tsx:283
 msgid "No items yet"
@@ -5920,7 +5942,7 @@ msgstr "Bez limita"
 msgid "No linked user"
 msgstr "Nema povezanog korisnika"
 
-#: packages/admin/src/components/editor/CodeBlockNode.tsx:171
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:289
 msgid "No matches"
 msgstr "Nema podudaranja"
 
@@ -6016,7 +6038,7 @@ msgstr "Nema nedavne aktivnosti"
 msgid "No redirects yet"
 msgstr "Još nema preusmeravanja"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1772
+#: packages/admin/src/components/PortableTextEditor.tsx:1776
 #: packages/admin/src/components/RepeaterField.tsx:374
 msgid "No results"
 msgstr "Nema rezultata"
@@ -6109,8 +6131,8 @@ msgid "Number of posts to show per page on list views"
 msgstr "Broj objava po stranici u prikazima liste"
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:135
-#: packages/admin/src/components/PortableTextEditor.tsx:1464
-#: packages/admin/src/components/PortableTextEditor.tsx:4092
+#: packages/admin/src/components/PortableTextEditor.tsx:1468
+#: packages/admin/src/components/PortableTextEditor.tsx:4096
 msgid "Numbered List"
 msgstr "Numerisana lista"
 
@@ -6430,8 +6452,8 @@ msgstr "Izaberite bilo koji način za kreiranje admin naloga."
 msgid "Placeholder text"
 msgstr "Tekst placeholder-a"
 
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:27
-#: packages/admin/src/components/editor/codeBlockLanguages.ts:120
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:26
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:121
 msgid "Plain text"
 msgstr "Običan tekst"
 
@@ -6698,8 +6720,8 @@ msgid "Quick edit alt text"
 msgstr "Brzo uredi alt tekst"
 
 #: packages/admin/src/components/editor/BlockMenu.tsx:111
-#: packages/admin/src/components/PortableTextEditor.tsx:1474
-#: packages/admin/src/components/PortableTextEditor.tsx:4117
+#: packages/admin/src/components/PortableTextEditor.tsx:1478
+#: packages/admin/src/components/PortableTextEditor.tsx:4121
 msgid "Quote"
 msgstr "Citat"
 
@@ -6783,7 +6805,7 @@ msgstr "Preusmeravanje na prijavu..."
 msgid "Redirects"
 msgstr "Preusmeravanja"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4262
+#: packages/admin/src/components/PortableTextEditor.tsx:4266
 msgid "Redo"
 msgstr "Ponovi"
 
@@ -6845,7 +6867,7 @@ msgstr ""
 #: packages/admin/src/components/ContentSettingsPanel.tsx:1065
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:179
-#: packages/admin/src/components/PortableTextEditor.tsx:4235
+#: packages/admin/src/components/PortableTextEditor.tsx:4239
 #: packages/admin/src/components/settings/GeneralSettings.tsx:229
 #: packages/admin/src/components/settings/GeneralSettings.tsx:289
 #: packages/admin/src/components/settings/PasskeyItem.tsx:180
@@ -6905,13 +6927,13 @@ msgid "Remove Image?"
 msgstr "Ukloniti sliku?"
 
 #. placeholder {0}: index + 1
-#: packages/admin/src/components/PortableTextEditor.tsx:2339
+#: packages/admin/src/components/PortableTextEditor.tsx:2343
 #: packages/admin/src/components/RepeaterField.tsx:275
 msgid "Remove item {0}"
 msgstr "Ukloni stavku {0}"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3620
-#: packages/admin/src/components/PortableTextEditor.tsx:3621
+#: packages/admin/src/components/PortableTextEditor.tsx:3624
+#: packages/admin/src/components/PortableTextEditor.tsx:3625
 msgid "Remove link"
 msgstr "Ukloni link"
 
@@ -7045,7 +7067,7 @@ msgstr "Vrati na original"
 msgid "Resize settings panel"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4108
+#: packages/admin/src/components/PortableTextEditor.tsx:4112
 msgid "Restart numbering"
 msgstr ""
 
@@ -7094,6 +7116,11 @@ msgstr "Pokušaj ponovo"
 #. placeholder {0}: row.file.name
 #: packages/admin/src/components/MediaUploadDialog.tsx:151
 msgid "Retry {0}"
+msgstr ""
+
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:246
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:253
+msgid "Retry copy"
 msgstr ""
 
 #: packages/admin/src/components/MediaUploadDialog.tsx:503
@@ -7516,7 +7543,7 @@ msgstr "Pretraživo"
 msgid "Searching..."
 msgstr "Pretražuje se..."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:2738
+#: packages/admin/src/components/PortableTextEditor.tsx:2742
 msgid "Section"
 msgstr "Sekcija"
 
@@ -7664,7 +7691,7 @@ msgstr "Izaberi fajl"
 msgid "Select File"
 msgstr "Izaberi fajl"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3461
+#: packages/admin/src/components/PortableTextEditor.tsx:3465
 msgid "Select Gallery Images"
 msgstr ""
 
@@ -7673,7 +7700,7 @@ msgid "Select image"
 msgstr "Izaberi sliku"
 
 #: packages/admin/src/components/MediaPickerModal.tsx:151
-#: packages/admin/src/components/PortableTextEditor.tsx:3447
+#: packages/admin/src/components/PortableTextEditor.tsx:3451
 #: packages/admin/src/components/settings/SeoSettings.tsx:223
 msgid "Select Image"
 msgstr "Izaberi sliku"
@@ -7700,12 +7727,12 @@ msgid "Select which content types to import."
 msgstr "Izaberi koje tipove sadržaja da uvezeš."
 
 #: packages/admin/src/components/BlockKitFieldWidget.tsx:108
-#: packages/admin/src/components/PortableTextEditor.tsx:2434
+#: packages/admin/src/components/PortableTextEditor.tsx:2438
 #: packages/admin/src/components/RepeaterField.tsx:372
 msgid "Select..."
 msgstr "Izaberi..."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1763
+#: packages/admin/src/components/PortableTextEditor.tsx:1767
 msgid "Selected {selectedItemTitle}"
 msgstr "Izabrano {selectedItemTitle}"
 
@@ -7789,12 +7816,11 @@ msgstr "SEO naslov"
 msgid "Set a custom display size for this image instance."
 msgstr "Postavi prilagođenu veličinu prikaza za ovu instancu slike."
 
-#: packages/admin/src/components/editor/CodeBlockNode.tsx:146
-#: packages/admin/src/components/editor/CodeBlockNode.tsx:150
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:239
 msgid "Set language"
 msgstr "Postavi jezik"
 
-#: packages/admin/src/components/editor/CodeBlockNode.tsx:147
+#: packages/admin/src/components/editor/CodeBlockNode.tsx:236
 msgid "Set language (current: {label})"
 msgstr "Postavi jezik (trenutno: {label})"
 
@@ -8047,15 +8073,15 @@ msgstr "Slug kopiran u clipboard"
 msgid "Slugs cannot be changed after the field is created."
 msgstr "Slugovi se ne mogu menjati nakon kreiranja polja."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1415
+#: packages/admin/src/components/PortableTextEditor.tsx:1419
 msgid "Small section heading"
 msgstr "Mali naslov sekcije"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1425
+#: packages/admin/src/components/PortableTextEditor.tsx:1429
 msgid "Smaller section heading"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1445
+#: packages/admin/src/components/PortableTextEditor.tsx:1449
 msgid "Smallest section heading"
 msgstr ""
 
@@ -8122,7 +8148,7 @@ msgstr "neželjeno"
 msgid "Spam"
 msgstr "Neželjeno"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4275
+#: packages/admin/src/components/PortableTextEditor.tsx:4279
 msgid "Spotlight Mode"
 msgstr "Režim osvetljavanja"
 
@@ -8143,8 +8169,8 @@ msgid "Start Import"
 msgstr "Započni uvoz"
 
 #: packages/admin/src/components/ContentEditor.tsx:1297
-#: packages/admin/src/components/PortableTextEditor.tsx:2593
-#: packages/admin/src/components/PortableTextEditor.tsx:2594
+#: packages/admin/src/components/PortableTextEditor.tsx:2597
+#: packages/admin/src/components/PortableTextEditor.tsx:2598
 msgid "Start writing, or type '/' for commands"
 msgstr "Počni da pišeš ili ukucaj '/' za komande"
 
@@ -8179,8 +8205,8 @@ msgstr "Sačuvane rezervne kopije"
 msgid "Stored per locale — each translation of a byline gets its own value."
 msgstr "Čuvano po lokalu — svaki prevod potpisa autora ima sopstvenu vrednost."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3653
-#: packages/admin/src/components/PortableTextEditor.tsx:4058
+#: packages/admin/src/components/PortableTextEditor.tsx:3657
+#: packages/admin/src/components/PortableTextEditor.tsx:4062
 msgid "Strikethrough"
 msgstr "Precrtano"
 
@@ -8201,11 +8227,11 @@ msgstr "Podpolja"
 msgid "Subscriber"
 msgstr "Pretplatnik"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3660
+#: packages/admin/src/components/PortableTextEditor.tsx:3664
 msgid "Subscript"
 msgstr ""
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3667
+#: packages/admin/src/components/PortableTextEditor.tsx:3671
 msgid "Superscript"
 msgstr ""
 
@@ -8237,11 +8263,11 @@ msgstr "Sistem ({resolvedLabel})"
 msgid "System Fields"
 msgstr "Sistemska polja"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:1512
+#: packages/admin/src/components/PortableTextEditor.tsx:1516
 msgid "Table"
 msgstr "Tabela"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3742
+#: packages/admin/src/components/PortableTextEditor.tsx:3746
 msgid "Table controls"
 msgstr "Kontrole tabele"
 
@@ -8314,7 +8340,7 @@ msgstr "Pojam obrisan"
 msgid "test@example.com"
 msgstr "test@example.com"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4009
+#: packages/admin/src/components/PortableTextEditor.tsx:4013
 msgid "Text formatting"
 msgstr "Formatiranje teksta"
 
@@ -8421,7 +8447,7 @@ msgstr ""
 msgid "This collection is defined in code. Some settings cannot be changed here. Edit your live.config.ts file to modify the schema."
 msgstr "Ova kolekcija je definisana u kodu. Neka podešavanja se ovde ne mogu menjati. Uredi live.config.ts fajl da izmeniš šemu."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3344
+#: packages/admin/src/components/PortableTextEditor.tsx:3348
 msgid "This content cannot be edited safely"
 msgstr ""
 
@@ -8429,7 +8455,7 @@ msgstr ""
 msgid "This doesn't look like a valid migration key. Generate a new one in the plugin and paste the full string starting with \"em1.\"."
 msgstr "Ovo ne izgleda kao validan ključ migracije. Generiši novi u dodatku i nalepi ceo string koji počinje sa \"em1.\"."
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3346
+#: packages/admin/src/components/PortableTextEditor.tsx:3350
 msgid "This field contains unsupported Portable Text marks: <0>{markList}</0>. Remove them through the API before editing or saving this content."
 msgstr ""
 
@@ -8500,7 +8526,7 @@ msgid "This removes the byline profile. Content byline links are removed and lea
 msgstr "Ovo uklanja profil potpisa autora. Linkovi potpisa autora u sadržaju se uklanjaju i pokazivači se brišu."
 
 #. placeholder {0}: sectionInsertErrorMarks.join(", ")
-#: packages/admin/src/components/PortableTextEditor.tsx:3373
+#: packages/admin/src/components/PortableTextEditor.tsx:3377
 msgid "This section contains unsupported Portable Text marks: <0>{0}</0>. Update the section before inserting it."
 msgstr ""
 
@@ -8595,7 +8621,7 @@ msgstr "Do datuma"
 msgid "to select"
 msgstr "za izbor"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3787
+#: packages/admin/src/components/PortableTextEditor.tsx:3791
 msgid "Toggle header row"
 msgstr "Uključi/isključi zaglavni red"
 
@@ -8801,12 +8827,12 @@ msgstr "Nije moguće pristupiti tržištu"
 msgid "Unassigned"
 msgstr "Nedodeljeno"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:3646
-#: packages/admin/src/components/PortableTextEditor.tsx:4051
+#: packages/admin/src/components/PortableTextEditor.tsx:3650
+#: packages/admin/src/components/PortableTextEditor.tsx:4055
 msgid "Underline"
 msgstr "Podvučeno"
 
-#: packages/admin/src/components/PortableTextEditor.tsx:4255
+#: packages/admin/src/components/PortableTextEditor.tsx:4259
 msgid "Undo"
 msgstr "Poništi"
 
@@ -9067,9 +9093,9 @@ msgstr "Otprema se..."
 #: packages/admin/src/components/FieldEditor.tsx:615
 #: packages/admin/src/components/MenuEditor.tsx:418
 #: packages/admin/src/components/MenuEditor.tsx:596
-#: packages/admin/src/components/PortableTextEditor.tsx:3600
-#: packages/admin/src/components/PortableTextEditor.tsx:4200
-#: packages/admin/src/components/PortableTextEditor.tsx:4210
+#: packages/admin/src/components/PortableTextEditor.tsx:3604
+#: packages/admin/src/components/PortableTextEditor.tsx:4204
+#: packages/admin/src/components/PortableTextEditor.tsx:4214
 msgid "URL"
 msgstr "URL"
 
@@ -9661,3 +9687,7 @@ msgstr "ID ili naziv tvog YouTube kanala"
 #: packages/admin/src/components/settings/SocialSettings.tsx:179
 msgid "YouTube"
 msgstr "YouTube"
+
+#: packages/admin/src/components/editor/codeBlockLanguages.ts:60
+msgid "Zig"
+msgstr ""
