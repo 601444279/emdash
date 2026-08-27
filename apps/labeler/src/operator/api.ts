@@ -30,10 +30,15 @@ import { readAssessmentVersions } from "../runtime-config.js";
 
 const ASSESSMENT_ACTION_RE =
 	/^\/_admin\/api\/assessments\/([A-Za-z0-9._:-]{1,200})\/(approve|block|rerun)$/;
+const ASSESSMENT_MEDIA_RE =
+	/^\/_admin\/api\/assessments\/([A-Za-z0-9._:-]{1,200})\/media\/(icon|banner|screenshot)\/([0-9]{1,3})$/;
 const ASSESSMENT_DETAIL_RE = /^\/_admin\/api\/assessments\/([A-Za-z0-9._:-]{1,200})$/;
 const EVAL_DETAIL_RE = /^\/_admin\/api\/evals\/([1-9][0-9]*)$/;
 const IDEMPOTENCY_KEY_RE = /^[A-Za-z0-9._:-]{8,200}$/;
 const BASE64_PADDING_RE = /=+$/;
+const QUARANTINE_OBJECT_KEY_RE =
+	/^media\/[a-f0-9]{64}\/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const SHA256_HEX_RE = /^[a-f0-9]{64}$/;
 const MAX_BODY_BYTES = 16 * 1024;
 const OPERATOR_ASSESSMENT_STATES = new Set([
 	"pending",
@@ -347,6 +352,15 @@ async function handleOperatorRead(
 		return apiError("FORBIDDEN", "Operator role is not authorized for this action", 403);
 	}
 	const url = new URL(request.url);
+	const mediaDetail = ASSESSMENT_MEDIA_RE.exec(url.pathname);
+	if (mediaDetail) {
+		return readProductionAssessmentMedia(
+			env,
+			mediaDetail[1]!,
+			mediaDetail[2]!,
+			Number(mediaDetail[3]),
+		);
+	}
 	if (url.pathname === "/_admin/api/session") {
 		return mutationResponse({
 			authenticated: true,
@@ -454,11 +468,16 @@ async function handleOperatorRead(
 			row["subject_uri"],
 			row["subject_cid"],
 		);
+		const canonicalInput = parseStoredJson(row["canonical_input_json"]);
+		const relatedProfile =
+			row["subject_kind"] === "release"
+				? await readProductionRelatedProfile(env.DB, canonicalInput)
+				: null;
 		return mutationResponse({
 			assessment: {
 				...row,
 				coverage: parseStoredJson(row["coverage_json"]),
-				canonicalInput: parseStoredJson(row["canonical_input_json"]),
+				canonicalInput,
 				summary: parseStoredJson(row["summary_json"]),
 				coverage_json: undefined,
 				canonical_input_json: undefined,
@@ -470,6 +489,7 @@ async function handleOperatorRead(
 				evidence_refs_json: undefined,
 			})),
 			manualDecision,
+			relatedProfile,
 		});
 	}
 	if (url.pathname !== "/_admin/api/assessments") {
@@ -503,6 +523,80 @@ async function handleOperatorRead(
 		}
 		throw error;
 	}
+}
+
+async function readProductionAssessmentMedia(
+	env: Env,
+	runKey: string,
+	kind: string,
+	index: number,
+): Promise<Response> {
+	const row = await env.DB.prepare("SELECT canonical_input_json FROM assessments WHERE run_key = ?")
+		.bind(runKey)
+		.first<{ canonical_input_json: string | null }>();
+	if (!row) return apiError("NOT_FOUND", "Assessment was not found", 404);
+	const canonical = parseStoredJson(row.canonical_input_json);
+	const evidence = isRecord(canonical) ? canonical["mediaEvidence"] : null;
+	const media = Array.isArray(evidence)
+		? evidence.find((item) => isRecord(item) && item["kind"] === kind && item["index"] === index)
+		: undefined;
+	if (!isRecord(media)) return apiError("NOT_FOUND", "Assessment media was not found", 404);
+	const contentRef = media["contentRef"];
+	const sha256 = media["sha256"];
+	const mimeType = media["mimeType"];
+	if (
+		typeof contentRef !== "string" ||
+		typeof sha256 !== "string" ||
+		!SHA256_HEX_RE.test(sha256) ||
+		typeof mimeType !== "string" ||
+		!mimeType.startsWith("image/")
+	) {
+		return apiError("MEDIA_UNAVAILABLE", "Assessment media is unavailable", 404);
+	}
+	const objectKey = contentRef.startsWith("r2://quarantine/")
+		? contentRef.slice("r2://quarantine/".length)
+		: "";
+	if (!QUARANTINE_OBJECT_KEY_RE.test(objectKey) || !objectKey.startsWith(`media/${sha256}/`)) {
+		return apiError("MEDIA_UNAVAILABLE", "Assessment media is unavailable", 404);
+	}
+	const object = await env.MEDIA_QUARANTINE.get(objectKey);
+	if (!object) return apiError("MEDIA_UNAVAILABLE", "Assessment media is unavailable", 404);
+	return new Response(object.body, {
+		headers: {
+			"cache-control": "private, max-age=300",
+			"content-length": String(object.size),
+			"content-type": mimeType,
+			"x-content-type-options": "nosniff",
+		},
+	});
+}
+
+async function readProductionRelatedProfile(
+	db: D1Database,
+	canonicalInput: unknown,
+): Promise<unknown> {
+	if (!isRecord(canonicalInput) || !isRecord(canonicalInput["input"])) return null;
+	const input = canonicalInput["input"];
+	const publisherDid = input["publisherDid"];
+	const packageSlug = input["packageSlug"];
+	if (typeof publisherDid !== "string" || typeof packageSlug !== "string") return null;
+	const profileUri = `at://${publisherDid}/com.emdashcms.experimental.package.profile/${packageSlug}`;
+	const row = await db
+		.prepare(
+			`SELECT assessment.canonical_input_json
+			 FROM current_subjects subject
+			 JOIN current_assessments current
+			   ON current.subject_uri = subject.uri AND current.subject_cid = subject.cid
+			 JOIN assessments assessment ON assessment.id = current.assessment_id
+			 WHERE subject.uri = ? AND subject.deleted_at IS NULL
+			 LIMIT 1`,
+		)
+		.bind(profileUri)
+		.first<{ canonical_input_json: string | null }>();
+	const canonicalProfile = parseStoredJson(row?.canonical_input_json);
+	return isRecord(canonicalProfile) && isRecord(canonicalProfile["input"])
+		? canonicalProfile["input"]
+		: null;
 }
 
 async function readProductionIssuanceStatus(db: D1Database): Promise<OperatorIssuanceStatus> {
@@ -870,6 +964,10 @@ function parseStoredJson(value: unknown): unknown {
 	} catch {
 		return null;
 	}
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function apiError(code: string, message: string, status: number): Response {
