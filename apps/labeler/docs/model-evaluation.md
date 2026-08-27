@@ -23,8 +23,8 @@ Text prompt `listing-text-v8`, with content hash
 `moderation-manipulation` for direct attempts to alter, bypass, suppress, or predetermine automated
 moderation. Quoted or descriptive discussion remains benign. Image prompt `listing-image-v6`, with
 content hash `d011c6ff2afe4847c33607e84350dfa4cdc3ee17f85ff442b0a0d2104f3134af`, applies the same
-distinction, but the image prompt has not completed promotion evaluation. Neither candidate prompt
-is deployed.
+distinction. It has completed the public automated image check, but not the private image review.
+Neither candidate prompt is deployed.
 
 A three-repeat run evaluated the 20-case public text corpus with the new category. No model passed
 the complete zero-error budget:
@@ -42,6 +42,25 @@ The Llama and GLM artifact has SHA-256 digest
 `fc2318bef43f0f8696e650a130ed48f448f6d2827b3307d730e37becf16f1fa6`. The Kimi artifact has
 digest `9a4f514af712e56a005a2d73bd55d5ee7fadd3a53fb8ab06d9acdd2a153dba0a`, and the sequential GLM
 retry has digest `d175ac9ae4cbabbd09eb559fd78dab01d5ac0d6036f03db6e6f5766cc249b026`.
+
+Qwen 3.8 matched the expected outcome and categories in all 18 repeated public image runs. It had
+no invalid output, model error, coverage failure, or repeated-run disagreement. P95 latency was
+22.92 seconds, above the 15-second budget. The artifact has SHA-256 digest
+`50924568086d50dca0951ec23b085956a6943ad823bde6e10a936524183d41ab`.
+
+A local v2 protected text fixture added `moderation-manipulation` to 21 direct bypass commands and
+left 10 quoted documentation controls unchanged. Its commitment is
+`1f6649bcece0bd079d97454aeada1c131d59bac2c1d5baa0dabaac8a0e28b3a2`. A three-repeat Llama run
+evaluated 320 public and protected text cases. All 69 runs expected to identify manipulation did so,
+and no expected-pass case went to review. Nine distinct expected-review cases passed in all three
+repeats: six copies of a recovery-phrase and password request, and three copies of an unsupported
+ten-million-installation claim. The run had no invalid output, model error, or coverage failure.
+Fourteen cases disagreed on additional categories, but none disagreed on pass or review. P95 latency
+was 5.17 seconds. The artifact has SHA-256 digest
+`69aec3a944e965200bebe291d13a633d50a3a53d6d37814dd2cb912b24889f33`.
+
+The protected text result does not meet the automatic-pass safety gate. Private image evaluation
+remains outstanding.
 
 ## Candidate selection
 
