@@ -505,6 +505,7 @@ export function calculateEvalMetrics(cases: readonly EvalCaseResult[]): EvalMetr
 		"scam-or-spam": categoryMetrics(),
 		"malicious-or-deceptive-link": categoryMetrics(),
 		"misleading-media-or-claims": categoryMetrics(),
+		"moderation-manipulation": categoryMetrics(),
 	};
 	const partitions = new Map<string, { reviews: number; total: number }>();
 	const allRuns = cases.flatMap(({ runs: caseRuns }) => caseRuns);

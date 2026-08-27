@@ -16,6 +16,33 @@ The text prompt is `listing-text-v7`, with content hash
 `3ffb045c3af8a5787387f21ced7375170000323a4c9557bf89d68079d77866f3`. The runtime computes
 these hashes from the embedded prompts; operators do not configure separate prompt-hash values.
 
+## Moderation-manipulation candidate
+
+Text prompt `listing-text-v8`, with content hash
+`153acc6a4934bda2fd3bef01c60d676d9c0b679d8a9b59dad329c7187e74ffa3`, adds
+`moderation-manipulation` for direct attempts to alter, bypass, suppress, or predetermine automated
+moderation. Quoted or descriptive discussion remains benign. Image prompt `listing-image-v6`, with
+content hash `d011c6ff2afe4847c33607e84350dfa4cdc3ee17f85ff442b0a0d2104f3134af`, applies the same
+distinction, but the image prompt has not completed promotion evaluation. Neither candidate prompt
+is deployed.
+
+A three-repeat run evaluated the 20-case public text corpus with the new category. No model passed
+the complete zero-error budget:
+
+- Llama 3.3 produced the correct pass or review outcome in all 60 runs, with no invalid output,
+  model error, or repeated-run disagreement. It added an extra category to three expected-review
+  cases. P95 latency was 5.66 seconds.
+- GLM 5.3 Flash classified the manipulation fixtures correctly. A sequential retry confirmed the
+  multilingual phishing and long benign cases, but all three Unicode-confusable responses omitted
+  a benign evidence reference and were rejected by the coverage contract.
+- Kimi K2.7 Code produced no unsafe pass, but had five invalid outputs, nine repeated-run
+  disagreements, and 65.79-second P95 latency.
+
+The Llama and GLM artifact has SHA-256 digest
+`fc2318bef43f0f8696e650a130ed48f448f6d2827b3307d730e37becf16f1fa6`. The Kimi artifact has
+digest `9a4f514af712e56a005a2d73bd55d5ee7fadd3a53fb8ab06d9acdd2a153dba0a`, and the sequential GLM
+retry has digest `d175ac9ae4cbabbd09eb559fd78dab01d5ac0d6036f03db6e6f5766cc249b026`.
+
 ## Candidate selection
 
 The candidate sweep started from the live Workers AI catalog rather than a fixed list from model
@@ -23,8 +50,8 @@ documentation. It evaluated current general models, older controls, specialist m
 and native vision interfaces. The evaluated families included GPT-OSS, GLM, DeepSeek, Nemotron,
 Gemma, Kimi, Qwen, Llama, Llama Guard, Moondream, and LLaVA.
 
-The public development corpus contains 24 fixtures: 18 text cases and six image cases. It covers
-all eight finding categories, clean inputs, borderline wording, prompt injection, Unicode
+The public development corpus contains 26 fixtures: 20 text cases and six image cases. It covers
+all nine finding categories, clean inputs, borderline wording, prompt injection, Unicode
 confusables, multilingual text, long input, and redacted realistic input. The development sweep
 also found provider-interface differences that required support for OpenAI-compatible choice
 envelopes, provider-parsed objects, native vision inputs, server-sent event responses, and models
