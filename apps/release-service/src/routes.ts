@@ -100,18 +100,6 @@ export interface RouteDefinition {
 	): Response | Promise<Response>;
 }
 
-function accessHandler(
-	handler: (
-		request: Request,
-		requestId: string,
-		configuration: ServiceConfiguration,
-		accessActor: AccessActor | null,
-	) => Response | Promise<Response>,
-): RouteDefinition["handler"] {
-	return (request, requestId, configuration, _params, accessActor) =>
-		handler(request, requestId, configuration, accessActor);
-}
-
 export const ROUTES = Object.freeze([
 	{
 		method: "GET",
@@ -263,7 +251,7 @@ export const ROUTES = Object.freeze([
 		method: "GET",
 		path: "/admin/api/status",
 		accessRole: "viewer",
-		handler: accessHandler(handleServiceStatus),
+		handler: handleServiceStatus,
 	},
 	{
 		method: "GET",
@@ -275,7 +263,7 @@ export const ROUTES = Object.freeze([
 		method: "POST",
 		path: "/admin/api/pause",
 		accessRole: "admin",
-		handler: accessHandler(handleSetServiceMode),
+		handler: handleSetServiceMode,
 	},
 	{
 		method: "GET",
@@ -358,55 +346,55 @@ export const ROUTES = Object.freeze([
 		method: "GET",
 		path: "/admin/api/audit",
 		accessRole: "viewer",
-		handler: accessHandler(handleControlAudit),
+		handler: handleControlAudit,
 	},
 	{
 		method: "GET",
 		path: "/admin/api/viewer/status",
 		accessRole: "viewer",
-		handler: accessHandler(handleServiceStatus),
+		handler: handleServiceStatus,
 	},
 	{
 		method: "GET",
 		path: "/admin/api/viewer/publisher-control",
 		accessRole: "viewer",
-		handler: accessHandler(handleGetPublisherControl),
+		handler: handleGetPublisherControl,
 	},
 	{
 		method: "GET",
 		path: "/admin/api/viewer/audit",
 		accessRole: "viewer",
-		handler: accessHandler(handleControlAudit),
+		handler: handleControlAudit,
 	},
 	{
 		method: "GET",
 		path: "/admin/api/viewer/encryption/keys",
 		accessRole: "viewer",
-		handler: accessHandler(handleEncryptionKeyStatus),
+		handler: handleEncryptionKeyStatus,
 	},
 	{
 		method: "POST",
 		path: "/admin/api/admin/service-mode",
 		accessRole: "admin",
-		handler: accessHandler(handleSetServiceMode),
+		handler: handleSetServiceMode,
 	},
 	{
 		method: "POST",
 		path: "/admin/api/admin/publisher-control",
 		accessRole: "admin",
-		handler: accessHandler(handleSetPublisherControl),
+		handler: handleSetPublisherControl,
 	},
 	{
 		method: "POST",
 		path: "/admin/api/admin/encryption/keys/activate",
 		accessRole: "admin",
-		handler: accessHandler(handleActivateEncryptionKey),
+		handler: handleActivateEncryptionKey,
 	},
 	{
 		method: "POST",
 		path: "/admin/api/admin/encryption/verify",
 		accessRole: "admin",
-		handler: accessHandler(handleStartEncryptionVerification),
+		handler: handleStartEncryptionVerification,
 	},
 	{
 		method: "POST",

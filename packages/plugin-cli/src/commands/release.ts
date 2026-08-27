@@ -48,7 +48,7 @@ function positiveInteger(value: string, name: string, maximum: number): number {
 	return parsed;
 }
 
-function printIntent(intent: ReleaseIntentResource, json: boolean): void {
+function printIntent(intent: ReleaseIntentResource, json?: boolean): void {
 	if (json) {
 		console.log(JSON.stringify(intent, null, 2));
 		return;
@@ -64,7 +64,7 @@ function printIntent(intent: ReleaseIntentResource, json: boolean): void {
 	if (intent.reasonCode) console.log(`  Reason: ${intent.reasonCode}`);
 }
 
-function printDryRun(result: DryRunReleaseIntentResult, json: boolean): void {
+function printDryRun(result: DryRunReleaseIntentResult, json?: boolean): void {
 	if (json) {
 		console.log(JSON.stringify(result, null, 2));
 		return;
@@ -74,7 +74,7 @@ function printDryRun(result: DryRunReleaseIntentResult, json: boolean): void {
 	console.log(`  Policy:    ${result.workloadPolicyVersion}`);
 }
 
-function printBrowserHandoff(action: InteractiveReleaseAction, url: URL, json: boolean): void {
+function printBrowserHandoff(action: InteractiveReleaseAction, url: URL, json?: boolean): void {
 	if (json) {
 		console.log(JSON.stringify({ action, url: url.toString() }));
 		return;

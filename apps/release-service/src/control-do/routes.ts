@@ -179,6 +179,7 @@ export async function handleEncryptionKeyStatus(
 	_request: Request,
 	requestId: string,
 	configuration: ServiceConfiguration,
+	_params: Readonly<Record<string, string>>,
 	accessActor: AccessActor | null,
 ): Promise<Response> {
 	const actor = requireActor(accessActor);
@@ -205,6 +206,7 @@ export async function handleActivateEncryptionKey(
 	request: Request,
 	requestId: string,
 	configuration: ServiceConfiguration,
+	_params: Readonly<Record<string, string>>,
 	accessActor: AccessActor | null,
 ): Promise<Response> {
 	const actor = requireActor(accessActor);
@@ -255,6 +257,7 @@ export async function handleStartEncryptionVerification(
 	request: Request,
 	requestId: string,
 	configuration: ServiceConfiguration,
+	_params: Readonly<Record<string, string>>,
 	accessActor: AccessActor | null,
 ): Promise<Response> {
 	const actor = requireActor(accessActor);
