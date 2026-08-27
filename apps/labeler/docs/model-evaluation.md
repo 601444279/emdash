@@ -18,13 +18,14 @@ these hashes from the embedded prompts; operators do not configure separate prom
 
 ## Moderation-manipulation candidate
 
-Text prompt `listing-text-v8`, with content hash
-`153acc6a4934bda2fd3bef01c60d676d9c0b679d8a9b59dad329c7187e74ffa3`, adds
+Text prompt `listing-text-v9`, with content hash
+`aee2551bd26b942ef2f67fa3137ad0d16eb5b502a376a2df410486d4fe37b1c5`, adds
 `moderation-manipulation` for direct attempts to alter, bypass, suppress, or predetermine automated
-moderation. Quoted or descriptive discussion remains benign. Image prompt `listing-image-v6`, with
-content hash `d011c6ff2afe4847c33607e84350dfa4cdc3ee17f85ff442b0a0d2104f3134af`, applies the same
-distinction. It has completed the public automated image check, but not the private image review.
-Neither candidate prompt is deployed.
+moderation. Quoted or descriptive discussion remains benign. It also excludes unsupported usage,
+performance, testimonial, and other marketing claims unless the submitted content itself identifies
+fabrication, forgery, nonexistent evidence, or a contradiction. Image prompt `listing-image-v7`,
+with content hash `7215746880df62b42448d3e9f5c8f5709f9071906ab705ffa8889c51ab8817b0`, applies the same
+distinctions. Neither candidate prompt is deployed.
 
 A three-repeat run evaluated the 20-case public text corpus with the new category. No model passed
 the complete zero-error budget:
@@ -43,24 +44,33 @@ The Llama and GLM artifact has SHA-256 digest
 digest `9a4f514af712e56a005a2d73bd55d5ee7fadd3a53fb8ab06d9acdd2a153dba0a`, and the sequential GLM
 retry has digest `d175ac9ae4cbabbd09eb559fd78dab01d5ac0d6036f03db6e6f5766cc249b026`.
 
-Qwen 3.8 matched the expected outcome and categories in all 18 repeated public image runs. It had
-no invalid output, model error, coverage failure, or repeated-run disagreement. P95 latency was
-22.92 seconds, above the 15-second budget. The artifact has SHA-256 digest
-`50924568086d50dca0951ec23b085956a6943ad823bde6e10a936524183d41ab`.
+Qwen 3.8 matched the expected outcome and categories in all 18 repeated public image runs under
+image prompt v7. It had no invalid output, model error, coverage failure, or repeated-run
+disagreement. P95 latency was 4.05 seconds. The artifact has SHA-256 digest
+`ace1216c7d19e489559cf39195703f515d9725462ab2749b2c9aa5d5148276c0`.
 
 A local v2 protected text fixture added `moderation-manipulation` to 21 direct bypass commands and
 left 10 quoted documentation controls unchanged. Its commitment is
 `1f6649bcece0bd079d97454aeada1c131d59bac2c1d5baa0dabaac8a0e28b3a2`. A three-repeat Llama run
 evaluated 320 public and protected text cases. All 69 runs expected to identify manipulation did so,
-and no expected-pass case went to review. Nine distinct expected-review cases passed in all three
-repeats: six copies of a recovery-phrase and password request, and three copies of an unsupported
-ten-million-installation claim. The run had no invalid output, model error, or coverage failure.
-Fourteen cases disagreed on additional categories, but none disagreed on pass or review. P95 latency
-was 5.17 seconds. The artifact has SHA-256 digest
+and no expected-pass case went to review under that fixture. The fixture incorrectly expected
+unsupported installation-count claims to review. Under the corrected policy, the result contains
+six distinct unsafe passes for a recovery-phrase and password request, plus three distinct false
+positive reviews for the unsupported claim. The run had no invalid output, model error, or coverage
+failure. Fourteen cases disagreed on additional categories, but none disagreed on pass or review.
+P95 latency was 5.17 seconds. The artifact has SHA-256 digest
 `69aec3a944e965200bebe291d13a633d50a3a53d6d37814dd2cb912b24889f33`.
 
-The protected text result does not meet the automatic-pass safety gate. Private image evaluation
-remains outstanding.
+A focused text regression used a local v3 protected fixture with commitment
+`542de52832d2689c91ba94d331bd12349c976e9ce9a76c0e4306301bc10b271e`. Llama matched the
+expected pass or review outcome in all 105 runs, with no invalid output, model error, coverage
+failure, or repeated-run disagreement. All unsupported installation-count variants passed, while
+the variant containing a direct bypass command reviewed for manipulation only. P95 latency was
+2.76 seconds. The artifact has SHA-256 digest
+`91938a482d63f191b5f65fba097f6347ac17359701dd122ca414ceb810f44926`.
+
+The focused checks pass, but a complete text prompt v9 protected run and private image evaluation
+remain outstanding.
 
 ## Candidate selection
 
@@ -69,7 +79,7 @@ documentation. It evaluated current general models, older controls, specialist m
 and native vision interfaces. The evaluated families included GPT-OSS, GLM, DeepSeek, Nemotron,
 Gemma, Kimi, Qwen, Llama, Llama Guard, Moondream, and LLaVA.
 
-The public development corpus contains 26 fixtures: 20 text cases and six image cases. It covers
+The public development corpus contains 27 fixtures: 21 text cases and six image cases. It covers
 all nine finding categories, clean inputs, borderline wording, prompt injection, Unicode
 confusables, multilingual text, long input, and redacted realistic input. The development sweep
 also found provider-interface differences that required support for OpenAI-compatible choice

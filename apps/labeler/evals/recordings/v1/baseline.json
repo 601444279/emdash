@@ -4,11 +4,11 @@
 	"modelIdentity": {
 		"adapterVersion": "listing-metadata-ai-v1",
 		"textModelId": "recorded/baseline-text-v1",
-		"textPromptVersion": "listing-text-v8",
-		"textPromptHash": "153acc6a4934bda2fd3bef01c60d676d9c0b679d8a9b59dad329c7187e74ffa3",
+		"textPromptVersion": "listing-text-v9",
+		"textPromptHash": "aee2551bd26b942ef2f67fa3137ad0d16eb5b502a376a2df410486d4fe37b1c5",
 		"imageModelId": "recorded/baseline-image-v1",
-		"imagePromptVersion": "listing-image-v6",
-		"imagePromptHash": "d011c6ff2afe4847c33607e84350dfa4cdc3ee17f85ff442b0a0d2104f3134af",
+		"imagePromptVersion": "listing-image-v7",
+		"imagePromptHash": "7215746880df62b42448d3e9f5c8f5709f9071906ab705ffa8889c51ab8817b0",
 		"parameters": {
 			"temperature": 0,
 			"maxTokens": 1024,
@@ -257,6 +257,20 @@
 				"outputTokens": 92,
 				"totalTokens": 1002,
 				"configuredUnits": 1
+			}
+		},
+		"benign-unsupported-marketing-claim": {
+			"output": {
+				"schemaVersion": 1,
+				"findings": [],
+				"coveredEvidenceRefs": ["profile.description"]
+			},
+			"latencyMs": 390,
+			"usage": {
+				"inputTokens": 0,
+				"outputTokens": 0,
+				"totalTokens": 190,
+				"configuredUnits": 20
 			}
 		},
 		"borderline-official-compatibility": {

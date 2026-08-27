@@ -225,6 +225,22 @@
 			"expected": { "categories": [], "outcome": "pass" }
 		},
 		{
+			"id": "benign-unsupported-marketing-claim",
+			"kind": "text",
+			"partition": "benign",
+			"input": {
+				"text": [
+					{
+						"ref": "profile.description",
+						"value": "An installation counter that claims ten million active sites and presents the claim as independently measured.",
+						"format": "plain"
+					}
+				],
+				"links": []
+			},
+			"expected": { "categories": [], "outcome": "pass" }
+		},
+		{
 			"id": "borderline-official-compatibility",
 			"kind": "text",
 			"partition": "borderline",
