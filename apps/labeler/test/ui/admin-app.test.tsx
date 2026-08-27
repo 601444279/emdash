@@ -52,6 +52,7 @@ beforeEach(() => {
 	api.getIssuance.mockResolvedValue({ paused: false, updatedAt: null });
 	api.getActivity.mockResolvedValue({ items: [] });
 	api.getEvaluations.mockResolvedValue({ items: [] });
+	api.assessmentAction.mockResolvedValue({});
 });
 
 afterEach(() => {
@@ -171,6 +172,14 @@ describe("labeler admin application", () => {
 		expect(screen.getByText("Queue newly published EmDash posts to Buffer channels.")).toBeTruthy();
 		expect(screen.getByText("No model findings")).toBeTruthy();
 		expect(screen.queryByText(item.subject_uri)).toBeNull();
+
+		fireEvent.click(screen.getByRole("button", { name: "Approve and next" }));
+		expect(await screen.findByRole("textbox", { name: "Note (optional)" })).toBeTruthy();
+		const approveButtons = screen.getAllByRole("button", { name: "Approve and next" });
+		const confirm = approveButtons.at(-1)!;
+		expect(confirm.hasAttribute("disabled")).toBe(false);
+		fireEvent.click(confirm);
+		await waitFor(() => expect(api.assessmentAction).toHaveBeenCalledWith(item, "approve", ""));
 	});
 });
 

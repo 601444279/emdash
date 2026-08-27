@@ -69,6 +69,42 @@ describe("operator mutation API", () => {
 		);
 	});
 
+	it("approves without requiring a reason", async () => {
+		const approve = vi.fn(async () => ({
+			action: "approve" as const,
+			operatorActionId: 8,
+			labels: [],
+		}));
+		const response = await handleOperatorApi(
+			operatorRequest(`/_admin/api/assessments/${RUN.runKey}/approve`, {
+				uri: RUN.subject.uri,
+				cid: RUN.subject.cid,
+			}),
+			{} as Env,
+			dependencies(REVIEWER, { approve }),
+		);
+
+		expect(response.status).toBe(200);
+		expect(approve).toHaveBeenCalledWith(
+			expect.objectContaining({ reason: "" }),
+			RUN.subject,
+			expect.any(Date),
+		);
+	});
+
+	it("still requires a reason to block a revision", async () => {
+		const response = await handleOperatorApi(
+			operatorRequest(`/_admin/api/assessments/${RUN.runKey}/block`, {
+				uri: RUN.subject.uri,
+				cid: RUN.subject.cid,
+			}),
+			{} as Env,
+			dependencies(REVIEWER),
+		);
+
+		expect(response.status).toBe(400);
+	});
+
 	it("requires the custom header, same origin, JSON, authentication, and role", async () => {
 		const missingHeader = operatorRequest(`/_admin/api/assessments/${RUN.runKey}/approve`, {
 			reason: "Review",

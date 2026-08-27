@@ -555,6 +555,7 @@ function AssessmentReview({
 						title={t`Approve exact revision`}
 						description={t`Approve only this exact listing revision, then continue to the next item.`}
 						variant="primary"
+						reasonOptional
 						open={pendingAction === "approve"}
 						onOpenChange={(open) => setPendingAction(open ? "approve" : null)}
 						onConfirm={(reason) => assessmentAction(item, "approve", reason)}
@@ -1145,6 +1146,7 @@ function ActionDialog(props: {
 	title: string;
 	description: string;
 	variant?: "primary" | "destructive" | "secondary";
+	reasonOptional?: boolean;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	onConfirm: (reason: string) => Promise<unknown>;
@@ -1154,6 +1156,7 @@ function ActionDialog(props: {
 	const [reason, setReason] = React.useState("");
 	const [submitting, setSubmitting] = React.useState(false);
 	const [error, setError] = React.useState<Error | null>(null);
+	const reasonLabel = props.reasonOptional ? t`Note (optional)` : t`Reason`;
 	return (
 		<Dialog.Root
 			open={props.open}
@@ -1190,14 +1193,14 @@ function ActionDialog(props: {
 						{props.description}
 					</Dialog.Description>
 					<div className="mt-5">
-						<Field label={t`Reason`}>
+						<Field label={reasonLabel}>
 							<InputArea
-								aria-label={t`Reason`}
+								aria-label={reasonLabel}
 								value={reason}
 								onChange={(event) => setReason(event.currentTarget.value)}
 								rows={4}
 								maxLength={1000}
-								required
+								required={!props.reasonOptional}
 							/>
 						</Field>
 					</div>
@@ -1210,7 +1213,7 @@ function ActionDialog(props: {
 						/>
 					)}
 					<DialogActions
-						disabled={!reason.trim()}
+						disabled={!props.reasonOptional && !reason.trim()}
 						loading={submitting}
 						label={props.label}
 						variant={props.variant}

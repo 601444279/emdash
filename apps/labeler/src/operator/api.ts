@@ -189,9 +189,26 @@ export async function handleOperatorApi(
 	}
 	const body = await parseMutationBody(request);
 	if (!body) return apiError("INVALID_REQUEST", "Request body is invalid", 400);
-	const reason = body["reason"];
-	if (typeof reason !== "string" || reason.trim().length === 0 || reason.length > 1_000) {
-		return apiError("INVALID_REQUEST", "A non-empty reason is required", 400);
+	const suppliedReason = body["reason"];
+	const approvalAllowsNoReason = assessmentAction?.[2] === "approve";
+	const reason =
+		approvalAllowsNoReason &&
+		(suppliedReason === undefined ||
+			(typeof suppliedReason === "string" && suppliedReason.trim().length === 0))
+			? ""
+			: suppliedReason;
+	if (
+		typeof reason !== "string" ||
+		reason.length > 1_000 ||
+		(!approvalAllowsNoReason && reason.trim().length === 0)
+	) {
+		return apiError(
+			"INVALID_REQUEST",
+			approvalAllowsNoReason
+				? "Reason must be no more than 1000 characters"
+				: "A non-empty reason is required",
+			400,
+		);
 	}
 	const now = dependencies?.now() ?? new Date();
 	const actorDid = await (dependencies?.actorDid(identity) ?? operatorActorDid(identity));
