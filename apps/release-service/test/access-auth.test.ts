@@ -180,13 +180,15 @@ describe("Access route enforcement", () => {
 		method: "GET",
 		path: "/admin/api/viewer/test",
 		accessRole: "viewer",
-		handler: (_request, requestId, _configuration, actor) => apiSuccess({ actor }, requestId),
+		handler: (_request, requestId, _configuration, _params, actor) =>
+			apiSuccess({ actor }, requestId),
 	};
 	const postRoute: RouteDefinition = {
 		method: "POST",
 		path: "/admin/api/admin/test",
 		accessRole: "admin",
-		handler: (_request, requestId, _configuration, actor) => apiSuccess({ actor }, requestId),
+		handler: (_request, requestId, _configuration, _params, actor) =>
+			apiSuccess({ actor }, requestId),
 	};
 
 	it("authenticates before dispatch and passes the Access actor", async () => {

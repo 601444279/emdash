@@ -78,6 +78,7 @@ export async function handleServiceStatus(
 	_request: Request,
 	requestId: string,
 	_configuration: ServiceConfiguration,
+	_params: Readonly<Record<string, string>>,
 	accessActor: AccessActor | null,
 ): Promise<Response> {
 	const state = await control().readServiceState(requireActor(accessActor));
@@ -97,6 +98,7 @@ export async function handleSetServiceMode(
 	request: Request,
 	requestId: string,
 	_configuration: ServiceConfiguration,
+	_params: Readonly<Record<string, string>>,
 	accessActor: AccessActor | null,
 ): Promise<Response> {
 	const actor = requireActor(accessActor);
@@ -134,6 +136,7 @@ export async function handleGetPublisherControl(
 	request: Request,
 	requestId: string,
 	_configuration: ServiceConfiguration,
+	_params: Readonly<Record<string, string>>,
 	accessActor: AccessActor | null,
 ): Promise<Response> {
 	const url = new URL(request.url);
@@ -157,6 +160,7 @@ export async function handleSetPublisherControl(
 	request: Request,
 	requestId: string,
 	_configuration: ServiceConfiguration,
+	_params: Readonly<Record<string, string>>,
 	accessActor: AccessActor | null,
 ): Promise<Response> {
 	const actor = requireActor(accessActor);
@@ -196,6 +200,7 @@ export async function handleControlAudit(
 	request: Request,
 	requestId: string,
 	_configuration: ServiceConfiguration,
+	_params: Readonly<Record<string, string>>,
 	accessActor: AccessActor | null,
 ): Promise<Response> {
 	const url = new URL(request.url);
