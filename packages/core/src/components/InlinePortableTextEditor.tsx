@@ -2243,6 +2243,8 @@ export function InlinePortableTextEditor({
 			if (mediaPickerOpen) return;
 			const related = e.relatedTarget instanceof HTMLElement ? e.relatedTarget : null;
 			if (related && e.currentTarget.contains(related)) return;
+			// The copy fallback briefly moves focus to its textarea before restoring the editor.
+			if (related?.hasAttribute("data-emdash-clipboard-fallback")) return;
 			// Don't save if focus moved to the slash menu (portalled to body)
 			if (related?.closest(".emdash-slash-menu")) return;
 			if (related?.closest(".emdash-media-picker")) return;
@@ -2285,6 +2287,8 @@ export function InlinePortableTextEditor({
 			/>
 			<style>{`
 				.emdash-inline-code-block {
+					position: relative;
+					margin-block: 1rem;
 					--emdash-code-background: var(--emdash-inline-code-background, #f7f7f5);
 					--emdash-code-foreground: var(--emdash-inline-code-foreground, #24292f);
 					--emdash-code-muted: var(--emdash-inline-code-muted, #57606a);
@@ -2306,15 +2310,18 @@ export function InlinePortableTextEditor({
 				.emdash-inline-code-block .emdash-code-block {
 					margin: 0;
 					padding: 1rem;
+					padding-block: 30px !important;
+					border: 0 !important;
 					border-radius: 0.5rem;
-					background: var(--emdash-code-background);
-					color: var(--emdash-code-foreground);
-					caret-color: var(--emdash-code-foreground);
+					background: var(--emdash-code-background) !important;
+					color: var(--emdash-code-foreground) !important;
+					caret-color: var(--emdash-code-foreground) !important;
 					overflow-x: auto;
 				}
 				.emdash-inline-code-block .emdash-code-block code {
-					background: transparent;
-					color: inherit;
+					background: transparent !important;
+					color: inherit !important;
+					font-size: 13px !important;
 				}
 				.emdash-inline-code-block :is(.hljs-comment, .hljs-quote) {
 					color: var(--emdash-code-muted);
@@ -2336,19 +2343,53 @@ export function InlinePortableTextEditor({
 				}
 				.emdash-inline-code-block-popover,
 				.emdash-inline-code-block-chip {
+					box-sizing: border-box;
 					border: 1px solid var(--emdash-code-border);
 					background: var(--emdash-code-control-background);
 					color: var(--emdash-code-control-foreground);
 				}
+				.emdash-inline-code-block-controls-wrap {
+					position: absolute;
+					inset-block-start: 0;
+					inset-inline-end: 0.25rem;
+					z-index: 100;
+					max-inline-size: min(calc(100% - 0.25rem), calc(100vw - 1rem));
+					opacity: 0;
+					pointer-events: none;
+					user-select: none;
+					transition: opacity 120ms ease-out;
+				}
+				.emdash-inline-code-block:hover .emdash-inline-code-block-controls-wrap,
+				.emdash-inline-code-block:focus-within .emdash-inline-code-block-controls-wrap,
+				.emdash-inline-code-block-controls-wrap[data-persistent="true"] {
+					opacity: 1;
+					pointer-events: auto;
+				}
+				.emdash-inline-code-block-popover {
+					inline-size: min(14rem, 100%, calc(100vw - 1rem));
+				}
 				.emdash-inline-code-block-language-input {
+					min-inline-size: 0;
+					flex: 1;
 					border: 1px solid var(--emdash-code-border);
 					background: transparent;
 					color: inherit;
 				}
-				.emdash-inline-code-block-chip:focus-visible,
+				.emdash-inline-code-block-controls-wrap button:focus-visible,
 				.emdash-inline-code-block-language-input:focus-visible {
 					outline: 2px solid var(--emdash-code-focus);
 					outline-offset: 2px;
+				}
+				@media (hover: none), (pointer: coarse) {
+					.emdash-inline-code-block-controls-wrap {
+						opacity: 1;
+						pointer-events: auto;
+					}
+				}
+				@media (prefers-reduced-motion: reduce) {
+					.emdash-inline-code-block-controls-wrap {
+						transition: none;
+					}
 				}
 				@media (prefers-color-scheme: dark) {
 					.emdash-inline-code-block {
