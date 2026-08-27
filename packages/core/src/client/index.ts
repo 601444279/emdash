@@ -193,6 +193,8 @@ export interface MediaItem {
 	size: number;
 	width?: number;
 	height?: number;
+	focalX?: number | null;
+	focalY?: number | null;
 	alt?: string;
 	caption?: string;
 	createdAt: string;
@@ -909,7 +911,7 @@ export class EmDashClient {
 			`/media/${encodeURIComponent(id)}`,
 			{ folderId },
 		);
-		return data.item;
+		return { id: data.item.id, folderId: data.item.folderId };
 	}
 
 	/** Get entry-grouped usage details for a media item */

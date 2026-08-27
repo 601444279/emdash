@@ -759,7 +759,9 @@ describe("EmDashClient", () => {
 				}
 				if (req.method === "DELETE") return jsonResponse({ deleted: true });
 				if (url.pathname.endsWith("/media/media%2Fone")) {
-					return jsonResponse({ item: { id: "media/one", folderId: null } });
+					return jsonResponse({
+						item: { id: "media/one", folderId: null, focalX: 0.25, focalY: 0.75 },
+					});
 				}
 				return jsonResponse({ item: { id: "folder/one", name: "Updated" } });
 			};
