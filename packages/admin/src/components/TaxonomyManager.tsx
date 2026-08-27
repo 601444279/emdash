@@ -724,6 +724,7 @@ function CreateTaxonomyDialog({
 		onSuccess: () => {
 			void queryClient.invalidateQueries({ queryKey: ["taxonomy-defs"] });
 			void queryClient.invalidateQueries({ queryKey: ["taxonomy-def"] });
+			void queryClient.invalidateQueries({ queryKey: ["manifest"] });
 			onCreated();
 			resetForm();
 		},
