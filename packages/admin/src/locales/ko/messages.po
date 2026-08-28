@@ -208,6 +208,11 @@ msgstr ""
 msgid "{0} • {1}"
 msgstr ""
 
+#. placeholder {0}: byline.displayName
+#: packages/admin/src/components/BylineCreditsEditor.tsx:272
+msgid "{0} added to this post."
+msgstr ""
+
 #. placeholder {0}: displayName ?? slug
 #: packages/admin/src/components/RegistryPluginDetail.tsx:484
 msgid "{0} banner"
@@ -289,6 +294,11 @@ msgstr "{0} 플러그인"
 msgid "{0} preview"
 msgstr "{0} 미리보기"
 
+#. placeholder {0}: byline.displayName
+#: packages/admin/src/components/BylineCreditsEditor.tsx:625
+msgid "{0} removed from this post."
+msgstr ""
+
 #. placeholder {0}: SYSTEM_FIELDS.length
 #. placeholder {1}: fields.length
 #. placeholder {2}: import { Badge, Button, Checkbox, Input, InputArea, Label, Select, Switch } from "@cloudflare/kumo"; import { DndContext, closestCenter, type DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors, } from "@dnd-kit/core"; import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy, } from "@dnd-kit/sortable"; import { CSS } from "@dnd-kit/utilities"; import type { MessageDescriptor } from "@lingui/core"; import { msg, plural } from "@lingui/core/macro"; import { Trans, useLingui } from "@lingui/react/macro"; import { Plus, DotsSixVertical, Pencil, Trash, Database, FileText } from "@phosphor-icons/react"; import { useNavigate } from "@tanstack/react-router"; import * as React from "react"; import type { SchemaCollectionWithFields, SchemaField, CreateFieldInput, CreateCollectionInput, UpdateCollectionInput, } from "../lib/api"; import { cn } from "../lib/utils"; import { ArrowPrev } from "./ArrowIcons.js"; import { ConfirmDialog } from "./ConfirmDialog"; import { EditorHeader } from "./EditorHeader"; import { FieldEditor } from "./FieldEditor"; import { RouterLinkButton } from "./RouterLinkButton.js"; import { SaveButton } from "./SaveButton"; // Regex patterns for slug generation const SLUG_INVALID_CHARS_PATTERN = /[^a-z0-9]+/g; const SLUG_LEADING_TRAILING_PATTERN = /^_|_$/g; export interface ContentTypeEditorProps { collection?: SchemaCollectionWithFields; isNew?: boolean; isSaving?: boolean; onSave: (input: CreateCollectionInput | UpdateCollectionInput) => void; onAddField?: (input: CreateFieldInput) => void; onUpdateField?: (fieldSlug: string, input: CreateFieldInput) => void; onDeleteField?: (fieldSlug: string) => void; onReorderFields?: (fieldSlugs: string[]) => void; } interface SupportOptionDef { value: string; label: MessageDescriptor; description: MessageDescriptor; } const MODERATION_OPTIONS: Record<"all" | "first_time" | "none", MessageDescriptor> = { all: msg`All comments require approval`, first_time: msg`First-time commenters only`, none: msg`No moderation (auto-approve all)`, }; const SUPPORT_OPTIONS: SupportOptionDef[] = [ { value: "drafts", label: msg`Drafts`, description: msg`Save content as draft before publishing`, }, { value: "revisions", label: msg`Revisions`, description: msg`Track content history`, }, { value: "preview", label: msg`Preview`, description: msg`Preview content before publishing`, }, { value: "search", label: msg`Search`, description: msg`Enable full-text search on this collection`, }, ]; /** * System fields that exist on every collection * These are created automatically and cannot be modified */ interface SystemFieldDef { slug: string; label: MessageDescriptor; type: string; description: MessageDescriptor; } const SYSTEM_FIELDS: SystemFieldDef[] = [ { slug: "id", label: msg`ID`, type: "text", description: msg`Unique identifier (ULID)`, }, { slug: "slug", label: msg`Slug`, type: "text", description: msg`URL-friendly identifier`, }, { slug: "status", label: msg`Status`, type: "text", description: msg`draft, published, or archived`, }, { slug: "created_at", label: msg`Created At`, type: "datetime", description: msg`When the entry was created`, }, { slug: "updated_at", label: msg`Updated At`, type: "datetime", description: msg`When the entry was last modified`, }, { slug: "published_at", label: msg`Published At`, type: "datetime", description: msg`When the entry was published`, }, ]; /** * Content Type editor for creating/editing collections */ export function ContentTypeEditor({ collection, isNew, isSaving, onSave, onAddField, onUpdateField, onDeleteField, onReorderFields, }: ContentTypeEditorProps) { const { t } = useLingui(); const _navigate = useNavigate(); // Form state const [slug, setSlug] = React.useState(collection?.slug ?? ""); const [label, setLabel] = React.useState(collection?.label ?? ""); const [labelSingular, setLabelSingular] = React.useState(collection?.labelSingular ?? ""); const [description, setDescription] = React.useState(collection?.description ?? ""); const [urlPattern, setUrlPattern] = React.useState(collection?.urlPattern ?? ""); const [routable, setRoutable] = React.useState(collection?.routable ?? true); // SEO is managed via the separate `hasSeo` field; strip any legacy "seo" entry // so it isn't sent back on save (the API enum rejects it). const [supports, setSupports] = React.useState<string[]>( (collection?.supports ?? ["drafts", "revisions"]).filter((s) => s !== "seo"), ); // SEO state const [hasSeo, setHasSeo] = React.useState(collection?.hasSeo ?? false); // Comment settings state const [commentsEnabled, setCommentsEnabled] = React.useState( collection?.commentsEnabled ?? false, ); const [commentsModeration, setCommentsModeration] = React.useState<"all" | "first_time" | "none">( collection?.commentsModeration ?? "first_time", ); const [commentsClosedAfterDays, setCommentsClosedAfterDays] = React.useState( collection?.commentsClosedAfterDays ?? 90, ); const [commentsAutoApproveUsers, setCommentsAutoApproveUsers] = React.useState( collection?.commentsAutoApproveUsers ?? true, ); // Field editor state const [fieldEditorOpen, setFieldEditorOpen] = React.useState(false); const [editingField, setEditingField] = React.useState<SchemaField | undefined>(); const [fieldSaving, setFieldSaving] = React.useState(false); const [deleteFieldTarget, setDeleteFieldTarget] = React.useState<SchemaField | null>(null); const urlPatternValid = !urlPattern || urlPattern.includes("{slug}"); // Track whether form has unsaved changes const hasChanges = React.useMemo(() => { if (isNew) return slug && label; if (!collection) return false; return ( label !== collection.label || labelSingular !== (collection.labelSingular ?? "") || description !== (collection.description ?? "") || urlPattern !== (collection.urlPattern ?? "") || routable !== (collection.routable ?? true) || JSON.stringify([...supports].toSorted()) !== JSON.stringify(collection.supports.filter((s) => s !== "seo").toSorted()) || hasSeo !== collection.hasSeo || commentsEnabled !== collection.commentsEnabled || commentsModeration !== collection.commentsModeration || commentsClosedAfterDays !== collection.commentsClosedAfterDays || commentsAutoApproveUsers !== collection.commentsAutoApproveUsers ); }, [ isNew, collection, slug, label, labelSingular, description, urlPattern, routable, supports, hasSeo, commentsEnabled, commentsModeration, commentsClosedAfterDays, commentsAutoApproveUsers, ]); // Auto-generate slug from plural label const handleLabelChange = (value: string) => { setLabel(value); if (isNew) { setSlug( value .toLowerCase() .replace(SLUG_INVALID_CHARS_PATTERN, "_") .replace(SLUG_LEADING_TRAILING_PATTERN, ""), ); } }; // Auto-generate plural label (and slug) from singular label const handleSingularLabelChange = (value: string) => { setLabelSingular(value); if (isNew) { const pluralLabel = value ? `${value}s` : ""; handleLabelChange(pluralLabel); } }; const handleSupportToggle = (value: string) => { setSupports((prev) => prev.includes(value) ? prev.filter((s) => s !== value) : [...prev, value], ); }; const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (isNew) { onSave({ slug, label, labelSingular: labelSingular || undefined, description: description || undefined, urlPattern: urlPattern || undefined, routable, supports, hasSeo, }); } else { onSave({ label, labelSingular: labelSingular || undefined, description: description || undefined, urlPattern: urlPattern || undefined, routable, supports, hasSeo, commentsEnabled, commentsModeration, commentsClosedAfterDays, commentsAutoApproveUsers, }); } }; const handleFieldSave = async (input: CreateFieldInput) => { setFieldSaving(true); try { if (editingField) { onUpdateField?.(editingField.slug, input); } else { onAddField?.(input); } setFieldEditorOpen(false); setEditingField(undefined); } finally { setFieldSaving(false); } }; const handleEditField = (field: SchemaField) => { setEditingField(field); setFieldEditorOpen(true); }; const handleAddField = () => { setEditingField(undefined); setFieldEditorOpen(true); }; const isFromCode = collection?.source === "code"; const fields = collection?.fields ?? []; const sensors = useSensors( useSensor(PointerSensor, { activationConstraint: { distance: 8 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }), ); const handleDragEnd = (event: DragEndEvent) => { const { active, over } = event; if (!over || active.id === over.id) return; const oldIndex = fields.findIndex((f) => f.id === active.id); const newIndex = fields.findIndex((f) => f.id === over.id); if (oldIndex === -1 || newIndex === -1) return; const reordered = arrayMove(fields, oldIndex, newIndex); onReorderFields?.(reordered.map((f) => f.slug)); }; return ( <div className="space-y-6"> <EditorHeader leading={ <RouterLinkButton to="/content-types" aria-label={t`Back to Content Types`} variant="ghost" shape="square" icon={<ArrowPrev />} /> } actions={ !isFromCode && !isNew ? ( <SaveButton type="submit" form="content-type-editor-form" isDirty={!!hasChanges} isSaving={!!isSaving} disabled={!urlPatternValid} /> ) : null } > <h1 className="truncate text-2xl font-semibold"> {isNew ? t`New Content Type` : collection?.label} </h1> {!isNew && ( <p className="text-kumo-subtle text-sm"> <code className="bg-kumo-tint px-1.5 py-0.5 rounded">{collection?.slug}</code> {isFromCode && <span className="ms-2 text-kumo-info">{t`Defined in code`}</span>} </p> )} </EditorHeader> {isFromCode && ( <div className="rounded-lg border border-kumo-info/50 bg-kumo-info-tint p-4"> <div className="flex items-center space-x-2"> <FileText className="h-5 w-5 text-kumo-info" /> <p className="text-sm text-kumo-subtle"> {t`This collection is defined in code. Some settings cannot be changed here. Edit your live.config.ts file to modify the schema.`} </p> </div> </div> )} <div className="grid grid-cols-1 lg:grid-cols-3 gap-6"> {/* Settings form */} <div className="lg:col-span-1"> <form id="content-type-editor-form" onSubmit={handleSubmit} className="space-y-4"> <div className="rounded-lg border bg-kumo-base p-4 space-y-4"> <h2 className="font-semibold">{t`Settings`}</h2> <Input label={t`Label (Singular)`} value={labelSingular} onChange={(e) => handleSingularLabelChange(e.target.value)} placeholder={t`Post`} disabled={isFromCode} /> <Input label={t`Label (Plural)`} value={label} onChange={(e) => handleLabelChange(e.target.value)} placeholder={t`Posts`} disabled={isFromCode} /> {isNew && ( <div> <Input label={t`Slug`} value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="posts" disabled={!isNew} /> <p className="text-xs text-kumo-subtle mt-2">{t`Used in URLs and API endpoints`}</p> </div> )} <InputArea label={t`Description`} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t`A brief description of this content type`} rows={3} disabled={isFromCode} /> <Switch checked={routable} onCheckedChange={setRoutable} disabled={isFromCode} label={ <div> <span className="text-sm font-medium">{t`Routable`}</span> <p className="text-xs text-kumo-subtle"> {t`Require a slug before content can be published`} </p> </div> } /> <div> <Input label={t`URL Pattern`} value={urlPattern} onChange={(e) => setUrlPattern(e.target.value)} placeholder={`/${slug === "pages" ? "" : `${slug}/`}{slug}`} disabled={isFromCode} /> {urlPattern && !urlPattern.includes("{slug}") && ( <p className="text-xs text-kumo-danger mt-2"> {t`Pattern must include a ${"{slug}"} placeholder`} </p> )} <p className="text-xs text-kumo-subtle mt-1"> {t`Pattern for generating URLs, e.g. /blog/${"{slug}"}`} </p> </div> <div className="space-y-3"> <Label>{t`Features`}</Label> {SUPPORT_OPTIONS.map((option) => ( <div key={option.value} className={cn( "p-2 rounded-md hover:bg-kumo-tint/50", isFromCode && "opacity-60", )} > <Checkbox checked={supports.includes(option.value)} onCheckedChange={() => handleSupportToggle(option.value)} disabled={isFromCode} label={ <div> <span className="text-sm font-medium">{t(option.label)}</span> <p className="text-xs text-kumo-subtle">{t(option.description)}</p> </div> } /> </div> ))} </div> {/* SEO toggle */} <div className="pt-2 border-t"> <Switch checked={hasSeo} onCheckedChange={(checked) => setHasSeo(checked)} disabled={isFromCode} label={ <div> <span className="text-sm font-medium">{t`SEO`}</span> <p className="text-xs text-kumo-subtle"> {t`Add SEO metadata fields (title, description, image) and include in sitemap`} </p> </div> } /> </div> </div> {/* Comments settings — only for existing collections */} {!isNew && ( <div className="rounded-lg border bg-kumo-base p-4 space-y-4"> <h2 className="font-semibold">{t`Comments`}</h2> <Switch checked={commentsEnabled} onCheckedChange={(checked) => setCommentsEnabled(checked)} disabled={isFromCode} label={ <div> <span className="text-sm font-medium">{t`Enable comments`}</span> <p className="text-xs text-kumo-subtle"> {t`Allow visitors to leave comments on this collection's content`} </p> </div> } /> {commentsEnabled && ( <> <Select label={t`Moderation`} value={commentsModeration} onValueChange={(v) => setCommentsModeration((v as "all" | "first_time" | "none") ?? "first_time") } items={{ all: t(MODERATION_OPTIONS.all), first_time: t(MODERATION_OPTIONS.first_time), none: t(MODERATION_OPTIONS.none), }} disabled={isFromCode} /> <Input label={t`Close comments after (days)`} type="number" min={0} value={String(commentsClosedAfterDays)} onChange={(e) => { const parsed = Number.parseInt(e.target.value, 10); setCommentsClosedAfterDays(Number.isNaN(parsed) ? 0 : Math.max(0, parsed)); }} disabled={isFromCode} /> <p className="text-xs text-kumo-subtle -mt-2"> {t`Set to 0 to never close comments automatically.`} </p> <Switch checked={commentsAutoApproveUsers} onCheckedChange={(checked) => setCommentsAutoApproveUsers(checked)} disabled={isFromCode} label={ <div> <span className="text-sm font-medium"> {t`Auto-approve authenticated users`} </span> <p className="text-xs text-kumo-subtle"> {t`Comments from logged-in CMS users are approved automatically`} </p> </div> } /> </> )} </div> )} {!isFromCode && (isNew ? ( <Button type="submit" disabled={!hasChanges || !urlPatternValid} loading={isSaving} className="w-full justify-center" > {t`Create Content Type`} </Button> ) : ( <SaveButton type="submit" isDirty={!!hasChanges} isSaving={!!isSaving} announce={false} disabled={!urlPatternValid} className="w-full justify-center" /> ))} </form> </div> {/* Fields section - only show for existing collections */} {!isNew && ( <div className="lg:col-span-2"> <div className="rounded-lg border bg-kumo-base"> <div className="flex items-center justify-between p-4 border-b"> <div> <h2 className="font-semibold">{t`Fields`}</h2> <p className="text-sm text-kumo-subtle"> <Trans> {SYSTEM_FIELDS.length} system + {fields.length} custom{" "} {plural(fields.length, { one: "field", other: "fields" })} </Trans> </p> </div> {!isFromCode && ( <Button icon={<Plus />} onClick={handleAddField}> {t`Add Field`} </Button> )} </div> {/* System fields - always shown */} <div> <div className="px-4 py-2 text-xs font-medium text-kumo-subtle uppercase tracking-wider bg-kumo-tint/50 border-b"> {t`System Fields`} </div> <div className="divide-y divide-kumo-line/50 border-b"> {SYSTEM_FIELDS.map((field) => ( <SystemFieldRow key={field.slug} field={field} /> ))} </div> </div> {/* Custom fields */} {fields.length === 0 ? ( <div className="p-8 text-center text-kumo-subtle"> <Database className="mx-auto h-12 w-12 mb-4 opacity-50" /> <p className="font-medium">{t`No custom fields yet`}</p> <p className="text-sm">{t`Add fields to define the structure of your content`}</p> {!isFromCode && ( <Button className="mt-4" icon={<Plus />} onClick={handleAddField}> {t`Add First Field`} </Button> )} </div> ) : ( <> <div className="px-4 py-2 text-xs font-medium text-kumo-subtle uppercase tracking-wider bg-kumo-tint/50 border-b"> {t`Custom Fields`} </div> <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} > <SortableContext items={fields.map((f) => f.id)} strategy={verticalListSortingStrategy} > <div className="divide-y"> {fields.map((field) => ( <FieldRow key={field.id} field={field} isFromCode={isFromCode} onEdit={() => handleEditField(field)} onDelete={() => setDeleteFieldTarget(field)} /> ))} </div> </SortableContext> </DndContext> </> )} </div> </div> )} </div> {/* Field editor dialog */} <FieldEditor open={fieldEditorOpen} onOpenChange={setFieldEditorOpen} field={editingField} onSave={handleFieldSave} isSaving={fieldSaving} /> <ConfirmDialog open={!!deleteFieldTarget} onClose={() => setDeleteFieldTarget(null)} title={t`Delete Field?`} description={ deleteFieldTarget ? t`Are you sure you want to delete the "${deleteFieldTarget.label}" field?` : "" } confirmLabel={t`Delete`} pendingLabel={t`Deleting...`} isPending={false} error={null} onConfirm={() => { if (deleteFieldTarget) { onDeleteField?.(deleteFieldTarget.slug); setDeleteFieldTarget(null); } }} /> </div> ); } interface FieldRowProps { field: SchemaField; isFromCode?: boolean; onEdit: () => void; onDelete: () => void; } function FieldRow({ field, isFromCode, onEdit, onDelete }: FieldRowProps) { const { t } = useLingui(); const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id, disabled: isFromCode, }); const style = { transform: CSS.Transform.toString(transform), transition }; return ( <div ref={setNodeRef} style={style} className={cn( "flex items-center px-4 py-3 hover:bg-kumo-tint/25", isDragging && "opacity-50", )} > {!isFromCode && ( <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing me-3" aria-label={t`Drag to reorder ${field.label}`} > <DotsSixVertical className="h-5 w-5 text-kumo-subtle" /> </button> )} <div className="flex-1 min-w-0"> <div className="flex items-center space-x-2"> <span className="font-medium">{field.label}</span> <code className="text-xs bg-kumo-tint px-1.5 py-0.5 rounded text-kumo-subtle"> {field.slug} </code> </div> <div className="flex items-center space-x-2 mt-1"> <span className="text-xs text-kumo-subtle capitalize">{field.type}</span> {field.required && <Badge variant="secondary">{t`Required`}</Badge>} {field.unique && <Badge variant="secondary">{t`Unique`}</Badge>} {field.searchable && <Badge variant="secondary">{t`Searchable`}</Badge>} </div> </div> {!isFromCode && ( <div className="flex items-center space-x-1"> <Button variant="ghost" shape="square" onClick={onEdit} aria-label={t`Edit ${field.label} field`} > <Pencil className="h-4 w-4" /> </Button> <Button variant="ghost" shape="square" onClick={onDelete} aria-label={t`Delete ${field.label} field`} > <Trash className="h-4 w-4 text-kumo-danger" /> </Button> </div> )} </div> ); } interface SystemFieldInfo { slug: string; label: MessageDescriptor; type: string; description: MessageDescriptor; } function SystemFieldRow({ field }: { field: SystemFieldInfo }) { const { t } = useLingui(); return ( <div className="flex items-center px-4 py-2 opacity-75"> <div className="w-8" /> {/* Spacer for alignment with draggable fields */} <div className="flex-1 min-w-0"> <div className="flex items-center space-x-2"> <span className="font-medium text-sm">{t(field.label)}</span> <code className="text-xs bg-kumo-tint px-1.5 py-0.5 rounded text-kumo-subtle"> {field.slug} </code> <Badge variant="secondary">{t`System`}</Badge> </div> <p className="text-xs text-kumo-subtle mt-0.5">{t(field.description)}</p> </div> </div> ); } 
@@ -300,6 +310,11 @@ msgstr ""
 #: packages/admin/src/components/TaxonomySidebar.tsx:411
 msgid "{0} updated"
 msgstr "{0} 업데이트됨"
+
+#. placeholder {0}: updated.displayName
+#: packages/admin/src/components/BylineCreditsEditor.tsx:375
+msgid "{0} updated everywhere it appears."
+msgstr ""
 
 #. placeholder {0}: plugin.name
 #. placeholder {1}: updateInfo?.latest
@@ -375,6 +390,11 @@ msgstr "{label} — 번역 없음"
 #: packages/admin/src/components/LocaleSwitcher.tsx:107
 msgid "{label} — view translation"
 msgstr "{label} — 번역 보기"
+
+#. placeholder {0}: to + 1
+#: packages/admin/src/components/BylineCreditsEditor.tsx:291
+msgid "{label} moved to position {0}."
+msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:1189
 msgid "{matchCount, plural, one {# item matching \"{searchQuery}\"} other {# items matching \"{searchQuery}\"}}"
@@ -666,14 +686,16 @@ msgid "Active"
 msgstr "활성"
 
 #: packages/admin/src/components/AllowedTypesEditor.tsx:174
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1015
+#: packages/admin/src/components/BylineCreditsEditor.tsx:501
 #: packages/admin/src/components/MenuEditor.tsx:441
 #: packages/admin/src/components/TaxonomySidebar.tsx:619
 msgid "Add"
 msgstr "추가"
 
 #. placeholder {0}: field.item_label
+#. placeholder {0}: option.byline.displayName
 #. placeholder {0}: taxonomyDef.labelSingular || t`Term`
+#: packages/admin/src/components/BylineCreditsEditor.tsx:498
 #: packages/admin/src/components/PortableTextEditor.tsx:2142
 #: packages/admin/src/components/TaxonomyManager.tsx:545
 #: packages/admin/src/components/TaxonomyManager.tsx:1047
@@ -688,9 +710,17 @@ msgstr "{label} 추가"
 msgid "Add a new passkey"
 msgstr "새 패스키 추가"
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:564
+msgid "Add another byline"
+msgstr ""
+
 #: packages/admin/src/components/FieldEditor.tsx:573
 msgid "Add at least one sub-field to define the repeater structure."
 msgstr "반복 필드 구조를 정의하려면 하위 필드를 하나 이상 추가하세요."
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:420
+msgid "Add byline"
+msgstr ""
 
 #: packages/admin/src/components/PortableTextEditor.tsx:3757
 msgid "Add column after"
@@ -851,6 +881,10 @@ msgstr "관리자 탐색 메뉴"
 #: packages/admin/src/components/WelcomeModal.tsx:25
 msgid "Administrator"
 msgstr "관리자"
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:990
+msgid "Advanced"
+msgstr ""
 
 #: packages/admin/src/components/settings/EmailSettings.tsx:191
 msgid "After send:"
@@ -1199,7 +1233,7 @@ msgstr "인증이 취소되었거나 시간이 초과되었습니다. 다시 시
 
 #: packages/admin/src/components/comments/CommentDetail.tsx:77
 #: packages/admin/src/components/comments/CommentInbox.tsx:279
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1225
+#: packages/admin/src/components/ContentSettingsPanel.tsx:889
 #: packages/admin/src/components/users/roleDefinitions.ts:30
 #: packages/admin/src/components/WelcomeModal.tsx:27
 msgid "Author"
@@ -1249,6 +1283,10 @@ msgstr ""
 msgid "Auto-generated from name (you can edit)"
 msgstr "이름에서 자동 생성됨(수정 가능)"
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:645
+msgid "Automatic"
+msgstr ""
+
 #: packages/admin/src/components/settings/BackupSettings.tsx:204
 #: packages/admin/src/components/settings/BackupSettings.tsx:260
 msgid "Automatic Backups"
@@ -1261,6 +1299,10 @@ msgstr ""
 
 #: packages/admin/src/router.tsx:1071
 msgid "Autosave failed"
+msgstr ""
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:457
+msgid "Available bylines"
 msgstr ""
 
 #. placeholder {0}: assignment.availableLocales.map((locale) => locale.toUpperCase()).join(", ")
@@ -1293,7 +1335,7 @@ msgstr ""
 msgid "Back"
 msgstr "뒤로"
 
-#: packages/admin/src/components/ContentEditor.tsx:675
+#: packages/admin/src/components/ContentEditor.tsx:685
 msgid "Back to {collectionLabel} list"
 msgstr "{collectionLabel} 목록으로 돌아가기"
 
@@ -1438,6 +1480,10 @@ msgstr "테마를 찾아보고 자신만의 콘텐츠로 미리 보세요."
 msgid "Bullet List"
 msgstr "글머리 기호 목록"
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:290
+msgid "Byline"
+msgstr ""
+
 #: packages/admin/src/routes/byline-schema.tsx:218
 #: packages/admin/src/routes/bylines.tsx:383
 msgid "Byline schema"
@@ -1448,7 +1494,7 @@ msgid "Byline Schema"
 msgstr ""
 
 #: packages/admin/src/components/BylineFilter.tsx:145
-#: packages/admin/src/components/ContentSettingsPanel.tsx:670
+#: packages/admin/src/components/ContentSettingsPanel.tsx:669
 #: packages/admin/src/components/ContentSettingsPanel.tsx:673
 #: packages/admin/src/components/Sidebar.tsx:285
 #: packages/admin/src/routes/bylines.tsx:375
@@ -1483,6 +1529,7 @@ msgstr "본인 콘텐츠 게시 가능"
 msgid "Can view content"
 msgstr "콘텐츠 조회 가능"
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:1016
 #: packages/admin/src/components/BylineFieldEditor.tsx:315
 #: packages/admin/src/components/CapabilityConsentDialog.tsx:192
 #: packages/admin/src/components/ConfirmDialog.tsx:83
@@ -1490,11 +1537,9 @@ msgstr "콘텐츠 조회 가능"
 #: packages/admin/src/components/ContentList.tsx:1363
 #: packages/admin/src/components/ContentList.tsx:1531
 #: packages/admin/src/components/ContentPickerModal.tsx:240
-#: packages/admin/src/components/ContentSettingsPanel.tsx:99
-#: packages/admin/src/components/ContentSettingsPanel.tsx:591
-#: packages/admin/src/components/ContentSettingsPanel.tsx:826
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1129
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1182
+#: packages/admin/src/components/ContentSettingsPanel.tsx:96
+#: packages/admin/src/components/ContentSettingsPanel.tsx:590
+#: packages/admin/src/components/ContentSettingsPanel.tsx:851
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:311
 #: packages/admin/src/components/editor/CodeBlockNode.tsx:312
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:586
@@ -1598,7 +1643,7 @@ msgstr ""
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:76
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:107
-#: packages/admin/src/components/ContentEditor.tsx:1769
+#: packages/admin/src/components/ContentEditor.tsx:1785
 #: packages/admin/src/components/FieldEditor.tsx:428
 #: packages/admin/src/components/ImageFieldRenderer.tsx:215
 #: packages/admin/src/components/ImageFieldRenderer.tsx:245
@@ -1627,6 +1672,10 @@ msgstr "로고 변경"
 
 #: packages/admin/src/components/RegistryPluginDetail.tsx:819
 msgid "Changelog"
+msgstr ""
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:975
+msgid "Changes apply everywhere this byline appears."
 msgstr ""
 
 #: packages/admin/src/router.tsx:1122
@@ -1673,6 +1722,11 @@ msgstr ""
 msgid "Choose a date range"
 msgstr ""
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:662
+#: packages/admin/src/components/BylineCreditsEditor.tsx:680
+msgid "Choose bylines"
+msgstr ""
+
 #: packages/admin/src/components/SetupWizard.tsx:288
 msgid "Choose how to sign in"
 msgstr "로그인 방법을 선택하세요"
@@ -1684,6 +1738,10 @@ msgstr ""
 #: packages/admin/src/components/Settings.tsx:134
 msgid "Choose your preferred admin language"
 msgstr "선호하는 관리 언어를 선택하세요"
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:651
+msgid "Choosing a byline replaces this automatic credit."
+msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:570
 #: packages/admin/src/components/ContentList.tsx:1051
@@ -1783,6 +1841,10 @@ msgstr "이메일에 있는 링크를 클릭하여 로그인하세요."
 msgid "Close"
 msgstr "닫기"
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:430
+msgid "Close byline search"
+msgstr ""
+
 #: packages/admin/src/components/ContentTypeEditor.tsx:533
 msgid "Close comments after (days)"
 msgstr ""
@@ -1795,7 +1857,7 @@ msgstr ""
 msgid "Close panel"
 msgstr "패널 닫기"
 
-#: packages/admin/src/components/ContentEditor.tsx:1142
+#: packages/admin/src/components/ContentEditor.tsx:1158
 msgid "Close settings"
 msgstr ""
 
@@ -1910,7 +1972,7 @@ msgstr "WordPress 연결"
 msgid "Connected {0}"
 msgstr "연결됨 {0}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:192
+#: packages/admin/src/components/ContentSettingsPanel.tsx:189
 msgid "content"
 msgstr ""
 
@@ -1954,7 +2016,7 @@ msgstr "콘텐츠 ID:"
 msgid "Content is now live"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:498
+#: packages/admin/src/components/ContentSettingsPanel.tsx:497
 msgid "Content locale"
 msgstr ""
 
@@ -2113,8 +2175,8 @@ msgstr ""
 msgid "Couldn’t move file"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1021
-msgid "Couldn't search bylines. Please try again."
+#: packages/admin/src/components/BylineCreditsEditor.tsx:469
+msgid "Couldn’t search bylines."
 msgstr ""
 
 #. placeholder {0}: deletingField.label
@@ -2126,7 +2188,7 @@ msgstr ""
 msgid "Count"
 msgstr "수"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1153
+#: packages/admin/src/components/BylineCreditsEditor.tsx:525
 #: packages/admin/src/components/MediaFolderDialog.tsx:171
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:192
@@ -2137,8 +2199,18 @@ msgstr "수"
 msgid "Create"
 msgstr "생성"
 
+#. placeholder {0}: option.label
+#: packages/admin/src/components/BylineCreditsEditor.tsx:511
+msgid "Create “{0}”"
+msgstr ""
+
 #: packages/admin/src/components/TaxonomySidebar.tsx:339
 msgid "Create \"{trimmedInput}\""
+msgstr ""
+
+#. placeholder {0}: option.label
+#: packages/admin/src/components/BylineCreditsEditor.tsx:522
+msgid "Create {0}"
 msgstr ""
 
 #. placeholder {0}: resolvedEntryLocale.toUpperCase()
@@ -2159,6 +2231,10 @@ msgstr "새 {0} 만들기"
 msgid "Create a numbered list"
 msgstr "번호 매기기 목록 만들기"
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:974
+msgid "Create a reusable public profile, then add it to this post."
+msgstr ""
+
 #: packages/admin/src/components/InviteAcceptPage.tsx:84
 #: packages/admin/src/components/SignupPage.tsx:236
 msgid "Create Account"
@@ -2168,7 +2244,11 @@ msgstr "계정 만들기"
 msgid "Create an account"
 msgstr "계정 만들기"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1101
+#: packages/admin/src/components/BylineCreditsEditor.tsx:1019
+msgid "Create and add"
+msgstr ""
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:970
 #: packages/admin/src/routes/bylines.tsx:476
 msgid "Create byline"
 msgstr "바이라인 추가"
@@ -2292,7 +2372,7 @@ msgid "Create, update, delete content"
 msgstr "콘텐츠 생성, 업데이트, 삭제"
 
 #: packages/admin/src/components/ContentList.tsx:860
-#: packages/admin/src/components/ContentSettingsPanel.tsx:642
+#: packages/admin/src/components/ContentSettingsPanel.tsx:641
 #: packages/admin/src/components/settings/ApiTokenSettings.tsx:358
 #: packages/admin/src/components/users/UserDetail.tsx:219
 msgid "Created"
@@ -2321,7 +2401,6 @@ msgstr "생성 날짜"
 msgid "Creating collections and fields..."
 msgstr "컬렉션 및 필드 생성 중..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1153
 #: packages/admin/src/components/MenuList.tsx:178
 #: packages/admin/src/components/Redirects.tsx:189
 #: packages/admin/src/components/Sections.tsx:212
@@ -2794,8 +2873,8 @@ msgstr ""
 msgid "Discard"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:86
-#: packages/admin/src/components/ContentSettingsPanel.tsx:106
+#: packages/admin/src/components/ContentSettingsPanel.tsx:83
+#: packages/admin/src/components/ContentSettingsPanel.tsx:103
 msgid "Discard changes"
 msgstr "변경사항 버리기"
 
@@ -2803,7 +2882,7 @@ msgstr "변경사항 버리기"
 msgid "Discard changes?"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:91
+#: packages/admin/src/components/ContentSettingsPanel.tsx:88
 msgid "Discard draft changes?"
 msgstr "초안 변경사항을 버리시겠습니까?"
 
@@ -2836,8 +2915,6 @@ msgstr "탐색 메뉴 표시"
 msgid "Display category list"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1104
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1166
 #: packages/admin/src/routes/bylines.tsx:481
 msgid "Display name"
 msgstr "표시 이름"
@@ -2860,7 +2937,7 @@ msgstr ""
 msgid "Displayed below the image as a visible caption."
 msgstr "이미지 아래에 보이는 캡션으로 표시됩니다."
 
-#: packages/admin/src/components/ContentEditor.tsx:736
+#: packages/admin/src/components/ContentEditor.tsx:746
 msgid "Distraction-free mode (⌘⇧\\)"
 msgstr "집중 모드 (⌘⇧\\)"
 
@@ -2897,16 +2974,13 @@ msgstr "도메인이 업데이트되었습니다."
 msgid "Don't have an account? <0>Sign up</0>"
 msgstr "계정이 없으신가요? <0>회원가입</0>"
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:915
 #: packages/admin/src/components/ContentList.tsx:1059
 #: packages/admin/src/components/MediaUploadDialog.tsx:512
 #: packages/admin/src/components/users/InviteUserModal.tsx:142
 #: packages/admin/src/components/WordPressImport.tsx:2144
 msgid "Done"
 msgstr "완료"
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1047
-msgid "Down"
-msgstr "아래로"
 
 #. placeholder {0}: archive.name
 #: packages/admin/src/components/settings/BackupSettings.tsx:304
@@ -3032,7 +3106,6 @@ msgstr "예: CI/CD 파이프라인"
 msgid "e.g., MacBook Pro, iPhone"
 msgstr "예: 맥북 프로, 아이폰"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1056
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
 #: packages/admin/src/components/MenuEditor.tsx:544
@@ -3060,17 +3133,13 @@ msgstr "{0} 수정"
 msgid "Edit {0} field"
 msgstr ""
 
-#: packages/admin/src/components/ContentEditor.tsx:682
+#: packages/admin/src/components/ContentEditor.tsx:692
 msgid "Edit {itemLabel}"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:1328
 msgid "Edit {title}"
 msgstr "{title} 편집"
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1163
-msgid "Edit byline"
-msgstr "작성자 편집"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:209
 msgid "Edit byline field"
@@ -3111,6 +3180,11 @@ msgstr "메뉴 항목 편집"
 msgid "Edit menu items"
 msgstr "메뉴 항목 편집"
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:876
+#: packages/admin/src/components/BylineCreditsEditor.tsx:970
+msgid "Edit name and slug"
+msgstr ""
+
 #: packages/admin/src/components/Redirects.tsx:536
 msgid "Edit redirect"
 msgstr "리디렉션 수정"
@@ -3123,6 +3197,10 @@ msgstr "리디렉션 수정"
 #: packages/admin/src/components/Redirects.tsx:537
 msgid "Edit redirect {0}"
 msgstr "리디렉션 수정 {0}"
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:868
+msgid "Edit role"
+msgstr ""
 
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:367
 #: packages/admin/src/components/editor/PluginBlockNode.tsx:368
@@ -3258,8 +3336,12 @@ msgstr ""
 msgid "Enabled"
 msgstr "활성화됨"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:504
+#: packages/admin/src/components/ContentSettingsPanel.tsx:503
 msgid "English is used because no content locale is configured. Content locale is stored with the entry and is separate from your admin language."
+msgstr ""
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:312
+msgid "Enter a name."
 msgstr ""
 
 #: packages/admin/src/components/MenuEditor.tsx:423
@@ -3267,7 +3349,7 @@ msgstr ""
 msgid "Enter a URL (https://…) or a relative path (/…)"
 msgstr "URL(https://…) 또는 상대 경로(/…)를 입력하세요."
 
-#: packages/admin/src/components/ContentEditor.tsx:1550
+#: packages/admin/src/components/ContentEditor.tsx:1566
 msgid "Enter a valid URL (e.g. https://example.com)"
 msgstr "유효한 URL을 입력하세요 (예: https://example.com)"
 
@@ -3275,7 +3357,7 @@ msgstr "유효한 URL을 입력하세요 (예: https://example.com)"
 msgid "Enter credentials manually"
 msgstr "자격 증명을 수동으로 입력하세요."
 
-#: packages/admin/src/components/ContentEditor.tsx:735
+#: packages/admin/src/components/ContentEditor.tsx:745
 msgid "Enter distraction-free mode"
 msgstr "집중 모드로 전환"
 
@@ -3287,7 +3369,7 @@ msgstr "이메일을 입력하세요"
 msgid "Enter HTML..."
 msgstr ""
 
-#: packages/admin/src/components/ContentEditor.tsx:1323
+#: packages/admin/src/components/ContentEditor.tsx:1339
 msgid "Enter markdown content..."
 msgstr "마크다운 콘텐츠를 입력하세요..."
 
@@ -3363,7 +3445,7 @@ msgstr ""
 msgid "Exists"
 msgstr "존재"
 
-#: packages/admin/src/components/ContentEditor.tsx:794
+#: packages/admin/src/components/ContentEditor.tsx:804
 msgid "Exit distraction-free mode"
 msgstr "집중 모드 종료"
 
@@ -3434,10 +3516,6 @@ msgstr ""
 msgid "Failed to create backup"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1147
-msgid "Failed to create byline"
-msgstr "바이라인을 추가하지 못했습니다."
-
 #: packages/admin/src/lib/api/byline-fields.ts:120
 msgid "Failed to create byline field"
 msgstr ""
@@ -3499,7 +3577,7 @@ msgstr ""
 msgid "Failed to delete comment"
 msgstr ""
 
-#: packages/admin/src/lib/api/content.ts:302
+#: packages/admin/src/lib/api/content.ts:303
 msgid "Failed to delete content"
 msgstr ""
 
@@ -3664,8 +3742,8 @@ msgstr ""
 msgid "Failed to fetch provider media"
 msgstr ""
 
-#: packages/admin/src/lib/api/content.ts:579
-#: packages/admin/src/lib/api/content.ts:584
+#: packages/admin/src/lib/api/content.ts:580
+#: packages/admin/src/lib/api/content.ts:585
 msgid "Failed to fetch revision"
 msgstr ""
 
@@ -3808,7 +3886,7 @@ msgstr ""
 msgid "Failed to perform bulk action"
 msgstr ""
 
-#: packages/admin/src/lib/api/content.ts:345
+#: packages/admin/src/lib/api/content.ts:346
 msgid "Failed to permanently delete content"
 msgstr ""
 
@@ -3863,12 +3941,12 @@ msgstr ""
 msgid "Failed to restore"
 msgstr ""
 
-#: packages/admin/src/lib/api/content.ts:334
+#: packages/admin/src/lib/api/content.ts:335
 msgid "Failed to restore content"
 msgstr ""
 
-#: packages/admin/src/lib/api/content.ts:601
-#: packages/admin/src/lib/api/content.ts:606
+#: packages/admin/src/lib/api/content.ts:602
+#: packages/admin/src/lib/api/content.ts:607
 msgid "Failed to restore revision"
 msgstr ""
 
@@ -3952,10 +4030,6 @@ msgstr "{0}을(를) 업데이트하지 못했습니다."
 #: packages/admin/src/lib/api/backups.ts:46
 msgid "Failed to update backup settings"
 msgstr ""
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1197
-msgid "Failed to update byline"
-msgstr "바이라인을 업데이트하지 못했습니다."
 
 #: packages/admin/src/lib/api/byline-fields.ts:135
 msgid "Failed to update byline field"
@@ -4227,6 +4301,10 @@ msgstr ""
 msgid "From {0}"
 msgstr ""
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:648
+msgid "From the post owner"
+msgstr ""
+
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:164
 #: packages/admin/src/components/WordPressImport.tsx:1173
 msgid "Full"
@@ -4257,6 +4335,10 @@ msgstr "일반"
 #: packages/admin/src/components/settings/GeneralSettings.tsx:118
 msgid "General Settings"
 msgstr "일반 설정"
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:997
+msgid "Generated automatically."
+msgstr ""
 
 #: packages/admin/src/components/TaxonomyManager.tsx:816
 msgid "Genres"
@@ -4758,7 +4840,7 @@ msgstr "정수"
 msgid "Invalid invite link"
 msgstr ""
 
-#: packages/admin/src/components/ContentEditor.tsx:1619
+#: packages/admin/src/components/ContentEditor.tsx:1635
 msgid "Invalid JSON"
 msgstr "잘못된 JSON"
 
@@ -4868,8 +4950,8 @@ msgstr ""
 msgid "Keep this tab open. The import runs in small steps and can be safely re-run if interrupted."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1026
-msgid "Keep typing to narrow down more bylines."
+#: packages/admin/src/components/BylineCreditsEditor.tsx:535
+msgid "Keep typing to narrow the list."
 msgstr ""
 
 #: packages/admin/src/components/MarketplacePluginDetail.tsx:304
@@ -5026,9 +5108,9 @@ msgstr "링크"
 msgid "List view"
 msgstr "목록 보기"
 
-#: packages/admin/src/components/ContentEditor.tsx:716
-#: packages/admin/src/components/ContentEditor.tsx:759
-#: packages/admin/src/components/ContentSettingsPanel.tsx:265
+#: packages/admin/src/components/ContentEditor.tsx:726
+#: packages/admin/src/components/ContentEditor.tsx:769
+#: packages/admin/src/components/ContentSettingsPanel.tsx:262
 msgid "Live View"
 msgstr "실시간 미리보기"
 
@@ -5264,7 +5346,7 @@ msgstr "관리"
 msgid "Manage {0} for {1}"
 msgstr "{1}에 대한 {0} 관리"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:988
+#: packages/admin/src/components/BylineCreditsEditor.tsx:698
 msgid "Manage bylines in {entryLocale}"
 msgstr ""
 
@@ -5553,6 +5635,11 @@ msgstr ""
 msgid "Monthly/yearly archives"
 msgstr ""
 
+#. placeholder {0}: byline.displayName
+#: packages/admin/src/components/BylineCreditsEditor.tsx:857
+msgid "More actions for {0}"
+msgstr ""
+
 #: packages/admin/src/components/ImageFieldRenderer.tsx:191
 msgid "More information about {label}"
 msgstr ""
@@ -5613,14 +5700,14 @@ msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:555
 #: packages/admin/src/components/ContentList.tsx:1370
-#: packages/admin/src/components/ContentSettingsPanel.tsx:813
-#: packages/admin/src/components/ContentSettingsPanel.tsx:833
+#: packages/admin/src/components/ContentSettingsPanel.tsx:838
+#: packages/admin/src/components/ContentSettingsPanel.tsx:858
 msgid "Move to Trash"
 msgstr "휴지통으로 이동"
 
 #: packages/admin/src/components/ContentList.tsx:533
 #: packages/admin/src/components/ContentList.tsx:1355
-#: packages/admin/src/components/ContentSettingsPanel.tsx:818
+#: packages/admin/src/components/ContentSettingsPanel.tsx:843
 msgid "Move to Trash?"
 msgstr "휴지통으로 이동하시겠습니까?"
 
@@ -5657,6 +5744,7 @@ msgstr "옵션의 다중 선택"
 msgid "My Awesome Blog"
 msgstr "내 멋진 블로그"
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:982
 #: packages/admin/src/components/ContentTypeList.tsx:178
 #: packages/admin/src/components/MarketplaceBrowse.tsx:45
 #: packages/admin/src/components/MediaFolderDialog.tsx:131
@@ -5715,7 +5803,7 @@ msgstr "NEW"
 msgid "New {0}"
 msgstr "새 {0}"
 
-#: packages/admin/src/components/ContentEditor.tsx:682
+#: packages/admin/src/components/ContentEditor.tsx:692
 msgid "New {itemLabel}"
 msgstr ""
 
@@ -5748,6 +5836,10 @@ msgstr ""
 #: packages/admin/src/components/Redirects.tsx:370
 msgid "New Redirect"
 msgstr "새 리디렉션"
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:514
+msgid "New reusable profile"
+msgstr ""
 
 #: packages/admin/src/components/Sections.tsx:143
 msgid "New Section"
@@ -5845,18 +5937,22 @@ msgstr ""
 msgid "No byline fields yet."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:980
+#: packages/admin/src/components/BylineCreditsEditor.tsx:670
+msgid "No byline is shown on this post."
+msgstr ""
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:690
 msgid "No bylines available in {entryLocale}. Create a variant from the Bylines page before crediting one on this entry."
+msgstr ""
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:542
+msgid "No bylines available."
 msgstr ""
 
 #: packages/admin/src/components/BylineFilter.tsx:150
 #: packages/admin/src/routes/bylines.tsx:452
 msgid "No bylines found"
 msgstr ""
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1088
-msgid "No bylines selected."
-msgstr "선택된 작성자가 없습니다."
 
 #: packages/admin/src/components/Dashboard.tsx:275
 msgid "No collections configured"
@@ -5964,7 +6060,7 @@ msgstr ""
 msgid "No matches"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1023
+#: packages/admin/src/components/BylineCreditsEditor.tsx:542
 msgid "No matching bylines."
 msgstr ""
 
@@ -6283,7 +6379,7 @@ msgstr "순서 저장됨"
 msgid "Original:"
 msgstr "원본:"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:777
+#: packages/admin/src/components/ContentSettingsPanel.tsx:802
 #: packages/admin/src/components/editor/DocumentOutline.tsx:191
 msgid "Outline"
 msgstr "개요"
@@ -6292,8 +6388,8 @@ msgstr "개요"
 msgid "Overrides the page title in search engine results"
 msgstr "검색 결과에 표시되는 페이지 제목을 재정의합니다"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:655
-#: packages/admin/src/components/ContentSettingsPanel.tsx:658
+#: packages/admin/src/components/ContentSettingsPanel.tsx:654
+#: packages/admin/src/components/ContentSettingsPanel.tsx:657
 msgid "Ownership"
 msgstr "소유권"
 
@@ -6438,6 +6534,11 @@ msgstr "보류 중"
 #: packages/admin/src/components/ContentStatusBadge.tsx:67
 msgid "Pending changes"
 msgstr "보류 중인 변경사항"
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:640
+#: packages/admin/src/components/BylineCreditsEditor.tsx:669
+msgid "People shown publicly on this post."
+msgstr ""
 
 #: packages/admin/src/components/MediaLibrary.tsx:1332
 msgid "Per page"
@@ -6639,7 +6740,7 @@ msgstr "WordPress에서 파일 다운로드 준비 중..."
 msgid "Preparing..."
 msgstr "준비 중..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:167
+#: packages/admin/src/components/ContentSettingsPanel.tsx:164
 #: packages/admin/src/components/ContentTypeEditor.tsx:81
 #: packages/admin/src/components/MediaDetailPanel.tsx:880
 #: packages/admin/src/components/MediaLibrary.tsx:1206
@@ -6650,7 +6751,7 @@ msgstr "미리보기"
 msgid "Preview content before publishing"
 msgstr "게시하기 전에 콘텐츠 미리보기"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:167
+#: packages/admin/src/components/ContentSettingsPanel.tsx:164
 msgid "Preview draft"
 msgstr "초안 미리보기"
 
@@ -6681,14 +6782,14 @@ msgid "Provider:"
 msgstr "공급자:"
 
 #: packages/admin/src/components/ContentList.tsx:504
-#: packages/admin/src/components/ContentSettingsPanel.tsx:198
-#: packages/admin/src/components/ContentSettingsPanel.tsx:205
-#: packages/admin/src/components/ContentSettingsPanel.tsx:484
-#: packages/admin/src/components/ContentSettingsPanel.tsx:487
+#: packages/admin/src/components/ContentSettingsPanel.tsx:195
+#: packages/admin/src/components/ContentSettingsPanel.tsx:202
+#: packages/admin/src/components/ContentSettingsPanel.tsx:483
+#: packages/admin/src/components/ContentSettingsPanel.tsx:486
 msgid "Publish"
 msgstr "게시"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:612
+#: packages/admin/src/components/ContentSettingsPanel.tsx:611
 msgid "Publish date"
 msgstr ""
 
@@ -6724,10 +6825,6 @@ msgstr ""
 #: packages/admin/src/components/MediaUploadDialog.tsx:106
 msgid "Queued"
 msgstr ""
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1096
-msgid "Quick create byline"
-msgstr "바이라인 빠르게 추가"
 
 #: packages/admin/src/components/editor/ImageNode.tsx:209
 #: packages/admin/src/components/editor/ImageNode.tsx:210
@@ -6879,7 +6976,6 @@ msgstr ""
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:84
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:115
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1065
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:199
 #: packages/admin/src/components/ImageFieldRenderer.tsx:179
 #: packages/admin/src/components/PortableTextEditor.tsx:4239
@@ -6904,7 +7000,7 @@ msgstr "{0} 삭제"
 msgid "Remove {entry}"
 msgstr ""
 
-#: packages/admin/src/components/ContentEditor.tsx:1777
+#: packages/admin/src/components/ContentEditor.tsx:1793
 msgid "Remove {label}"
 msgstr ""
 
@@ -6919,6 +7015,10 @@ msgstr "도메인 제거"
 #: packages/admin/src/components/settings/AllowedDomainsSettings.tsx:381
 msgid "Remove Domain?"
 msgstr "도메인을 제거하시겠습니까?"
+
+#: packages/admin/src/components/BylineCreditsEditor.tsx:886
+msgid "Remove from post"
+msgstr ""
 
 #: packages/admin/src/components/ImageFieldRenderer.tsx:177
 #: packages/admin/src/components/ImageFieldRenderer.tsx:223
@@ -6991,7 +7091,9 @@ msgstr "패스키 이름 바꾸기"
 msgid "Reorder"
 msgstr ""
 
+#. placeholder {0}: byline.displayName
 #. placeholder {0}: collection.label
+#: packages/admin/src/components/BylineCreditsEditor.tsx:831
 #: packages/admin/src/components/ContentTypeList.tsx:281
 msgid "Reorder {0}"
 msgstr ""
@@ -7078,7 +7180,7 @@ msgstr ""
 msgid "Reset to original"
 msgstr "원본으로 재설정"
 
-#: packages/admin/src/components/ContentEditor.tsx:969
+#: packages/admin/src/components/ContentEditor.tsx:980
 msgid "Resize settings panel"
 msgstr ""
 
@@ -7116,6 +7218,7 @@ msgstr "{0}에서 이 버전을 복원하시겠습니까? 그러면 현재 콘�
 msgid "Restoring..."
 msgstr "복원 중..."
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:471
 #: packages/admin/src/components/MarketplaceBrowse.tsx:143
 #: packages/admin/src/components/MediaDetailPanel.tsx:778
 #: packages/admin/src/components/MediaLibrary.tsx:1025
@@ -7175,7 +7278,7 @@ msgstr "새로운 권한 검토"
 msgid "Revision restored"
 msgstr "버전이 복원되었습니다."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:785
+#: packages/admin/src/components/ContentSettingsPanel.tsx:810
 #: packages/admin/src/components/ContentTypeEditor.tsx:76
 #: packages/admin/src/components/RevisionHistory.tsx:168
 msgid "Revisions"
@@ -7237,9 +7340,14 @@ msgstr "역할"
 msgid "Role {role}"
 msgstr "역할 {role}"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1070
-msgid "Role label"
-msgstr "역할명"
+#: packages/admin/src/components/BylineCreditsEditor.tsx:901
+msgid "Role on this post (optional)"
+msgstr ""
+
+#. placeholder {0}: byline.displayName
+#: packages/admin/src/components/BylineCreditsEditor.tsx:611
+msgid "Role updated for {0}."
+msgstr ""
 
 #: packages/admin/src/components/ContentTypeEditor.tsx:428
 msgid "Routable"
@@ -7267,7 +7375,6 @@ msgstr ""
 msgid "Same window"
 msgstr "현재 창"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1203
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:395
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:589
 #: packages/admin/src/components/editor/ImageNode.tsx:277
@@ -7290,6 +7397,7 @@ msgstr ""
 msgid "Save alt text"
 msgstr ""
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:1019
 #: packages/admin/src/components/BylineFieldEditor.tsx:318
 msgid "Save changes"
 msgstr ""
@@ -7320,7 +7428,6 @@ msgstr "저장됨"
 msgid "Saved \"{0}\"."
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1203
 #: packages/admin/src/components/FieldEditor.tsx:689
 #: packages/admin/src/components/MediaDetailPanel.tsx:934
 #: packages/admin/src/components/MediaFolderDialog.tsx:171
@@ -7349,15 +7456,15 @@ msgstr ""
 msgid "SBOM · {0}"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:580
+#: packages/admin/src/components/ContentSettingsPanel.tsx:579
 msgid "Schedule"
 msgstr "예약"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:566
+#: packages/admin/src/components/ContentSettingsPanel.tsx:565
 msgid "Schedule for"
 msgstr "예약 일시"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:603
+#: packages/admin/src/components/ContentSettingsPanel.tsx:602
 msgid "Schedule for later"
 msgstr "나중에 게시 예약"
 
@@ -7368,7 +7475,7 @@ msgid "Scheduled"
 msgstr "예약됨"
 
 #. placeholder {0}: formatScheduledDate(item.scheduledAt)
-#: packages/admin/src/components/ContentSettingsPanel.tsx:554
+#: packages/admin/src/components/ContentSettingsPanel.tsx:553
 msgid "Scheduled for: {0}"
 msgstr "게시 예약: {0}"
 
@@ -7456,14 +7563,14 @@ msgstr ""
 msgid "Search by name or email..."
 msgstr ""
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:439
 #: packages/admin/src/components/BylineFilter.tsx:128
-#: packages/admin/src/components/ContentSettingsPanel.tsx:997
 #: packages/admin/src/routes/bylines.tsx:401
 msgid "Search bylines"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:996
-msgid "Search bylines to add..."
+#: packages/admin/src/components/BylineCreditsEditor.tsx:440
+msgid "Search bylines to add…"
 msgstr ""
 
 #: packages/admin/src/components/BylineFilter.tsx:129
@@ -7519,6 +7626,10 @@ msgstr ""
 msgid "Search plugins..."
 msgstr "플러그인 검색..."
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:421
+msgid "Search reusable public profiles."
+msgstr ""
+
 #: packages/admin/src/components/SectionPickerModal.tsx:82
 #: packages/admin/src/components/Sections.tsx:226
 msgid "Search sections..."
@@ -7554,8 +7665,9 @@ msgstr "검색..."
 msgid "Searchable"
 msgstr "검색 가능"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1001
-msgid "Searching..."
+#: packages/admin/src/components/BylineCreditsEditor.tsx:465
+#: packages/admin/src/components/BylineCreditsEditor.tsx:548
+msgid "Searching…"
 msgstr ""
 
 #: packages/admin/src/components/PortableTextEditor.tsx:2742
@@ -7650,8 +7762,8 @@ msgid "Select"
 msgstr "선택"
 
 #: packages/admin/src/components/BlockKitMediaPickerField.tsx:140
-#: packages/admin/src/components/ContentEditor.tsx:1789
 #: packages/admin/src/components/ContentEditor.tsx:1805
+#: packages/admin/src/components/ContentEditor.tsx:1821
 #: packages/admin/src/components/ImageFieldRenderer.tsx:281
 msgid "Select {label}"
 msgstr "{label} 선택"
@@ -7698,7 +7810,7 @@ msgstr ""
 msgid "Select Favicon"
 msgstr "파비콘 선택"
 
-#: packages/admin/src/components/ContentEditor.tsx:1793
+#: packages/admin/src/components/ContentEditor.tsx:1809
 msgid "Select file"
 msgstr ""
 
@@ -7802,8 +7914,8 @@ msgstr "테스트 이메일 보내기"
 msgid "Sending..."
 msgstr "보내는 중..."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:728
-#: packages/admin/src/components/ContentSettingsPanel.tsx:731
+#: packages/admin/src/components/ContentSettingsPanel.tsx:753
+#: packages/admin/src/components/ContentSettingsPanel.tsx:756
 #: packages/admin/src/components/ContentTypeEditor.tsx:487
 #: packages/admin/src/components/Settings.tsx:64
 msgid "SEO"
@@ -7839,6 +7951,10 @@ msgstr ""
 msgid "Set language (current: {label})"
 msgstr ""
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:868
+msgid "Set role"
+msgstr ""
+
 #: packages/admin/src/components/ContentTypeEditor.tsx:544
 msgid "Set to 0 to never close comments automatically."
 msgstr ""
@@ -7865,8 +7981,8 @@ msgid "Setting up..."
 msgstr "설정 중..."
 
 #: packages/admin/src/components/AdminCommandPalette.tsx:234
-#: packages/admin/src/components/ContentEditor.tsx:850
-#: packages/admin/src/components/ContentEditor.tsx:1128
+#: packages/admin/src/components/ContentEditor.tsx:860
+#: packages/admin/src/components/ContentEditor.tsx:1144
 #: packages/admin/src/components/ContentTypeEditor.tsx:382
 #: packages/admin/src/components/Header.tsx:101
 #: packages/admin/src/components/PluginManager.tsx:478
@@ -7942,6 +8058,10 @@ msgstr "토큰 표시"
 #. placeholder {0}: totalCount ?? 0
 #: packages/admin/src/components/MediaLibrary.tsx:1323
 msgid "Showing {pageShowingRange} of {0}"
+msgstr ""
+
+#: packages/admin/src/components/ContentSettingsPanel.tsx:678
+msgid "Shown to readers in this order."
 msgstr ""
 
 #: packages/admin/src/components/editor/ImageDetailPanel.tsx:365
@@ -8064,9 +8184,7 @@ msgid "Skipped"
 msgstr "건너뜀"
 
 #: packages/admin/src/components/BylineFieldEditor.tsx:239
-#: packages/admin/src/components/ContentSettingsPanel.tsx:491
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1112
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1174
+#: packages/admin/src/components/ContentSettingsPanel.tsx:490
 #: packages/admin/src/components/ContentTypeEditor.tsx:111
 #: packages/admin/src/components/ContentTypeEditor.tsx:403
 #: packages/admin/src/components/ContentTypeList.tsx:181
@@ -8183,14 +8301,14 @@ msgstr ""
 msgid "Start Import"
 msgstr "가져오기 시작"
 
-#: packages/admin/src/components/ContentEditor.tsx:1297
+#: packages/admin/src/components/ContentEditor.tsx:1313
 #: packages/admin/src/components/PortableTextEditor.tsx:2597
 #: packages/admin/src/components/PortableTextEditor.tsx:2598
 msgid "Start writing, or type '/' for commands"
 msgstr ""
 
 #: packages/admin/src/components/ContentList.tsx:611
-#: packages/admin/src/components/ContentSettingsPanel.tsx:526
+#: packages/admin/src/components/ContentSettingsPanel.tsx:525
 #: packages/admin/src/components/ContentTypeEditor.tsx:117
 #: packages/admin/src/components/Redirects.tsx:480
 #: packages/admin/src/components/settings/MediaUsageSettings.tsx:382
@@ -8310,7 +8428,7 @@ msgstr "열기 방식"
 msgid "Target locale"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:715
+#: packages/admin/src/components/ContentSettingsPanel.tsx:740
 #: packages/admin/src/components/TaxonomySidebar.tsx:683
 msgid "Taxonomies"
 msgstr "분류"
@@ -8478,7 +8596,7 @@ msgstr ""
 msgid "This field does not accept {sniffedMime} files."
 msgstr ""
 
-#: packages/admin/src/components/ContentEditor.tsx:1808
+#: packages/admin/src/components/ContentEditor.tsx:1824
 #: packages/admin/src/components/ImageFieldRenderer.tsx:284
 msgid "This field is required"
 msgstr "필수 항목입니다"
@@ -8565,7 +8683,7 @@ msgstr ""
 msgid "This will grant CLI access with your permissions."
 msgstr "현재 권한으로 CLI 접근이 허용됩니다."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:820
+#: packages/admin/src/components/ContentSettingsPanel.tsx:845
 msgid "This will move the item to trash. You can restore it later from the trash."
 msgstr "항목이 휴지통으로 이동됩니다. 나중에 휴지통에서 복원할 수 있습니다."
 
@@ -8587,7 +8705,7 @@ msgstr "이 댓글이 영구적으로 삭제됩니다. 이 작업은 취소할 �
 msgid "This will remove the plugin and its bundle from your site."
 msgstr "그러면 사이트에서 플러그인과 해당 번들이 제거됩니다."
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:93
+#: packages/admin/src/components/ContentSettingsPanel.tsx:90
 msgid "This will revert to the published version. Your draft changes will be lost."
 msgstr "게시된 버전으로 되돌아갑니다. 초안 변경사항이 손실됩니다."
 
@@ -8695,7 +8813,7 @@ msgstr ""
 msgid "Translation created"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:693
+#: packages/admin/src/components/ContentSettingsPanel.tsx:718
 #: packages/admin/src/components/TranslationsPanel.tsx:60
 msgid "Translations"
 msgstr "번역"
@@ -8829,8 +8947,8 @@ msgstr ""
 msgid "Unable to reach marketplace"
 msgstr "마켓플레이스에 접속할 수 없습니다"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1217
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1234
+#: packages/admin/src/components/ContentSettingsPanel.tsx:881
+#: packages/admin/src/components/ContentSettingsPanel.tsx:898
 msgid "Unassigned"
 msgstr "할당되지 않음"
 
@@ -8891,7 +9009,7 @@ msgstr "종횡비 잠금 해제"
 msgid "Unnamed passkey"
 msgstr "이름이 없는 패스키"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:211
+#: packages/admin/src/components/ContentSettingsPanel.tsx:208
 msgid "Unpublish {itemLabel}"
 msgstr ""
 
@@ -8907,7 +9025,7 @@ msgstr "등록되지 않은 콘텐츠 테이블이 발견되었습니다."
 msgid "Unresolved assignment"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:556
+#: packages/admin/src/components/ContentSettingsPanel.tsx:555
 msgid "Unschedule"
 msgstr "예약 취소"
 
@@ -8930,7 +9048,7 @@ msgstr ""
 msgid "Untitled"
 msgstr "제목 없음"
 
-#: packages/admin/src/components/ContentEditor.tsx:1711
+#: packages/admin/src/components/ContentEditor.tsx:1727
 msgid "Untitled file"
 msgstr ""
 
@@ -8938,10 +9056,6 @@ msgstr ""
 #: packages/admin/src/components/Widgets.tsx:809
 msgid "Untitled Widget"
 msgstr ""
-
-#: packages/admin/src/components/ContentSettingsPanel.tsx:1044
-msgid "Up"
-msgstr "위로"
 
 #: packages/admin/src/components/BylineFilter.tsx:175
 msgid "Up to {MAX_SELECTED} bylines can be selected"
@@ -8955,7 +9069,7 @@ msgstr "업데이트"
 msgid "Update Field"
 msgstr "필드 업데이트"
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:630
+#: packages/admin/src/components/ContentSettingsPanel.tsx:629
 msgid "Update publish date"
 msgstr ""
 
@@ -8983,7 +9097,7 @@ msgid "Update to v{0}"
 msgstr "v{0}로 업데이트"
 
 #: packages/admin/src/components/ContentList.tsx:861
-#: packages/admin/src/components/ContentSettingsPanel.tsx:646
+#: packages/admin/src/components/ContentSettingsPanel.tsx:645
 #: packages/admin/src/components/RegistryPluginDetail.tsx:538
 msgid "Updated"
 msgstr ""
@@ -9115,6 +9229,10 @@ msgstr "URL"
 msgid "URL Pattern"
 msgstr ""
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:996
+msgid "URL slug"
+msgstr ""
+
 #: packages/admin/src/components/ContentTypeEditor.tsx:113
 #: packages/admin/src/components/FieldEditor.tsx:258
 msgid "URL-friendly identifier"
@@ -9168,6 +9286,10 @@ msgstr "패턴 일치를 위해 경로에 [param] 또는 [...rest]를 사용하�
 msgid "Use as end date"
 msgstr ""
 
+#: packages/admin/src/components/BylineCreditsEditor.tsx:314
+msgid "Use lowercase letters, numbers, and hyphens, starting with a letter."
+msgstr ""
+
 #: packages/admin/src/components/auth/PasskeyLogin.tsx:356
 msgid "Use your device's biometric authentication, security key, or PIN to sign in."
 msgstr "기기의 생체 인증, 보안 키 또는 PIN을 사용하여 로그인하세요."
@@ -9184,7 +9306,7 @@ msgstr ""
 msgid "Used as the identifier. Lowercase letters, numbers, and underscores only."
 msgstr "식별자로 사용됩니다. 소문자, 숫자, 밑줄만 가능합니다."
 
-#: packages/admin/src/components/ContentEditor.tsx:1400
+#: packages/admin/src/components/ContentEditor.tsx:1416
 msgid "Used as the main visual for this post on listing pages and at the top of the post"
 msgstr "목록 페이지와 게시물 상단에서 이 게시물의 기본 시각적 요소로 사용됩니다."
 
@@ -9402,11 +9524,15 @@ msgstr "이 분류를 사용할 수 있는 콘텐츠 유형"
 msgid "Whole number"
 msgstr "정수"
 
+#: packages/admin/src/components/ContentSettingsPanel.tsx:691
+msgid "Why are bylines shown in this order?"
+msgstr ""
+
 #: packages/admin/src/components/MediaDetailPanel.tsx:209
 msgid "Why can't this be changed?"
 msgstr ""
 
-#: packages/admin/src/components/ContentSettingsPanel.tsx:517
+#: packages/admin/src/components/ContentSettingsPanel.tsx:516
 msgid "Why English is used"
 msgstr ""
 
