@@ -8,6 +8,7 @@ export function labelerDidDocument(env: Env): Response {
 		{
 			"@context": ["https://www.w3.org/ns/did/v1"],
 			id: config.labelerDid,
+			alsoKnownAs: [`at://${new URL(config.serviceUrl).hostname}`],
 			verificationMethod: [
 				{
 					id: `${config.labelerDid}#atproto_label`,
@@ -26,6 +27,16 @@ export function labelerDidDocument(env: Env): Response {
 		},
 		{ headers: { "cache-control": "public, max-age=300" } },
 	);
+}
+
+export function labelerHandleDocument(env: Env): Response {
+	const config = readPublicLabelerRuntimeConfig(env);
+	return new Response(config.labelerDid, {
+		headers: {
+			"cache-control": "public, max-age=300",
+			"content-type": "text/plain; charset=utf-8",
+		},
+	});
 }
 
 export function labelerPolicyDocument(env: Env): Response {
