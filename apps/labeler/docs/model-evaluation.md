@@ -49,6 +49,15 @@ image prompt v7. It had no invalid output, model error, coverage failure, or rep
 disagreement. P95 latency was 4.05 seconds. The artifact has SHA-256 digest
 `ace1216c7d19e489559cf39195703f515d9725462ab2749b2c9aa5d5148276c0`.
 
+GLM 5.3 Flash also matched all 18 public image outcomes under image prompt v7. One repeat added a
+phishing category to the screenshot that already required review for moderation manipulation; all
+other categories matched. P95 latency was 4.96 seconds. The artifact has SHA-256 digest
+`24c31f4b4aea37be4f61293ed663f85dba8dd687913f66ccd01e4380d8104f18`.
+
+A separate private-image check selected GLM as the image candidate because it caught nudity and
+hateful imagery that Qwen missed. Catching unsafe imagery takes precedence over Qwen's cleaner
+category result on the public regression fixtures.
+
 A local v2 protected text fixture added `moderation-manipulation` to 21 direct bypass commands and
 left 10 quoted documentation controls unchanged. Its commitment is
 `1f6649bcece0bd079d97454aeada1c131d59bac2c1d5baa0dabaac8a0e28b3a2`. A three-repeat Llama run
