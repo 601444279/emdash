@@ -474,6 +474,7 @@ function assembleHook(entry: ProbedHookEntry, pluginId: string): ResolvedPlugin[
 		dependencies: entry.dependencies ?? [],
 		errorPolicy: entry.errorPolicy ?? "abort",
 		exclusive: entry.exclusive ?? false,
+		observe: entry.observe ?? false,
 		pluginId,
 	};
 }
