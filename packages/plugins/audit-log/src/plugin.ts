@@ -79,8 +79,11 @@ export default {
 		},
 
 		"content:beforeSave": {
+			// Read-only observer: captures before-state with content:read,
+			// without requesting write access to drafts.
+			observe: true,
 			handler: async (event, ctx) => {
-				const contentId = stringifyId(event.content.id);
+				const contentId = stringifyId(event.id ?? event.content.id);
 				if (!event.isNew && contentId) {
 					try {
 						if (ctx.content) {
@@ -93,7 +96,6 @@ export default {
 						// Ignore -- best effort
 					}
 				}
-				return event.content;
 			},
 		},
 
