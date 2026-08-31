@@ -78,9 +78,19 @@ function resolveSandboxedHook(
 	hookName: string,
 ): ResolvedHook<AnyHookHandler> {
 	if (isHookConfig(entry)) {
+		if (entry.observe !== undefined && typeof entry.observe !== "boolean") {
+			throw new Error(
+				`Invalid "observe" value in hook config for plugin "${pluginId}". Must be boolean.`,
+			);
+		}
 		if (entry.observe && !OBSERVABLE_HOOKS.has(hookName)) {
 			throw new Error(
 				`Invalid "observe" in ${hookName} hook config for plugin "${pluginId}". Only content:beforeSave supports observe.`,
+			);
+		}
+		if (entry.observe && entry.exclusive) {
+			throw new Error(
+				`Invalid hook config for plugin "${pluginId}": "observe" cannot be combined with "exclusive".`,
 			);
 		}
 		return {

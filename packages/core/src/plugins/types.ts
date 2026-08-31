@@ -1175,7 +1175,7 @@ export interface ResolvedHook<THandler> {
 	/** Whether this hook is exclusive (provider pattern) */
 	exclusive: boolean;
 	/** Whether this hook is a read-only observer (see HookConfig.observe) */
-	observe: boolean;
+	observe?: boolean;
 	handler: THandler;
 	pluginId: string;
 }

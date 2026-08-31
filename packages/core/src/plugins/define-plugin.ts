@@ -276,6 +276,11 @@ function resolveHook<THandler>(
 				`Invalid "observe" in ${name} hook config for plugin "${pluginId}". Only content:beforeSave supports observe.`,
 			);
 		}
+		if (hook.observe && hook.exclusive) {
+			throw new Error(
+				`Invalid hook config for plugin "${pluginId}": "observe" cannot be combined with "exclusive".`,
+			);
+		}
 		return {
 			priority: hook.priority ?? 100,
 			timeout: hook.timeout ?? 5000,

@@ -12,7 +12,20 @@ import plugin from "../src/plugin.js";
 function createCtx() {
 	return {
 		content: {
-			get: vi.fn(async () => ({ title: "old title" })),
+			// Shape matches ContentAccess.get(): the item envelope with the
+			// field data under `data`.
+			get: vi.fn(async () => ({
+				id: "post-1",
+				type: "posts",
+				slug: "audit-test",
+				status: "draft",
+				data: { title: "old title" },
+				createdAt: "2026-08-30T00:00:00.000Z",
+				updatedAt: "2026-08-30T00:00:00.000Z",
+				locale: "en",
+				publishedAt: null,
+				scheduledAt: null,
+			})),
 		},
 		storage: {
 			entries: {

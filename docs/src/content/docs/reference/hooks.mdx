@@ -86,7 +86,7 @@ interface ContentHookEvent {
 
 #### Capability
 
-Requires `content:write` capability, because the returned content replaces what is saved. A plugin that only watches saves can set `observe: true` in the hook config: the hook then registers with `content:read` and its return value is discarded, so it cannot modify the content.
+Requires `content:write` capability, because the returned content replaces what is saved. A plugin that only watches saves can set `observe: true` in the hook config: the hook then registers with `content:read`, its return value is discarded, and errors it throws are logged without blocking the save, so it cannot affect the content.
 
 ```ts
 hooks: {

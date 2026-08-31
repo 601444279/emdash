@@ -3,7 +3,7 @@
 "@emdash-cms/plugin-cli": patch
 ---
 
-Adds an `observe` option to the `content:beforeSave` hook config so plugins can watch saves without requesting write access. An observe hook registers with the `content:read` capability instead of `content:write`; its return value is discarded, so it cannot modify the content being saved.
+Adds an `observe` option to the `content:beforeSave` hook config so plugins can watch saves without requesting write access. An observe hook registers with the `content:read` capability instead of `content:write`; it receives a copy of the content, its return value is discarded, and errors it throws are logged without blocking the save, so it cannot affect what is saved.
 
 ```ts
 hooks: {

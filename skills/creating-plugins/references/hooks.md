@@ -121,13 +121,13 @@ Returns: `Record<string, unknown> | void`
 
 On updates `event.id` is the item's id (`content` carries only submitted field data); on creates it is absent because the id is generated after the hook runs.
 
-Requires the `content:write` capability, because the return value replaces the saved content. A plugin that only needs to watch saves (audit logging, capturing before-state) can set `observe: true` in the hook config: the handler's return value is discarded and the hook registers with just `content:read`.
+Requires the `content:write` capability, because the return value replaces the saved content. A plugin that only needs to watch saves (audit logging, capturing before-state) can set `observe: true` in the hook config: the hook registers with just `content:read`, the handler's return value is discarded, and errors it throws never block the save.
 
 ```typescript
 "content:beforeSave": {
 	observe: true,
 	handler: async (event, ctx) => {
-		await ctx.storage.log.put(`${Date.now()}`, { saved: event.content.id });
+		await ctx.storage.log.put(`${Date.now()}`, { saved: event.id });
 	}
 }
 ```

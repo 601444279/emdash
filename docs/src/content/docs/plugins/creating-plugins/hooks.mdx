@@ -159,7 +159,7 @@ Runs before content is saved. Return modified content, or `void` to leave it unc
 
 On updates, `event.id` is the id of the item being saved; `content` carries only the submitted field data. On creates, `id` is absent because it is generated after the hook runs.
 
-Requires `content:write` capability, because the returned content replaces what is saved. A plugin that only watches saves — an audit trail capturing before-state, for example — can set `observe: true` in the hook config. An observe hook registers with `content:read`; its return value is discarded, so it cannot modify the content.
+Requires `content:write` capability, because the returned content replaces what is saved. A plugin that only watches saves — an audit trail capturing before-state, for example — can set `observe: true` in the hook config. An observe hook registers with `content:read`; its return value is discarded and errors it throws never block the save, so it cannot affect the content.
 
 The following hook records every save without requesting write access.
 
@@ -169,7 +169,7 @@ The following hook records every save without requesting write access.
 	handler: async (event, ctx) => {
 		await ctx.storage.log.put(`${Date.now()}`, {
 			collection: event.collection,
-			id: event.content.id,
+			id: event.id,
 		});
 	},
 },

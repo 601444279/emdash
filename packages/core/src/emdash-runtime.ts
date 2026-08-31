@@ -2990,7 +2990,7 @@ export class EmDashRuntime {
 					bodyWithoutRev.data,
 					collection,
 					false,
-					resolvedId,
+					resolvedItem?.id,
 				);
 				processedData = hookResult.content;
 			}
@@ -3000,7 +3000,7 @@ export class EmDashRuntime {
 				processedData!,
 				collection,
 				false,
-				resolvedId,
+				resolvedItem?.id,
 			);
 
 			// Normalize media fields (fill dimensions, storageKey, etc.)

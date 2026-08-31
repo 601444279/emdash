@@ -514,9 +514,10 @@ export class HookPipeline {
 		for (const hook of hooks) {
 			const { handler } = hook;
 			const event: ContentHookEvent = {
-				// Observers get a shallow clone so in-place mutation can't leak
-				// into the saved content (mirrors the email:beforeSend clone).
-				content: hook.observe ? { ...currentContent } : currentContent,
+				// Observers get a deep copy so mutation of the event — including
+				// nested values like portable text blocks — can't leak into the
+				// saved content.
+				content: hook.observe ? structuredClone(currentContent) : currentContent,
 				collection,
 				isNew,
 				id,
@@ -545,7 +546,9 @@ export class HookPipeline {
 					duration: Date.now() - start,
 				});
 
-				if (hook.errorPolicy === "abort") {
+				// An observer that could abort the pipeline would be a veto, not
+				// an observer — its failures are recorded but never block the save.
+				if (hook.errorPolicy === "abort" && !hook.observe) {
 					throw error;
 				}
 			}
