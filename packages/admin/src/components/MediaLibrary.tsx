@@ -1706,7 +1706,7 @@ function MediaGridItem({ item, selected, draggable, isMoving, onClick }: MediaGr
 				(isDragging || isMoving) && "opacity-40",
 			)}
 		>
-			<LayerCard.Primary className="aspect-[4/3] p-0">
+			<LayerCard.Primary className="aspect-video p-0">
 				{isImage ? (
 					<img
 						src={getMediaThumbnailUrl(item.url, item.mimeType, MEDIA_THUMBNAIL_WIDTH)}
