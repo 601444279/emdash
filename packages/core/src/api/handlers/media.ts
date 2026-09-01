@@ -228,6 +228,35 @@ export async function handleMediaUpdate(
 	}
 }
 
+export async function handleMediaReplaceMetadata(
+	db: Kysely<Database>,
+	id: string,
+	expectedStorageKey: string,
+	input: { size: number; width: number; height: number; contentHash: string },
+): Promise<ApiResult<MediaResponse>> {
+	try {
+		const item = await new MediaRepository(db).replaceReadyFile(id, expectedStorageKey, input);
+		if (!item) {
+			return {
+				success: false,
+				error: {
+					code: "MEDIA_REPLACE_METADATA_ERROR",
+					message: "Failed to update replaced media metadata",
+				},
+			};
+		}
+		return { success: true, data: { item } };
+	} catch {
+		return {
+			success: false,
+			error: {
+				code: "MEDIA_REPLACE_METADATA_ERROR",
+				message: "Failed to update replaced media metadata",
+			},
+		};
+	}
+}
+
 function isForeignKeyViolation(error: unknown): boolean {
 	if (error && typeof error === "object") {
 		if ("code" in error && error.code === "23503") return true;

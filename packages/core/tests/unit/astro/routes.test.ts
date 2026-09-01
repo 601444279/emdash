@@ -9,6 +9,7 @@ import {
 	hasUserDefinedPublicRoute,
 	injectCoreRoutes,
 } from "../../../src/astro/integration/routes.js";
+import * as mediaReplaceRoute from "../../../src/astro/routes/api/media/[id]/replace.js";
 import * as mediaUploadRoute from "../../../src/astro/routes/api/media/[id]/upload.js";
 import { GET as getMediaFile } from "../../../src/astro/routes/api/media/file/[...key].js";
 
@@ -84,6 +85,19 @@ describe("core media route injection", () => {
 		expect(mediaUploadRoute.PUT).toBeTypeOf("function");
 		for (const method of ["GET", "POST", "PATCH", "DELETE"]) {
 			expect(mediaUploadRoute).not.toHaveProperty(method);
+		}
+	});
+
+	it("registers the media replacement route with PUT only", () => {
+		const routes: Array<{ pattern: string; entrypoint: string }> = [];
+		injectCoreRoutes((route) => routes.push(route));
+
+		expect(routes).toContainEqual(
+			expect.objectContaining({ pattern: "/_emdash/api/media/[id]/replace" }),
+		);
+		expect(mediaReplaceRoute.PUT).toBeTypeOf("function");
+		for (const method of ["GET", "POST", "PATCH", "DELETE"]) {
+			expect(mediaReplaceRoute).not.toHaveProperty(method);
 		}
 	});
 
