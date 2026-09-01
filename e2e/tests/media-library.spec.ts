@@ -10,7 +10,7 @@ import { join } from "node:path";
 
 import type { Locator, Page } from "@playwright/test";
 
-import { test, expect } from "../fixtures";
+import { test, expect, type ServerInfo } from "../fixtures";
 
 // Create a test image for uploads
 const TEST_ASSETS_DIR = join(process.cwd(), "e2e/fixtures/assets");
@@ -19,6 +19,10 @@ const TEST_ASSETS_DIR = join(process.cwd(), "e2e/fixtures/assets");
 const MEDIA_API_RESPONSE_PATTERN = /\/api\/media/;
 const UPLOAD_BUTTON_REGEX = /Upload/;
 const BROWSE_FILES_LABEL = "Browse files to upload";
+const CROP_TEST_PNG = Buffer.from(
+	"iVBORw0KGgoAAAANSUhEUgAAACgAAAAUCAYAAAD/Rn+7AAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAOklEQVR4nO2WsQ0AAAjC+v/T9QkSlw6uxBCFIrgctnLOFWlBctBu0J7EYsaC2prEuthggXDLgNVvoj5sbjobLqOjWwAAAABJRU5ErkJggg==",
+	"base64",
+);
 
 function ensureTestAssets(): string {
 	if (!existsSync(TEST_ASSETS_DIR)) {
@@ -68,6 +72,69 @@ async function uploadTestImage(page: Page, filename?: string) {
 	await expect(dialog.getByText("Complete", { exact: true })).toBeVisible();
 	await dialog.getByRole("button", { name: "Done" }).click();
 	await expect(dialog).not.toBeVisible();
+}
+
+async function uploadCropTestImage(page: Page, filename: string) {
+	await page.getByRole("button", { name: UPLOAD_BUTTON_REGEX }).first().click();
+	const dialog = page.getByRole("dialog");
+	await expect(dialog).toBeVisible();
+	await dialog.getByLabel(BROWSE_FILES_LABEL).setInputFiles({
+		name: filename,
+		mimeType: "image/png",
+		buffer: CROP_TEST_PNG,
+	});
+	await expect(dialog.getByText("Complete", { exact: true })).toBeVisible();
+	await dialog.getByRole("button", { name: "Done" }).click();
+	await expect(dialog).not.toBeVisible();
+}
+
+async function apiJson<T>(
+	serverInfo: ServerInfo,
+	path: string,
+	init: RequestInit = {},
+): Promise<T> {
+	const headers = new Headers(init.headers);
+	headers.set("Authorization", `Bearer ${serverInfo.token}`);
+	headers.set("Origin", serverInfo.baseUrl);
+	headers.set("X-EmDash-Request", "1");
+	if (init.body) headers.set("Content-Type", "application/json");
+	const response = await fetch(`${serverInfo.baseUrl}${path}`, {
+		...init,
+		headers,
+	});
+	if (!response.ok) throw new Error(`${init.method ?? "GET"} ${path} failed: ${response.status}`);
+	const body = (await response.json()) as { data: T };
+	return body.data;
+}
+
+interface CropTestMediaItem {
+	id: string;
+	filename: string;
+	storageKey: string;
+	url: string;
+	width: number;
+	height: number;
+}
+
+async function findMediaByFilename(
+	serverInfo: ServerInfo,
+	filename: string,
+): Promise<CropTestMediaItem> {
+	const result = await apiJson<{ items: CropTestMediaItem[] }>(
+		serverInfo,
+		`/_emdash/api/media?q=${encodeURIComponent(filename)}&limit=100`,
+	);
+	const item = result.items.find((candidate) => candidate.filename === filename);
+	if (!item) throw new Error(`Media not found: ${filename}`);
+	return item;
+}
+
+async function fetchUncachedBytes(serverInfo: ServerInfo, url: string): Promise<Uint8Array> {
+	const uncached = new URL(url, serverInfo.baseUrl);
+	uncached.searchParams.set("e2e", crypto.randomUUID());
+	const response = await fetch(uncached);
+	if (!response.ok) throw new Error(`Media download failed: ${response.status}`);
+	return new Uint8Array(await response.arrayBuffer());
 }
 
 async function createFolder(page: Page, name: string) {
@@ -172,6 +239,137 @@ test.describe("Media Library", () => {
 			const count = await images.count();
 			expect(count).toBeGreaterThan(0);
 		});
+	});
+
+	test("crops a referenced image in place and creates a distinct cropped copy", async ({
+		admin,
+		page,
+		serverInfo,
+	}) => {
+		test.setTimeout(150_000);
+		const marker = Date.now();
+		const filename = `crop-source-${marker}.png`;
+		const duplicateFilename = `crop-source-${marker}-cropped.png`;
+		const slug = `crop-reference-${marker}`;
+		await admin.goToMedia();
+		await admin.waitForLoading();
+		await uploadCropTestImage(page, filename);
+
+		const original = await findMediaByFilename(serverInfo, filename);
+		const originalBytes = await fetchUncachedBytes(serverInfo, original.url);
+		const created = await apiJson<{ item: { id: string } }>(
+			serverInfo,
+			"/_emdash/api/content/posts",
+			{
+				method: "POST",
+				body: JSON.stringify({
+					slug,
+					data: {
+						title: "Crop reference",
+						excerpt: "Content snapshot used by the crop test",
+						body: [
+							{
+								_type: "image",
+								_key: "crop-image",
+								asset: { _ref: original.id, url: original.url },
+								alt: "Crop test image",
+								width: original.width,
+								height: original.height,
+							},
+						],
+					},
+				}),
+			},
+		);
+		await apiJson(serverInfo, `/_emdash/api/content/posts/${created.item.id}/publish`, {
+			method: "POST",
+			body: "{}",
+		});
+		const contentBefore = await apiJson<{ item: Record<string, unknown> }>(
+			serverInfo,
+			`/_emdash/api/content/posts/${created.item.id}`,
+		);
+
+		await page.getByRole("button", { name: filename, exact: true }).click();
+		const details = page.getByRole("dialog", { name: "Media Details" });
+		await details.getByRole("tab", { name: "Edit image" }).click();
+		await details.getByRole("tab", { name: "Crop" }).click();
+		const zoom = details.getByRole("slider", { name: "Zoom" });
+		await zoom.evaluate((element) => (element as HTMLElement).focus());
+		await page.keyboard.press("End");
+		await expect(zoom).toHaveAttribute("aria-valuenow", "3");
+
+		await details.getByRole("button", { name: "Crop original" }).click();
+		const replaceConfirm = page.getByRole("dialog", { name: "Crop original image?" });
+		const replaceResponse = page.waitForResponse(
+			(response) =>
+				response.request().method() === "PUT" &&
+				new URL(response.url()).pathname.endsWith(`/_emdash/api/media/${original.id}/replace`),
+		);
+		await replaceConfirm.getByRole("button", { name: "Crop original" }).click();
+		const replacedHttp = await replaceResponse;
+		const replacedBody = (await replacedHttp.json()) as {
+			data: { item: CropTestMediaItem };
+			error?: { code: string; message: string };
+		};
+		expect(replacedHttp.status(), JSON.stringify(replacedBody.error)).toBe(200);
+		const replaced = replacedBody.data.item;
+		expect(replaced).toMatchObject({
+			id: original.id,
+			storageKey: original.storageKey,
+			url: original.url,
+		});
+		expect(replaced.width).toBeLessThan(original.width);
+		expect(replaced.height).toBeLessThan(original.height);
+		const replacedBytes = await fetchUncachedBytes(serverInfo, replaced.url);
+		expect(replacedBytes).not.toEqual(originalBytes);
+		expect(await apiJson(serverInfo, `/_emdash/api/content/posts/${created.item.id}`)).toEqual(
+			contentBefore,
+		);
+		await expect(page.getByText("Original image cropped.")).toBeAttached();
+
+		const refreshedZoom = details.getByRole("slider", { name: "Zoom" });
+		await refreshedZoom.evaluate((element) => (element as HTMLElement).focus());
+		await page.keyboard.press("End");
+		const duplicateResponse = page.waitForResponse(
+			(response) =>
+				response.request().method() === "POST" &&
+				new URL(response.url()).pathname.endsWith("/confirm") &&
+				response.status() === 200,
+		);
+		const duplicateAction = details.getByRole("button", { name: "Duplicate and crop" });
+		await expect(duplicateAction).toBeEnabled();
+		await duplicateAction.click();
+		await duplicateResponse;
+		await expect(details).not.toBeVisible();
+
+		const duplicate = await findMediaByFilename(serverInfo, duplicateFilename);
+		expect(duplicate.id).not.toBe(original.id);
+		expect(duplicate.storageKey).not.toBe(original.storageKey);
+		expect(await fetchUncachedBytes(serverInfo, original.url)).toEqual(replacedBytes);
+		expect(await apiJson(serverInfo, `/_emdash/api/content/posts/${created.item.id}`)).toEqual(
+			contentBefore,
+		);
+
+		await page
+			.context()
+			.addCookies([{ name: "emdash-locale", value: "ar", domain: "localhost", path: "/_emdash" }]);
+		await page.setViewportSize({ width: 320, height: 800 });
+		await page.reload();
+		await admin.waitForLoading();
+		await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+		await page.locator('input[type="search"]').fill(filename);
+		await page.getByRole("button", { name: filename, exact: true }).click();
+		const narrowDetails = page.getByRole("dialog").filter({ hasText: filename });
+		await narrowDetails.getByRole("tab").nth(2).click();
+		await narrowDetails.getByRole("tab").last().click();
+		await expect(narrowDetails.getByRole("button", { name: "Duplicate and crop" })).toBeVisible();
+		expect(
+			await narrowDetails.evaluate((element) => element.scrollWidth <= element.clientWidth),
+		).toBe(true);
+		expect(
+			await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+		).toBe(true);
 	});
 
 	test.describe("List View", () => {

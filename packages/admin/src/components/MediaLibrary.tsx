@@ -226,7 +226,8 @@ export function MediaLibrary({
 	onMoveMedia,
 }: MediaLibraryProps) {
 	const { t } = useLingui();
-	const isAdmin = (useCurrentUser().data?.role ?? 0) >= 50;
+	const currentUser = useCurrentUser().data;
+	const isAdmin = (currentUser?.role ?? 0) >= 50;
 	const [activeProvider, setActiveProvider] = React.useState<string>("local");
 	const activationQuery = useQuery({
 		queryKey: MEDIA_USAGE_ACTIVATION_QUERY_KEY,
@@ -787,7 +788,7 @@ export function MediaLibrary({
 			aria-busy={currentLoading || moveMutation.isPending || undefined}
 			onClickCapture={handleRootClickCapture}
 		>
-			{onMoveMedia && <Toasty toastManager={toastManager}>{null}</Toasty>}
+			<Toasty toastManager={toastManager}>{null}</Toasty>
 			{isFileDragActive && canUploadHere && (
 				<div
 					className="pointer-events-none fixed inset-0 z-50 bg-kumo-base/70 p-4 backdrop-blur-sm sm:p-8"
@@ -1379,11 +1380,25 @@ export function MediaLibrary({
 					providerName={detailItem.provider ? activeProviderInfo?.name : undefined}
 					canDelete={detailItem.provider ? activeProviderInfo?.capabilities.delete : undefined}
 					canMoveLocation={isLocalMediaItem(detailItem) ? canMoveMedia?.(detailItem) : undefined}
+					canCropOriginal={Boolean(
+						isLocalMediaItem(detailItem) &&
+						currentUser &&
+						(currentUser.role >= 40 ||
+							(currentUser.role >= 30 && detailItem.authorId === currentUser.id)),
+					)}
+					canDuplicateCrop={Boolean(isLocalMediaItem(detailItem) && (currentUser?.role ?? 0) >= 20)}
 					restoreFocusTargetRef={mediaHeadingRef}
 					onClose={closeDetail}
 					onClosed={handleDetailClosed}
 					onUpdated={onItemUpdated}
 					onItemRefreshed={handleDetailItemRefreshed}
+					onCroppedCopyCreated={() => {
+						toastManager.add({
+							title: t`Cropped copy created.`,
+							variant: "success",
+							timeout: 3000,
+						});
+					}}
 					onDeleted={detailItem.provider ? undefined : onItemUpdated}
 				/>
 			)}
