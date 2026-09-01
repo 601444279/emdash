@@ -2,10 +2,15 @@ import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { userEvent } from "vitest/browser";
 
-import { MediaImageCropper } from "../../src/components/MediaImageCropper.js";
+import {
+	MediaImageCropper,
+	type MediaCropSelection,
+} from "../../src/components/MediaImageCropper.js";
+
+import "../../src/media-image-cropper.css";
 import { render } from "../utils/render.tsx";
 
-function sourceUrl(width = 4, height = 2): string {
+function sourceUrl(width = 400, height = 200): string {
 	const canvas = document.createElement("canvas");
 	canvas.width = width;
 	canvas.height = height;
@@ -16,164 +21,249 @@ function sourceUrl(width = 4, height = 2): string {
 }
 
 function Harness(props: {
+	aspect?: number;
 	disabled?: boolean;
-	resizable?: boolean;
+	sourceWidth?: number;
+	sourceHeight?: number;
 	onSourceReady?: (size: { width: number; height: number }) => void;
 	onCropComplete?: (crop: { x: number; y: number; width: number; height: number }) => void;
 }) {
-	const [crop, setCrop] = React.useState({ x: 0, y: 0 });
-	const [zoom, setZoom] = React.useState(1);
-	const [cropSize, setCropSize] = React.useState<{ width: number; height: number }>();
+	const [crop, setCrop] = React.useState<MediaCropSelection>();
+	const [completed, setCompleted] = React.useState({ x: 0, y: 0, width: 0, height: 0 });
+	const handleCropComplete = React.useCallback(
+		(next: { x: number; y: number; width: number; height: number }) => {
+			setCompleted(next);
+			props.onCropComplete?.(next);
+		},
+		[props.onCropComplete],
+	);
 	return (
 		<>
 			<MediaImageCropper
-				src={props.resizable ? sourceUrl(400, 200) : sourceUrl()}
+				src={sourceUrl(props.sourceWidth, props.sourceHeight)}
 				crop={crop}
-				zoom={zoom}
-				aspect={props.resizable ? 2 : undefined}
+				aspect={props.aspect}
 				disabled={props.disabled}
-				cropSize={props.resizable ? cropSize : undefined}
-				resizable={props.resizable}
 				onCropChange={setCrop}
-				onZoomChange={setZoom}
-				onCropSizeChange={setCropSize}
-				onCropComplete={props.onCropComplete ?? vi.fn()}
+				onCropComplete={handleCropComplete}
 				onSourceReady={props.onSourceReady ?? vi.fn()}
 				onSourceError={vi.fn()}
 			/>
-			<output aria-label="Crop position">{`${crop.x},${crop.y}`}</output>
-			<output aria-label="Crop size">
-				{cropSize ? `${Math.round(cropSize.width)}x${Math.round(cropSize.height)}` : "pending"}
+			<output aria-label="Crop selection">
+				{crop ? `${crop.x},${crop.y},${crop.width},${crop.height}` : "pending"}
+			</output>
+			<output aria-label="Crop pixels">
+				{`${completed.x},${completed.y},${completed.width},${completed.height}`}
 			</output>
 		</>
 	);
 }
 
-function readCropSize(element: HTMLElement): { width: number; height: number } {
-	const [width, height] = element.textContent!.split("x").map(Number);
-	return { width: width!, height: height! };
+function readCropPixels(element: HTMLElement): {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+} {
+	const [x, y, width, height] = element.textContent!.split(",").map(Number);
+	return { x: x!, y: y!, width: width!, height: height! };
 }
 
 describe("MediaImageCropper", () => {
-	it("loads the source ratio without injecting runtime styles", async () => {
+	it("does not emit crop pixels before the image loads", async () => {
+		const onCropComplete = vi.fn();
+		await render(
+			<MediaImageCropper
+				src=""
+				sourceSize={{ width: 400, height: 200 }}
+				onCropChange={vi.fn()}
+				onCropComplete={onCropComplete}
+				onSourceReady={vi.fn()}
+				onSourceError={vi.fn()}
+			/>,
+		);
+		await new Promise((resolve) => window.setTimeout(resolve, 0));
+		expect(onCropComplete).not.toHaveBeenCalled();
+	});
+
+	it("loads the source without injecting runtime styles", async () => {
 		const onSourceReady = vi.fn();
 		const styleCount = document.head.querySelectorAll("style").length;
 		const screen = await render(<Harness onSourceReady={onSourceReady} />);
 
-		await vi.waitFor(() => expect(onSourceReady).toHaveBeenCalledWith({ width: 4, height: 2 }));
+		await vi.waitFor(() => expect(onSourceReady).toHaveBeenCalledWith({ width: 400, height: 200 }));
 		expect(document.head.querySelectorAll("style")).toHaveLength(styleCount);
 		await expect
-			.element(screen.getByText("Drag the image or use the Arrow keys to position the crop."))
+			.element(
+				screen.getByRole("group", { name: "Crop selection. Use the Arrow keys to move it." }),
+			)
 			.toBeVisible();
 	});
 
-	it("supports labelled zoom and Arrow-key positioning", async () => {
-		const onCropComplete = vi.fn();
-		const screen = await render(<Harness onCropComplete={onCropComplete} />);
-		const cropArea = screen.getByLabelText("Crop image. Use arrow keys to move the crop area.");
-		await expect.element(cropArea).toBeVisible();
+	it("shows eight resize handles and a persistent rule-of-thirds grid", async () => {
+		const screen = await render(<Harness aspect={2} />);
+		const handleNames = [
+			"top-left corner",
+			"top edge",
+			"top-right corner",
+			"right edge",
+			"bottom-right corner",
+			"bottom edge",
+			"bottom-left corner",
+			"left edge",
+		];
+		for (const handle of handleNames) {
+			await expect
+				.element(screen.getByRole("button", { name: `Resize crop from ${handle}` }))
+				.toBeVisible();
+		}
+		const cropBounds = screen
+			.getByRole("group", { name: "Crop selection. Use the Arrow keys to move it." })
+			.element()
+			.getBoundingClientRect();
+		for (const handle of handleNames) {
+			const bounds = screen
+				.getByRole("button", { name: `Resize crop from ${handle}` })
+				.element()
+				.getBoundingClientRect();
+			expect(bounds.left).toBeGreaterThanOrEqual(cropBounds.left);
+			expect(bounds.top).toBeGreaterThanOrEqual(cropBounds.top);
+			expect(bounds.right).toBeLessThanOrEqual(cropBounds.right);
+			expect(bounds.bottom).toBeLessThanOrEqual(cropBounds.bottom);
+		}
+		expect(
+			getComputedStyle(
+				screen
+					.getByRole("group", { name: "Crop selection. Use the Arrow keys to move it." })
+					.element(),
+			).animationName,
+		).toBe("none");
+		const verticalGrid = document.querySelector<HTMLElement>(".ReactCrop__rule-of-thirds-vt")!;
+		expect(getComputedStyle(verticalGrid, "::before").borderLeftStyle).toBe("dashed");
+	});
 
-		const zoom = screen.getByRole("slider", { name: "Zoom" });
-		zoom.element().focus();
-		await userEvent.keyboard("{ArrowRight}");
-		await expect.element(screen.getByText("101%")).toBeVisible();
+	it("upscales a tiny source so all eight handles remain distinct", async () => {
+		const screen = await render(<Harness aspect={2} sourceWidth={40} sourceHeight={20} />);
+		const frame = screen.getByTestId("media-image-cropper-frame").element();
+		frame.style.width = "400px";
+		frame.style.height = "200px";
+		const image = document.querySelector<HTMLImageElement>(".emdash-react-image-crop img")!;
+		await vi.waitFor(() => expect(image.getBoundingClientRect().width).toBe(400));
+		const resizeHandle = screen.getByRole("button", {
+			name: "Resize crop from bottom-right corner",
+		});
+		resizeHandle.element().focus();
+		for (let index = 0; index < 4; index += 1) {
+			await userEvent.keyboard("{Control>}{ArrowLeft}{/Control}");
+		}
 
+		const handles = [
+			"top-left corner",
+			"top edge",
+			"top-right corner",
+			"right edge",
+			"bottom-right corner",
+			"bottom edge",
+			"bottom-left corner",
+			"left edge",
+		].map((name) =>
+			screen
+				.getByRole("button", { name: `Resize crop from ${name}` })
+				.element()
+				.getBoundingClientRect(),
+		);
+		for (let index = 0; index < handles.length; index += 1) {
+			for (let other = index + 1; other < handles.length; other += 1) {
+				const first = handles[index]!;
+				const second = handles[other]!;
+				const overlaps =
+					first.left < second.right &&
+					first.right > second.left &&
+					first.top < second.bottom &&
+					first.bottom > second.top;
+				expect(overlaps).toBe(false);
+			}
+		}
+	});
+
+	it("moves the crop frame with the keyboard", async () => {
+		const screen = await render(<Harness aspect={1} />);
+		const image = document.querySelector<HTMLImageElement>(".emdash-react-image-crop img")!;
+		expect(image.draggable).toBe(false);
+		const imageBoundsBefore = image.getBoundingClientRect();
+		const selection = screen.getByLabelText("Crop selection", { exact: true });
+		await expect.element(selection).not.toHaveTextContent("pending");
+		const beforeX = Number(selection.element().textContent!.split(",")[0]);
+		const cropArea = screen.getByRole("group", {
+			name: "Crop selection. Use the Arrow keys to move it.",
+		});
 		cropArea.element().focus();
 		await userEvent.keyboard("{ArrowRight}");
-		await expect.element(screen.getByLabelText("Crop position")).not.toHaveTextContent("0,0");
-		await vi.waitFor(() => expect(onCropComplete).toHaveBeenCalled());
+		await vi.waitFor(() => {
+			expect(Number(selection.element().textContent!.split(",")[0])).toBeGreaterThan(beforeX);
+		});
+		const imageBoundsAfter = image.getBoundingClientRect();
+		expect(imageBoundsAfter.x).toBe(imageBoundsBefore.x);
+		expect(imageBoundsAfter.y).toBe(imageBoundsBefore.y);
+		expect(getComputedStyle(image).transform).toBe("none");
 	});
 
-	it("removes disabled crop controls from keyboard interaction", async () => {
-		const screen = await render(<Harness disabled />);
-		const cropArea = screen.getByLabelText("Crop image. Use arrow keys to move the crop area.");
-
-		expect(cropArea.element().tabIndex).toBe(-1);
-		await expect.element(cropArea).toHaveAttribute("aria-disabled", "true");
-		await expect.element(screen.getByRole("slider", { name: "Zoom" })).toBeDisabled();
-	});
-
-	it("resizes a freeform crop edge directly with the pointer", async () => {
-		const screen = await render(<Harness resizable />);
-		const cropSize = screen.getByLabelText("Crop size");
-		await expect.element(cropSize).not.toHaveTextContent("pending");
-		const initial = readCropSize(cropSize.element());
-		const rightHandle = screen.getByRole("button", { name: "Resize crop from right edge" });
-		const handle = rightHandle.element();
-		vi.spyOn(handle, "setPointerCapture").mockImplementation(() => {});
-		vi.spyOn(handle, "hasPointerCapture").mockReturnValue(true);
-		vi.spyOn(handle, "releasePointerCapture").mockImplementation(() => {});
-
-		handle.dispatchEvent(
-			new PointerEvent("pointerdown", {
-				bubbles: true,
-				button: 0,
-				isPrimary: true,
-				pointerId: 7,
-				clientX: 100,
-			}),
-		);
-		handle.dispatchEvent(
-			new PointerEvent("pointermove", {
-				bubbles: true,
-				pointerId: 7,
-				clientX: 90,
-			}),
-		);
-		handle.dispatchEvent(
-			new PointerEvent("pointerup", {
-				bubbles: true,
-				pointerId: 7,
-				clientX: 90,
-			}),
-		);
-
-		await expect.element(cropSize).toHaveTextContent(`${initial.width - 20}x${initial.height}`);
-		await expect
-			.element(screen.getByText(`Crop area ${initial.width - 20} by ${initial.height} pixels.`))
-			.toBeInTheDocument();
-	});
-
-	it("resizes every freeform edge from the keyboard", async () => {
-		const screen = await render(<Harness resizable />);
-		const cropSize = screen.getByLabelText("Crop size");
-		await expect.element(cropSize).not.toHaveTextContent("pending");
-		const initial = readCropSize(cropSize.element());
-
+	it("preserves a fixed aspect ratio while resizing a small source", async () => {
+		const screen = await render(<Harness aspect={2} sourceWidth={40} sourceHeight={20} />);
+		const frame = screen.getByTestId("media-image-cropper-frame").element();
+		frame.style.width = "400px";
+		frame.style.height = "200px";
+		const image = document.querySelector<HTMLImageElement>(".emdash-react-image-crop img")!;
+		await vi.waitFor(() => expect(image.getBoundingClientRect().width).toBe(400));
+		const cropPixels = screen.getByLabelText("Crop pixels");
+		await vi.waitFor(() => expect(readCropPixels(cropPixels.element()).width).toBe(40));
 		const rightHandle = screen.getByRole("button", { name: "Resize crop from right edge" });
 		rightHandle.element().focus();
-		await userEvent.keyboard("{ArrowLeft}");
-		await expect.element(cropSize).toHaveTextContent(`${initial.width - 2}x${initial.height}`);
-
-		const topHandle = screen.getByRole("button", { name: "Resize crop from top edge" });
-		topHandle.element().focus();
-		await userEvent.keyboard("{Shift>}{ArrowDown}{/Shift}");
-		await expect.element(cropSize).toHaveTextContent(`${initial.width - 2}x${initial.height - 20}`);
-
-		const bottomHandle = screen.getByRole("button", { name: "Resize crop from bottom edge" });
-		bottomHandle.element().focus();
-		await userEvent.keyboard("{ArrowUp}");
-		await expect.element(cropSize).toHaveTextContent(`${initial.width - 2}x${initial.height - 22}`);
-
-		const leftHandle = screen.getByRole("button", { name: "Resize crop from left edge" });
-		leftHandle.element().focus();
-		await userEvent.keyboard("{ArrowRight}");
-		await expect.element(cropSize).toHaveTextContent(`${initial.width - 4}x${initial.height - 22}`);
-	});
-
-	it("keeps a freeform crop inside the frame when the frame shrinks", async () => {
-		const screen = await render(<Harness resizable />);
-		const cropSize = screen.getByLabelText("Crop size");
-		await expect.element(cropSize).not.toHaveTextContent("pending");
-		const frame = document.querySelector<HTMLElement>(".emdash-image-cropper")!;
-		frame.style.width = "100px";
-		frame.style.height = "100px";
-		window.dispatchEvent(new Event("resize"));
+		await userEvent.keyboard("{Shift>}{ArrowLeft}{/Shift}");
 
 		await vi.waitFor(() => {
-			const resized = readCropSize(cropSize.element());
-			expect(resized.width).toBeLessThanOrEqual(100);
-			expect(resized.height).toBeLessThanOrEqual(100);
+			const resized = readCropPixels(cropPixels.element());
+			expect(resized.width).toBeLessThan(40);
+			expect(Math.abs(resized.width - resized.height * 2)).toBeLessThanOrEqual(1);
 		});
+	});
+
+	it("resizes both dimensions from a freeform corner", async () => {
+		const screen = await render(<Harness />);
+		const cropPixels = screen.getByLabelText("Crop pixels");
+		await vi.waitFor(() => expect(readCropPixels(cropPixels.element()).width).toBe(400));
+		const corner = screen.getByRole("button", { name: "Resize crop from bottom-right corner" });
+		corner.element().focus();
+		await userEvent.keyboard("{Shift>}{ArrowLeft}{/Shift}");
+
+		await vi.waitFor(() => {
+			const resized = readCropPixels(cropPixels.element());
+			expect(resized.width).toBeLessThan(400);
+			expect(resized.height).toBeLessThan(200);
+		});
+	});
+
+	it("resizes one dimension from a freeform edge", async () => {
+		const screen = await render(<Harness />);
+		const cropPixels = screen.getByLabelText("Crop pixels");
+		await vi.waitFor(() => expect(readCropPixels(cropPixels.element()).width).toBe(400));
+		const rightEdge = screen.getByRole("button", { name: "Resize crop from right edge" });
+		rightEdge.element().focus();
+		await userEvent.keyboard("{Shift>}{ArrowLeft}{/Shift}");
+
+		await vi.waitFor(() => {
+			const resized = readCropPixels(cropPixels.element());
+			expect(resized.width).toBeLessThan(400);
+			expect(resized.height).toBe(200);
+		});
+	});
+
+	it("removes disabled crop handles from keyboard interaction", async () => {
+		const screen = await render(<Harness disabled />);
+		await expect
+			.element(screen.getByLabelText("Crop selection", { exact: true }))
+			.not.toHaveTextContent("pending");
+		expect(screen.getByRole("button", { name: "Resize crop from top edge" }).query()).toBeNull();
+		await expect.element(screen.getByTestId("media-image-cropper-frame")).toHaveAttribute("inert");
 	});
 });

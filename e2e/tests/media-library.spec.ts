@@ -293,11 +293,64 @@ test.describe("Media Library", () => {
 		await page.getByRole("button", { name: filename, exact: true }).click();
 		const details = page.getByRole("dialog", { name: "Media Details" });
 		await details.getByRole("tab", { name: "Edit image" }).click();
+		await page.setViewportSize({ width: 700, height: 900 });
+		await details.evaluate(async (element) => {
+			await Promise.allSettled(
+				element.getAnimations({ subtree: true }).map((animation) => animation.finished),
+			);
+		});
+		const previewColumn = details.getByTestId("media-detail-dialog-preview-column");
+		const focalImageBounds = await previewColumn.locator("img").first().boundingBox();
+		if (!focalImageBounds) throw new Error("Focal-point image is not visible");
 		await details.getByRole("tab", { name: "Crop" }).click();
-		const zoom = details.getByRole("slider", { name: "Zoom" });
-		await zoom.evaluate((element) => (element as HTMLElement).focus());
-		await page.keyboard.press("End");
-		await expect(zoom).toHaveAttribute("aria-valuenow", "3");
+		const cropModeImageBounds = await previewColumn
+			.locator(".emdash-react-image-crop img")
+			.boundingBox();
+		if (!cropModeImageBounds) throw new Error("Crop image is not visible");
+		expect(cropModeImageBounds.x).toBeCloseTo(focalImageBounds.x, 0);
+		expect(cropModeImageBounds.y).toBeCloseTo(focalImageBounds.y, 0);
+		expect(cropModeImageBounds.width).toBeCloseTo(focalImageBounds.width, 0);
+		expect(cropModeImageBounds.height).toBeCloseTo(focalImageBounds.height, 0);
+		for (const handle of [
+			"top-left corner",
+			"top edge",
+			"top-right corner",
+			"right edge",
+			"bottom-right corner",
+			"bottom edge",
+			"bottom-left corner",
+			"left edge",
+		]) {
+			await expect(
+				details.getByRole("button", { name: `Resize crop from ${handle}` }),
+			).toBeVisible();
+		}
+		expect(
+			await details.locator(".ReactCrop__rule-of-thirds-vt").evaluate((grid) => {
+				return getComputedStyle(grid, "::before").borderLeftStyle;
+			}),
+		).toBe("dashed");
+		const cropFrame = details.locator(".emdash-image-cropper");
+		const cropImage = details.locator(".emdash-react-image-crop img");
+		const frameBounds = await cropFrame.boundingBox();
+		const imageBoundsBefore = await cropImage.boundingBox();
+		if (!frameBounds || !imageBoundsBefore) throw new Error("Crop image is not visible");
+		expect(imageBoundsBefore.x + imageBoundsBefore.width / 2).toBeCloseTo(
+			frameBounds.x + frameBounds.width / 2,
+			0,
+		);
+		expect(imageBoundsBefore.y + imageBoundsBefore.height / 2).toBeCloseTo(
+			frameBounds.y + frameBounds.height / 2,
+			0,
+		);
+		const corner = details.getByRole("button", { name: "Resize crop from bottom-right corner" });
+		await corner.press("Shift+ArrowLeft");
+		await details
+			.getByRole("group", { name: "Crop selection. Use the Arrow keys to move it." })
+			.press("ArrowRight");
+		const imageBoundsAfter = await cropImage.boundingBox();
+		expect(imageBoundsAfter).toEqual(imageBoundsBefore);
+		await expect(details.getByRole("button", { name: "Crop original" })).toBeEnabled();
 
 		await details.getByRole("button", { name: "Crop original" }).click();
 		const replaceConfirm = page.getByRole("dialog", { name: "Crop original image?" });
