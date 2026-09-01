@@ -346,6 +346,13 @@ test.describe("Media Library", () => {
 		const duplicate = await findMediaByFilename(serverInfo, duplicateFilename);
 		expect(duplicate.id).not.toBe(original.id);
 		expect(duplicate.storageKey).not.toBe(original.storageKey);
+		const duplicateCardImage = page
+			.getByRole("button", { name: duplicateFilename, exact: true })
+			.locator("img");
+		await expect(duplicateCardImage).toBeVisible();
+		expect(await duplicateCardImage.evaluate((image) => getComputedStyle(image).objectFit)).toBe(
+			"contain",
+		);
 		expect(await fetchUncachedBytes(serverInfo, original.url)).toEqual(replacedBytes);
 		expect(await apiJson(serverInfo, `/_emdash/api/content/posts/${created.item.id}`)).toEqual(
 			contentBefore,
