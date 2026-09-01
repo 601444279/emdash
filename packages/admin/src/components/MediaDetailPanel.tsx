@@ -12,6 +12,7 @@ import {
 	Dialog,
 	Input,
 	InputArea,
+	Select,
 	Tabs,
 	Tooltip,
 	inputVariants,
@@ -71,6 +72,12 @@ const CLOSE_FALLBACK_MS = 500;
 type MediaDetailTab = "details" | "used-in" | "edit-image";
 type ImageEditMode = "focal-point" | "crop";
 type CropAction = "duplicate" | "replace";
+type CropAspectMode = "original" | "freeform" | "square" | "4:3" | "3:2" | "16:9";
+
+interface CropViewportSize {
+	width: number;
+	height: number;
+}
 
 class CropFileCreationError extends Error {}
 
@@ -99,6 +106,25 @@ function croppedFilename(filename: string): string {
 	const extensionIndex = filename.lastIndexOf(".");
 	if (extensionIndex <= 0) return `${filename}-cropped`;
 	return `${filename.slice(0, extensionIndex)}-cropped${filename.slice(extensionIndex)}`;
+}
+
+function isCropAspectMode(value: string | null): value is CropAspectMode {
+	return ["original", "freeform", "square", "4:3", "3:2", "16:9"].includes(value ?? "");
+}
+
+function cropAspectRatio(mode: CropAspectMode, source: CropViewportSize | null): number {
+	switch (mode) {
+		case "square":
+			return 1;
+		case "4:3":
+			return 4 / 3;
+		case "3:2":
+			return 3 / 2;
+		case "16:9":
+			return 16 / 9;
+		default:
+			return source && source.width > 0 && source.height > 0 ? source.width / source.height : 1;
+	}
 }
 
 interface MediaLocationOption {
@@ -178,6 +204,8 @@ export function MediaDetailPanel({
 	const [imageEditMode, setImageEditMode] = React.useState<ImageEditMode>("focal-point");
 	const [cropPosition, setCropPosition] = React.useState({ x: 0, y: 0 });
 	const [cropZoom, setCropZoom] = React.useState(1);
+	const [cropAspectMode, setCropAspectMode] = React.useState<CropAspectMode>("original");
+	const [cropViewportSize, setCropViewportSize] = React.useState<CropViewportSize | null>(null);
 	const [cropPixels, setCropPixels] = React.useState<PixelCrop | null>(null);
 	const [cropSourceSize, setCropSourceSize] = React.useState<{
 		width: number;
@@ -217,6 +245,8 @@ export function MediaDetailPanel({
 		setImageEditMode("focal-point");
 		setCropPosition({ x: 0, y: 0 });
 		setCropZoom(1);
+		setCropAspectMode("original");
+		setCropViewportSize(null);
 		setCropPixels(null);
 		setCropSourceSize(null);
 		setCropSourceFailed(false);
@@ -281,6 +311,10 @@ export function MediaDetailPanel({
 		(canCropOriginal || canDuplicateCrop),
 	);
 	const cropPreviewUrl = canShowCrop ? cacheBustMediaUrl(item.url, cropPreviewKey) : item.url;
+	const cropAspectSource =
+		cropSourceSize ??
+		(item.width && item.height ? { width: item.width, height: item.height } : null);
+	const cropAspect = cropAspectRatio(cropAspectMode, cropAspectSource);
 	const cropChanged = Boolean(
 		cropPixels &&
 		cropSourceSize &&
@@ -293,6 +327,17 @@ export function MediaDetailPanel({
 	const filenameHelpLabel = t`Why can't this be changed?`;
 	const altTextHelp = t`Used by screen readers and when image fails to load`;
 	const altTextHelpLabel = t`Why is this important?`;
+	const cropAspectOptions = React.useMemo(
+		() => ({
+			original: t`Original`,
+			freeform: t`Freeform`,
+			square: t`Square (1:1)`,
+			"4:3": t`4:3`,
+			"3:2": t`3:2`,
+			"16:9": t`16:9`,
+		}),
+		[t],
+	);
 	const debouncedLocationSearch = useDebouncedValue(locationSearch, 300);
 	const currentFolderQuery = useQuery({
 		queryKey: ["media-folder", localItem?.folderId],
@@ -479,6 +524,8 @@ export function MediaDetailPanel({
 			setFocalPoint(null);
 			setCropPosition({ x: 0, y: 0 });
 			setCropZoom(1);
+			setCropAspectMode("original");
+			setCropViewportSize(null);
 			setCropPixels(null);
 			setCropSourceSize(null);
 			setCropSourceFailed(false);
@@ -565,12 +612,25 @@ export function MediaDetailPanel({
 		) {
 			return;
 		}
-		if (action === "replace" && !canCropOriginal) return;
+		if (action === "replace" && (!canCropOriginal || cropAspectMode !== "original")) return;
 		if (action === "duplicate" && !canDuplicateCrop) return;
 		cropPendingRef.current = true;
 		setCropStatus(action === "duplicate" ? t`Creating cropped copy...` : t`Cropping original...`);
 		cropMutation.mutate(action);
 	};
+
+	const changeCropAspect = (value: string | null) => {
+		if (!isCropAspectMode(value) || isBusy) return;
+		setCropAspectMode(value);
+		setCropPixels(null);
+		setCropStatus("");
+		cropMutation.reset();
+	};
+	const handleCropViewportSizeChange = React.useCallback((size: CropViewportSize) => {
+		setCropViewportSize((current) =>
+			current?.width === size.width && current.height === size.height ? current : size,
+		);
+	}, []);
 
 	const changeImageEditMode = (mode: ImageEditMode) => {
 		if (isBusy || (mode === "crop" && !canShowCrop)) return;
@@ -746,9 +806,15 @@ export function MediaDetailPanel({
 											src={cropPreviewUrl}
 											crop={cropPosition}
 											zoom={cropZoom}
+											aspect={cropAspect}
+											cropSize={
+												cropAspectMode === "freeform" ? (cropViewportSize ?? undefined) : undefined
+											}
+											resizable={cropAspectMode === "freeform"}
 											disabled={isBusy}
 											onCropChange={setCropPosition}
 											onZoomChange={setCropZoom}
+											onCropSizeChange={handleCropViewportSizeChange}
 											onCropComplete={setCropPixels}
 											onSourceReady={setCropSourceSize}
 											onSourceError={() => setCropSourceFailed(true)}
@@ -1175,6 +1241,13 @@ export function MediaDetailPanel({
 													{t`Position the image, then create a cropped copy or replace the original.`}
 												</p>
 											</div>
+											<Select
+												label={t`Aspect ratio`}
+												value={cropAspectMode}
+												items={cropAspectOptions}
+												disabled={isBusy || cropSourceFailed}
+												onValueChange={changeCropAspect}
+											/>
 											{cropSourceFailed ? (
 												<DialogError message={t`This image could not be loaded for cropping.`} />
 											) : null}
@@ -1187,6 +1260,11 @@ export function MediaDetailPanel({
 											{cropMime === "image/webp" ? (
 												<p className="text-sm text-kumo-subtle">
 													{t`Animated WebP files become still images when cropped.`}
+												</p>
+											) : null}
+											{canCropOriginal && cropAspectMode !== "original" ? (
+												<p className="text-sm text-kumo-subtle">
+													{t`Crop original requires the Original aspect ratio.`}
 												</p>
 											) : null}
 											<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -1213,12 +1291,15 @@ export function MediaDetailPanel({
 														size="sm"
 														disabled={
 															!cropChanged ||
+															cropAspectMode !== "original" ||
 															cropSourceFailed ||
 															hasChanges ||
 															isBusy ||
 															mediaUnavailable
 														}
-														onClick={() => setShowCropConfirm(true)}
+														onClick={() => {
+															if (cropAspectMode === "original") setShowCropConfirm(true);
+														}}
 													>
 														{t`Crop original`}
 													</Button>

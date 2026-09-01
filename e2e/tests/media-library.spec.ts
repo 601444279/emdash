@@ -328,9 +328,10 @@ test.describe("Media Library", () => {
 		);
 		await expect(page.getByText("Original image cropped.")).toBeAttached();
 
-		const refreshedZoom = details.getByRole("slider", { name: "Zoom" });
-		await refreshedZoom.evaluate((element) => (element as HTMLElement).focus());
-		await page.keyboard.press("End");
+		const aspectRatio = details.getByRole("combobox", { name: "Aspect ratio" });
+		await aspectRatio.click();
+		await page.getByRole("option", { name: "Square (1:1)" }).click();
+		await expect(details.getByRole("button", { name: "Crop original" })).toBeDisabled();
 		const duplicateResponse = page.waitForResponse(
 			(response) =>
 				response.request().method() === "POST" &&
@@ -346,6 +347,7 @@ test.describe("Media Library", () => {
 		const duplicate = await findMediaByFilename(serverInfo, duplicateFilename);
 		expect(duplicate.id).not.toBe(original.id);
 		expect(duplicate.storageKey).not.toBe(original.storageKey);
+		expect(duplicate.width).toBe(duplicate.height);
 		const duplicateCardImage = page
 			.getByRole("button", { name: duplicateFilename, exact: true })
 			.locator("img");
