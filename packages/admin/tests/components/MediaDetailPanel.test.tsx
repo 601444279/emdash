@@ -413,19 +413,34 @@ describe("MediaDetailPanel", () => {
 		expect(screen.getByRole("tab", { name: "Crop" }).query()).toBeNull();
 	});
 
-	it("keeps both crop actions disabled until the crop is smaller than the source", async () => {
+	it("uses a contextual crop footer with output, reset, and disabled guidance", async () => {
 		const screen = await renderPanel({
 			item: makeLocalItem({ url: TEST_IMAGE_URL }),
 			canCropOriginal: true,
 			canDuplicateCrop: true,
 		});
 		await openCropEditor(screen);
+		const footer = screen.getByTestId("media-detail-dialog-footer").element();
+		const createCopy = screen.getByRole("button", { name: "Create cropped copy" });
+		const replaceOriginal = screen.getByRole("button", { name: "Replace original…" });
 
-		await expect.element(screen.getByRole("button", { name: "Duplicate and crop" })).toBeDisabled();
-		await expect.element(screen.getByRole("button", { name: "Crop original" })).toBeDisabled();
+		expect(footer).toContainElement(createCopy.element());
+		expect(footer).toContainElement(replaceOriginal.element());
+		expect(screen.getByRole("button", { name: "Save" }).query()).toBeNull();
+		await expect
+			.element(screen.getByLabelText("Crop output dimensions"))
+			.toHaveTextContent("100 × 100");
+		await expect.element(screen.getByText("Adjust the crop to continue.")).toBeVisible();
+		await expect.element(createCopy).toBeDisabled();
+		await expect.element(replaceOriginal).toBeDisabled();
 		await resizeCrop(screen);
-		await expect.element(screen.getByRole("button", { name: "Duplicate and crop" })).toBeEnabled();
-		await expect.element(screen.getByRole("button", { name: "Crop original" })).toBeEnabled();
+		await expect.element(createCopy).toBeEnabled();
+		await expect.element(replaceOriginal).toBeEnabled();
+		const resetCrop = screen.getByRole("button", { name: "Reset crop" });
+		await expect.element(resetCrop).toBeEnabled();
+		resetCrop.element().click();
+		await expect.element(createCopy).toBeDisabled();
+		await expect.element(replaceOriginal).toBeDisabled();
 	});
 
 	it("offers common aspect ratios and Freeform edge handles", async () => {
@@ -469,14 +484,16 @@ describe("MediaDetailPanel", () => {
 				.toBeVisible();
 		}
 
-		await expect.element(screen.getByRole("button", { name: "Duplicate and crop" })).toBeDisabled();
+		await expect
+			.element(screen.getByRole("button", { name: "Create cropped copy" }))
+			.toBeDisabled();
 		const rightHandle = screen.getByRole("button", { name: "Resize crop from right edge" });
 		rightHandle.element().focus();
 		await userEvent.keyboard("{Shift>}{ArrowLeft}{/Shift}");
-		await expect.element(screen.getByRole("button", { name: "Duplicate and crop" })).toBeEnabled();
-		await expect.element(screen.getByRole("button", { name: "Crop original" })).toBeDisabled();
+		await expect.element(screen.getByRole("button", { name: "Create cropped copy" })).toBeEnabled();
+		await expect.element(screen.getByRole("button", { name: "Replace original…" })).toBeDisabled();
 		await expect
-			.element(screen.getByText("Crop original requires the Original aspect ratio."))
+			.element(screen.getByText("Replace original requires the Original aspect ratio."))
 			.toBeVisible();
 	});
 
@@ -493,8 +510,10 @@ describe("MediaDetailPanel", () => {
 		await expect
 			.element(screen.getByText("Save or discard the other changes before cropping."))
 			.toBeVisible();
-		await expect.element(screen.getByRole("button", { name: "Duplicate and crop" })).toBeDisabled();
-		await expect.element(screen.getByRole("button", { name: "Crop original" })).toBeDisabled();
+		await expect
+			.element(screen.getByRole("button", { name: "Create cropped copy" }))
+			.toBeDisabled();
+		await expect.element(screen.getByRole("button", { name: "Replace original…" })).toBeDisabled();
 	});
 
 	it("preserves the crop draft across Media Details tabs", async () => {
@@ -572,7 +591,7 @@ describe("MediaDetailPanel", () => {
 		await openCropEditor(screen);
 		await resizeCrop(screen);
 
-		screen.getByRole("button", { name: "Duplicate and crop" }).element().click();
+		screen.getByRole("button", { name: "Create cropped copy" }).element().click();
 
 		await vi.waitFor(() => {
 			expect(uploadMedia).toHaveBeenCalledWith(
@@ -611,8 +630,8 @@ describe("MediaDetailPanel", () => {
 			.element()
 			.querySelector<HTMLImageElement>(".emdash-react-image-crop img")!.src;
 
-		screen.getByRole("button", { name: "Crop original" }).element().click();
-		await expect.element(screen.getByText("Crop original image?")).toBeVisible();
+		screen.getByRole("button", { name: "Replace original…" }).element().click();
+		await expect.element(screen.getByText("Replace original image?")).toBeVisible();
 		await expect
 			.element(
 				screen.getByText(
@@ -621,7 +640,7 @@ describe("MediaDetailPanel", () => {
 			)
 			.toBeVisible();
 		expect(replaceMediaImage).not.toHaveBeenCalled();
-		screen.getByRole("button", { name: "Crop original" }).last().element().click();
+		screen.getByRole("button", { name: "Replace original" }).element().click();
 
 		await vi.waitFor(() => {
 			expect(replaceMediaImage).toHaveBeenCalledWith(
@@ -656,10 +675,10 @@ describe("MediaDetailPanel", () => {
 		await resizeCrop(screen);
 		const draftStyle = cropSelectionStyle(screen);
 
-		screen.getByRole("button", { name: "Duplicate and crop" }).element().click();
+		screen.getByRole("button", { name: "Create cropped copy" }).element().click();
 		await expect.element(screen.getByText("The cropped image could not be created.")).toBeVisible();
 		expect(cropSelectionStyle(screen)).toBe(draftStyle);
-		screen.getByRole("button", { name: "Duplicate and crop" }).element().click();
+		screen.getByRole("button", { name: "Create cropped copy" }).element().click();
 		await vi.waitFor(() => expect(uploadMedia).toHaveBeenCalledTimes(1));
 		expect(createCroppedImageFile).toHaveBeenCalledTimes(2);
 	});
@@ -674,10 +693,10 @@ describe("MediaDetailPanel", () => {
 		await resizeCrop(screen);
 		const draftStyle = cropSelectionStyle(screen);
 
-		screen.getByRole("button", { name: "Crop original" }).element().click();
-		const confirmation = screen.getByRole("dialog", { name: "Crop original image?" });
+		screen.getByRole("button", { name: "Replace original…" }).element().click();
+		const confirmation = screen.getByRole("dialog", { name: "Replace original image?" });
 		await expect.element(confirmation).toBeVisible();
-		confirmation.getByRole("button", { name: "Crop original" }).element().click();
+		confirmation.getByRole("button", { name: "Replace original" }).element().click();
 
 		await expect.element(screen.getByText("Replace failed")).toBeVisible();
 		await expect.element(confirmation).not.toBeInTheDocument();
@@ -713,7 +732,7 @@ describe("MediaDetailPanel", () => {
 		});
 		await openCropEditor(screen);
 		await resizeCrop(screen);
-		const action = screen.getByRole("button", { name: "Duplicate and crop" }).element();
+		const action = screen.getByRole("button", { name: "Create cropped copy" }).element();
 
 		action.click();
 		action.click();

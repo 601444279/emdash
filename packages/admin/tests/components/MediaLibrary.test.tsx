@@ -1149,12 +1149,12 @@ describe("MediaLibrary", () => {
 			}
 			await expect.element(crop).toBeVisible();
 			crop.element().click();
-			await expect.element(screen.getByRole("heading", { name: "Crop" })).toBeVisible();
+			await expect.element(screen.getByLabelText("Crop output dimensions")).toBeVisible();
 
-			expect(screen.getByRole("button", { name: "Duplicate and crop" }).query() !== null).toBe(
+			expect(screen.getByRole("button", { name: "Create cropped copy" }).query() !== null).toBe(
 				testCase.duplicate,
 			);
-			expect(screen.getByRole("button", { name: "Crop original" }).query() !== null).toBe(
+			expect(screen.getByRole("button", { name: "Replace original…" }).query() !== null).toBe(
 				testCase.replace,
 			);
 		});
