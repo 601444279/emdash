@@ -65,7 +65,7 @@ import {
 import { ConfirmDialog } from "./ConfirmDialog";
 import { DialogError, getMutationError } from "./DialogError.js";
 import { FocalPointEditor, FocalPointPreviews } from "./FocalPointEditor.js";
-import { MediaImageCropper } from "./MediaImageCropper.js";
+import { MediaImageCropper, type MediaCropSelection } from "./MediaImageCropper.js";
 import { MediaUsedIn } from "./MediaUsedIn.js";
 
 const CLOSE_FALLBACK_MS = 500;
@@ -202,10 +202,8 @@ export function MediaDetailPanel({
 	);
 	const [activeTab, setActiveTab] = React.useState<MediaDetailTab>("details");
 	const [imageEditMode, setImageEditMode] = React.useState<ImageEditMode>("focal-point");
-	const [cropPosition, setCropPosition] = React.useState({ x: 0, y: 0 });
-	const [cropZoom, setCropZoom] = React.useState(1);
 	const [cropAspectMode, setCropAspectMode] = React.useState<CropAspectMode>("original");
-	const [cropViewportSize, setCropViewportSize] = React.useState<CropViewportSize | null>(null);
+	const [cropSelection, setCropSelection] = React.useState<MediaCropSelection>();
 	const [cropPixels, setCropPixels] = React.useState<PixelCrop | null>(null);
 	const [cropSourceSize, setCropSourceSize] = React.useState<{
 		width: number;
@@ -243,10 +241,8 @@ export function MediaDetailPanel({
 		setFocalPoint(normalizeMediaFocalPoint(item));
 		setActiveTab("details");
 		setImageEditMode("focal-point");
-		setCropPosition({ x: 0, y: 0 });
-		setCropZoom(1);
 		setCropAspectMode("original");
-		setCropViewportSize(null);
+		setCropSelection(undefined);
 		setCropPixels(null);
 		setCropSourceSize(null);
 		setCropSourceFailed(false);
@@ -522,10 +518,8 @@ export function MediaDetailPanel({
 
 			onItemRefreshed?.(croppedItem);
 			setFocalPoint(null);
-			setCropPosition({ x: 0, y: 0 });
-			setCropZoom(1);
 			setCropAspectMode("original");
-			setCropViewportSize(null);
+			setCropSelection(undefined);
 			setCropPixels(null);
 			setCropSourceSize(null);
 			setCropSourceFailed(false);
@@ -622,16 +616,11 @@ export function MediaDetailPanel({
 	const changeCropAspect = (value: string | null) => {
 		if (!isCropAspectMode(value) || isBusy) return;
 		setCropAspectMode(value);
+		setCropSelection(undefined);
 		setCropPixels(null);
 		setCropStatus("");
 		cropMutation.reset();
 	};
-	const handleCropViewportSizeChange = React.useCallback((size: CropViewportSize) => {
-		setCropViewportSize((current) =>
-			current?.width === size.width && current.height === size.height ? current : size,
-		);
-	}, []);
-
 	const changeImageEditMode = (mode: ImageEditMode) => {
 		if (isBusy || (mode === "crop" && !canShowCrop)) return;
 		setImageEditMode(mode);
@@ -793,6 +782,7 @@ export function MediaDetailPanel({
 										<FocalPointEditor
 											key={`${item.id}:${item.url}:crop-fallback`}
 											src={item.url}
+											sourceSize={cropAspectSource ?? undefined}
 											alt={item.alt || item.filename}
 											editing={false}
 											disabled
@@ -804,17 +794,16 @@ export function MediaDetailPanel({
 										<MediaImageCropper
 											key={cropPreviewKey}
 											src={cropPreviewUrl}
-											crop={cropPosition}
-											zoom={cropZoom}
-											aspect={cropAspect}
-											cropSize={
-												cropAspectMode === "freeform" ? (cropViewportSize ?? undefined) : undefined
+											sourceSize={cropAspectSource ?? undefined}
+											crop={cropSelection}
+											aspect={
+												cropAspectMode === "freeform" ||
+												(cropAspectMode === "original" && !cropSourceSize)
+													? undefined
+													: cropAspect
 											}
-											resizable={cropAspectMode === "freeform"}
 											disabled={isBusy}
-											onCropChange={setCropPosition}
-											onZoomChange={setCropZoom}
-											onCropSizeChange={handleCropViewportSizeChange}
+											onCropChange={setCropSelection}
 											onCropComplete={setCropPixels}
 											onSourceReady={setCropSourceSize}
 											onSourceError={() => setCropSourceFailed(true)}
@@ -826,7 +815,8 @@ export function MediaDetailPanel({
 								) : (
 									<FocalPointEditor
 										key={`${item.id}:${item.url}`}
-										src={item.url}
+										src={activeTab === "edit-image" && canShowCrop ? cropPreviewUrl : item.url}
+										sourceSize={cropAspectSource ?? undefined}
 										alt={item.alt || item.filename}
 										editing={activeTab === "edit-image"}
 										disabled={isBusy}
@@ -1238,7 +1228,7 @@ export function MediaDetailPanel({
 											<div className="grid gap-1.5">
 												<h3 className="text-sm font-semibold">{t`Crop`}</h3>
 												<p className="text-sm text-kumo-subtle">
-													{t`Position the image, then create a cropped copy or replace the original.`}
+													{t`Move and resize the crop frame, then create a cropped copy or replace the original. Use the Arrow keys when the frame or a handle has focus.`}
 												</p>
 											</div>
 											<Select

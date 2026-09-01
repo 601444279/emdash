@@ -2,9 +2,11 @@ import { useLingui } from "@lingui/react/macro";
 import * as React from "react";
 
 import { getMediaObjectPosition, type MediaFocalPoint } from "../lib/media-utils.js";
+import { useContainedMediaSize } from "./useContainedMediaSize.js";
 
 interface FocalPointEditorProps {
 	src: string;
+	sourceSize?: { width: number; height: number };
 	alt: string;
 	editing: boolean;
 	disabled: boolean;
@@ -56,6 +58,7 @@ export function FocalPointPreviews({ src, point }: Pick<FocalPointEditorProps, "
 
 export function FocalPointEditor({
 	src,
+	sourceSize: knownSourceSize,
 	alt,
 	editing,
 	disabled,
@@ -66,8 +69,14 @@ export function FocalPointEditor({
 }: FocalPointEditorProps) {
 	const { t } = useLingui();
 	const activePointerRef = React.useRef<number | null>(null);
+	const frameRef = React.useRef<HTMLDivElement>(null);
 	const [ready, setReady] = React.useState(false);
+	const [loadedSourceSize, setLoadedSourceSize] = React.useState<{
+		width: number;
+		height: number;
+	} | null>(null);
 	const [announcement, setAnnouncement] = React.useState("");
+	const displaySize = useContainedMediaSize(frameRef, loadedSourceSize ?? knownSourceSize ?? null);
 	const current = point ?? { focalX: 0.5, focalY: 0.5 };
 
 	const announce = (next: MediaFocalPoint) =>
@@ -121,18 +130,28 @@ export function FocalPointEditor({
 
 	return (
 		<div className="grid gap-4">
-			<div className="emdash-media-transparency-grid flex h-64 items-center justify-center overflow-hidden rounded-xl ring ring-kumo-line md:h-80">
-				<div className="relative inline-flex max-h-full max-w-full">
+			<div
+				ref={frameRef}
+				className="emdash-media-transparency-grid flex h-64 items-center justify-center overflow-hidden rounded-xl ring ring-kumo-line md:h-80"
+			>
+				<div
+					className="relative inline-flex max-h-full max-w-full"
+					style={displaySize ?? undefined}
+				>
 					<img
 						src={src}
 						alt={alt}
 						className="block max-h-64 max-w-full object-contain md:max-h-80"
+						style={displaySize ? { width: "100%", height: "100%" } : undefined}
 						draggable={false}
-						onLoad={() => {
+						onLoad={(event) => {
+							const image = event.currentTarget;
+							setLoadedSourceSize({ width: image.naturalWidth, height: image.naturalHeight });
 							setReady(true);
 							onReadyChange?.(true);
 						}}
 						onError={() => {
+							setLoadedSourceSize(null);
 							setReady(false);
 							onReadyChange?.(false);
 						}}
