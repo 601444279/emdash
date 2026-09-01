@@ -12,7 +12,8 @@ import type { PixelCrop } from "../lib/crop-image.js";
 import { useContainedMediaSize } from "./useContainedMediaSize.js";
 
 const HANDLE_TARGET_SIZE = 24;
-const HANDLES_PER_EDGE = 3;
+const FREEFORM_HANDLES_PER_EDGE = 3;
+const FIXED_HANDLES_PER_EDGE = 2;
 
 export type MediaCropSelection = PercentCrop;
 
@@ -73,7 +74,8 @@ export function MediaImageCropper({
 	} | null>(null);
 	const displaySize = useContainedMediaSize(frameRef, loadedSourceSize ?? knownSourceSize ?? null);
 	const [resizeAnnouncement, setResizeAnnouncement] = React.useState("");
-	const handleSpan = HANDLE_TARGET_SIZE * HANDLES_PER_EDGE;
+	const handleSpan =
+		HANDLE_TARGET_SIZE * (aspect ? FIXED_HANDLES_PER_EDGE : FREEFORM_HANDLES_PER_EDGE);
 	const minimumCropWidth = displaySize
 		? Math.max(
 				1,
@@ -89,14 +91,14 @@ export function MediaImageCropper({
 	const ariaLabels = React.useMemo(
 		() => ({
 			cropArea: t`Crop selection. Use the Arrow keys to move it.`,
-			nwDragHandle: t`Resize crop from top-left corner`,
-			nDragHandle: t`Resize crop from top edge`,
-			neDragHandle: t`Resize crop from top-right corner`,
-			eDragHandle: t`Resize crop from right edge`,
-			seDragHandle: t`Resize crop from bottom-right corner`,
-			sDragHandle: t`Resize crop from bottom edge`,
-			swDragHandle: t`Resize crop from bottom-left corner`,
-			wDragHandle: t`Resize crop from left edge`,
+			nwDragHandle: t`Resize crop from top-left corner. Use the Arrow keys to resize.`,
+			nDragHandle: t`Resize crop from top edge. Use the Arrow keys to resize.`,
+			neDragHandle: t`Resize crop from top-right corner. Use the Arrow keys to resize.`,
+			eDragHandle: t`Resize crop from right edge. Use the Arrow keys to resize.`,
+			seDragHandle: t`Resize crop from bottom-right corner. Use the Arrow keys to resize.`,
+			sDragHandle: t`Resize crop from bottom edge. Use the Arrow keys to resize.`,
+			swDragHandle: t`Resize crop from bottom-left corner. Use the Arrow keys to resize.`,
+			wDragHandle: t`Resize crop from left edge. Use the Arrow keys to resize.`,
 		}),
 		[t],
 	);

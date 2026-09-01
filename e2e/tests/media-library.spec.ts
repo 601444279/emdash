@@ -311,19 +311,18 @@ test.describe("Media Library", () => {
 		expect(cropModeImageBounds.y).toBeCloseTo(focalImageBounds.y, 0);
 		expect(cropModeImageBounds.width).toBeCloseTo(focalImageBounds.width, 0);
 		expect(cropModeImageBounds.height).toBeCloseTo(focalImageBounds.height, 0);
-		for (const handle of [
+		for (const corner of [
 			"top-left corner",
-			"top edge",
 			"top-right corner",
-			"right edge",
 			"bottom-right corner",
-			"bottom edge",
 			"bottom-left corner",
-			"left edge",
 		]) {
 			await expect(
-				details.getByRole("button", { name: `Resize crop from ${handle}` }),
+				details.getByRole("button", { name: `Resize crop from ${corner}` }),
 			).toBeVisible();
+		}
+		for (const edge of ["top edge", "right edge", "bottom edge", "left edge"]) {
+			await expect(details.getByRole("button", { name: `Resize crop from ${edge}` })).toBeHidden();
 		}
 		expect(
 			await details.locator(".ReactCrop__rule-of-thirds-vt").evaluate((grid) => {

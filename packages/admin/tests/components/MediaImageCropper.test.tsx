@@ -101,7 +101,7 @@ describe("MediaImageCropper", () => {
 	});
 
 	it("shows eight resize handles and a persistent rule-of-thirds grid", async () => {
-		const screen = await render(<Harness aspect={2} />);
+		const screen = await render(<Harness />);
 		const handleNames = [
 			"top-left corner",
 			"top edge",
@@ -142,8 +142,72 @@ describe("MediaImageCropper", () => {
 		expect(getComputedStyle(verticalGrid, "::before").borderLeftStyle).toBe("dashed");
 	});
 
+	it("uses only corner resize handles for a fixed aspect ratio", async () => {
+		const screen = await render(<Harness aspect={2} />);
+		for (const corner of [
+			"top-left corner",
+			"top-right corner",
+			"bottom-right corner",
+			"bottom-left corner",
+		]) {
+			await expect
+				.element(screen.getByRole("button", { name: `Resize crop from ${corner}` }))
+				.toBeVisible();
+		}
+		for (const edge of ["top edge", "right edge", "bottom edge", "left edge"]) {
+			expect(screen.getByRole("button", { name: `Resize crop from ${edge}` }).query()).toBeNull();
+		}
+	});
+
+	it("keeps a small fixed-ratio corner drag proportional", async () => {
+		const screen = await render(<Harness aspect={2} />);
+		const cropPixels = screen.getByLabelText("Crop pixels");
+		await vi.waitFor(() => expect(readCropPixels(cropPixels.element()).width).toBe(400));
+		const corner = screen.getByRole("button", { name: "Resize crop from bottom-right corner" });
+		const handle = corner.element();
+		const bounds = handle.getBoundingClientRect();
+		const start = { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 };
+		handle.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				cancelable: true,
+				button: 0,
+				isPrimary: true,
+				pointerId: 12,
+				clientX: start.x,
+				clientY: start.y,
+			}),
+		);
+		document.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				cancelable: true,
+				isPrimary: true,
+				pointerId: 12,
+				clientX: start.x - 6,
+				clientY: start.y - 3,
+			}),
+		);
+		await new Promise((resolve) => window.setTimeout(resolve, 0));
+		document.dispatchEvent(
+			new PointerEvent("pointerup", {
+				bubbles: true,
+				pointerId: 12,
+				clientX: start.x - 6,
+				clientY: start.y - 3,
+			}),
+		);
+
+		await vi.waitFor(() => {
+			const resized = readCropPixels(cropPixels.element());
+			expect(resized.width).toBeGreaterThan(380);
+			expect(resized.width).toBeLessThan(400);
+			expect(Math.abs(resized.width - resized.height * 2)).toBeLessThanOrEqual(1);
+		});
+	});
+
 	it("upscales a tiny source so all eight handles remain distinct", async () => {
-		const screen = await render(<Harness aspect={2} sourceWidth={40} sourceHeight={20} />);
+		const screen = await render(<Harness sourceWidth={40} sourceHeight={20} />);
 		const frame = screen.getByTestId("media-image-cropper-frame").element();
 		frame.style.width = "400px";
 		frame.style.height = "200px";
@@ -217,8 +281,8 @@ describe("MediaImageCropper", () => {
 		await vi.waitFor(() => expect(image.getBoundingClientRect().width).toBe(400));
 		const cropPixels = screen.getByLabelText("Crop pixels");
 		await vi.waitFor(() => expect(readCropPixels(cropPixels.element()).width).toBe(40));
-		const rightHandle = screen.getByRole("button", { name: "Resize crop from right edge" });
-		rightHandle.element().focus();
+		const corner = screen.getByRole("button", { name: "Resize crop from bottom-right corner" });
+		corner.element().focus();
 		await userEvent.keyboard("{Shift>}{ArrowLeft}{/Shift}");
 
 		await vi.waitFor(() => {

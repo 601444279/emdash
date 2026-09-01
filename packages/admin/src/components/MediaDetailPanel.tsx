@@ -1228,7 +1228,7 @@ export function MediaDetailPanel({
 											<div className="grid gap-1.5">
 												<h3 className="text-sm font-semibold">{t`Crop`}</h3>
 												<p className="text-sm text-kumo-subtle">
-													{t`Move and resize the crop frame, then create a cropped copy or replace the original. Use the Arrow keys when the frame or a handle has focus.`}
+													{t`Move and resize the crop frame, then create a cropped copy or replace the original. Fixed ratios resize from the corners; Freeform also enables the edge handles. Use the Arrow keys when the frame or a handle has focus.`}
 												</p>
 											</div>
 											<Select

@@ -428,13 +428,32 @@ describe("MediaDetailPanel", () => {
 		await expect.element(screen.getByRole("button", { name: "Crop original" })).toBeEnabled();
 	});
 
-	it("offers common aspect ratios and eight resize handles", async () => {
+	it("offers common aspect ratios and Freeform edge handles", async () => {
 		const screen = await renderPanel({
 			item: makeLocalItem({ url: TEST_IMAGE_URL }),
 			canCropOriginal: true,
 			canDuplicateCrop: true,
 		});
 		await openCropEditor(screen);
+		for (const corner of [
+			"top-left corner",
+			"top-right corner",
+			"bottom-right corner",
+			"bottom-left corner",
+		]) {
+			await expect
+				.element(screen.getByRole("button", { name: `Resize crop from ${corner}` }))
+				.toBeVisible();
+		}
+		for (const edge of ["top edge", "right edge", "bottom edge", "left edge"]) {
+			expect(screen.getByRole("button", { name: `Resize crop from ${edge}` }).query()).toBeNull();
+		}
+		const aspectRatio = screen.getByRole("combobox", { name: "Aspect ratio" });
+		aspectRatio.element().click();
+		for (const option of ["Original", "Freeform", "Square (1:1)", "4:3", "3:2", "16:9"]) {
+			await expect.element(screen.getByRole("option", { name: option })).toBeVisible();
+		}
+		screen.getByRole("option", { name: "Freeform" }).element().click();
 		for (const handle of [
 			"top-left corner",
 			"top edge",
@@ -449,12 +468,6 @@ describe("MediaDetailPanel", () => {
 				.element(screen.getByRole("button", { name: `Resize crop from ${handle}` }))
 				.toBeVisible();
 		}
-		const aspectRatio = screen.getByRole("combobox", { name: "Aspect ratio" });
-		aspectRatio.element().click();
-		for (const option of ["Original", "Freeform", "Square (1:1)", "4:3", "3:2", "16:9"]) {
-			await expect.element(screen.getByRole("option", { name: option })).toBeVisible();
-		}
-		screen.getByRole("option", { name: "Freeform" }).element().click();
 
 		await expect.element(screen.getByRole("button", { name: "Duplicate and crop" })).toBeDisabled();
 		const rightHandle = screen.getByRole("button", { name: "Resize crop from right edge" });
