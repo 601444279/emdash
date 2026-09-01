@@ -21,6 +21,7 @@ export interface MediaUploadOptions {
 
 export interface UploadMediaOptions extends MediaUploadOptions {
 	fieldId?: string;
+	deduplicate?: boolean;
 }
 
 /** Trim and clamp a search term to the server-accepted range. */
@@ -98,6 +99,7 @@ export interface MediaItem {
 	alt?: string;
 	caption?: string;
 	createdAt: string;
+	status?: "pending" | "ready" | "failed";
 	/** Provider ID for external media (e.g., "cloudflare-images") */
 	provider?: string;
 	/** Provider-specific metadata */
@@ -308,7 +310,8 @@ async function getUploadUrl(
 	opts?: UploadMediaOptions,
 ): Promise<UploadUrlResponse | ExistingMediaResponse | null> {
 	try {
-		const contentHash = await computeContentHash(file, opts?.signal);
+		const contentHash =
+			opts?.deduplicate === false ? undefined : await computeContentHash(file, opts?.signal);
 		const response = await apiFetch(`${API_BASE}/media/upload-url`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -319,6 +322,7 @@ async function getUploadUrl(
 				size: file.size,
 				...(contentHash ? { contentHash } : {}),
 				...(opts?.fieldId ? { fieldId: opts.fieldId } : {}),
+				...(opts?.deduplicate === false ? { deduplicate: false } : {}),
 			}),
 		});
 
@@ -439,6 +443,7 @@ async function uploadMediaDirect(file: File, opts?: UploadMediaOptions): Promise
 	if (dimensions?.width) formData.append("width", String(dimensions.width));
 	if (dimensions?.height) formData.append("height", String(dimensions.height));
 	if (opts?.fieldId) formData.append("fieldId", opts.fieldId);
+	if (opts?.deduplicate === false) formData.append("deduplicate", "false");
 
 	const response = await apiFetch(`${API_BASE}/media`, {
 		method: "POST",
@@ -487,6 +492,28 @@ export async function uploadMedia(file: File, opts?: UploadMediaOptions): Promis
 		},
 		opts,
 	);
+}
+
+export async function replaceMediaImage(
+	id: string,
+	file: File,
+	dimensions: { width: number; height: number },
+	options?: MediaUploadOptions,
+): Promise<LocalMediaItem> {
+	const formData = new FormData();
+	formData.append("file", file);
+	formData.append("width", String(dimensions.width));
+	formData.append("height", String(dimensions.height));
+	const response = await apiFetch(`${API_BASE}/media/${encodeURIComponent(id)}/replace`, {
+		method: "PUT",
+		body: formData,
+		signal: options?.signal,
+	});
+	const data = await parseApiResponse<{ item: LocalMediaItem }>(
+		response,
+		i18n._(msg`Failed to replace media image`),
+	);
+	return data.item;
 }
 
 /**
