@@ -206,6 +206,47 @@ describe("MediaImageCropper", () => {
 		});
 	});
 
+	it("updates crop pixels while a handle is moving", async () => {
+		const screen = await render(<Harness />);
+		const cropPixels = screen.getByLabelText("Crop pixels");
+		await vi.waitFor(() => expect(readCropPixels(cropPixels.element()).width).toBe(400));
+		const handle = screen.getByRole("button", { name: "Resize crop from right edge" }).element();
+		const bounds = handle.getBoundingClientRect();
+		const start = { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 };
+
+		handle.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				cancelable: true,
+				button: 0,
+				isPrimary: true,
+				pointerId: 18,
+				clientX: start.x,
+				clientY: start.y,
+			}),
+		);
+		document.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				cancelable: true,
+				isPrimary: true,
+				pointerId: 18,
+				clientX: start.x - 20,
+				clientY: start.y,
+			}),
+		);
+
+		await vi.waitFor(() => expect(readCropPixels(cropPixels.element()).width).toBeLessThan(400));
+		document.dispatchEvent(
+			new PointerEvent("pointerup", {
+				bubbles: true,
+				pointerId: 18,
+				clientX: start.x - 20,
+				clientY: start.y,
+			}),
+		);
+	});
+
 	it("upscales a tiny source so all eight handles remain distinct", async () => {
 		const screen = await render(<Harness sourceWidth={40} sourceHeight={20} />);
 		const frame = screen.getByTestId("media-image-cropper-frame").element();

@@ -143,7 +143,10 @@ export function MediaImageCropper({
 					ariaLabels={ariaLabels}
 					className="emdash-react-image-crop max-h-full max-w-full"
 					style={displaySize ?? undefined}
-					onChange={(_pixelCrop, percentCrop) => onCropChange(percentCrop)}
+					onChange={(displayCrop, percentCrop) => {
+						onCropChange(percentCrop);
+						emitCropComplete(displayCrop, false);
+					}}
 					onComplete={(displayCrop) => emitCropComplete(displayCrop, true)}
 				>
 					<img

@@ -448,7 +448,7 @@ describe("MediaLibrary", () => {
 			await simulateMediaDrop(item, folder);
 			await vi.waitFor(() => expect(onMoveMedia).toHaveBeenCalledWith(item, folder));
 			expect(onOpenFolder).not.toHaveBeenCalled();
-			expect(screen.getByRole("heading", { name: "Media Details" }).query()).toBeNull();
+			expect(screen.getByRole("heading", { name: "Media details" }).query()).toBeNull();
 			await expect
 				.element(screen.getByText("Moved to Product photos", { exact: true }))
 				.toBeVisible();
@@ -509,7 +509,7 @@ describe("MediaLibrary", () => {
 
 			expect(onMoveMedia).not.toHaveBeenCalled();
 			await expect
-				.element(screen.getByRole("heading", { name: "Media Details" }))
+				.element(screen.getByRole("heading", { name: "Media details" }))
 				.toBeInTheDocument();
 		});
 
@@ -1167,7 +1167,7 @@ describe("MediaLibrary", () => {
 			await screen.getByRole("button", { name: "photo.jpg" }).click();
 
 			// MediaDetailPanel should open showing the item details
-			await expect.element(screen.getByText("Media Details")).toBeInTheDocument();
+			await expect.element(screen.getByText("Media details")).toBeInTheDocument();
 		});
 
 		it("opens the detail dialog on an animation frame so Kumo entry animation runs", async () => {
@@ -1190,12 +1190,12 @@ describe("MediaLibrary", () => {
 
 				expect(requestAnimationFrameSpy).toHaveBeenCalledTimes(1);
 				await expect
-					.element(screen.getByText("Media Details"), { timeout: 100 })
+					.element(screen.getByText("Media details"), { timeout: 100 })
 					.not.toBeInTheDocument();
 
 				openFrame?.(performance.now());
 
-				await expect.element(screen.getByText("Media Details")).toBeInTheDocument();
+				await expect.element(screen.getByText("Media details")).toBeInTheDocument();
 			} finally {
 				requestAnimationFrameSpy.mockRestore();
 				cancelAnimationFrameSpy.mockRestore();
