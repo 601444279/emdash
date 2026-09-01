@@ -36,6 +36,7 @@ import {
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import * as React from "react";
+import { flushSync } from "react-dom";
 
 import {
 	ApiResponseError,
@@ -69,6 +70,8 @@ import { MediaImageCropper, type MediaCropSelection } from "./MediaImageCropper.
 import { MediaUsedIn } from "./MediaUsedIn.js";
 
 const CLOSE_FALLBACK_MS = 500;
+const DIALOG_RESIZE_DURATION_MS = 340;
+const DIALOG_RESIZE_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
 type MediaDetailTab = "details" | "used-in" | "edit-image";
 type ImageEditMode = "focal-point" | "crop";
 type CropAction = "duplicate" | "replace";
@@ -177,6 +180,8 @@ export function MediaDetailPanel({
 	const closeFinishedRef = React.useRef(false);
 	const cropPendingRef = React.useRef(false);
 	const cropImageRef = React.useRef<HTMLImageElement | null>(null);
+	const dialogBodyRef = React.useRef<HTMLDivElement | null>(null);
+	const dialogResizeAnimationRef = React.useRef<Animation | null>(null);
 
 	const isProviderAsset = Boolean(item.provider);
 	const isImage = item.mimeType.startsWith("image/");
@@ -256,6 +261,7 @@ export function MediaDetailPanel({
 
 	React.useEffect(() => {
 		return () => {
+			dialogResizeAnimationRef.current?.cancel();
 			if (closeFallbackTimerRef.current !== null) {
 				window.clearTimeout(closeFallbackTimerRef.current);
 			}
@@ -632,14 +638,60 @@ export function MediaDetailPanel({
 		setCropStatus("");
 		cropMutation.reset();
 	};
+	const transitionDialogLayout = (update: () => void) => {
+		const dialog = dialogBodyRef.current?.closest<HTMLDivElement>('[role="dialog"]') ?? null;
+		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		if (!dialog || reduceMotion || typeof dialog.animate !== "function") {
+			dialogResizeAnimationRef.current?.cancel();
+			dialogResizeAnimationRef.current = null;
+			if (dialog) dialog.style.height = "";
+			update();
+			return;
+		}
+
+		const startHeight = dialog.getBoundingClientRect().height;
+		dialogResizeAnimationRef.current?.cancel();
+		dialogResizeAnimationRef.current = null;
+		dialog.style.height = `${startHeight}px`;
+		flushSync(update);
+		dialog.style.height = "auto";
+		const endHeight = dialog.getBoundingClientRect().height;
+		if (Math.abs(endHeight - startHeight) < 1) {
+			dialog.style.height = "";
+			return;
+		}
+
+		dialog.style.height = `${startHeight}px`;
+		const animation = dialog.animate(
+			[{ height: `${startHeight}px` }, { height: `${endHeight}px` }],
+			{
+				duration: DIALOG_RESIZE_DURATION_MS,
+				easing: DIALOG_RESIZE_EASING,
+				fill: "forwards",
+			},
+		);
+		dialogResizeAnimationRef.current = animation;
+		animation.addEventListener(
+			"finish",
+			() => {
+				if (dialogResizeAnimationRef.current !== animation) return;
+				dialogResizeAnimationRef.current = null;
+				dialog.style.height = "";
+				animation.cancel();
+			},
+			{ once: true },
+		);
+	};
 	const changeImageEditMode = (mode: ImageEditMode) => {
 		if (isBusy || (mode === "crop" && !canShowCrop)) return;
-		setImageEditMode(mode);
-		cropMutation.reset();
-		if (mode === "crop" && cropSourceFailed) {
-			setCropSourceFailed(false);
-			setCropPreviewKey(createCropPreviewKey());
-		}
+		transitionDialogLayout(() => {
+			setImageEditMode(mode);
+			cropMutation.reset();
+			if (mode === "crop" && cropSourceFailed) {
+				setCropSourceFailed(false);
+				setCropPreviewKey(createCropPreviewKey());
+			}
+		});
 	};
 
 	const handleDiscardConfirm = () => {
@@ -704,7 +756,7 @@ export function MediaDetailPanel({
 				<Dialog
 					size="xl"
 					className="min-w-0 flex flex-col overflow-hidden p-0"
-					style={{ width: "min(94vw, 72rem)", height: "min(88dvh, 43.5rem)" }}
+					style={{ width: "min(94vw, 68rem)", maxHeight: "min(88dvh, 43.5rem)" }}
 				>
 					<div
 						className="flex shrink-0 items-start justify-between gap-4 border-b border-kumo-line"
@@ -712,8 +764,8 @@ export function MediaDetailPanel({
 						data-testid="media-detail-dialog-header"
 					>
 						<div className="min-w-0 flex-1">
-							<Dialog.Title className="truncate text-lg font-semibold leading-none tracking-tight">
-								{t`Media Details`}
+							<Dialog.Title className="truncate text-lg font-semibold leading-none">
+								{t`Media details`}
 							</Dialog.Title>
 							<p className="mt-1 truncate text-sm text-kumo-subtle">{item.filename}</p>
 						</div>
@@ -741,15 +793,14 @@ export function MediaDetailPanel({
 										(value === "used-in" && hasUsage) ||
 										(value === "edit-image" && canEditMetadata)
 									) {
-										setActiveTab(value);
-										cropMutation.reset();
+										transitionDialogLayout(() => {
+											setActiveTab(value);
+											cropMutation.reset();
+										});
 									}
 								}}
 								tabs={[
 									{ value: "details", label: t`Details`, className: "flex-1 justify-center" },
-									...(hasUsage
-										? [{ value: "used-in", label: t`Used in`, className: "flex-1 justify-center" }]
-										: []),
 									...(canEditMetadata
 										? [
 												{
@@ -759,16 +810,25 @@ export function MediaDetailPanel({
 												},
 											]
 										: []),
+									...(hasUsage
+										? [{ value: "used-in", label: t`Used in`, className: "flex-1 justify-center" }]
+										: []),
 								]}
 							/>
 						</div>
 					)}
 
 					<div
+						ref={dialogBodyRef}
 						className={
 							activeTab === "used-in"
-								? "min-h-0 flex-1 overflow-hidden"
-								: "grid min-h-0 flex-1 grid-cols-1 overflow-y-auto md:grid-cols-2 md:overflow-hidden"
+								? "min-h-0 shrink overflow-hidden"
+								: "grid min-h-0 shrink grid-cols-1 overflow-y-auto md:grid-cols-2 md:overflow-hidden"
+						}
+						style={
+							activeTab === "used-in"
+								? { flexGrow: 1, height: "min(16rem, calc(88dvh - 12.5rem))" }
+								: { flexGrow: 1 }
 						}
 						data-testid="media-detail-dialog-body"
 						role={hasTabs ? "tabpanel" : undefined}
@@ -783,7 +843,7 @@ export function MediaDetailPanel({
 						}
 					>
 						<div
-							className={`border-b border-kumo-line p-6 md:min-h-0 md:overflow-y-auto md:border-e md:border-b-0 md:p-8 ${activeTab === "edit-image" ? "flex flex-col" : "space-y-5"}`}
+							className={`border-b border-kumo-line p-6 md:min-h-0 md:overflow-y-auto md:border-e md:border-b-0 ${activeTab === "edit-image" ? "flex flex-col" : "space-y-5"}`}
 							data-testid="media-detail-dialog-preview-column"
 							hidden={activeTab === "used-in"}
 						>
@@ -948,7 +1008,7 @@ export function MediaDetailPanel({
 						</div>
 
 						<div
-							className="grid content-start gap-5 p-6 md:min-h-0 md:overflow-y-auto md:p-8"
+							className="grid content-start gap-5 p-6 md:min-h-0 md:overflow-y-auto"
 							data-testid="media-detail-dialog-details-column"
 							hidden={activeTab === "used-in"}
 							style={
@@ -1235,13 +1295,8 @@ export function MediaDetailPanel({
 											</section>
 										</>
 									) : (
-										<div className="grid max-w-md gap-4">
-											<p className="text-pretty text-sm text-kumo-subtle">
-												{cropAspectMode === "freeform"
-													? t`Drag any handle to resize. Use the Arrow keys for precise adjustments.`
-													: t`Drag a corner to resize. Use the Arrow keys for precise adjustments.`}
-											</p>
-											<div className="grid max-w-sm gap-2">
+										<div className="grid max-w-sm gap-4">
+											<div className="grid gap-2">
 												<div className="flex items-end gap-2">
 													<div className="min-w-0 flex-1">
 														<Select
@@ -1249,13 +1304,19 @@ export function MediaDetailPanel({
 															value={cropAspectMode}
 															items={cropAspectOptions}
 															className="w-full"
+															size="lg"
+															description={
+																canCropOriginal && cropAspectMode !== "original"
+																	? t`Choose Original to replace the existing image.`
+																	: undefined
+															}
 															disabled={isBusy || cropSourceFailed}
 															onValueChange={changeCropAspect}
 														/>
 													</div>
 													<Button
 														variant="outline"
-														size="sm"
+														size="lg"
 														aria-label={t`Reset crop`}
 														icon={
 															<ArrowCounterClockwise
@@ -1274,11 +1335,11 @@ export function MediaDetailPanel({
 														{t`Reset`}
 													</Button>
 												</div>
-												<div className="flex items-center justify-between gap-3 text-sm">
-													<span className="text-kumo-subtle">{t`Output`}</span>
+												<div className="flex min-h-9 items-center justify-between gap-3 rounded-lg bg-kumo-tint px-3 text-sm ring ring-kumo-line">
+													<span className="text-kumo-subtle">{t`Output size`}</span>
 													<output
 														aria-label={t`Crop output dimensions`}
-														className="rounded-md bg-kumo-tint px-2 py-1 tabular-nums text-kumo-subtle ring ring-kumo-line"
+														className="shrink-0 font-medium tabular-nums text-kumo-default"
 													>
 														{cropPixels
 															? `${cropPixels.width} × ${cropPixels.height}`
@@ -1295,17 +1356,9 @@ export function MediaDetailPanel({
 													{t`Save or discard the other changes before cropping.`}
 												</p>
 											) : null}
-											{cropPixels && !cropChanged && !cropSourceFailed && !hasChanges ? (
-												<p className="text-sm text-kumo-subtle">{t`Adjust the crop to continue.`}</p>
-											) : null}
 											{cropMime === "image/webp" ? (
 												<p className="text-sm text-kumo-subtle">
 													{t`Animated WebP files become still images when cropped.`}
-												</p>
-											) : null}
-											{canCropOriginal && cropAspectMode !== "original" ? (
-												<p className="text-sm text-kumo-subtle">
-													{t`Replace original requires the Original aspect ratio.`}
 												</p>
 											) : null}
 										</div>
@@ -1319,7 +1372,7 @@ export function MediaDetailPanel({
 							)}
 						</div>
 						{activeTab === "used-in" && (
-							<div className="h-full min-h-0 w-full overflow-hidden p-6 md:p-8">
+							<div className="h-full min-h-0 w-full overflow-hidden p-6">
 								<MediaUsedIn
 									mediaId={item.id}
 									open={open}
@@ -1335,14 +1388,13 @@ export function MediaDetailPanel({
 					</p>
 					<div
 						className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-kumo-line"
-						style={{ padding: "1.25rem 2rem" }}
+						style={{ padding: "1rem 1.5rem" }}
 						data-testid="media-detail-dialog-footer"
 					>
 						<div>
 							{canDelete && !cropFooterActive && (
 								<Button
 									variant="destructive"
-									size="sm"
 									icon={<Trash />}
 									onClick={handleDelete}
 									disabled={isBusy || mediaUnavailable}
@@ -1352,15 +1404,14 @@ export function MediaDetailPanel({
 							)}
 						</div>
 						<div className="flex flex-wrap justify-end gap-2">
-							<Button variant="outline" size="sm" onClick={requestClose} disabled={isBusy}>
-								{canEdit ? t`Cancel` : t`Close`}
+							<Button variant="outline" onClick={requestClose} disabled={isBusy}>
+								{canEdit && (activeTab !== "used-in" || hasChanges) ? t`Cancel` : t`Close`}
 							</Button>
 							{cropFooterActive ? (
 								<>
 									{canCropOriginal ? (
 										<Button
-											variant="destructive"
-											size="sm"
+											variant="secondary-destructive"
 											disabled={cropActionDisabled || cropAspectMode !== "original"}
 											onClick={() => setShowCropConfirm(true)}
 										>
@@ -1370,7 +1421,6 @@ export function MediaDetailPanel({
 									{canDuplicateCrop ? (
 										<Button
 											variant="primary"
-											size="sm"
 											loading={isCropping && cropMutation.variables === "duplicate"}
 											disabled={cropActionDisabled}
 											onClick={() => startCrop("duplicate")}
@@ -1379,10 +1429,9 @@ export function MediaDetailPanel({
 										</Button>
 									) : null}
 								</>
-							) : canEdit ? (
+							) : canEdit && (activeTab !== "used-in" || hasChanges) ? (
 								<Button
 									variant="primary"
-									size="sm"
 									onClick={handleSave}
 									disabled={!hasChanges || isBusy || mediaUnavailable}
 								>

@@ -200,7 +200,7 @@ describe("MediaDetailPanel", () => {
 	it("does not render dialog contents when closed", async () => {
 		const screen = await renderPanel({ open: false });
 		await expect
-			.element(screen.getByText("Media Details"), { timeout: 100 })
+			.element(screen.getByText("Media details"), { timeout: 100 })
 			.not.toBeInTheDocument();
 	});
 
@@ -227,7 +227,7 @@ describe("MediaDetailPanel", () => {
 
 	it("groups the preview, metadata, and actions in an accessible dialog", async () => {
 		const screen = await renderPanel();
-		const dialog = screen.getByRole("dialog", { name: "Media Details" }).element();
+		const dialog = screen.getByRole("dialog", { name: "Media details" }).element();
 		const preview = screen.getByAltText("A nice photo");
 		const filename = screen.getByLabelText("Filename");
 		const altText = screen.getByLabelText("Alt Text");
@@ -254,28 +254,68 @@ describe("MediaDetailPanel", () => {
 		await expect.element(screen.getByText("1920 × 1080")).toBeVisible();
 	});
 
-	it("keeps the dialog height stable while switching image tabs", async () => {
-		const screen = await renderPanel({ item: makeImageItem({ url: TEST_IMAGE_URL }) });
-		const dialog = screen.getByRole("dialog", { name: "Media Details" }).element();
+	it("adapts the dialog height to each image task without clipping its actions", async () => {
+		const screen = await renderPanel({
+			item: makeLocalItem({ url: TEST_IMAGE_URL }),
+			canDuplicateCrop: true,
+		});
+		const dialog = screen.getByRole("dialog", { name: "Media details" }).element();
 		const detailsHeight = dialog.getBoundingClientRect().height;
 
 		screen.getByRole("tab", { name: "Used in" }).element().click();
 		await expect.element(screen.getByTestId("media-used-in")).toBeInTheDocument();
-		expect(dialog.getBoundingClientRect().height).toBe(detailsHeight);
+		await vi.waitFor(() =>
+			expect(dialog.getBoundingClientRect().height).toBeLessThan(detailsHeight),
+		);
 
 		screen.getByRole("tab", { name: "Edit image" }).element().click();
 		await expect.element(screen.getByTestId("focal-preview-square")).toBeVisible();
+		screen.getByRole("tab", { name: "Crop" }).element().click();
+		await expect
+			.element(
+				screen.getByRole("group", {
+					name: "Crop selection. Use the Arrow keys to move it.",
+				}),
+			)
+			.toBeVisible();
 
-		expect(dialog.getBoundingClientRect().height).toBe(detailsHeight);
+		await vi.waitFor(() =>
+			expect(dialog.getBoundingClientRect().height).toBeLessThan(detailsHeight),
+		);
+		await expect.element(screen.getByRole("button", { name: "Cancel" })).toBeVisible();
+	});
+
+	it("resizes without spatial motion when reduced motion is preferred", async () => {
+		const matchMedia = vi.spyOn(window, "matchMedia").mockImplementation(
+			(query) =>
+				({
+					matches: query === "(prefers-reduced-motion: reduce)",
+					media: query,
+					onchange: null,
+					addEventListener: vi.fn(),
+					removeEventListener: vi.fn(),
+					addListener: vi.fn(),
+					removeListener: vi.fn(),
+					dispatchEvent: vi.fn(),
+				}) satisfies MediaQueryList,
+		);
+		const screen = await renderPanel();
+		const dialog = screen.getByRole("dialog", { name: "Media details" }).element();
+		const detailsHeight = dialog.getBoundingClientRect().height;
+
+		screen.getByRole("tab", { name: "Used in" }).element().click();
+		await expect.element(screen.getByTestId("media-used-in")).toBeInTheDocument();
+		expect(dialog.getBoundingClientRect().height).toBeLessThan(detailsHeight);
+		matchMedia.mockRestore();
 	});
 
 	it("shows usage only in its dedicated local-image tab", async () => {
 		const screen = await renderPanel();
-		const dialog = screen.getByRole("dialog", { name: "Media Details" }).element();
+		const dialog = screen.getByRole("dialog", { name: "Media details" }).element();
 		expect(Array.from(dialog.querySelectorAll('[role="tab"]'), (tab) => tab.textContent)).toEqual([
 			"Details",
-			"Used in",
 			"Edit image",
+			"Used in",
 		]);
 		await expect
 			.element(screen.getByTestId("media-used-in"), { timeout: 100 })
@@ -289,6 +329,12 @@ describe("MediaDetailPanel", () => {
 		screen.getByRole("tab", { name: "Used in" }).element().click();
 		await expect.element(screen.getByRole("tabpanel", { name: "Used in" })).toBeInTheDocument();
 		await expect
+			.element(
+				screen.getByTestId("media-detail-dialog-footer").getByRole("button", { name: "Close" }),
+			)
+			.toBeVisible();
+		expect(screen.getByRole("button", { name: "Save" }).query()).toBeNull();
+		await expect
 			.element(screen.getByTestId("media-used-in"))
 			.toHaveAttribute("data-media-id", "media-1");
 		await expect.element(screen.getByAltText("A nice photo")).not.toBeVisible();
@@ -297,7 +343,7 @@ describe("MediaDetailPanel", () => {
 
 	it("gives non-image local media a dedicated usage tab", async () => {
 		const screen = await renderPanel({ item: makePdfItem() });
-		const dialog = screen.getByRole("dialog", { name: "Media Details" }).element();
+		const dialog = screen.getByRole("dialog", { name: "Media details" }).element();
 		expect(Array.from(dialog.querySelectorAll('[role="tab"]'), (tab) => tab.textContent)).toEqual([
 			"Details",
 			"Used in",
@@ -413,7 +459,7 @@ describe("MediaDetailPanel", () => {
 		expect(screen.getByRole("tab", { name: "Crop" }).query()).toBeNull();
 	});
 
-	it("uses a contextual crop footer with output, reset, and disabled guidance", async () => {
+	it("uses a contextual crop footer with output and reset", async () => {
 		const screen = await renderPanel({
 			item: makeLocalItem({ url: TEST_IMAGE_URL }),
 			canCropOriginal: true,
@@ -430,7 +476,7 @@ describe("MediaDetailPanel", () => {
 		await expect
 			.element(screen.getByLabelText("Crop output dimensions"))
 			.toHaveTextContent("100 × 100");
-		await expect.element(screen.getByText("Adjust the crop to continue.")).toBeVisible();
+		expect(screen.getByText("Adjust the crop to continue.").query()).toBeNull();
 		await expect.element(createCopy).toBeDisabled();
 		await expect.element(replaceOriginal).toBeDisabled();
 		await resizeCrop(screen);
@@ -493,7 +539,7 @@ describe("MediaDetailPanel", () => {
 		await expect.element(screen.getByRole("button", { name: "Create cropped copy" })).toBeEnabled();
 		await expect.element(screen.getByRole("button", { name: "Replace original…" })).toBeDisabled();
 		await expect
-			.element(screen.getByText("Replace original requires the Original aspect ratio."))
+			.element(screen.getByText("Choose Original to replace the existing image."))
 			.toBeVisible();
 	});
 
@@ -652,7 +698,7 @@ describe("MediaDetailPanel", () => {
 		});
 		const status = screen.getByText("Original image cropped.");
 		await expect.element(status).toBeInTheDocument();
-		expect(screen.getByRole("dialog", { name: "Media Details" }).element()).toContainElement(
+		expect(screen.getByRole("dialog", { name: "Media details" }).element()).toContainElement(
 			status.element(),
 		);
 		expect(onClose).not.toHaveBeenCalled();
@@ -1611,7 +1657,7 @@ describe("MediaDetailPanel file URL", () => {
 				item: makeStreamItem(),
 				providerName: "Cloudflare Stream",
 			});
-			await expect.element(screen.getByText("Media Details")).toBeInTheDocument();
+			await expect.element(screen.getByText("Media details")).toBeInTheDocument();
 
 			const video = findVideo();
 			expect(video).not.toBeNull();
@@ -1636,7 +1682,7 @@ describe("MediaDetailPanel file URL", () => {
 				item: makeStreamItem({ meta: { playback: { hls: STREAM_HLS } } }),
 				providerName: "Cloudflare Stream",
 			});
-			await expect.element(screen.getByText("Media Details")).toBeInTheDocument();
+			await expect.element(screen.getByText("Media details")).toBeInTheDocument();
 
 			const sources = [...document.querySelectorAll("video source")];
 			expect(sources).toHaveLength(1);
@@ -1646,7 +1692,7 @@ describe("MediaDetailPanel file URL", () => {
 		it("plays a locally stored video straight from its file URL", async () => {
 			const item = makeLocalVideoItem();
 			const screen = await renderPanel({ item });
-			await expect.element(screen.getByText("Media Details")).toBeInTheDocument();
+			await expect.element(screen.getByText("Media details")).toBeInTheDocument();
 
 			const video = findVideo();
 			expect(video?.getAttribute("src")).toBe(item.url);

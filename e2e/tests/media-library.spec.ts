@@ -291,7 +291,7 @@ test.describe("Media Library", () => {
 		);
 
 		await page.getByRole("button", { name: filename, exact: true }).click();
-		const details = page.getByRole("dialog", { name: "Media Details" });
+		const details = page.getByRole("dialog", { name: "Media details" });
 		await details.getByRole("tab", { name: "Edit image" }).click();
 		await page.setViewportSize({ width: 700, height: 900 });
 		await details.evaluate(async (element) => {
@@ -435,8 +435,8 @@ test.describe("Media Library", () => {
 		await page.locator('input[type="search"]').fill(filename);
 		await page.getByRole("button", { name: filename, exact: true }).click();
 		const narrowDetails = page.getByRole("dialog").filter({ hasText: filename });
-		await narrowDetails.getByRole("tab").nth(2).click();
-		await narrowDetails.getByRole("tab").last().click();
+		await narrowDetails.getByRole("tab", { name: "Edit image" }).click();
+		await narrowDetails.getByRole("tab", { name: "Crop" }).click();
 		await expect(narrowDetails.getByRole("button", { name: "Create cropped copy" })).toBeVisible();
 		expect(
 			await narrowDetails.evaluate((element) => element.scrollWidth <= element.clientWidth),
@@ -586,7 +586,7 @@ test.describe("Media Library", () => {
 		await pointerDrag(page, gridSource, gridTarget);
 		await gridMoveResponse;
 		await expect(page).toHaveURL(/\/_emdash\/admin\/media\/?$/);
-		await expect(page.getByRole("dialog", { name: "Media Details" })).toHaveCount(0);
+		await expect(page.getByRole("dialog", { name: "Media details" })).toHaveCount(0);
 		await expect(grid.locator(originalImageSelector)).toHaveCount(0);
 		await page.getByRole("link", { name: `Open folder ${gridFolderName}` }).click();
 		await expect(grid.locator(originalImageSelector)).toBeVisible();
@@ -637,7 +637,7 @@ test.describe("Media Library", () => {
 		await expect(table.getByRole("row").filter({ hasText: uniqueFilename })).toBeVisible();
 
 		await table.getByRole("row").filter({ hasText: uniqueFilename }).click();
-		const details = page.getByRole("dialog", { name: "Media Details" });
+		const details = page.getByRole("dialog", { name: "Media details" });
 		await details.getByRole("button", { name: "Delete" }).click();
 		const confirmMediaDelete = page.getByRole("dialog", { name: "Delete Media?" });
 		await confirmMediaDelete.getByRole("button", { name: "Delete" }).click();
@@ -842,7 +842,7 @@ test.describe("Media Library", () => {
 		const originalSrc = await originalImage.getAttribute("src");
 		await mediaGrid.locator("button").first().click();
 
-		const details = page.getByRole("dialog", { name: "Media Details" });
+		const details = page.getByRole("dialog", { name: "Media details" });
 		await details.getByRole("combobox", { name: "Location" }).click();
 		await page.getByRole("option", { name: folderName }).click();
 		await details.getByRole("button", { name: "Save" }).click();
