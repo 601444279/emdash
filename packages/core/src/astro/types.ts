@@ -408,6 +408,12 @@ export interface EmDashHandlers {
 		},
 	) => Promise<HandlerResponse>;
 
+	handleMediaReplaceMetadata?: (
+		id: string,
+		expectedStorageKey: string,
+		input: { size: number; width: number; height: number; contentHash: string },
+	) => Promise<HandlerResponse>;
+
 	handleMediaDelete: (id: string) => Promise<HandlerResponse>;
 
 	// Revision handlers

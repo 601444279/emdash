@@ -1109,6 +1109,56 @@ describe("MediaLibrary", () => {
 	});
 
 	describe("item selection", () => {
+		it.each([
+			{
+				label: "owner",
+				role: 30,
+				authorId: "user-1",
+				duplicate: true,
+				replace: true,
+			},
+			{
+				label: "another author",
+				role: 30,
+				authorId: "user-2",
+				duplicate: true,
+				replace: false,
+			},
+			{
+				label: "subscriber",
+				role: 10,
+				authorId: "user-1",
+				duplicate: false,
+				replace: false,
+			},
+		])("derives crop actions for an $label", async (testCase) => {
+			setupMocks.role = testCase.role;
+			const item = makeLocalMediaItem({
+				status: "ready",
+				authorId: testCase.authorId,
+				url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'/%3E",
+			});
+			const screen = await renderLibrary({ items: [item] });
+
+			await screen.getByRole("button", { name: "photo.jpg" }).click();
+			screen.getByRole("tab", { name: "Edit image" }).element().click();
+			const crop = screen.getByRole("tab", { name: "Crop" });
+			if (!testCase.duplicate && !testCase.replace) {
+				expect(crop.query()).toBeNull();
+				return;
+			}
+			await expect.element(crop).toBeVisible();
+			crop.element().click();
+			await expect.element(screen.getByRole("heading", { name: "Crop" })).toBeVisible();
+
+			expect(screen.getByRole("button", { name: "Duplicate and crop" }).query() !== null).toBe(
+				testCase.duplicate,
+			);
+			expect(screen.getByRole("button", { name: "Crop original" }).query() !== null).toBe(
+				testCase.replace,
+			);
+		});
+
 		it("clicking an item opens detail dialog", async () => {
 			const items = [makeMediaItem({ id: "1", filename: "photo.jpg", alt: "A photo" })];
 			const screen = await renderLibrary({ items });

@@ -39,6 +39,8 @@ import * as React from "react";
 import {
 	ApiResponseError,
 	updateMedia,
+	replaceMediaImage,
+	uploadMedia,
 	deleteMedia,
 	deleteFromProvider,
 	fetchMediaFolder,
@@ -50,6 +52,7 @@ import {
 	type MediaUpdateInput,
 	type MediaUsageEntryDetail,
 } from "../lib/api";
+import { createCroppedImageFile, type PixelCrop } from "../lib/crop-image.js";
 import { useDebouncedValue, useStableCallback } from "../lib/hooks";
 import {
 	getFileIcon,
@@ -61,10 +64,42 @@ import {
 import { ConfirmDialog } from "./ConfirmDialog";
 import { DialogError, getMutationError } from "./DialogError.js";
 import { FocalPointEditor, FocalPointPreviews } from "./FocalPointEditor.js";
+import { MediaImageCropper } from "./MediaImageCropper.js";
 import { MediaUsedIn } from "./MediaUsedIn.js";
 
 const CLOSE_FALLBACK_MS = 500;
 type MediaDetailTab = "details" | "used-in" | "edit-image";
+type ImageEditMode = "focal-point" | "crop";
+type CropAction = "duplicate" | "replace";
+
+class CropFileCreationError extends Error {}
+
+let cropPreviewFallbackId = 0;
+
+function createCropPreviewKey(): string {
+	return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${(cropPreviewFallbackId += 1)}`;
+}
+
+function cacheBustMediaUrl(url: string, key: string): string {
+	const result = new URL(url, window.location.origin);
+	if (result.protocol !== "http:" && result.protocol !== "https:") {
+		result.hash = `_emdash_crop=${encodeURIComponent(key)}`;
+		return result.href;
+	}
+	result.searchParams.set("_emdash_crop", key);
+	return result.href;
+}
+
+function normalizeCropMime(mimeType: string): string {
+	const normalized = mimeType.split(";")[0]!.trim().toLowerCase();
+	return normalized === "image/jpg" ? "image/jpeg" : normalized;
+}
+
+function croppedFilename(filename: string): string {
+	const extensionIndex = filename.lastIndexOf(".");
+	if (extensionIndex <= 0) return `${filename}-cropped`;
+	return `${filename.slice(0, extensionIndex)}-cropped${filename.slice(extensionIndex)}`;
+}
 
 interface MediaLocationOption {
 	id: string | null;
@@ -77,11 +112,14 @@ export interface MediaDetailPanelProps {
 	providerName?: string;
 	canDelete?: boolean;
 	canMoveLocation?: boolean;
+	canCropOriginal?: boolean;
+	canDuplicateCrop?: boolean;
 	restoreFocusTargetRef?: React.RefObject<HTMLElement | null>;
 	onClose: () => void;
 	onClosed?: () => void;
 	onUpdated?: () => void;
 	onItemRefreshed?: (item: LocalMediaItem) => void;
+	onCroppedCopyCreated?: () => void;
 	onDeleted?: () => void;
 }
 
@@ -94,11 +132,14 @@ export function MediaDetailPanel({
 	providerName,
 	canDelete: canDeleteProp,
 	canMoveLocation: canMoveLocationProp,
+	canCropOriginal = false,
+	canDuplicateCrop = false,
 	restoreFocusTargetRef,
 	onClose,
 	onClosed,
 	onUpdated,
 	onItemRefreshed,
+	onCroppedCopyCreated,
 	onDeleted,
 }: MediaDetailPanelProps) {
 	const { t } = useLingui();
@@ -108,6 +149,8 @@ export function MediaDetailPanel({
 	const savePendingRef = React.useRef(false);
 	const closeFallbackTimerRef = React.useRef<number | null>(null);
 	const closeFinishedRef = React.useRef(false);
+	const cropPendingRef = React.useRef(false);
+	const cropImageRef = React.useRef<HTMLImageElement | null>(null);
 
 	const isProviderAsset = Boolean(item.provider);
 	const isImage = item.mimeType.startsWith("image/");
@@ -132,8 +175,20 @@ export function MediaDetailPanel({
 		normalizeMediaFocalPoint(item),
 	);
 	const [activeTab, setActiveTab] = React.useState<MediaDetailTab>("details");
+	const [imageEditMode, setImageEditMode] = React.useState<ImageEditMode>("focal-point");
+	const [cropPosition, setCropPosition] = React.useState({ x: 0, y: 0 });
+	const [cropZoom, setCropZoom] = React.useState(1);
+	const [cropPixels, setCropPixels] = React.useState<PixelCrop | null>(null);
+	const [cropSourceSize, setCropSourceSize] = React.useState<{
+		width: number;
+		height: number;
+	} | null>(null);
+	const [cropSourceFailed, setCropSourceFailed] = React.useState(false);
+	const [cropPreviewKey, setCropPreviewKey] = React.useState(createCropPreviewKey);
+	const [cropStatus, setCropStatus] = React.useState("");
 	const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
 	const [showDiscardConfirm, setShowDiscardConfirm] = React.useState(false);
+	const [showCropConfirm, setShowCropConfirm] = React.useState(false);
 	const [pendingUsageEntry, setPendingUsageEntry] = React.useState<MediaUsageEntryDetail | null>(
 		null,
 	);
@@ -148,6 +203,8 @@ export function MediaDetailPanel({
 		closeFinishedRef.current = false;
 		restoreFocusAfterDeleteRef.current = false;
 		savePendingRef.current = false;
+		cropPendingRef.current = false;
+		cropImageRef.current = null;
 		setFilename(item.filename);
 		setAlt(item.alt ?? "");
 		setCaption(item.caption ?? "");
@@ -157,8 +214,17 @@ export function MediaDetailPanel({
 		setLocationSearch("");
 		setFocalPoint(normalizeMediaFocalPoint(item));
 		setActiveTab("details");
+		setImageEditMode("focal-point");
+		setCropPosition({ x: 0, y: 0 });
+		setCropZoom(1);
+		setCropPixels(null);
+		setCropSourceSize(null);
+		setCropSourceFailed(false);
+		setCropPreviewKey(createCropPreviewKey());
+		setCropStatus("");
 		setShowDeleteConfirm(false);
 		setShowDiscardConfirm(false);
+		setShowCropConfirm(false);
 		setPendingUsageEntry(null);
 	}, [item.id, localItem?.folderId, open]);
 
@@ -206,7 +272,20 @@ export function MediaDetailPanel({
 	const canEdit = canEditMetadata || canMoveLocation;
 	const hasTabs = canEditMetadata || hasUsage;
 	const hasChanges = metadataChanged || locationChanged;
-	const isConfirmOpen = showDeleteConfirm || showDiscardConfirm;
+	const isConfirmOpen = showDeleteConfirm || showDiscardConfirm || showCropConfirm;
+	const cropMime = normalizeCropMime(item.mimeType);
+	const canShowCrop = Boolean(
+		localItem &&
+		item.status === "ready" &&
+		["image/jpeg", "image/png", "image/webp"].includes(cropMime) &&
+		(canCropOriginal || canDuplicateCrop),
+	);
+	const cropPreviewUrl = canShowCrop ? cacheBustMediaUrl(item.url, cropPreviewKey) : item.url;
+	const cropChanged = Boolean(
+		cropPixels &&
+		cropSourceSize &&
+		(cropPixels.width < cropSourceSize.width || cropPixels.height < cropSourceSize.height),
+	);
 	const publicFileUrl =
 		!isProviderAsset && item.url ? new URL(item.url, window.location.origin).href : "";
 	const publicFilePath = publicFileUrl ? new URL(publicFileUrl).pathname : "";
@@ -359,13 +438,73 @@ export function MediaDetailPanel({
 			closeDialog();
 		},
 	});
+	const cropMutation = useMutation({
+		mutationFn: async (action: CropAction) => {
+			const image = cropImageRef.current;
+			const pixels = cropPixels;
+			if (!image || !pixels) throw new CropFileCreationError();
+			let file: File;
+			try {
+				file = await createCroppedImageFile(
+					image,
+					pixels,
+					action === "duplicate" ? croppedFilename(item.filename) : item.filename,
+					cropMime,
+				);
+			} catch {
+				throw new CropFileCreationError();
+			}
+
+			if (action === "duplicate") {
+				return { action, item: await uploadMedia(file, { deduplicate: false }) };
+			}
+			return {
+				action,
+				item: await replaceMediaImage(item.id, file, {
+					width: pixels.width,
+					height: pixels.height,
+				}),
+			};
+		},
+		onSuccess: ({ action, item: croppedItem }) => {
+			void queryClient.invalidateQueries({ queryKey: ["media"] });
+			if (action === "duplicate") {
+				onCroppedCopyCreated?.();
+				onUpdated?.();
+				closeDialog();
+				return;
+			}
+
+			onItemRefreshed?.(croppedItem);
+			setFocalPoint(null);
+			setCropPosition({ x: 0, y: 0 });
+			setCropZoom(1);
+			setCropPixels(null);
+			setCropSourceSize(null);
+			setCropSourceFailed(false);
+			setCropPreviewKey(createCropPreviewKey());
+			setShowCropConfirm(false);
+			setCropStatus(t`Original image cropped.`);
+		},
+		onError: (_error, action) => {
+			setCropStatus("");
+			if (action === "replace") setShowCropConfirm(false);
+		},
+		onSettled: () => {
+			cropPendingRef.current = false;
+		},
+	});
+	React.useEffect(() => {
+		cropMutation.reset();
+	}, [item.id, open]);
 	const isSaving = updateMutation.isPending;
 	const isDeleting = deleteMutation.isPending;
 	const isRecovering = recoverMediaMutation.isPending;
+	const isCropping = cropMutation.isPending;
 	const mediaUnavailable =
 		recoverMediaMutation.error instanceof ApiResponseError &&
 		recoverMediaMutation.error.code === "NOT_FOUND";
-	const isBusy = isSaving || isDeleting || isRecovering;
+	const isBusy = isSaving || isDeleting || isRecovering || isCropping;
 	const updateNotFound =
 		updateMutation.error instanceof ApiResponseError && updateMutation.error.code === "NOT_FOUND";
 	const updateErrorMessage = mediaUnavailable
@@ -377,6 +516,10 @@ export function MediaDetailPanel({
 					? t`Couldn’t confirm whether the media item or selected folder still exists. Try again.`
 					: t`The selected folder no longer exists. Choose another location and save again.`
 			: getMutationError(updateMutation.error) || getMutationError(recoverMediaMutation.error);
+	const cropErrorMessage =
+		cropMutation.error instanceof CropFileCreationError
+			? t`The cropped image could not be created.`
+			: getMutationError(cropMutation.error);
 
 	const requestClose = React.useCallback(() => {
 		if (isBusy) return;
@@ -408,6 +551,35 @@ export function MediaDetailPanel({
 	const handleDelete = () => {
 		if (!canDelete || isBusy) return;
 		setShowDeleteConfirm(true);
+	};
+
+	const startCrop = (action: CropAction) => {
+		if (
+			!canShowCrop ||
+			!cropChanged ||
+			cropSourceFailed ||
+			hasChanges ||
+			isBusy ||
+			mediaUnavailable ||
+			cropPendingRef.current
+		) {
+			return;
+		}
+		if (action === "replace" && !canCropOriginal) return;
+		if (action === "duplicate" && !canDuplicateCrop) return;
+		cropPendingRef.current = true;
+		setCropStatus(action === "duplicate" ? t`Creating cropped copy...` : t`Cropping original...`);
+		cropMutation.mutate(action);
+	};
+
+	const changeImageEditMode = (mode: ImageEditMode) => {
+		if (isBusy || (mode === "crop" && !canShowCrop)) return;
+		setImageEditMode(mode);
+		cropMutation.reset();
+		if (mode === "crop" && cropSourceFailed) {
+			setCropSourceFailed(false);
+			setCropPreviewKey(createCropPreviewKey());
+		}
 	};
 
 	const handleDiscardConfirm = () => {
@@ -503,12 +675,14 @@ export function MediaDetailPanel({
 								className="w-full max-w-lg"
 								value={activeTab}
 								onValueChange={(value) => {
+									if (isBusy) return;
 									if (
 										value === "details" ||
 										(value === "used-in" && hasUsage) ||
 										(value === "edit-image" && canEditMetadata)
 									) {
 										setActiveTab(value);
+										cropMutation.reset();
 									}
 								}}
 								tabs={[
@@ -520,7 +694,7 @@ export function MediaDetailPanel({
 										? [
 												{
 													value: "edit-image",
-													label: t`Focal point`,
+													label: t`Edit image`,
 													className: "flex-1 justify-center",
 												},
 											]
@@ -544,7 +718,7 @@ export function MediaDetailPanel({
 									? t`Details`
 									: activeTab === "used-in"
 										? t`Used in`
-										: t`Focal point`
+										: t`Edit image`
 								: undefined
 						}
 					>
@@ -554,16 +728,47 @@ export function MediaDetailPanel({
 							hidden={activeTab === "used-in"}
 						>
 							{isImage ? (
-								<FocalPointEditor
-									key={`${item.id}:${item.url}`}
-									src={item.url}
-									alt={item.alt || item.filename}
-									editing={activeTab === "edit-image"}
-									disabled={isBusy}
-									point={focalPoint}
-									descriptionId={focalPointDescriptionId}
-									onChange={setFocalPoint}
-								/>
+								activeTab === "edit-image" && imageEditMode === "crop" && canShowCrop ? (
+									cropSourceFailed ? (
+										<FocalPointEditor
+											key={`${item.id}:${item.url}:crop-fallback`}
+											src={item.url}
+											alt={item.alt || item.filename}
+											editing={false}
+											disabled
+											point={focalPoint}
+											descriptionId={focalPointDescriptionId}
+											onChange={setFocalPoint}
+										/>
+									) : (
+										<MediaImageCropper
+											key={cropPreviewKey}
+											src={cropPreviewUrl}
+											crop={cropPosition}
+											zoom={cropZoom}
+											disabled={isBusy}
+											onCropChange={setCropPosition}
+											onZoomChange={setCropZoom}
+											onCropComplete={setCropPixels}
+											onSourceReady={setCropSourceSize}
+											onSourceError={() => setCropSourceFailed(true)}
+											onImageReady={(image) => {
+												cropImageRef.current = image;
+											}}
+										/>
+									)
+								) : (
+									<FocalPointEditor
+										key={`${item.id}:${item.url}`}
+										src={item.url}
+										alt={item.alt || item.filename}
+										editing={activeTab === "edit-image"}
+										disabled={isBusy}
+										point={focalPoint}
+										descriptionId={focalPointDescriptionId}
+										onChange={setFocalPoint}
+									/>
+								)
 							) : (
 								<div className="flex h-64 items-center justify-center overflow-hidden rounded-xl bg-kumo-tint ring ring-kumo-line md:h-80">
 									{isVideo && playback ? (
@@ -903,47 +1108,126 @@ export function MediaDetailPanel({
 									</>
 								)}
 							</div>
-							{canEditMetadata && (
-								<div
-									className="grid content-start gap-6"
-									hidden={activeTab !== "edit-image"}
-									style={{
-										gridArea: "panel",
-									}}
-								>
-									<div className="flex items-center justify-between gap-4">
-										<div className="grid min-w-0 max-w-xs gap-1.5">
-											<h3 className="text-sm font-semibold">{t`Focal point`}</h3>
-											<p id={focalPointDescriptionId} className="text-sm text-kumo-subtle">
-												{t`Move the focal point to choose what stays visible in cropped images.`}
-											</p>
+							{canEditMetadata && activeTab === "edit-image" ? (
+								<div className="grid content-start gap-6" style={{ gridArea: "panel" }}>
+									{canShowCrop ? (
+										<Tabs
+											variant="segmented"
+											className="w-full"
+											value={imageEditMode}
+											onValueChange={(value) => {
+												if (value === "focal-point" || value === "crop") {
+													changeImageEditMode(value);
+												}
+											}}
+											tabs={[
+												{
+													value: "focal-point",
+													label: t`Focal point`,
+													className: "flex-1 justify-center",
+												},
+												{
+													value: "crop",
+													label: t`Crop`,
+													className: "flex-1 justify-center",
+												},
+											]}
+										/>
+									) : null}
+
+									{imageEditMode === "focal-point" ? (
+										<>
+											<div className="flex items-center justify-between gap-4">
+												<div className="grid min-w-0 max-w-xs gap-1.5">
+													<h3 className="text-sm font-semibold">{t`Focal point`}</h3>
+													<p id={focalPointDescriptionId} className="text-sm text-kumo-subtle">
+														{t`Move the focal point to choose what stays visible in cropped images.`}
+													</p>
+												</div>
+												<Button
+													type="button"
+													variant="outline"
+													size="lg"
+													icon={
+														<ArrowCounterClockwise
+															className="h-4 w-4"
+															weight="bold"
+															aria-hidden="true"
+														/>
+													}
+													className="shrink-0"
+													onClick={() => setFocalPoint(null)}
+													disabled={!focalPoint || isBusy}
+												>
+													{t`Reset`}
+												</Button>
+											</div>
+											<section className="grid gap-4 border-t border-kumo-line pt-5">
+												<h3 className="text-sm font-semibold">{t`Preview`}</h3>
+												<FocalPointPreviews src={item.url} point={focalPoint} />
+											</section>
+										</>
+									) : (
+										<div className="grid gap-4">
+											<div className="grid gap-1.5">
+												<h3 className="text-sm font-semibold">{t`Crop`}</h3>
+												<p className="text-sm text-kumo-subtle">
+													{t`Position the image, then create a cropped copy or replace the original.`}
+												</p>
+											</div>
+											{cropSourceFailed ? (
+												<DialogError message={t`This image could not be loaded for cropping.`} />
+											) : null}
+											{cropErrorMessage ? <DialogError message={cropErrorMessage} /> : null}
+											{hasChanges ? (
+												<p className="text-sm text-kumo-warning">
+													{t`Save or discard the other changes before cropping.`}
+												</p>
+											) : null}
+											{cropMime === "image/webp" ? (
+												<p className="text-sm text-kumo-subtle">
+													{t`Animated WebP files become still images when cropped.`}
+												</p>
+											) : null}
+											<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+												{canDuplicateCrop ? (
+													<Button
+														variant="primary"
+														size="sm"
+														loading={isCropping && cropMutation.variables === "duplicate"}
+														disabled={
+															!cropChanged ||
+															cropSourceFailed ||
+															hasChanges ||
+															isBusy ||
+															mediaUnavailable
+														}
+														onClick={() => startCrop("duplicate")}
+													>
+														{t`Duplicate and crop`}
+													</Button>
+												) : null}
+												{canCropOriginal ? (
+													<Button
+														variant="destructive"
+														size="sm"
+														disabled={
+															!cropChanged ||
+															cropSourceFailed ||
+															hasChanges ||
+															isBusy ||
+															mediaUnavailable
+														}
+														onClick={() => setShowCropConfirm(true)}
+													>
+														{t`Crop original`}
+													</Button>
+												) : null}
+											</div>
 										</div>
-										<Button
-											type="button"
-											variant="outline"
-											size="lg"
-											icon={
-												<ArrowCounterClockwise
-													className="h-4 w-4"
-													weight="bold"
-													aria-hidden="true"
-												/>
-											}
-											className="shrink-0"
-											onClick={() => setFocalPoint(null)}
-											disabled={!focalPoint || isBusy}
-										>
-											{t`Reset`}
-										</Button>
-									</div>
-									{activeTab === "edit-image" && (
-										<section className="grid gap-4 border-t border-kumo-line pt-5">
-											<h3 className="text-sm font-semibold">{t`Preview`}</h3>
-											<FocalPointPreviews src={item.url} point={focalPoint} />
-										</section>
 									)}
 								</div>
-							)}
+							) : null}
 							{updateErrorMessage && (
 								<div style={{ gridArea: canEditMetadata ? "error" : undefined }}>
 									<DialogError message={updateErrorMessage} />
@@ -962,6 +1246,9 @@ export function MediaDetailPanel({
 						)}
 					</div>
 
+					<p role="status" className="sr-only">
+						{cropStatus}
+					</p>
 					<div
 						className="flex shrink-0 items-center justify-between gap-3 border-t border-kumo-line"
 						style={{ padding: "1.25rem 2rem" }}
@@ -1013,6 +1300,23 @@ export function MediaDetailPanel({
 				error={null}
 				onConfirm={handleDiscardConfirm}
 			/>
+
+			<ConfirmDialog
+				open={showCropConfirm}
+				onClose={() => setShowCropConfirm(false)}
+				title={t`Crop original image?`}
+				description={t`This replaces the image everywhere it is used. The uncropped image cannot be restored.`}
+				confirmLabel={t`Crop original`}
+				pendingLabel={t`Cropping original...`}
+				isPending={isCropping && cropMutation.variables === "replace"}
+				preventCloseWhilePending
+				error={null}
+				onConfirm={() => startCrop("replace")}
+			>
+				<p role="status" className="sr-only">
+					{isCropping && cropMutation.variables === "replace" ? t`Cropping original...` : ""}
+				</p>
+			</ConfirmDialog>
 
 			<ConfirmDialog
 				open={showDeleteConfirm}
