@@ -353,6 +353,11 @@ test.describe("Media Library", () => {
 		expect(await duplicateCardImage.evaluate((image) => getComputedStyle(image).objectFit)).toBe(
 			"contain",
 		);
+		const duplicateHeroAspect = await duplicateCardImage.evaluate((image) => {
+			const bounds = image.parentElement!.getBoundingClientRect();
+			return bounds.width / bounds.height;
+		});
+		expect(duplicateHeroAspect).toBeCloseTo(16 / 9, 1);
 		expect(await fetchUncachedBytes(serverInfo, original.url)).toEqual(replacedBytes);
 		expect(await apiJson(serverInfo, `/_emdash/api/content/posts/${created.item.id}`)).toEqual(
 			contentBefore,
