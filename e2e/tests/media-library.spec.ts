@@ -329,7 +329,15 @@ test.describe("Media Library", () => {
 				return getComputedStyle(grid, "::before").borderLeftStyle;
 			}),
 		).toBe("dashed");
+		await page.setViewportSize({ width: 1280, height: 800 });
 		const cropFrame = details.locator(".emdash-image-cropper");
+		await expect
+			.poll(async () => {
+				const frame = await cropFrame.boundingBox();
+				const mode = await details.getByRole("tablist").nth(1).boundingBox();
+				return frame && mode ? Math.abs(frame.y - mode.y) : Number.POSITIVE_INFINITY;
+			})
+			.toBeLessThanOrEqual(1);
 		const cropImage = details.locator(".emdash-react-image-crop img");
 		const frameBounds = await cropFrame.boundingBox();
 		const imageBoundsBefore = await cropImage.boundingBox();
@@ -349,16 +357,16 @@ test.describe("Media Library", () => {
 			.press("ArrowRight");
 		const imageBoundsAfter = await cropImage.boundingBox();
 		expect(imageBoundsAfter).toEqual(imageBoundsBefore);
-		await expect(details.getByRole("button", { name: "Crop original" })).toBeEnabled();
+		await expect(details.getByRole("button", { name: "Replace original…" })).toBeEnabled();
 
-		await details.getByRole("button", { name: "Crop original" }).click();
-		const replaceConfirm = page.getByRole("dialog", { name: "Crop original image?" });
+		await details.getByRole("button", { name: "Replace original…" }).click();
+		const replaceConfirm = page.getByRole("dialog", { name: "Replace original image?" });
 		const replaceResponse = page.waitForResponse(
 			(response) =>
 				response.request().method() === "PUT" &&
 				new URL(response.url()).pathname.endsWith(`/_emdash/api/media/${original.id}/replace`),
 		);
-		await replaceConfirm.getByRole("button", { name: "Crop original" }).click();
+		await replaceConfirm.getByRole("button", { name: "Replace original" }).click();
 		const replacedHttp = await replaceResponse;
 		const replacedBody = (await replacedHttp.json()) as {
 			data: { item: CropTestMediaItem };
@@ -383,14 +391,14 @@ test.describe("Media Library", () => {
 		const aspectRatio = details.getByRole("combobox", { name: "Aspect ratio" });
 		await aspectRatio.click();
 		await page.getByRole("option", { name: "Square (1:1)" }).click();
-		await expect(details.getByRole("button", { name: "Crop original" })).toBeDisabled();
+		await expect(details.getByRole("button", { name: "Replace original…" })).toBeDisabled();
 		const duplicateResponse = page.waitForResponse(
 			(response) =>
 				response.request().method() === "POST" &&
 				new URL(response.url()).pathname.endsWith("/confirm") &&
 				response.status() === 200,
 		);
-		const duplicateAction = details.getByRole("button", { name: "Duplicate and crop" });
+		const duplicateAction = details.getByRole("button", { name: "Create cropped copy" });
 		await expect(duplicateAction).toBeEnabled();
 		await duplicateAction.click();
 		await duplicateResponse;
@@ -429,7 +437,7 @@ test.describe("Media Library", () => {
 		const narrowDetails = page.getByRole("dialog").filter({ hasText: filename });
 		await narrowDetails.getByRole("tab").nth(2).click();
 		await narrowDetails.getByRole("tab").last().click();
-		await expect(narrowDetails.getByRole("button", { name: "Duplicate and crop" })).toBeVisible();
+		await expect(narrowDetails.getByRole("button", { name: "Create cropped copy" })).toBeVisible();
 		expect(
 			await narrowDetails.evaluate((element) => element.scrollWidth <= element.clientWidth),
 		).toBe(true);

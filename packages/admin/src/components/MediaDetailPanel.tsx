@@ -546,6 +546,9 @@ export function MediaDetailPanel({
 		recoverMediaMutation.error instanceof ApiResponseError &&
 		recoverMediaMutation.error.code === "NOT_FOUND";
 	const isBusy = isSaving || isDeleting || isRecovering || isCropping;
+	const cropFooterActive = activeTab === "edit-image" && imageEditMode === "crop" && canShowCrop;
+	const cropActionDisabled =
+		!cropChanged || cropSourceFailed || hasChanges || isBusy || mediaUnavailable;
 	const updateNotFound =
 		updateMutation.error instanceof ApiResponseError && updateMutation.error.code === "NOT_FOUND";
 	const updateErrorMessage = mediaUnavailable
@@ -609,13 +612,21 @@ export function MediaDetailPanel({
 		if (action === "replace" && (!canCropOriginal || cropAspectMode !== "original")) return;
 		if (action === "duplicate" && !canDuplicateCrop) return;
 		cropPendingRef.current = true;
-		setCropStatus(action === "duplicate" ? t`Creating cropped copy...` : t`Cropping original...`);
+		setCropStatus(action === "duplicate" ? t`Creating cropped copy...` : t`Replacing original...`);
 		cropMutation.mutate(action);
 	};
 
 	const changeCropAspect = (value: string | null) => {
 		if (!isCropAspectMode(value) || isBusy) return;
 		setCropAspectMode(value);
+		setCropSelection(undefined);
+		setCropPixels(null);
+		setCropStatus("");
+		cropMutation.reset();
+	};
+	const resetCrop = () => {
+		if (isBusy) return;
+		setCropAspectMode("original");
 		setCropSelection(undefined);
 		setCropPixels(null);
 		setCropStatus("");
@@ -772,7 +783,7 @@ export function MediaDetailPanel({
 						}
 					>
 						<div
-							className={`border-b border-kumo-line p-6 md:min-h-0 md:overflow-y-auto md:border-e md:border-b-0 md:p-8 ${activeTab === "edit-image" ? "flex flex-col md:justify-center" : "space-y-5"}`}
+							className={`border-b border-kumo-line p-6 md:min-h-0 md:overflow-y-auto md:border-e md:border-b-0 md:p-8 ${activeTab === "edit-image" ? "flex flex-col" : "space-y-5"}`}
 							data-testid="media-detail-dialog-preview-column"
 							hidden={activeTab === "used-in"}
 						>
@@ -937,7 +948,7 @@ export function MediaDetailPanel({
 						</div>
 
 						<div
-							className={`grid gap-5 p-6 md:min-h-0 md:overflow-y-auto md:p-8 ${activeTab === "edit-image" ? "md:content-center" : ""}`}
+							className="grid content-start gap-5 p-6 md:min-h-0 md:overflow-y-auto md:p-8"
 							data-testid="media-detail-dialog-details-column"
 							hidden={activeTab === "used-in"}
 							style={
@@ -1169,7 +1180,7 @@ export function MediaDetailPanel({
 									{canShowCrop ? (
 										<Tabs
 											variant="segmented"
-											className="w-full"
+											className="w-full max-w-sm"
 											value={imageEditMode}
 											onValueChange={(value) => {
 												if (value === "focal-point" || value === "crop") {
@@ -1224,20 +1235,57 @@ export function MediaDetailPanel({
 											</section>
 										</>
 									) : (
-										<div className="grid gap-4">
-											<div className="grid gap-1.5">
-												<h3 className="text-sm font-semibold">{t`Crop`}</h3>
-												<p className="text-sm text-kumo-subtle">
-													{t`Move and resize the crop frame, then create a cropped copy or replace the original. Fixed ratios resize from the corners; Freeform also enables the edge handles. Use the Arrow keys when the frame or a handle has focus.`}
-												</p>
+										<div className="grid max-w-md gap-4">
+											<p className="text-pretty text-sm text-kumo-subtle">
+												{cropAspectMode === "freeform"
+													? t`Drag any handle to resize. Use the Arrow keys for precise adjustments.`
+													: t`Drag a corner to resize. Use the Arrow keys for precise adjustments.`}
+											</p>
+											<div className="grid max-w-sm gap-2">
+												<div className="flex items-end gap-2">
+													<div className="min-w-0 flex-1">
+														<Select
+															label={t`Aspect ratio`}
+															value={cropAspectMode}
+															items={cropAspectOptions}
+															className="w-full"
+															disabled={isBusy || cropSourceFailed}
+															onValueChange={changeCropAspect}
+														/>
+													</div>
+													<Button
+														variant="outline"
+														size="sm"
+														aria-label={t`Reset crop`}
+														icon={
+															<ArrowCounterClockwise
+																className="h-4 w-4"
+																weight="bold"
+																aria-hidden="true"
+															/>
+														}
+														disabled={
+															isBusy ||
+															cropSourceFailed ||
+															(cropAspectMode === "original" && !cropChanged)
+														}
+														onClick={resetCrop}
+													>
+														{t`Reset`}
+													</Button>
+												</div>
+												<div className="flex items-center justify-between gap-3 text-sm">
+													<span className="text-kumo-subtle">{t`Output`}</span>
+													<output
+														aria-label={t`Crop output dimensions`}
+														className="rounded-md bg-kumo-tint px-2 py-1 tabular-nums text-kumo-subtle ring ring-kumo-line"
+													>
+														{cropPixels
+															? `${cropPixels.width} × ${cropPixels.height}`
+															: t`Loading...`}
+													</output>
+												</div>
 											</div>
-											<Select
-												label={t`Aspect ratio`}
-												value={cropAspectMode}
-												items={cropAspectOptions}
-												disabled={isBusy || cropSourceFailed}
-												onValueChange={changeCropAspect}
-											/>
 											{cropSourceFailed ? (
 												<DialogError message={t`This image could not be loaded for cropping.`} />
 											) : null}
@@ -1247,6 +1295,9 @@ export function MediaDetailPanel({
 													{t`Save or discard the other changes before cropping.`}
 												</p>
 											) : null}
+											{cropPixels && !cropChanged && !cropSourceFailed && !hasChanges ? (
+												<p className="text-sm text-kumo-subtle">{t`Adjust the crop to continue.`}</p>
+											) : null}
 											{cropMime === "image/webp" ? (
 												<p className="text-sm text-kumo-subtle">
 													{t`Animated WebP files become still images when cropped.`}
@@ -1254,47 +1305,9 @@ export function MediaDetailPanel({
 											) : null}
 											{canCropOriginal && cropAspectMode !== "original" ? (
 												<p className="text-sm text-kumo-subtle">
-													{t`Crop original requires the Original aspect ratio.`}
+													{t`Replace original requires the Original aspect ratio.`}
 												</p>
 											) : null}
-											<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-												{canDuplicateCrop ? (
-													<Button
-														variant="primary"
-														size="sm"
-														loading={isCropping && cropMutation.variables === "duplicate"}
-														disabled={
-															!cropChanged ||
-															cropSourceFailed ||
-															hasChanges ||
-															isBusy ||
-															mediaUnavailable
-														}
-														onClick={() => startCrop("duplicate")}
-													>
-														{t`Duplicate and crop`}
-													</Button>
-												) : null}
-												{canCropOriginal ? (
-													<Button
-														variant="destructive"
-														size="sm"
-														disabled={
-															!cropChanged ||
-															cropAspectMode !== "original" ||
-															cropSourceFailed ||
-															hasChanges ||
-															isBusy ||
-															mediaUnavailable
-														}
-														onClick={() => {
-															if (cropAspectMode === "original") setShowCropConfirm(true);
-														}}
-													>
-														{t`Crop original`}
-													</Button>
-												) : null}
-											</div>
 										</div>
 									)}
 								</div>
@@ -1321,12 +1334,12 @@ export function MediaDetailPanel({
 						{cropStatus}
 					</p>
 					<div
-						className="flex shrink-0 items-center justify-between gap-3 border-t border-kumo-line"
+						className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-kumo-line"
 						style={{ padding: "1.25rem 2rem" }}
 						data-testid="media-detail-dialog-footer"
 					>
 						<div>
-							{canDelete && (
+							{canDelete && !cropFooterActive && (
 								<Button
 									variant="destructive"
 									size="sm"
@@ -1338,11 +1351,35 @@ export function MediaDetailPanel({
 								</Button>
 							)}
 						</div>
-						<div className="flex gap-2">
+						<div className="flex flex-wrap justify-end gap-2">
 							<Button variant="outline" size="sm" onClick={requestClose} disabled={isBusy}>
 								{canEdit ? t`Cancel` : t`Close`}
 							</Button>
-							{canEdit && (
+							{cropFooterActive ? (
+								<>
+									{canCropOriginal ? (
+										<Button
+											variant="destructive"
+											size="sm"
+											disabled={cropActionDisabled || cropAspectMode !== "original"}
+											onClick={() => setShowCropConfirm(true)}
+										>
+											{t`Replace original…`}
+										</Button>
+									) : null}
+									{canDuplicateCrop ? (
+										<Button
+											variant="primary"
+											size="sm"
+											loading={isCropping && cropMutation.variables === "duplicate"}
+											disabled={cropActionDisabled}
+											onClick={() => startCrop("duplicate")}
+										>
+											{t`Create cropped copy`}
+										</Button>
+									) : null}
+								</>
+							) : canEdit ? (
 								<Button
 									variant="primary"
 									size="sm"
@@ -1351,7 +1388,7 @@ export function MediaDetailPanel({
 								>
 									{isSaving ? t`Saving...` : t`Save`}
 								</Button>
-							)}
+							) : null}
 						</div>
 					</div>
 				</Dialog>
@@ -1375,17 +1412,17 @@ export function MediaDetailPanel({
 			<ConfirmDialog
 				open={showCropConfirm}
 				onClose={() => setShowCropConfirm(false)}
-				title={t`Crop original image?`}
+				title={t`Replace original image?`}
 				description={t`This replaces the image everywhere it is used. The uncropped image cannot be restored.`}
-				confirmLabel={t`Crop original`}
-				pendingLabel={t`Cropping original...`}
+				confirmLabel={t`Replace original`}
+				pendingLabel={t`Replacing original...`}
 				isPending={isCropping && cropMutation.variables === "replace"}
 				preventCloseWhilePending
 				error={null}
 				onConfirm={() => startCrop("replace")}
 			>
 				<p role="status" className="sr-only">
-					{isCropping && cropMutation.variables === "replace" ? t`Cropping original...` : ""}
+					{isCropping && cropMutation.variables === "replace" ? t`Replacing original...` : ""}
 				</p>
 			</ConfirmDialog>
 
