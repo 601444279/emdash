@@ -415,6 +415,36 @@ describe("MediaDetailPanel", () => {
 		await expect.element(screen.getByRole("button", { name: "Crop original" })).toBeEnabled();
 	});
 
+	it("offers common aspect ratios and freeform edge resizing", async () => {
+		const screen = await renderPanel({
+			item: makeLocalItem({ url: TEST_IMAGE_URL }),
+			canCropOriginal: true,
+			canDuplicateCrop: true,
+		});
+		await openCropEditor(screen);
+		const aspectRatio = screen.getByRole("combobox", { name: "Aspect ratio" });
+		aspectRatio.element().click();
+		for (const option of ["Original", "Freeform", "Square (1:1)", "4:3", "3:2", "16:9"]) {
+			await expect.element(screen.getByRole("option", { name: option })).toBeVisible();
+		}
+		screen.getByRole("option", { name: "Freeform" }).element().click();
+
+		for (const edge of ["top", "right", "bottom", "left"]) {
+			await expect
+				.element(screen.getByRole("button", { name: `Resize crop from ${edge} edge` }))
+				.toBeVisible();
+		}
+		await expect.element(screen.getByRole("button", { name: "Duplicate and crop" })).toBeDisabled();
+		const rightHandle = screen.getByRole("button", { name: "Resize crop from right edge" });
+		rightHandle.element().focus();
+		await userEvent.keyboard("{ArrowLeft}");
+		await expect.element(screen.getByRole("button", { name: "Duplicate and crop" })).toBeEnabled();
+		await expect.element(screen.getByRole("button", { name: "Crop original" })).toBeDisabled();
+		await expect
+			.element(screen.getByText("Crop original requires the Original aspect ratio."))
+			.toBeVisible();
+	});
+
 	it("blocks crop actions while metadata is dirty", async () => {
 		const screen = await renderPanel({
 			item: makeLocalItem({ url: TEST_IMAGE_URL }),
