@@ -105,6 +105,13 @@ export interface UpdateMediaInput extends FocalPointUpdate {
 	folderId?: string | null;
 }
 
+export interface ReplaceReadyMediaInput {
+	size: number;
+	width: number;
+	height: number;
+	contentHash: string;
+}
+
 export interface FindMediaPageOptions extends Omit<FindManyMediaOptions, "cursor"> {
 	page: number;
 }
@@ -478,6 +485,32 @@ export class MediaRepository {
 		}
 
 		return this.findById(id);
+	}
+
+	async replaceReadyFile(
+		id: string,
+		expectedStorageKey: string,
+		input: ReplaceReadyMediaInput,
+	): Promise<MediaItem | null> {
+		const row = await this.db
+			.updateTable("media")
+			.set({
+				size: input.size,
+				width: input.width,
+				height: input.height,
+				content_hash: input.contentHash,
+				blurhash: null,
+				dominant_color: null,
+				focal_x: null,
+				focal_y: null,
+			})
+			.where("id", "=", id)
+			.where("status", "=", "ready")
+			.where("storage_key", "=", expectedStorageKey)
+			.returningAll()
+			.executeTakeFirst();
+
+		return row ? this.rowToItem(row) : null;
 	}
 
 	/**

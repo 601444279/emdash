@@ -189,6 +189,7 @@ import {
 	handleMediaGet,
 	handleMediaCreate,
 	handleMediaUpdate,
+	handleMediaReplaceMetadata,
 	handleMediaDelete,
 	handleRevisionList,
 	handleRevisionGet,
@@ -3492,6 +3493,18 @@ export class EmDashRuntime {
 		// for every entry point: REST routes, MCP tools, plugin code, and
 		// any future caller of `handleMediaUpdate`. Cross-isolate staleness
 		// remains bounded by isolate lifetime.
+		if (result.success) {
+			invalidateSiteSettingsCache();
+		}
+		return result;
+	}
+
+	async handleMediaReplaceMetadata(
+		id: string,
+		expectedStorageKey: string,
+		input: { size: number; width: number; height: number; contentHash: string },
+	) {
+		const result = await handleMediaReplaceMetadata(this.db, id, expectedStorageKey, input);
 		if (result.success) {
 			invalidateSiteSettingsCache();
 		}
