@@ -1262,6 +1262,51 @@ describe("ReleaseIntentWorkflow", () => {
 		expect(permits).toEqual({ total: 3, distinct_ids: 3, consumed: 3 });
 	});
 
+	it("rechecks the attested workload against the active policy before create", async () => {
+		let policyChanged = false;
+		let createAttempts = 0;
+		vi.stubGlobal(
+			"fetch",
+			workflowNetwork({
+				onAuthorizationMetadata: async () => {
+					if (policyChanged) return;
+					policyChanged = true;
+					const publisher = env.PUBLISHER_DO.getByName(PUBLISHER_DID);
+					await runInDurableObject(publisher, (_instance, state) => {
+						state.storage.sql.exec(
+							`UPDATE workload_policies
+							 SET workflow_ref = ?, state_version = state_version + 1
+							 WHERE package_slug = ?`,
+							"example/gallery/.github/workflows/restricted.yml@refs/heads/main",
+							"gallery",
+						);
+					});
+				},
+				onCreateRecord: () => {
+					createAttempts += 1;
+					return Response.json({ uri: CREATED_URI, cid: CREATED_CID });
+				},
+			}),
+		);
+		await createVerifyingIntent();
+		await using introspector = await introspectWorkflowInstance(
+			env.RELEASE_INTENT_WORKFLOW,
+			INTENT_ID,
+		);
+		await env.RELEASE_INTENT_WORKFLOW.create({
+			id: INTENT_ID,
+			params: { publisherDid: PUBLISHER_DID, intentId: INTENT_ID },
+		});
+		await introspector.waitForStatus("complete");
+
+		await expect(introspector.getOutput()).resolves.toEqual({
+			intentId: INTENT_ID,
+			state: "failed",
+			reasonCode: "WORKLOAD_WORKFLOW_MISMATCH",
+		});
+		expect(createAttempts).toBe(0);
+	});
+
 	it.each([
 		["publication pause", "pause", "ready", "PUBLICATION_PAUSED"],
 		["publisher suspension", "suspend", "ready", "PUBLISHER_SUSPENDED"],
