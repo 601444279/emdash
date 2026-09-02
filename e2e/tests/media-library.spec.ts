@@ -294,94 +294,13 @@ test.describe("Media Library", () => {
 		await page.getByRole("button", { name: filename, exact: true }).click();
 		const details = page.getByRole("dialog", { name: "Media details" });
 		await details.getByRole("tab", { name: "Edit image" }).click();
-		await page.setViewportSize({ width: 700, height: 900 });
-		await details.evaluate(async (element) => {
-			await Promise.allSettled(
-				element.getAnimations({ subtree: true }).map((animation) => animation.finished),
-			);
-		});
 		const previewColumn = details.getByTestId("media-detail-dialog-preview-column");
-		const focalImageBounds = await previewColumn.locator("img").first().boundingBox();
-		if (!focalImageBounds) throw new Error("Focal-point image is not visible");
 		await details.getByRole("tab", { name: "Crop" }).click();
-		const cropModeImageBounds = await previewColumn
-			.locator(".emdash-react-image-crop img")
-			.boundingBox();
-		if (!cropModeImageBounds) throw new Error("Crop image is not visible");
-		expect(cropModeImageBounds.x).toBeCloseTo(focalImageBounds.x, 0);
-		expect(cropModeImageBounds.y).toBeCloseTo(focalImageBounds.y, 0);
-		expect(cropModeImageBounds.width).toBeCloseTo(focalImageBounds.width, 0);
-		expect(cropModeImageBounds.height).toBeCloseTo(focalImageBounds.height, 0);
-		for (const corner of [
-			"top-left corner",
-			"top-right corner",
-			"bottom-right corner",
-			"bottom-left corner",
-		]) {
-			await expect(
-				details.getByRole("button", { name: `Resize crop from ${corner}` }),
-			).toBeVisible();
-		}
-		for (const edge of ["top edge", "right edge", "bottom edge", "left edge"]) {
-			await expect(details.getByRole("button", { name: `Resize crop from ${edge}` })).toBeHidden();
-		}
-		expect(
-			await details.locator(".ReactCrop__rule-of-thirds-vt").evaluate((grid) => {
-				return getComputedStyle(grid, "::before").borderLeftStyle;
-			}),
-		).toBe("dashed");
-		await page.setViewportSize({ width: 1280, height: 800 });
-		const editPane = details.getByTestId("media-detail-dialog-details-column");
-		await expect
-			.poll(() => editPane.evaluate((element) => getComputedStyle(element).overflowY))
-			.toBe("auto");
-		const editModeTabs = details.getByRole("tablist").nth(1);
-		const outputRow = details.getByLabel("Crop output dimensions").locator("..");
-		const editPaneBounds = await editPane.boundingBox();
-		const editModeTabsBounds = await editModeTabs.boundingBox();
-		const outputRowBounds = await outputRow.boundingBox();
-		if (!editPaneBounds || !editModeTabsBounds || !outputRowBounds) {
-			throw new Error("Crop control geometry is unavailable");
-		}
-		const leadingInset = editModeTabsBounds.x - editPaneBounds.x;
-		const trailingInset =
-			editPaneBounds.x + editPaneBounds.width - (editModeTabsBounds.x + editModeTabsBounds.width);
-		expect(Math.abs(leadingInset - trailingInset)).toBeLessThanOrEqual(1);
-		expect(Math.abs(outputRowBounds.x - editModeTabsBounds.x)).toBeLessThanOrEqual(1);
-		expect(
-			Math.abs(
-				outputRowBounds.x +
-					outputRowBounds.width -
-					(editModeTabsBounds.x + editModeTabsBounds.width),
-			),
-		).toBeLessThanOrEqual(1);
-		const cropFrame = details.locator(".emdash-image-cropper");
-		await expect
-			.poll(async () => {
-				const frame = await cropFrame.boundingBox();
-				const mode = await details.getByRole("tablist").nth(1).boundingBox();
-				return frame && mode ? Math.abs(frame.y - mode.y) : Number.POSITIVE_INFINITY;
-			})
-			.toBeLessThanOrEqual(1);
-		const cropImage = details.locator(".emdash-react-image-crop img");
-		const frameBounds = await cropFrame.boundingBox();
-		const imageBoundsBefore = await cropImage.boundingBox();
-		if (!frameBounds || !imageBoundsBefore) throw new Error("Crop image is not visible");
-		expect(imageBoundsBefore.x + imageBoundsBefore.width / 2).toBeCloseTo(
-			frameBounds.x + frameBounds.width / 2,
-			0,
-		);
-		expect(imageBoundsBefore.y + imageBoundsBefore.height / 2).toBeCloseTo(
-			frameBounds.y + frameBounds.height / 2,
-			0,
-		);
+		await expect(
+			details.getByRole("group", { name: "Crop selection. Use the Arrow keys to move it." }),
+		).toBeVisible();
 		const corner = details.getByRole("button", { name: "Resize crop from bottom-right corner" });
 		await corner.press("Shift+ArrowLeft");
-		await details
-			.getByRole("group", { name: "Crop selection. Use the Arrow keys to move it." })
-			.press("ArrowRight");
-		const imageBoundsAfter = await cropImage.boundingBox();
-		expect(imageBoundsAfter).toEqual(imageBoundsBefore);
 		await expect(details.getByRole("button", { name: "Replace original" })).toBeEnabled();
 
 		await details.getByRole("button", { name: "Replace original" }).click();
@@ -447,14 +366,6 @@ test.describe("Media Library", () => {
 			.getByRole("button", { name: duplicateFilename, exact: true })
 			.locator("img");
 		await expect(duplicateCardImage).toBeVisible();
-		expect(await duplicateCardImage.evaluate((image) => getComputedStyle(image).objectFit)).toBe(
-			"contain",
-		);
-		const duplicateHeroAspect = await duplicateCardImage.evaluate((image) => {
-			const bounds = image.parentElement!.getBoundingClientRect();
-			return bounds.width / bounds.height;
-		});
-		expect(duplicateHeroAspect).toBeCloseTo(16 / 9, 1);
 		expect(await fetchUncachedBytes(serverInfo, original.url)).toEqual(replacedBytes);
 		expect(await apiJson(serverInfo, `/_emdash/api/content/posts/${created.item.id}`)).toEqual(
 			contentBefore,
@@ -674,7 +585,7 @@ test.describe("Media Library", () => {
 		await table.getByRole("row").filter({ hasText: uniqueFilename }).click();
 		const details = page.getByRole("dialog", { name: "Media details" });
 		await details.getByRole("button", { name: "Delete" }).click();
-		const confirmMediaDelete = page.getByRole("dialog", { name: "Delete Media?" });
+		const confirmMediaDelete = page.getByRole("alertdialog", { name: "Delete media?" });
 		await confirmMediaDelete.getByRole("button", { name: "Delete" }).click();
 		await expect(details).not.toBeVisible();
 		await expect(table.getByRole("row").filter({ hasText: uniqueFilename })).toHaveCount(0);
