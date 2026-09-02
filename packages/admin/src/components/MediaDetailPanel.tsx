@@ -533,11 +533,19 @@ export function MediaDetailPanel({
 
 	const updateMutation = useMutation({
 		mutationFn: (data: MediaUpdateInput) => updateMedia(item.id, data),
-		onSuccess: () => {
+		onSuccess: (updatedItem) => {
 			if (locationChanged) restoreFocusAfterDeleteRef.current = true;
 			void queryClient.invalidateQueries({ queryKey: ["media"] });
+			onItemRefreshed?.(
+				localItem
+					? {
+							...localItem,
+							...updatedItem,
+							url: updatedItem.url || localItem.url,
+						}
+					: updatedItem,
+			);
 			onUpdated?.();
-			closeDialog();
 		},
 		onError: (error) => {
 			if (error instanceof ApiResponseError && error.code === "NOT_FOUND") recoverMediaItem();
@@ -601,7 +609,10 @@ export function MediaDetailPanel({
 			if (action === "duplicate") {
 				onCroppedCopyCreated?.();
 				onUpdated?.();
-				closeDialog();
+				setCropAspectMode("original");
+				setCropSelection(undefined);
+				setCropPixels(null);
+				setCropStatus(t`Cropped copy created.`);
 				return;
 			}
 

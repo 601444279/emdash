@@ -724,7 +724,7 @@ describe("MediaDetailPanel", () => {
 		);
 	});
 
-	it("creates a distinct cropped copy and closes without replacing the source", async () => {
+	it("creates a distinct cropped copy and keeps the source dialog open", async () => {
 		const duplicate = makeLocalItem({ id: "media-copy", filename: "photo-cropped.jpg" });
 		vi.mocked(uploadMedia).mockResolvedValueOnce(duplicate);
 		const onClose = vi.fn();
@@ -748,8 +748,12 @@ describe("MediaDetailPanel", () => {
 				{ deduplicate: false, folderId: "folder-1" },
 			);
 			expect(onCroppedCopyCreated).toHaveBeenCalledTimes(1);
-			expect(onClose).toHaveBeenCalledTimes(1);
 		});
+		expect(onClose).not.toHaveBeenCalled();
+		await expect.element(screen.getByRole("dialog", { name: "Media details" })).toBeVisible();
+		await expect
+			.element(screen.getByRole("button", { name: "Create cropped copy" }))
+			.toBeDisabled();
 		expect(replaceMediaImage).not.toHaveBeenCalled();
 		expect(onItemRefreshed).not.toHaveBeenCalled();
 	});
@@ -896,7 +900,11 @@ describe("MediaDetailPanel", () => {
 		expect(onClose).not.toHaveBeenCalled();
 
 		resolveUpload(makeLocalItem({ id: "media-copy" }));
-		await vi.waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
+		await expect.element(screen.getByText("Cropped copy created.")).toBeInTheDocument();
+		expect(onClose).not.toHaveBeenCalled();
+		await expect
+			.element(screen.getByRole("button", { name: "Create cropped copy" }))
+			.toBeDisabled();
 	});
 
 	it("falls back to the ordinary preview when the crop source cannot load", async () => {
@@ -1160,8 +1168,28 @@ describe("MediaDetailPanel", () => {
 
 	it("save calls updateMedia with correct payload", async () => {
 		const onClose = vi.fn();
-		const item = makeImageItem({ alt: "Old alt", caption: "Old caption" });
-		const screen = await renderPanel({ item, onClose });
+		const item = makeLocalItem({ alt: "Old alt", caption: "Old caption" });
+		const refreshed = makeLocalItem({ ...item, alt: "New alt" });
+		const { url: _derivedUrl, ...updatedRow } = refreshed;
+		vi.mocked(updateMedia).mockResolvedValueOnce(updatedRow as LocalMediaItem);
+		function Harness() {
+			const [open, setOpen] = React.useState(true);
+			const [currentItem, setCurrentItem] = React.useState(item);
+			return (
+				<QueryWrapper>
+					<MediaDetailPanel
+						open={open}
+						item={currentItem}
+						onClose={() => {
+							onClose();
+							setOpen(false);
+						}}
+						onItemRefreshed={setCurrentItem}
+					/>
+				</QueryWrapper>
+			);
+		}
+		const screen = await render(<Harness />);
 
 		const altInput = screen.getByLabelText("Alt Text");
 		await altInput.fill("New alt");
@@ -1174,8 +1202,11 @@ describe("MediaDetailPanel", () => {
 			expect(updateMedia).toHaveBeenCalledWith("media-1", {
 				alt: "New alt",
 			});
-			expect(onClose).toHaveBeenCalled();
 		});
+		expect(onClose).not.toHaveBeenCalled();
+		await expect.element(screen.getByRole("dialog", { name: "Media details" })).toBeVisible();
+		await expect.element(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+		await expect.element(screen.getByAltText("New alt")).toHaveAttribute("src", item.url);
 	});
 
 	it("saves empty strings when clearing alt text and caption", async () => {
@@ -1200,8 +1231,9 @@ describe("MediaDetailPanel", () => {
 			() => new Promise<MediaItem>((resolve) => (resolveUpdate = resolve)),
 		);
 		const onClose = vi.fn();
+		const onItemRefreshed = vi.fn();
 		const item = makeImageItem({ alt: "Old alt", caption: "Old caption" });
-		const screen = await renderPanel({ item, onClose });
+		const screen = await renderPanel({ item, onClose, onItemRefreshed });
 
 		const altInput = screen.getByLabelText("Alt Text");
 		await altInput.fill("New alt");
@@ -1215,16 +1247,22 @@ describe("MediaDetailPanel", () => {
 		screen.getByRole("button", { name: "Close" }).element().click();
 		expect(onClose).not.toHaveBeenCalled();
 
-		resolveUpdate({ ...item, alt: "New alt" });
+		const refreshed = { ...item, alt: "New alt" };
+		resolveUpdate(refreshed);
 		await vi.waitFor(() => {
-			expect(onClose).toHaveBeenCalled();
+			expect(onItemRefreshed).toHaveBeenCalledWith(refreshed);
 		});
+		expect(onClose).not.toHaveBeenCalled();
+		await expect.element(altInput).toBeEnabled();
 	});
 
 	it("saves dirty metadata with the keyboard shortcut", async () => {
 		const onClose = vi.fn();
+		const onItemRefreshed = vi.fn();
 		const item = makeImageItem({ alt: "Old alt", caption: "Old caption" });
-		const screen = await renderPanel({ item, onClose });
+		const refreshed = makeLocalItem({ ...item, alt: "Shortcut alt" });
+		vi.mocked(updateMedia).mockResolvedValueOnce(refreshed);
+		const screen = await renderPanel({ item, onClose, onItemRefreshed });
 
 		await screen.getByLabelText("Alt Text").fill("Shortcut alt");
 		window.dispatchEvent(new KeyboardEvent("keydown", { key: "s", ctrlKey: true }));
@@ -1233,8 +1271,9 @@ describe("MediaDetailPanel", () => {
 			expect(updateMedia).toHaveBeenCalledWith("media-1", {
 				alt: "Shortcut alt",
 			});
-			expect(onClose).toHaveBeenCalled();
+			expect(onItemRefreshed).toHaveBeenCalledWith(refreshed);
 		});
+		expect(onClose).not.toHaveBeenCalled();
 	});
 
 	it("loads bounded Location options only after the control opens", async () => {

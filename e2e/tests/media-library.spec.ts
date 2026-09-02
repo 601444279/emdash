@@ -356,6 +356,10 @@ test.describe("Media Library", () => {
 		await expect(duplicateAction).toBeEnabled();
 		await duplicateAction.click();
 		await duplicateResponse;
+		await expect(page.getByRole("heading", { name: "Cropped copy created." })).toBeVisible();
+		await expect(details).toBeVisible();
+		await expect(duplicateAction).toBeDisabled();
+		await details.getByRole("button", { name: "Cancel" }).click();
 		await expect(details).not.toBeVisible();
 
 		const duplicate = await findMediaByFilename(serverInfo, duplicateFilename);
