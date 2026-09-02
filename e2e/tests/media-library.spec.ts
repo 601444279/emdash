@@ -382,10 +382,10 @@ test.describe("Media Library", () => {
 			.press("ArrowRight");
 		const imageBoundsAfter = await cropImage.boundingBox();
 		expect(imageBoundsAfter).toEqual(imageBoundsBefore);
-		await expect(details.getByRole("button", { name: "Replace original…" })).toBeEnabled();
+		await expect(details.getByRole("button", { name: "Replace original" })).toBeEnabled();
 
-		await details.getByRole("button", { name: "Replace original…" }).click();
-		const replaceConfirm = page.getByRole("dialog", { name: "Replace original image?" });
+		await details.getByRole("button", { name: "Replace original" }).click();
+		const replaceConfirm = page.getByRole("alertdialog", { name: "Replace original image?" });
 		const replaceResponse = page.waitForResponse(
 			(response) =>
 				response.request().method() === "PUT" &&
@@ -426,7 +426,7 @@ test.describe("Media Library", () => {
 		const aspectRatio = details.getByRole("combobox", { name: "Aspect ratio" });
 		await aspectRatio.click();
 		await page.getByRole("option", { name: "Square (1:1)" }).click();
-		await expect(details.getByRole("button", { name: "Replace original…" })).toBeDisabled();
+		await expect(details.getByRole("button", { name: "Replace original" })).toBeDisabled();
 		const duplicateResponse = page.waitForResponse(
 			(response) =>
 				response.request().method() === "POST" &&

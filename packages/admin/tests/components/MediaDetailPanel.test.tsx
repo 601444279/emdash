@@ -515,7 +515,7 @@ describe("MediaDetailPanel", () => {
 		await openCropEditor(screen);
 		const footer = screen.getByTestId("media-detail-dialog-footer").element();
 		const createCopy = screen.getByRole("button", { name: "Create cropped copy" });
-		const replaceOriginal = screen.getByRole("button", { name: "Replace original…" });
+		const replaceOriginal = screen.getByRole("button", { name: "Replace original" });
 
 		expect(footer).toContainElement(createCopy.element());
 		expect(footer).toContainElement(replaceOriginal.element());
@@ -584,7 +584,7 @@ describe("MediaDetailPanel", () => {
 		rightHandle.element().focus();
 		await userEvent.keyboard("{Shift>}{ArrowLeft}{/Shift}");
 		await expect.element(screen.getByRole("button", { name: "Create cropped copy" })).toBeEnabled();
-		await expect.element(screen.getByRole("button", { name: "Replace original…" })).toBeDisabled();
+		await expect.element(screen.getByRole("button", { name: "Replace original" })).toBeDisabled();
 		expect(screen.getByText("Choose Original to replace the existing image.").query()).toBeNull();
 		await expect
 			.element(screen.getByText("Replace original is available with the Original aspect ratio."))
@@ -607,7 +607,7 @@ describe("MediaDetailPanel", () => {
 		await expect
 			.element(screen.getByRole("button", { name: "Create cropped copy" }))
 			.toBeDisabled();
-		await expect.element(screen.getByRole("button", { name: "Replace original…" })).toBeDisabled();
+		await expect.element(screen.getByRole("button", { name: "Replace original" })).toBeDisabled();
 	});
 
 	it("preserves the crop draft across Media Details tabs", async () => {
@@ -724,15 +724,18 @@ describe("MediaDetailPanel", () => {
 			.element()
 			.querySelector<HTMLImageElement>(".emdash-react-image-crop img")!.src;
 
-		screen.getByRole("button", { name: "Replace original…" }).element().click();
-		await expect.element(screen.getByText("Replace original image?")).toBeVisible();
+		screen.getByRole("button", { name: "Replace original" }).element().click();
 		await expect
-			.element(
-				screen.getByText(
-					"This replaces the image everywhere it is used. The uncropped image cannot be restored.",
-				),
-			)
+			.element(screen.getByRole("alertdialog", { name: "Replace original image?" }))
 			.toBeVisible();
+		await expect
+			.element(screen.getByText("Every place using this image will update to the cropped version."))
+			.toBeVisible();
+		const irreversibleWarning = screen.getByRole("note");
+		await expect.element(irreversibleWarning).toHaveTextContent("This cannot be undone");
+		await expect
+			.element(irreversibleWarning)
+			.toHaveTextContent("EmDash does not keep the uncropped image.");
 		expect(replaceMediaImage).not.toHaveBeenCalled();
 		screen.getByRole("button", { name: "Replace original" }).element().click();
 
@@ -787,8 +790,8 @@ describe("MediaDetailPanel", () => {
 		await resizeCrop(screen);
 		const draftStyle = cropSelectionStyle(screen);
 
-		screen.getByRole("button", { name: "Replace original…" }).element().click();
-		const confirmation = screen.getByRole("dialog", { name: "Replace original image?" });
+		screen.getByRole("button", { name: "Replace original" }).element().click();
+		const confirmation = screen.getByRole("alertdialog", { name: "Replace original image?" });
 		await expect.element(confirmation).toBeVisible();
 		confirmation.getByRole("button", { name: "Replace original" }).element().click();
 

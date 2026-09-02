@@ -6,6 +6,7 @@
  */
 
 import {
+	Banner,
 	Button,
 	ClipboardText,
 	Combobox,
@@ -32,6 +33,7 @@ import {
 	LinkSimple,
 	Ruler,
 	Info,
+	WarningCircle,
 } from "@phosphor-icons/react";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -1497,7 +1499,7 @@ export function MediaDetailPanel({
 											disabled={cropActionDisabled || cropAspectMode !== "original"}
 											onClick={() => setShowCropConfirm(true)}
 										>
-											{t`Replace original…`}
+											{t`Replace original`}
 										</Button>
 									) : null}
 									{canDuplicateCrop ? (
@@ -1558,15 +1560,35 @@ export function MediaDetailPanel({
 			<ConfirmDialog
 				open={showCropConfirm}
 				onClose={() => setShowCropConfirm(false)}
+				role="alertdialog"
 				title={t`Replace original image?`}
-				description={t`This replaces the image everywhere it is used. The uncropped image cannot be restored.`}
+				titleClassName="text-[18px] font-semibold leading-6"
+				description={
+					<span className="text-[14px] leading-5">
+						{t`Every place using this image will update to the cropped version.`}
+					</span>
+				}
+				descriptionClassName="text-pretty text-[14px] leading-5 text-kumo-subtle"
 				confirmLabel={t`Replace original`}
 				pendingLabel={t`Replacing original...`}
 				isPending={isCropping && cropMutation.variables === "replace"}
+				compact
 				preventCloseWhilePending
 				error={null}
 				onConfirm={() => startCrop("replace")}
 			>
+				<Banner
+					variant="error"
+					icon={<WarningCircle className="h-4 w-4" aria-hidden="true" />}
+					title={t`This cannot be undone`}
+					description={
+						<span className="text-[14px] leading-5">
+							{t`EmDash does not keep the uncropped image.`}
+						</span>
+					}
+					className="mt-4 text-[14px]"
+					role="note"
+				/>
 				<p role="status" className="sr-only">
 					{isCropping && cropMutation.variables === "replace" ? t`Replacing original...` : ""}
 				</p>

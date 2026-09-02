@@ -1154,7 +1154,7 @@ describe("MediaLibrary", () => {
 			expect(screen.getByRole("button", { name: "Create cropped copy" }).query() !== null).toBe(
 				testCase.duplicate,
 			);
-			expect(screen.getByRole("button", { name: "Replace original…" }).query() !== null).toBe(
+			expect(screen.getByRole("button", { name: "Replace original" }).query() !== null).toBe(
 				testCase.replace,
 			);
 		});
