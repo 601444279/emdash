@@ -1373,7 +1373,7 @@ export function MediaDetailPanel({
 													{t`Reset`}
 												</Button>
 											</div>
-											<section className="mt-auto grid gap-3 border-t border-kumo-line pt-4">
+											<section className="mt-auto grid gap-2 border-t border-kumo-line pt-3">
 												<h3 className="text-sm font-semibold">{t`Preview`}</h3>
 												<FocalPointPreviews src={mediaPreviewUrl} point={focalPoint} />
 											</section>
