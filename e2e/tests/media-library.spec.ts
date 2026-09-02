@@ -796,8 +796,10 @@ test.describe("Media Library", () => {
 		await details.getByRole("combobox", { name: "Location" }).click();
 		await page.getByRole("option", { name: folderName }).click();
 		await details.getByRole("button", { name: "Save" }).click();
+		await expect(details).toBeVisible();
+		await expect(details.getByRole("button", { name: "Save" })).toBeDisabled();
+		await details.getByRole("button", { name: "Close" }).click();
 		await expect(details).not.toBeVisible();
-		await expect(page.getByRole("heading", { name: "Media Library" })).toBeFocused();
 
 		await page.getByRole("link", { name: `Open folder ${folderName}` }).click();
 		await expect(page).toHaveURL(/\/media\?folder=/);
