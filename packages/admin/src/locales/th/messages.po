@@ -81,7 +81,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr ""
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1798
+#: packages/admin/src/router.tsx:1804
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {อัปเดตความคิดเห็น # รายการ} other {อัปเดตความคิดเห็น # รายการ}}"
 
@@ -270,17 +270,17 @@ msgid "{0} items will be imported"
 msgstr "จะนำเข้า {0} รายการ"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:575
+#: packages/admin/src/router.tsx:577
 msgid "{0} of {total} could not be deleted"
 msgstr ""
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:531
+#: packages/admin/src/router.tsx:533
 msgid "{0} of {total} could not be published"
 msgstr ""
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:554
+#: packages/admin/src/router.tsx:556
 msgid "{0} of {total} could not be updated"
 msgstr ""
 
@@ -638,7 +638,7 @@ msgstr "ยอมรับคำเชิญ"
 msgid "Access denied"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1818
+#: packages/admin/src/router.tsx:1824
 msgid "Access Denied"
 msgstr "การเข้าถึงถูกปฏิเสธ"
 
@@ -1070,24 +1070,24 @@ msgstr "หรืออีกทางหนึ่ง คุณสามาร�
 #: packages/admin/src/components/TaxonomySidebar.tsx:416
 #: packages/admin/src/components/TaxonomySidebar.tsx:476
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
-#: packages/admin/src/router.tsx:463
-#: packages/admin/src/router.tsx:478
-#: packages/admin/src/router.tsx:492
-#: packages/admin/src/router.tsx:506
-#: packages/admin/src/router.tsx:730
-#: packages/admin/src/router.tsx:1019
-#: packages/admin/src/router.tsx:1080
-#: packages/admin/src/router.tsx:1098
-#: packages/admin/src/router.tsx:1116
-#: packages/admin/src/router.tsx:1137
-#: packages/admin/src/router.tsx:1158
-#: packages/admin/src/router.tsx:1179
-#: packages/admin/src/router.tsx:1210
-#: packages/admin/src/router.tsx:1230
-#: packages/admin/src/router.tsx:1763
-#: packages/admin/src/router.tsx:1779
-#: packages/admin/src/router.tsx:1804
-#: packages/admin/src/router.tsx:2310
+#: packages/admin/src/router.tsx:465
+#: packages/admin/src/router.tsx:480
+#: packages/admin/src/router.tsx:494
+#: packages/admin/src/router.tsx:508
+#: packages/admin/src/router.tsx:732
+#: packages/admin/src/router.tsx:1021
+#: packages/admin/src/router.tsx:1082
+#: packages/admin/src/router.tsx:1100
+#: packages/admin/src/router.tsx:1118
+#: packages/admin/src/router.tsx:1139
+#: packages/admin/src/router.tsx:1160
+#: packages/admin/src/router.tsx:1181
+#: packages/admin/src/router.tsx:1212
+#: packages/admin/src/router.tsx:1232
+#: packages/admin/src/router.tsx:1769
+#: packages/admin/src/router.tsx:1785
+#: packages/admin/src/router.tsx:1810
+#: packages/admin/src/router.tsx:2316
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -1305,7 +1305,7 @@ msgstr ""
 msgid "Automatic backups need a storage backend (R2, S3, or local storage). Configure storage in your EmDash config to enable them."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1079
+#: packages/admin/src/router.tsx:1081
 msgid "Autosave failed"
 msgstr "บันทึกอัตโนมัติล้มเหลว"
 
@@ -1686,7 +1686,7 @@ msgstr "บันทึกการเปลี่ยนแปลง"
 msgid "Changes apply everywhere this byline appears."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1130
+#: packages/admin/src/router.tsx:1132
 msgid "Changes discarded"
 msgstr "ละทิ้งการเปลี่ยนแปลงแล้ว"
 
@@ -2004,7 +2004,7 @@ msgstr "ข้อผิดพลาดของเนื้อหา ({0})"
 msgid "Content found:"
 msgstr "พบเนื้อหา:"
 
-#: packages/admin/src/router.tsx:1152
+#: packages/admin/src/router.tsx:1154
 msgid "Content has been scheduled for publishing"
 msgstr "กำหนดเวลาเผยแพร่เนื้อหาแล้ว"
 
@@ -2016,7 +2016,7 @@ msgstr "อัปเดตเนื้อหาเป็นรุ่นแก้
 msgid "Content ID:"
 msgstr "ID เนื้อหา:"
 
-#: packages/admin/src/router.tsx:1093
+#: packages/admin/src/router.tsx:1095
 msgid "Content is now live"
 msgstr "เนื้อหาเผยแพร่แล้ว"
 
@@ -2028,11 +2028,11 @@ msgstr ""
 msgid "Content Read"
 msgstr "อ่านเนื้อหา"
 
-#: packages/admin/src/router.tsx:1111
+#: packages/admin/src/router.tsx:1113
 msgid "Content removed from public view"
 msgstr "นำเนื้อหาออกจากมุมมองสาธารณะแล้ว"
 
-#: packages/admin/src/router.tsx:1173
+#: packages/admin/src/router.tsx:1175
 msgid "Content reverted to draft"
 msgstr "เปลี่ยนเนื้อหากลับเป็นฉบับร่างแล้ว"
 
@@ -2393,7 +2393,7 @@ msgid "Created {0}"
 msgstr "สร้าง {0} แล้ว"
 
 #. placeholder {0}: result.locale?.toUpperCase() ?? t`new`
-#: packages/admin/src/router.tsx:1204
+#: packages/admin/src/router.tsx:1206
 msgid "Created {0} translation"
 msgstr "สร้างคำแปล {0} แล้ว"
 
@@ -3417,7 +3417,7 @@ msgstr "ป้อน URL ของเว็บไซต์ WordPress ของ�
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/TaxonomyManager.tsx:947
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2525
+#: packages/admin/src/router.tsx:2531
 msgid "Error"
 msgstr "ข้อผิดพลาด"
 
@@ -3554,14 +3554,14 @@ msgid "Failed to create term"
 msgstr "สร้างเทอมไม่สำเร็จ"
 
 #: packages/admin/src/components/TaxonomySidebar.tsx:475
-#: packages/admin/src/router.tsx:1209
+#: packages/admin/src/router.tsx:1211
 msgid "Failed to create translation"
 msgstr "สร้างคำแปลไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:462
-#: packages/admin/src/router.tsx:491
-#: packages/admin/src/router.tsx:574
-#: packages/admin/src/router.tsx:1229
+#: packages/admin/src/router.tsx:464
+#: packages/admin/src/router.tsx:493
+#: packages/admin/src/router.tsx:576
+#: packages/admin/src/router.tsx:1231
 msgid "Failed to delete"
 msgstr "ลบไม่สำเร็จ"
 
@@ -3586,11 +3586,11 @@ msgid "Failed to delete collection"
 msgstr "ลบคอลเลกชันไม่สำเร็จ"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1778
+#: packages/admin/src/router.tsx:1784
 msgid "Failed to delete comment"
 msgstr "ลบความคิดเห็นไม่สำเร็จ"
 
-#: packages/admin/src/lib/api/content.ts:303
+#: packages/admin/src/lib/api/content.ts:327
 msgid "Failed to delete content"
 msgstr "ลบเนื้อหาไม่สำเร็จ"
 
@@ -3656,7 +3656,7 @@ msgstr ""
 msgid "Failed to disable user"
 msgstr "ปิดใช้งานผู้ใช้ไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:1136
+#: packages/admin/src/router.tsx:1138
 msgid "Failed to discard changes"
 msgstr "ละทิ้งการเปลี่ยนแปลงไม่สำเร็จ"
 
@@ -3664,7 +3664,7 @@ msgstr "ละทิ้งการเปลี่ยนแปลงไม่ส
 msgid "Failed to dismiss welcome"
 msgstr "ปิดข้อความต้อนรับไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:505
+#: packages/admin/src/router.tsx:507
 msgid "Failed to duplicate"
 msgstr "ทำสำเนาไม่สำเร็จ"
 
@@ -3755,8 +3755,8 @@ msgstr ""
 msgid "Failed to fetch provider media"
 msgstr ""
 
-#: packages/admin/src/lib/api/content.ts:580
-#: packages/admin/src/lib/api/content.ts:585
+#: packages/admin/src/lib/api/content.ts:604
+#: packages/admin/src/lib/api/content.ts:609
 msgid "Failed to fetch revision"
 msgstr "ดึงข้อมูลรุ่นแก้ไขไม่สำเร็จ"
 
@@ -3783,8 +3783,8 @@ msgstr "ดึงข้อมูลเทอมไม่สำเร็จ"
 #: packages/admin/src/lib/api/current-user.ts:22
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
-#: packages/admin/src/router.tsx:922
-#: packages/admin/src/router.tsx:1709
+#: packages/admin/src/router.tsx:924
+#: packages/admin/src/router.tsx:1715
 msgid "Failed to fetch user"
 msgstr "ดึงข้อมูลผู้ใช้ไม่สำเร็จ"
 
@@ -3826,7 +3826,7 @@ msgstr "ติดตั้งปลั๊กอินไม่สำเร็จ
 msgid "Failed to list byline fields"
 msgstr ""
 
-#: packages/admin/src/router.tsx:302
+#: packages/admin/src/router.tsx:304
 msgid "Failed to load admin"
 msgstr "โหลดหน้าผู้ดูแลระบบไม่สำเร็จ"
 
@@ -3895,11 +3895,11 @@ msgstr "โหลดผู้ใช้ไม่สำเร็จ: {0}"
 msgid "Failed to load widget"
 msgstr "โหลดวิดเจ็ตไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:1803
+#: packages/admin/src/router.tsx:1809
 msgid "Failed to perform bulk action"
 msgstr "ดำเนินการแบบกลุ่มไม่สำเร็จ"
 
-#: packages/admin/src/lib/api/content.ts:346
+#: packages/admin/src/lib/api/content.ts:370
 msgid "Failed to permanently delete content"
 msgstr "ลบเนื้อหาอย่างถาวรไม่สำเร็จ"
 
@@ -3907,8 +3907,8 @@ msgstr "ลบเนื้อหาอย่างถาวรไม่สำเ
 msgid "Failed to prepare import"
 msgstr "เตรียมการนำเข้าไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:530
-#: packages/admin/src/router.tsx:1097
+#: packages/admin/src/router.tsx:532
+#: packages/admin/src/router.tsx:1099
 msgid "Failed to publish"
 msgstr "เผยแพร่ไม่สำเร็จ"
 
@@ -3950,16 +3950,16 @@ msgstr "จัดเรียงฟิลด์ใหม่ไม่สำเร
 msgid "Failed to reorder widgets"
 msgstr "จัดเรียงวิดเจ็ตใหม่ไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:477
+#: packages/admin/src/router.tsx:479
 msgid "Failed to restore"
 msgstr "กู้คืนไม่สำเร็จ"
 
-#: packages/admin/src/lib/api/content.ts:335
+#: packages/admin/src/lib/api/content.ts:359
 msgid "Failed to restore content"
 msgstr "กู้คืนเนื้อหาไม่สำเร็จ"
 
-#: packages/admin/src/lib/api/content.ts:602
-#: packages/admin/src/lib/api/content.ts:607
+#: packages/admin/src/lib/api/content.ts:626
+#: packages/admin/src/lib/api/content.ts:631
 msgid "Failed to restore revision"
 msgstr "กู้คืนรุ่นแก้ไขไม่สำเร็จ"
 
@@ -3971,9 +3971,9 @@ msgstr "เพิกถอนโทเค็น API ไม่สำเร็จ"
 msgid "Failed to rewrite URLs"
 msgstr "เขียน URL ใหม่ไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:729
-#: packages/admin/src/router.tsx:1018
-#: packages/admin/src/router.tsx:2309
+#: packages/admin/src/router.tsx:731
+#: packages/admin/src/router.tsx:1020
+#: packages/admin/src/router.tsx:2315
 msgid "Failed to save"
 msgstr "บันทึกไม่สำเร็จ"
 
@@ -3992,7 +3992,7 @@ msgstr ""
 msgid "Failed to save settings"
 msgstr "บันทึกการตั้งค่าไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:1157
+#: packages/admin/src/router.tsx:1159
 msgid "Failed to schedule"
 msgstr "กำหนดเวลาไม่สำเร็จ"
 
@@ -4023,15 +4023,15 @@ msgstr "กำหนดเทอมของรายการไม่สำเ
 msgid "Failed to uninstall plugin"
 msgstr "ถอนการติดตั้งปลั๊กอินไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:1115
+#: packages/admin/src/router.tsx:1117
 msgid "Failed to unpublish"
 msgstr "ยกเลิกการเผยแพร่ไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:1178
+#: packages/admin/src/router.tsx:1180
 msgid "Failed to unschedule"
 msgstr "ยกเลิกการกำหนดเวลาไม่สำเร็จ"
 
-#: packages/admin/src/router.tsx:553
+#: packages/admin/src/router.tsx:555
 msgid "Failed to update"
 msgstr ""
 
@@ -4077,7 +4077,7 @@ msgstr ""
 msgid "Failed to update settings"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1762
+#: packages/admin/src/router.tsx:1768
 msgid "Failed to update status"
 msgstr "อัปเดตสถานะไม่สำเร็จ"
 
@@ -4267,7 +4267,7 @@ msgstr ""
 msgid "Folder name must be between 1 and 200 characters"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1438
 msgid "Folder no longer exists"
 msgstr ""
 
@@ -4378,7 +4378,7 @@ msgid "Go"
 msgstr ""
 
 #: packages/admin/src/components/WordPressImport.tsx:2434
-#: packages/admin/src/router.tsx:2545
+#: packages/admin/src/router.tsx:2551
 msgid "Go to Dashboard"
 msgstr "ไปที่แดชบอร์ด"
 
@@ -5159,7 +5159,7 @@ msgstr "โหลดเพิ่มเติม"
 msgid "Load more folders"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2500
+#: packages/admin/src/router.tsx:2506
 msgid "Loading"
 msgstr ""
 
@@ -5175,8 +5175,8 @@ msgstr "กำลังโหลดคอลเลกชัน..."
 msgid "Loading comments..."
 msgstr "กำลังโหลดความคิดเห็น..."
 
-#: packages/admin/src/router.tsx:2502
-#: packages/admin/src/router.tsx:2514
+#: packages/admin/src/router.tsx:2508
+#: packages/admin/src/router.tsx:2520
 msgid "Loading configuration..."
 msgstr "กำลังโหลดการกำหนดค่า..."
 
@@ -5740,11 +5740,11 @@ msgstr "ย้ายไปยังถังขยะ?"
 msgid "Move up"
 msgstr "เลื่อนขึ้น"
 
-#: packages/admin/src/router.tsx:550
+#: packages/admin/src/router.tsx:552
 msgid "Moved {total} items to draft"
 msgstr ""
 
-#: packages/admin/src/router.tsx:571
+#: packages/admin/src/router.tsx:573
 msgid "Moved {total} items to trash"
 msgstr ""
 
@@ -5811,7 +5811,7 @@ msgstr ""
 msgid "Never"
 msgstr "ไม่เลย"
 
-#: packages/admin/src/router.tsx:1204
+#: packages/admin/src/router.tsx:1206
 msgid "new"
 msgstr "ใหม่"
 
@@ -6433,7 +6433,7 @@ msgstr "ความเป็นเจ้าของ"
 msgid "Package"
 msgstr "แพ็กเกจ"
 
-#: packages/admin/src/router.tsx:2540
+#: packages/admin/src/router.tsx:2546
 msgid "Page Not Found"
 msgstr "ไม่พบหน้า"
 
@@ -6849,7 +6849,7 @@ msgstr ""
 #: packages/admin/src/components/ContentList.tsx:862
 #: packages/admin/src/components/ContentStatusBadge.tsx:59
 #: packages/admin/src/components/Dashboard.tsx:297
-#: packages/admin/src/router.tsx:1093
+#: packages/admin/src/router.tsx:1095
 msgid "Published"
 msgstr "เผยแพร่แล้ว"
 
@@ -6858,7 +6858,7 @@ msgstr "เผยแพร่แล้ว"
 msgid "Published {0}"
 msgstr "เผยแพร่แล้ว {0}"
 
-#: packages/admin/src/router.tsx:527
+#: packages/admin/src/router.tsx:529
 msgid "Published {total} items"
 msgstr ""
 
@@ -7304,7 +7304,7 @@ msgstr "กำลังกู้คืน..."
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
 #: packages/admin/src/lib/content-editor-panels.tsx:201
-#: packages/admin/src/router.tsx:2528
+#: packages/admin/src/router.tsx:2534
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "ลองใหม่"
@@ -7340,7 +7340,7 @@ msgstr ""
 msgid "Reusable content blocks you can insert into any content"
 msgstr "บล็อกเนื้อหาที่นำกลับมาใช้ซ้ำได้ ซึ่งคุณสามารถแทรกลงในเนื้อหาใดก็ได้"
 
-#: packages/admin/src/router.tsx:1131
+#: packages/admin/src/router.tsx:1133
 msgid "Reverted to published version"
 msgstr "เปลี่ยนกลับเป็นเวอร์ชันที่เผยแพร่แล้ว"
 
@@ -7560,7 +7560,7 @@ msgstr "กำหนดเวลาสำหรับภายหลัง"
 
 #: packages/admin/src/components/ContentList.tsx:853
 #: packages/admin/src/components/ContentStatusBadge.tsx:63
-#: packages/admin/src/router.tsx:1151
+#: packages/admin/src/router.tsx:1153
 msgid "Scheduled"
 msgstr "กำหนดเวลา"
 
@@ -8618,7 +8618,7 @@ msgstr "ลบเมนูแล้ว"
 msgid "The name of your site, used in the header and metadata"
 msgstr "ชื่อเว็บไซต์ของคุณ ใช้ในส่วนหัวและข้อมูลเมตา"
 
-#: packages/admin/src/router.tsx:2542
+#: packages/admin/src/router.tsx:2548
 msgid "The page you're looking for doesn't exist."
 msgstr "ไม่พบหน้าที่คุณกำลังค้นหา"
 
@@ -8921,7 +8921,7 @@ msgstr "กำลังแปล..."
 #: packages/admin/src/components/MenuEditor.tsx:143
 #: packages/admin/src/components/TaxonomyManager.tsx:993
 #: packages/admin/src/components/TaxonomySidebar.tsx:471
-#: packages/admin/src/router.tsx:1203
+#: packages/admin/src/router.tsx:1205
 msgid "Translation created"
 msgstr "สร้างคำแปลแล้ว"
 
@@ -9125,7 +9125,7 @@ msgstr "Passkey ที่ไม่มีชื่อ"
 msgid "Unpublish {itemLabel}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1111
+#: packages/admin/src/router.tsx:1113
 msgid "Unpublished"
 msgstr "ยกเลิกการเผยแพร่แล้ว"
 
@@ -9141,7 +9141,7 @@ msgstr ""
 msgid "Unschedule"
 msgstr "ยกเลิกการกำหนดเวลา"
 
-#: packages/admin/src/router.tsx:1172
+#: packages/admin/src/router.tsx:1174
 msgid "Unscheduled"
 msgstr "ยกเลิกการกำหนดเวลาแล้ว"
 
@@ -9828,7 +9828,7 @@ msgstr ""
 msgid "You need Admin permissions to manage media usage tracking."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1819
+#: packages/admin/src/router.tsx:1825
 msgid "You need Editor permissions to moderate comments."
 msgstr "คุณต้องมีสิทธิ์ผู้แก้ไขเพื่อกลั่นกรองความคิดเห็น"
 

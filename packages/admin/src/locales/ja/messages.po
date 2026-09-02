@@ -81,7 +81,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {#件のコメントをインポート} other {#件のコメントをインポート}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1798
+#: packages/admin/src/router.tsx:1804
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {#件のコメントを更新} other {#件のコメントを更新}}"
 
@@ -270,17 +270,17 @@ msgid "{0} items will be imported"
 msgstr "{0}件がインポートされます"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:575
+#: packages/admin/src/router.tsx:577
 msgid "{0} of {total} could not be deleted"
 msgstr "全{total}件中{0}件を削除できませんでした"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:531
+#: packages/admin/src/router.tsx:533
 msgid "{0} of {total} could not be published"
 msgstr "全{total}件中{0}件を公開できませんでした"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:554
+#: packages/admin/src/router.tsx:556
 msgid "{0} of {total} could not be updated"
 msgstr "全{total}件中{0}件を更新できませんでした"
 
@@ -638,7 +638,7 @@ msgstr "招待を承諾"
 msgid "Access denied"
 msgstr "アクセスが拒否されました"
 
-#: packages/admin/src/router.tsx:1818
+#: packages/admin/src/router.tsx:1824
 msgid "Access Denied"
 msgstr "アクセスが拒否されました"
 
@@ -1070,24 +1070,24 @@ msgstr "または、WordPressからエクスポート（ツール → エクス�
 #: packages/admin/src/components/TaxonomySidebar.tsx:416
 #: packages/admin/src/components/TaxonomySidebar.tsx:476
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
-#: packages/admin/src/router.tsx:463
-#: packages/admin/src/router.tsx:478
-#: packages/admin/src/router.tsx:492
-#: packages/admin/src/router.tsx:506
-#: packages/admin/src/router.tsx:730
-#: packages/admin/src/router.tsx:1019
-#: packages/admin/src/router.tsx:1080
-#: packages/admin/src/router.tsx:1098
-#: packages/admin/src/router.tsx:1116
-#: packages/admin/src/router.tsx:1137
-#: packages/admin/src/router.tsx:1158
-#: packages/admin/src/router.tsx:1179
-#: packages/admin/src/router.tsx:1210
-#: packages/admin/src/router.tsx:1230
-#: packages/admin/src/router.tsx:1763
-#: packages/admin/src/router.tsx:1779
-#: packages/admin/src/router.tsx:1804
-#: packages/admin/src/router.tsx:2310
+#: packages/admin/src/router.tsx:465
+#: packages/admin/src/router.tsx:480
+#: packages/admin/src/router.tsx:494
+#: packages/admin/src/router.tsx:508
+#: packages/admin/src/router.tsx:732
+#: packages/admin/src/router.tsx:1021
+#: packages/admin/src/router.tsx:1082
+#: packages/admin/src/router.tsx:1100
+#: packages/admin/src/router.tsx:1118
+#: packages/admin/src/router.tsx:1139
+#: packages/admin/src/router.tsx:1160
+#: packages/admin/src/router.tsx:1181
+#: packages/admin/src/router.tsx:1212
+#: packages/admin/src/router.tsx:1232
+#: packages/admin/src/router.tsx:1769
+#: packages/admin/src/router.tsx:1785
+#: packages/admin/src/router.tsx:1810
+#: packages/admin/src/router.tsx:2316
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -1305,7 +1305,7 @@ msgstr "自動バックアップ"
 msgid "Automatic backups need a storage backend (R2, S3, or local storage). Configure storage in your EmDash config to enable them."
 msgstr "自動バックアップにはストレージバックエンド（R2、S3、またはローカルストレージ）が必要です。有効にするにはEmDashの設定でストレージを構成してください。"
 
-#: packages/admin/src/router.tsx:1079
+#: packages/admin/src/router.tsx:1081
 msgid "Autosave failed"
 msgstr "自動保存に失敗しました"
 
@@ -1686,7 +1686,7 @@ msgstr "更新履歴"
 msgid "Changes apply everywhere this byline appears."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1130
+#: packages/admin/src/router.tsx:1132
 msgid "Changes discarded"
 msgstr "変更を破棄しました"
 
@@ -2004,7 +2004,7 @@ msgstr "コンテンツエラー（{0}）"
 msgid "Content found:"
 msgstr "検出されたコンテンツ："
 
-#: packages/admin/src/router.tsx:1152
+#: packages/admin/src/router.tsx:1154
 msgid "Content has been scheduled for publishing"
 msgstr "コンテンツの公開を予約しました"
 
@@ -2016,7 +2016,7 @@ msgstr "選択した版の内容に更新しました。"
 msgid "Content ID:"
 msgstr "コンテンツID："
 
-#: packages/admin/src/router.tsx:1093
+#: packages/admin/src/router.tsx:1095
 msgid "Content is now live"
 msgstr "コンテンツを公開しました"
 
@@ -2028,11 +2028,11 @@ msgstr "コンテンツの言語"
 msgid "Content Read"
 msgstr "コンテンツの読み取り"
 
-#: packages/admin/src/router.tsx:1111
+#: packages/admin/src/router.tsx:1113
 msgid "Content removed from public view"
 msgstr "コンテンツを公開表示から外しました"
 
-#: packages/admin/src/router.tsx:1173
+#: packages/admin/src/router.tsx:1175
 msgid "Content reverted to draft"
 msgstr "コンテンツを下書きに戻しました"
 
@@ -2393,7 +2393,7 @@ msgid "Created {0}"
 msgstr "作成日時：{0}"
 
 #. placeholder {0}: result.locale?.toUpperCase() ?? t`new`
-#: packages/admin/src/router.tsx:1204
+#: packages/admin/src/router.tsx:1206
 msgid "Created {0} translation"
 msgstr "{0}の翻訳を作成しました"
 
@@ -3420,7 +3420,7 @@ msgstr "WordPressサイトのURLを入力"
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/TaxonomyManager.tsx:947
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2525
+#: packages/admin/src/router.tsx:2531
 msgid "Error"
 msgstr "エラー"
 
@@ -3557,14 +3557,14 @@ msgid "Failed to create term"
 msgstr "分類項目の作成に失敗しました"
 
 #: packages/admin/src/components/TaxonomySidebar.tsx:475
-#: packages/admin/src/router.tsx:1209
+#: packages/admin/src/router.tsx:1211
 msgid "Failed to create translation"
 msgstr "翻訳の作成に失敗しました"
 
-#: packages/admin/src/router.tsx:462
-#: packages/admin/src/router.tsx:491
-#: packages/admin/src/router.tsx:574
-#: packages/admin/src/router.tsx:1229
+#: packages/admin/src/router.tsx:464
+#: packages/admin/src/router.tsx:493
+#: packages/admin/src/router.tsx:576
+#: packages/admin/src/router.tsx:1231
 msgid "Failed to delete"
 msgstr "削除に失敗しました"
 
@@ -3589,11 +3589,11 @@ msgid "Failed to delete collection"
 msgstr "コンテンツタイプの削除に失敗しました"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1778
+#: packages/admin/src/router.tsx:1784
 msgid "Failed to delete comment"
 msgstr "コメントの削除に失敗しました"
 
-#: packages/admin/src/lib/api/content.ts:303
+#: packages/admin/src/lib/api/content.ts:327
 msgid "Failed to delete content"
 msgstr "コンテンツの削除に失敗しました"
 
@@ -3659,7 +3659,7 @@ msgstr "検索の無効化に失敗しました"
 msgid "Failed to disable user"
 msgstr "ユーザーの無効化に失敗しました"
 
-#: packages/admin/src/router.tsx:1136
+#: packages/admin/src/router.tsx:1138
 msgid "Failed to discard changes"
 msgstr "変更の破棄に失敗しました"
 
@@ -3667,7 +3667,7 @@ msgstr "変更の破棄に失敗しました"
 msgid "Failed to dismiss welcome"
 msgstr "ウェルカム画面を閉じられませんでした"
 
-#: packages/admin/src/router.tsx:505
+#: packages/admin/src/router.tsx:507
 msgid "Failed to duplicate"
 msgstr "複製に失敗しました"
 
@@ -3758,8 +3758,8 @@ msgstr "プラグイン一覧の取得に失敗しました"
 msgid "Failed to fetch provider media"
 msgstr "連携先のメディア取得に失敗しました"
 
-#: packages/admin/src/lib/api/content.ts:580
-#: packages/admin/src/lib/api/content.ts:585
+#: packages/admin/src/lib/api/content.ts:604
+#: packages/admin/src/lib/api/content.ts:609
 msgid "Failed to fetch revision"
 msgstr "版の取得に失敗しました"
 
@@ -3786,8 +3786,8 @@ msgstr "分類項目の取得に失敗しました"
 #: packages/admin/src/lib/api/current-user.ts:22
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
-#: packages/admin/src/router.tsx:922
-#: packages/admin/src/router.tsx:1709
+#: packages/admin/src/router.tsx:924
+#: packages/admin/src/router.tsx:1715
 msgid "Failed to fetch user"
 msgstr "ユーザーの取得に失敗しました"
 
@@ -3829,7 +3829,7 @@ msgstr "プラグインのインストールに失敗しました"
 msgid "Failed to list byline fields"
 msgstr "執筆者情報の項目一覧の取得に失敗しました"
 
-#: packages/admin/src/router.tsx:302
+#: packages/admin/src/router.tsx:304
 msgid "Failed to load admin"
 msgstr "管理画面の読み込みに失敗しました"
 
@@ -3898,11 +3898,11 @@ msgstr "ユーザーの読み込みに失敗しました：{0}"
 msgid "Failed to load widget"
 msgstr "ウィジェットの読み込みに失敗しました"
 
-#: packages/admin/src/router.tsx:1803
+#: packages/admin/src/router.tsx:1809
 msgid "Failed to perform bulk action"
 msgstr "一括操作に失敗しました"
 
-#: packages/admin/src/lib/api/content.ts:346
+#: packages/admin/src/lib/api/content.ts:370
 msgid "Failed to permanently delete content"
 msgstr "コンテンツの完全削除に失敗しました"
 
@@ -3910,8 +3910,8 @@ msgstr "コンテンツの完全削除に失敗しました"
 msgid "Failed to prepare import"
 msgstr "インポートの準備に失敗しました"
 
-#: packages/admin/src/router.tsx:530
-#: packages/admin/src/router.tsx:1097
+#: packages/admin/src/router.tsx:532
+#: packages/admin/src/router.tsx:1099
 msgid "Failed to publish"
 msgstr "公開に失敗しました"
 
@@ -3953,16 +3953,16 @@ msgstr "項目を並べ替えられませんでした"
 msgid "Failed to reorder widgets"
 msgstr "ウィジェットの並べ替えに失敗しました"
 
-#: packages/admin/src/router.tsx:477
+#: packages/admin/src/router.tsx:479
 msgid "Failed to restore"
 msgstr "復元に失敗しました"
 
-#: packages/admin/src/lib/api/content.ts:335
+#: packages/admin/src/lib/api/content.ts:359
 msgid "Failed to restore content"
 msgstr "コンテンツの復元に失敗しました"
 
-#: packages/admin/src/lib/api/content.ts:602
-#: packages/admin/src/lib/api/content.ts:607
+#: packages/admin/src/lib/api/content.ts:626
+#: packages/admin/src/lib/api/content.ts:631
 msgid "Failed to restore revision"
 msgstr "版の復元に失敗しました"
 
@@ -3974,9 +3974,9 @@ msgstr "APIトークンの取り消しに失敗しました"
 msgid "Failed to rewrite URLs"
 msgstr "URLの書き換えに失敗しました"
 
-#: packages/admin/src/router.tsx:729
-#: packages/admin/src/router.tsx:1018
-#: packages/admin/src/router.tsx:2309
+#: packages/admin/src/router.tsx:731
+#: packages/admin/src/router.tsx:1020
+#: packages/admin/src/router.tsx:2315
 msgid "Failed to save"
 msgstr "保存に失敗しました"
 
@@ -3995,7 +3995,7 @@ msgstr "項目を保存できませんでした"
 msgid "Failed to save settings"
 msgstr "設定の保存に失敗しました"
 
-#: packages/admin/src/router.tsx:1157
+#: packages/admin/src/router.tsx:1159
 msgid "Failed to schedule"
 msgstr "公開予約に失敗しました"
 
@@ -4026,15 +4026,15 @@ msgstr "コンテンツへの分類項目の設定に失敗しました"
 msgid "Failed to uninstall plugin"
 msgstr "プラグインのアンインストールに失敗しました"
 
-#: packages/admin/src/router.tsx:1115
+#: packages/admin/src/router.tsx:1117
 msgid "Failed to unpublish"
 msgstr "非公開化に失敗しました"
 
-#: packages/admin/src/router.tsx:1178
+#: packages/admin/src/router.tsx:1180
 msgid "Failed to unschedule"
 msgstr "公開予約の解除に失敗しました"
 
-#: packages/admin/src/router.tsx:553
+#: packages/admin/src/router.tsx:555
 msgid "Failed to update"
 msgstr "更新に失敗しました"
 
@@ -4080,7 +4080,7 @@ msgstr "セクションの更新に失敗しました"
 msgid "Failed to update settings"
 msgstr "設定の更新に失敗しました"
 
-#: packages/admin/src/router.tsx:1762
+#: packages/admin/src/router.tsx:1768
 msgid "Failed to update status"
 msgstr "ステータスの更新に失敗しました"
 
@@ -4270,7 +4270,7 @@ msgstr "フォルダーを削除しました"
 msgid "Folder name must be between 1 and 200 characters"
 msgstr "フォルダー名は1～200文字で入力してください"
 
-#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1438
 msgid "Folder no longer exists"
 msgstr "フォルダーが見つかりません"
 
@@ -4381,7 +4381,7 @@ msgid "Go"
 msgstr "Go"
 
 #: packages/admin/src/components/WordPressImport.tsx:2434
-#: packages/admin/src/router.tsx:2545
+#: packages/admin/src/router.tsx:2551
 msgid "Go to Dashboard"
 msgstr "ダッシュボードへ"
 
@@ -5162,7 +5162,7 @@ msgstr "さらに読み込む"
 msgid "Load more folders"
 msgstr "さらにフォルダーを読み込む"
 
-#: packages/admin/src/router.tsx:2500
+#: packages/admin/src/router.tsx:2506
 msgid "Loading"
 msgstr "読み込み中"
 
@@ -5178,8 +5178,8 @@ msgstr "コンテンツタイプを読み込み中…"
 msgid "Loading comments..."
 msgstr "コメントを読み込み中…"
 
-#: packages/admin/src/router.tsx:2502
-#: packages/admin/src/router.tsx:2514
+#: packages/admin/src/router.tsx:2508
+#: packages/admin/src/router.tsx:2520
 msgid "Loading configuration..."
 msgstr "設定を読み込み中…"
 
@@ -5743,11 +5743,11 @@ msgstr "ゴミ箱に移動しますか？"
 msgid "Move up"
 msgstr "上に移動"
 
-#: packages/admin/src/router.tsx:550
+#: packages/admin/src/router.tsx:552
 msgid "Moved {total} items to draft"
 msgstr "{total}件を下書きに移動しました"
 
-#: packages/admin/src/router.tsx:571
+#: packages/admin/src/router.tsx:573
 msgid "Moved {total} items to trash"
 msgstr "{total}件をゴミ箱に移動しました"
 
@@ -5814,7 +5814,7 @@ msgstr "対応が必要"
 msgid "Never"
 msgstr "ログイン履歴なし"
 
-#: packages/admin/src/router.tsx:1204
+#: packages/admin/src/router.tsx:1206
 msgid "new"
 msgstr "新規"
 
@@ -6436,7 +6436,7 @@ msgstr "投稿者"
 msgid "Package"
 msgstr "パッケージ"
 
-#: packages/admin/src/router.tsx:2540
+#: packages/admin/src/router.tsx:2546
 msgid "Page Not Found"
 msgstr "ページが見つかりません"
 
@@ -6852,7 +6852,7 @@ msgstr "公開日時"
 #: packages/admin/src/components/ContentList.tsx:862
 #: packages/admin/src/components/ContentStatusBadge.tsx:59
 #: packages/admin/src/components/Dashboard.tsx:297
-#: packages/admin/src/router.tsx:1093
+#: packages/admin/src/router.tsx:1095
 msgid "Published"
 msgstr "公開済み"
 
@@ -6861,7 +6861,7 @@ msgstr "公開済み"
 msgid "Published {0}"
 msgstr "公開日時：{0}"
 
-#: packages/admin/src/router.tsx:527
+#: packages/admin/src/router.tsx:529
 msgid "Published {total} items"
 msgstr "{total}件を公開しました"
 
@@ -7307,7 +7307,7 @@ msgstr "復元中…"
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
 #: packages/admin/src/lib/content-editor-panels.tsx:201
-#: packages/admin/src/router.tsx:2528
+#: packages/admin/src/router.tsx:2534
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "再試行"
@@ -7343,7 +7343,7 @@ msgstr "再設定中…"
 msgid "Reusable content blocks you can insert into any content"
 msgstr "コンテンツに挿入して再利用できるセクションを管理"
 
-#: packages/admin/src/router.tsx:1131
+#: packages/admin/src/router.tsx:1133
 msgid "Reverted to published version"
 msgstr "公開版に戻しました"
 
@@ -7563,7 +7563,7 @@ msgstr "後で公開予約"
 
 #: packages/admin/src/components/ContentList.tsx:853
 #: packages/admin/src/components/ContentStatusBadge.tsx:63
-#: packages/admin/src/router.tsx:1151
+#: packages/admin/src/router.tsx:1153
 msgid "Scheduled"
 msgstr "予約済み"
 
@@ -8621,7 +8621,7 @@ msgstr "メニューを削除しました。"
 msgid "The name of your site, used in the header and metadata"
 msgstr "サイトの名前。ヘッダーとメタデータに使用されます"
 
-#: packages/admin/src/router.tsx:2542
+#: packages/admin/src/router.tsx:2548
 msgid "The page you're looking for doesn't exist."
 msgstr "お探しのページは存在しません。"
 
@@ -8924,7 +8924,7 @@ msgstr "翻訳中…"
 #: packages/admin/src/components/MenuEditor.tsx:143
 #: packages/admin/src/components/TaxonomyManager.tsx:993
 #: packages/admin/src/components/TaxonomySidebar.tsx:471
-#: packages/admin/src/router.tsx:1203
+#: packages/admin/src/router.tsx:1205
 msgid "Translation created"
 msgstr "翻訳を作成しました"
 
@@ -9128,7 +9128,7 @@ msgstr "名前のないパスキー"
 msgid "Unpublish {itemLabel}"
 msgstr "{itemLabel}を非公開にする"
 
-#: packages/admin/src/router.tsx:1111
+#: packages/admin/src/router.tsx:1113
 msgid "Unpublished"
 msgstr "非公開"
 
@@ -9144,7 +9144,7 @@ msgstr "未解決の割り当て"
 msgid "Unschedule"
 msgstr "予約を解除"
 
-#: packages/admin/src/router.tsx:1172
+#: packages/admin/src/router.tsx:1174
 msgid "Unscheduled"
 msgstr "予約なし"
 
@@ -9831,7 +9831,7 @@ msgstr "執筆者情報の項目を管理するには、管理者権限が必要
 msgid "You need Admin permissions to manage media usage tracking."
 msgstr "メディアの使用状況を管理するには、管理者権限が必要です。"
 
-#: packages/admin/src/router.tsx:1819
+#: packages/admin/src/router.tsx:1825
 msgid "You need Editor permissions to moderate comments."
 msgstr "コメントを管理するには、編集者権限が必要です。"
 

@@ -81,7 +81,7 @@ msgid "{0, plural, one {# comment imported} other {# comments imported}}"
 msgstr "{0, plural, one {# reactie geïmporteerd} other {# reacties geïmporteerd}}"
 
 #. placeholder {0}: result.affected
-#: packages/admin/src/router.tsx:1798
+#: packages/admin/src/router.tsx:1804
 msgid "{0, plural, one {# comment updated} other {# comments updated}}"
 msgstr "{0, plural, one {# reactie bijgewerkt} other {# reacties bijgewerkt}}"
 
@@ -270,17 +270,17 @@ msgid "{0} items will be imported"
 msgstr "{0} items worden geïmporteerd"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:575
+#: packages/admin/src/router.tsx:577
 msgid "{0} of {total} could not be deleted"
 msgstr "{0} van {total} konden niet worden verwijderd"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:531
+#: packages/admin/src/router.tsx:533
 msgid "{0} of {total} could not be published"
 msgstr "{0} van {total} konden niet worden gepubliceerd"
 
 #. placeholder {0}: failedIds.length
-#: packages/admin/src/router.tsx:554
+#: packages/admin/src/router.tsx:556
 msgid "{0} of {total} could not be updated"
 msgstr "{0} van {total} konden niet worden bijgewerkt"
 
@@ -638,7 +638,7 @@ msgstr "Uitnodiging accepteren"
 msgid "Access denied"
 msgstr "Toegang geweigerd"
 
-#: packages/admin/src/router.tsx:1818
+#: packages/admin/src/router.tsx:1824
 msgid "Access Denied"
 msgstr "Toegang geweigerd"
 
@@ -1070,24 +1070,24 @@ msgstr "Je kunt ook exporteren vanuit WordPress (Extra → Exporteren) en het be
 #: packages/admin/src/components/TaxonomySidebar.tsx:416
 #: packages/admin/src/components/TaxonomySidebar.tsx:476
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:114
-#: packages/admin/src/router.tsx:463
-#: packages/admin/src/router.tsx:478
-#: packages/admin/src/router.tsx:492
-#: packages/admin/src/router.tsx:506
-#: packages/admin/src/router.tsx:730
-#: packages/admin/src/router.tsx:1019
-#: packages/admin/src/router.tsx:1080
-#: packages/admin/src/router.tsx:1098
-#: packages/admin/src/router.tsx:1116
-#: packages/admin/src/router.tsx:1137
-#: packages/admin/src/router.tsx:1158
-#: packages/admin/src/router.tsx:1179
-#: packages/admin/src/router.tsx:1210
-#: packages/admin/src/router.tsx:1230
-#: packages/admin/src/router.tsx:1763
-#: packages/admin/src/router.tsx:1779
-#: packages/admin/src/router.tsx:1804
-#: packages/admin/src/router.tsx:2310
+#: packages/admin/src/router.tsx:465
+#: packages/admin/src/router.tsx:480
+#: packages/admin/src/router.tsx:494
+#: packages/admin/src/router.tsx:508
+#: packages/admin/src/router.tsx:732
+#: packages/admin/src/router.tsx:1021
+#: packages/admin/src/router.tsx:1082
+#: packages/admin/src/router.tsx:1100
+#: packages/admin/src/router.tsx:1118
+#: packages/admin/src/router.tsx:1139
+#: packages/admin/src/router.tsx:1160
+#: packages/admin/src/router.tsx:1181
+#: packages/admin/src/router.tsx:1212
+#: packages/admin/src/router.tsx:1232
+#: packages/admin/src/router.tsx:1769
+#: packages/admin/src/router.tsx:1785
+#: packages/admin/src/router.tsx:1810
+#: packages/admin/src/router.tsx:2316
 #: packages/admin/src/routes/byline-schema.tsx:103
 #: packages/admin/src/routes/byline-schema.tsx:123
 #: packages/admin/src/routes/byline-schema.tsx:139
@@ -1305,7 +1305,7 @@ msgstr "Automatische back-ups"
 msgid "Automatic backups need a storage backend (R2, S3, or local storage). Configure storage in your EmDash config to enable them."
 msgstr "Automatische back-ups vereisen een storage-backend (R2, S3 of lokale storage). Configureer storage in je EmDash-config om ze in te schakelen."
 
-#: packages/admin/src/router.tsx:1079
+#: packages/admin/src/router.tsx:1081
 msgid "Autosave failed"
 msgstr "Automatisch opslaan mislukt"
 
@@ -1686,7 +1686,7 @@ msgstr "Changelog"
 msgid "Changes apply everywhere this byline appears."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1130
+#: packages/admin/src/router.tsx:1132
 msgid "Changes discarded"
 msgstr "Wijzigingen verworpen"
 
@@ -2004,7 +2004,7 @@ msgstr "Contentfouten ({0})"
 msgid "Content found:"
 msgstr "Gevonden content:"
 
-#: packages/admin/src/router.tsx:1152
+#: packages/admin/src/router.tsx:1154
 msgid "Content has been scheduled for publishing"
 msgstr "Content is ingepland voor publicatie"
 
@@ -2016,7 +2016,7 @@ msgstr "Content is bijgewerkt naar de geselecteerde revisie."
 msgid "Content ID:"
 msgstr "Content-ID:"
 
-#: packages/admin/src/router.tsx:1093
+#: packages/admin/src/router.tsx:1095
 msgid "Content is now live"
 msgstr "Content is nu live"
 
@@ -2028,11 +2028,11 @@ msgstr ""
 msgid "Content Read"
 msgstr "Content lezen"
 
-#: packages/admin/src/router.tsx:1111
+#: packages/admin/src/router.tsx:1113
 msgid "Content removed from public view"
 msgstr "Content is niet meer openbaar zichtbaar"
 
-#: packages/admin/src/router.tsx:1173
+#: packages/admin/src/router.tsx:1175
 msgid "Content reverted to draft"
 msgstr "Content teruggezet naar concept"
 
@@ -2393,7 +2393,7 @@ msgid "Created {0}"
 msgstr "Aangemaakt op {0}"
 
 #. placeholder {0}: result.locale?.toUpperCase() ?? t`new`
-#: packages/admin/src/router.tsx:1204
+#: packages/admin/src/router.tsx:1206
 msgid "Created {0} translation"
 msgstr "Vertaling {0} aangemaakt"
 
@@ -3420,7 +3420,7 @@ msgstr "Voer de URL van je WordPress-site in"
 #: packages/admin/src/components/SetupWizard.tsx:539
 #: packages/admin/src/components/TaxonomyManager.tsx:947
 #: packages/admin/src/components/Widgets.tsx:769
-#: packages/admin/src/router.tsx:2525
+#: packages/admin/src/router.tsx:2531
 msgid "Error"
 msgstr "Fout"
 
@@ -3557,14 +3557,14 @@ msgid "Failed to create term"
 msgstr "Aanmaken van term mislukt"
 
 #: packages/admin/src/components/TaxonomySidebar.tsx:475
-#: packages/admin/src/router.tsx:1209
+#: packages/admin/src/router.tsx:1211
 msgid "Failed to create translation"
 msgstr "Aanmaken van vertaling mislukt"
 
-#: packages/admin/src/router.tsx:462
-#: packages/admin/src/router.tsx:491
-#: packages/admin/src/router.tsx:574
-#: packages/admin/src/router.tsx:1229
+#: packages/admin/src/router.tsx:464
+#: packages/admin/src/router.tsx:493
+#: packages/admin/src/router.tsx:576
+#: packages/admin/src/router.tsx:1231
 msgid "Failed to delete"
 msgstr "Verwijderen mislukt"
 
@@ -3589,11 +3589,11 @@ msgid "Failed to delete collection"
 msgstr "Verwijderen van collectie mislukt"
 
 #: packages/admin/src/lib/api/comments.ts:111
-#: packages/admin/src/router.tsx:1778
+#: packages/admin/src/router.tsx:1784
 msgid "Failed to delete comment"
 msgstr "Verwijderen van reactie mislukt"
 
-#: packages/admin/src/lib/api/content.ts:303
+#: packages/admin/src/lib/api/content.ts:327
 msgid "Failed to delete content"
 msgstr "Verwijderen van content mislukt"
 
@@ -3659,7 +3659,7 @@ msgstr "Uitschakelen van zoeken mislukt"
 msgid "Failed to disable user"
 msgstr "Uitschakelen van gebruiker mislukt"
 
-#: packages/admin/src/router.tsx:1136
+#: packages/admin/src/router.tsx:1138
 msgid "Failed to discard changes"
 msgstr "Verwerpen van wijzigingen mislukt"
 
@@ -3667,7 +3667,7 @@ msgstr "Verwerpen van wijzigingen mislukt"
 msgid "Failed to dismiss welcome"
 msgstr "Verbergen van welkomstscherm mislukt"
 
-#: packages/admin/src/router.tsx:505
+#: packages/admin/src/router.tsx:507
 msgid "Failed to duplicate"
 msgstr "Dupliceren mislukt"
 
@@ -3758,8 +3758,8 @@ msgstr "Ophalen van plugins mislukt"
 msgid "Failed to fetch provider media"
 msgstr "Ophalen van media van provider mislukt"
 
-#: packages/admin/src/lib/api/content.ts:580
-#: packages/admin/src/lib/api/content.ts:585
+#: packages/admin/src/lib/api/content.ts:604
+#: packages/admin/src/lib/api/content.ts:609
 msgid "Failed to fetch revision"
 msgstr "Ophalen van revisie mislukt"
 
@@ -3786,8 +3786,8 @@ msgstr "Ophalen van termen mislukt"
 #: packages/admin/src/lib/api/current-user.ts:22
 #: packages/admin/src/lib/api/users.ts:88
 #: packages/admin/src/lib/api/users.ts:93
-#: packages/admin/src/router.tsx:922
-#: packages/admin/src/router.tsx:1709
+#: packages/admin/src/router.tsx:924
+#: packages/admin/src/router.tsx:1715
 msgid "Failed to fetch user"
 msgstr "Ophalen van gebruiker mislukt"
 
@@ -3829,7 +3829,7 @@ msgstr "Installeren van plugin mislukt"
 msgid "Failed to list byline fields"
 msgstr "Ophalen van auteursvermeldingsvelden mislukt"
 
-#: packages/admin/src/router.tsx:302
+#: packages/admin/src/router.tsx:304
 msgid "Failed to load admin"
 msgstr "Laden van admin mislukt"
 
@@ -3898,11 +3898,11 @@ msgstr "Laden van gebruikers mislukt: {0}"
 msgid "Failed to load widget"
 msgstr "Laden van widget mislukt"
 
-#: packages/admin/src/router.tsx:1803
+#: packages/admin/src/router.tsx:1809
 msgid "Failed to perform bulk action"
 msgstr "Uitvoeren van bulkactie mislukt"
 
-#: packages/admin/src/lib/api/content.ts:346
+#: packages/admin/src/lib/api/content.ts:370
 msgid "Failed to permanently delete content"
 msgstr "Definitief verwijderen van content mislukt"
 
@@ -3910,8 +3910,8 @@ msgstr "Definitief verwijderen van content mislukt"
 msgid "Failed to prepare import"
 msgstr "Voorbereiden van import mislukt"
 
-#: packages/admin/src/router.tsx:530
-#: packages/admin/src/router.tsx:1097
+#: packages/admin/src/router.tsx:532
+#: packages/admin/src/router.tsx:1099
 msgid "Failed to publish"
 msgstr "Publiceren mislukt"
 
@@ -3953,16 +3953,16 @@ msgstr "Herschikken van velden mislukt"
 msgid "Failed to reorder widgets"
 msgstr "Herschikken van widgets mislukt"
 
-#: packages/admin/src/router.tsx:477
+#: packages/admin/src/router.tsx:479
 msgid "Failed to restore"
 msgstr "Herstellen mislukt"
 
-#: packages/admin/src/lib/api/content.ts:335
+#: packages/admin/src/lib/api/content.ts:359
 msgid "Failed to restore content"
 msgstr "Herstellen van content mislukt"
 
-#: packages/admin/src/lib/api/content.ts:602
-#: packages/admin/src/lib/api/content.ts:607
+#: packages/admin/src/lib/api/content.ts:626
+#: packages/admin/src/lib/api/content.ts:631
 msgid "Failed to restore revision"
 msgstr "Herstellen van revisie mislukt"
 
@@ -3974,9 +3974,9 @@ msgstr "Intrekken van API-token mislukt"
 msgid "Failed to rewrite URLs"
 msgstr "Herschrijven van URL's mislukt"
 
-#: packages/admin/src/router.tsx:729
-#: packages/admin/src/router.tsx:1018
-#: packages/admin/src/router.tsx:2309
+#: packages/admin/src/router.tsx:731
+#: packages/admin/src/router.tsx:1020
+#: packages/admin/src/router.tsx:2315
 msgid "Failed to save"
 msgstr "Opslaan mislukt"
 
@@ -3995,7 +3995,7 @@ msgstr "Opslaan van veld mislukt"
 msgid "Failed to save settings"
 msgstr "Opslaan van instellingen mislukt"
 
-#: packages/admin/src/router.tsx:1157
+#: packages/admin/src/router.tsx:1159
 msgid "Failed to schedule"
 msgstr "Inplannen mislukt"
 
@@ -4026,15 +4026,15 @@ msgstr "Instellen van termen voor item mislukt"
 msgid "Failed to uninstall plugin"
 msgstr "De-installeren van plugin mislukt"
 
-#: packages/admin/src/router.tsx:1115
+#: packages/admin/src/router.tsx:1117
 msgid "Failed to unpublish"
 msgstr "Depubliceren mislukt"
 
-#: packages/admin/src/router.tsx:1178
+#: packages/admin/src/router.tsx:1180
 msgid "Failed to unschedule"
 msgstr "Annuleren van inplanning mislukt"
 
-#: packages/admin/src/router.tsx:553
+#: packages/admin/src/router.tsx:555
 msgid "Failed to update"
 msgstr "Bijwerken mislukt"
 
@@ -4080,7 +4080,7 @@ msgstr "Bijwerken van sectie mislukt"
 msgid "Failed to update settings"
 msgstr "Bijwerken van instellingen mislukt"
 
-#: packages/admin/src/router.tsx:1762
+#: packages/admin/src/router.tsx:1768
 msgid "Failed to update status"
 msgstr "Bijwerken van status mislukt"
 
@@ -4270,7 +4270,7 @@ msgstr ""
 msgid "Folder name must be between 1 and 200 characters"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1432
+#: packages/admin/src/router.tsx:1438
 msgid "Folder no longer exists"
 msgstr ""
 
@@ -4381,7 +4381,7 @@ msgid "Go"
 msgstr "Go"
 
 #: packages/admin/src/components/WordPressImport.tsx:2434
-#: packages/admin/src/router.tsx:2545
+#: packages/admin/src/router.tsx:2551
 msgid "Go to Dashboard"
 msgstr "Ga naar dashboard"
 
@@ -5162,7 +5162,7 @@ msgstr "Meer laden"
 msgid "Load more folders"
 msgstr ""
 
-#: packages/admin/src/router.tsx:2500
+#: packages/admin/src/router.tsx:2506
 msgid "Loading"
 msgstr ""
 
@@ -5178,8 +5178,8 @@ msgstr "Collecties laden..."
 msgid "Loading comments..."
 msgstr "Reacties laden..."
 
-#: packages/admin/src/router.tsx:2502
-#: packages/admin/src/router.tsx:2514
+#: packages/admin/src/router.tsx:2508
+#: packages/admin/src/router.tsx:2520
 msgid "Loading configuration..."
 msgstr "Configuratie laden..."
 
@@ -5743,11 +5743,11 @@ msgstr "Naar prullenbak verplaatsen?"
 msgid "Move up"
 msgstr "Omhoog verplaatsen"
 
-#: packages/admin/src/router.tsx:550
+#: packages/admin/src/router.tsx:552
 msgid "Moved {total} items to draft"
 msgstr "{total} items naar concept verplaatst"
 
-#: packages/admin/src/router.tsx:571
+#: packages/admin/src/router.tsx:573
 msgid "Moved {total} items to trash"
 msgstr "{total} items naar de prullenbak verplaatst"
 
@@ -5814,7 +5814,7 @@ msgstr ""
 msgid "Never"
 msgstr "Nooit"
 
-#: packages/admin/src/router.tsx:1204
+#: packages/admin/src/router.tsx:1206
 msgid "new"
 msgstr "nieuw"
 
@@ -6436,7 +6436,7 @@ msgstr "Eigenaarschap"
 msgid "Package"
 msgstr "Pakket"
 
-#: packages/admin/src/router.tsx:2540
+#: packages/admin/src/router.tsx:2546
 msgid "Page Not Found"
 msgstr "Pagina niet gevonden"
 
@@ -6852,7 +6852,7 @@ msgstr ""
 #: packages/admin/src/components/ContentList.tsx:862
 #: packages/admin/src/components/ContentStatusBadge.tsx:59
 #: packages/admin/src/components/Dashboard.tsx:297
-#: packages/admin/src/router.tsx:1093
+#: packages/admin/src/router.tsx:1095
 msgid "Published"
 msgstr "Gepubliceerd"
 
@@ -6861,7 +6861,7 @@ msgstr "Gepubliceerd"
 msgid "Published {0}"
 msgstr "Gepubliceerd op {0}"
 
-#: packages/admin/src/router.tsx:527
+#: packages/admin/src/router.tsx:529
 msgid "Published {total} items"
 msgstr "{total} items gepubliceerd"
 
@@ -7307,7 +7307,7 @@ msgstr "Herstellen..."
 #: packages/admin/src/components/PluginFieldErrorBoundary.tsx:44
 #: packages/admin/src/components/ThemeMarketplaceBrowse.tsx:122
 #: packages/admin/src/lib/content-editor-panels.tsx:201
-#: packages/admin/src/router.tsx:2528
+#: packages/admin/src/router.tsx:2534
 #: packages/admin/src/routes/byline-schema.tsx:280
 msgid "Retry"
 msgstr "Opnieuw proberen"
@@ -7343,7 +7343,7 @@ msgstr ""
 msgid "Reusable content blocks you can insert into any content"
 msgstr "Herbruikbare contentblokken die je in elke content kunt invoegen"
 
-#: packages/admin/src/router.tsx:1131
+#: packages/admin/src/router.tsx:1133
 msgid "Reverted to published version"
 msgstr "Teruggezet naar gepubliceerde versie"
 
@@ -7563,7 +7563,7 @@ msgstr "Inplannen voor later"
 
 #: packages/admin/src/components/ContentList.tsx:853
 #: packages/admin/src/components/ContentStatusBadge.tsx:63
-#: packages/admin/src/router.tsx:1151
+#: packages/admin/src/router.tsx:1153
 msgid "Scheduled"
 msgstr "Ingepland"
 
@@ -8621,7 +8621,7 @@ msgstr "Het menu is verwijderd."
 msgid "The name of your site, used in the header and metadata"
 msgstr "De naam van je site, gebruikt in de header en metadata"
 
-#: packages/admin/src/router.tsx:2542
+#: packages/admin/src/router.tsx:2548
 msgid "The page you're looking for doesn't exist."
 msgstr "De pagina die je zoekt bestaat niet."
 
@@ -8924,7 +8924,7 @@ msgstr "Vertalen..."
 #: packages/admin/src/components/MenuEditor.tsx:143
 #: packages/admin/src/components/TaxonomyManager.tsx:993
 #: packages/admin/src/components/TaxonomySidebar.tsx:471
-#: packages/admin/src/router.tsx:1203
+#: packages/admin/src/router.tsx:1205
 msgid "Translation created"
 msgstr "Vertaling aangemaakt"
 
@@ -9128,7 +9128,7 @@ msgstr "Naamloze passkey"
 msgid "Unpublish {itemLabel}"
 msgstr ""
 
-#: packages/admin/src/router.tsx:1111
+#: packages/admin/src/router.tsx:1113
 msgid "Unpublished"
 msgstr "Gedepubliceerd"
 
@@ -9144,7 +9144,7 @@ msgstr ""
 msgid "Unschedule"
 msgstr "Planning ongedaan maken"
 
-#: packages/admin/src/router.tsx:1172
+#: packages/admin/src/router.tsx:1174
 msgid "Unscheduled"
 msgstr "Planning ongedaan gemaakt"
 
@@ -9831,7 +9831,7 @@ msgstr "Je hebt admin-rechten nodig om het schema voor auteursvermeldingen te be
 msgid "You need Admin permissions to manage media usage tracking."
 msgstr ""
 
-#: packages/admin/src/router.tsx:1819
+#: packages/admin/src/router.tsx:1825
 msgid "You need Editor permissions to moderate comments."
 msgstr "Je hebt redacteursrechten nodig om reacties te modereren."
 
