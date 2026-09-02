@@ -972,6 +972,7 @@ export function MediaLibrary({
 				>
 					{(canSearch || activeProvider === "local") && (
 						<TableToolbarSearch
+							size="base"
 							placeholder={activeProvider === "local" ? t`Search by filename...` : t`Search...`}
 							aria-label={t`Search media`}
 							value={searchQuery}
@@ -982,7 +983,7 @@ export function MediaLibrary({
 					)}
 					{activeProvider === "local" && (
 						<Select
-							size="sm"
+							size="base"
 							value={localTypeFilter}
 							onValueChange={(v) => {
 								const next = v ?? "all";
