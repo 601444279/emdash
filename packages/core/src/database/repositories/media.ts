@@ -83,6 +83,7 @@ export interface CreateMediaInput {
 	dominantColor?: string;
 	status?: MediaStatus;
 	authorId?: string;
+	folderId?: string | null;
 }
 
 export interface FindManyMediaOptions {
@@ -155,7 +156,7 @@ export class MediaRepository {
 			status: input.status ?? "ready",
 			created_at: now,
 			author_id: input.authorId ?? null,
-			folder_id: null,
+			folder_id: input.folderId ?? null,
 		};
 
 		await this.db.insertInto("media").values(row).execute();
@@ -173,6 +174,7 @@ export class MediaRepository {
 		storageKey: string;
 		contentHash?: string;
 		authorId?: string;
+		folderId?: string | null;
 	}): Promise<MediaItem> {
 		return this.create({
 			...input,

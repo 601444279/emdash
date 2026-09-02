@@ -285,6 +285,35 @@ describe("MediaDetailPanel", () => {
 		await expect.element(screen.getByRole("button", { name: "Cancel" })).toBeVisible();
 	});
 
+	it("suppresses inner scrollbars only while the dialog height expands", async () => {
+		const screen = await renderPanel({
+			item: makeLocalItem({ url: TEST_IMAGE_URL }),
+			canDuplicateCrop: true,
+		});
+		const dialog = screen.getByRole("dialog", { name: "Media details" }).element();
+		const body = screen.getByTestId("media-detail-dialog-body").element();
+		const previewPane = screen.getByTestId("media-detail-dialog-preview-column").element();
+		const detailsPane = screen.getByTestId("media-detail-dialog-details-column").element();
+
+		screen.getByRole("tab", { name: "Edit image" }).element().click();
+		await vi.waitFor(() => expect(dialog.style.height).toBe(""));
+		expect(body.style.overflowY).toBe("");
+		expect(previewPane.style.overflowY).toBe("");
+		expect(detailsPane.style.overflowY).toBe("");
+
+		screen.getByRole("tab", { name: "Details" }).element().click();
+		expect(body.style.overflowY).toBe("hidden");
+		expect(previewPane.style.overflowY).toBe("hidden");
+		expect(detailsPane.style.overflowY).toBe("hidden");
+
+		await vi.waitFor(() => {
+			expect(dialog.style.height).toBe("");
+			expect(body.style.overflowY).toBe("");
+			expect(previewPane.style.overflowY).toBe("");
+			expect(detailsPane.style.overflowY).toBe("");
+		});
+	});
+
 	it("resizes without spatial motion when reduced motion is preferred", async () => {
 		const matchMedia = vi.spyOn(window, "matchMedia").mockImplementation(
 			(query) =>
@@ -397,11 +426,14 @@ describe("MediaDetailPanel", () => {
 		await expect
 			.element(screen.getByRole("button", { name: "Focal point. Use arrow keys to move it." }))
 			.toBeVisible();
-		await expect
-			.element(
-				screen.getByText("Move the focal point to choose what stays visible in cropped images."),
-			)
-			.toBeVisible();
+		const focalDescription = screen
+			.getByText("Move the focal point to choose what stays visible in cropped images.")
+			.element();
+		expect(focalDescription).toHaveClass("sr-only");
+		expect(
+			screen.getByRole("button", { name: "Focal point. Use arrow keys to move it." }).element(),
+		).toHaveAttribute("aria-describedby", focalDescription.id);
+		await expect.element(screen.getByRole("button", { name: "About focal point" })).toBeVisible();
 		await expect.element(screen.getByRole("heading", { name: "Preview" })).toBeVisible();
 		const previewGroup = screen.getByTestId("focal-preview-group").element();
 		const portraitPreview = screen.getByTestId("focal-preview-portrait").element();
@@ -445,6 +477,21 @@ describe("MediaDetailPanel", () => {
 		});
 	});
 
+	it("suppresses image-editor overflow only while the mode layout settles", async () => {
+		const screen = await renderPanel({
+			item: makeLocalItem({ url: TEST_IMAGE_URL }),
+			canDuplicateCrop: true,
+		});
+
+		screen.getByRole("tab", { name: "Edit image" }).element().click();
+		const editPane = screen.getByTestId("media-detail-dialog-details-column").element();
+		await vi.waitFor(() => expect(getComputedStyle(editPane).overflowY).not.toBe("hidden"));
+
+		screen.getByRole("tab", { name: "Crop" }).element().click();
+		expect(getComputedStyle(editPane).overflowY).toBe("hidden");
+		await vi.waitFor(() => expect(getComputedStyle(editPane).overflowY).not.toBe("hidden"));
+	});
+
 	it.each([
 		["pending image", makeLocalItem({ url: TEST_IMAGE_URL, status: "pending" })],
 		["unsupported image", makeLocalItem({ url: TEST_IMAGE_URL, mimeType: "image/gif" })],
@@ -453,7 +500,7 @@ describe("MediaDetailPanel", () => {
 			makeImageItem({ url: TEST_IMAGE_URL, provider: "cloudflare-images", status: "ready" }),
 		],
 	])("hides crop for a %s", async (_label, item) => {
-		const screen = await renderPanel({ item, canCropOriginal: true, canDuplicateCrop: true });
+		const screen = await renderPanel({ item, canDuplicateCrop: true });
 		const editImage = screen.getByRole("tab", { name: "Edit image" });
 		if (editImage.query()) editImage.element().click();
 		expect(screen.getByRole("tab", { name: "Crop" }).query()).toBeNull();
@@ -538,8 +585,9 @@ describe("MediaDetailPanel", () => {
 		await userEvent.keyboard("{Shift>}{ArrowLeft}{/Shift}");
 		await expect.element(screen.getByRole("button", { name: "Create cropped copy" })).toBeEnabled();
 		await expect.element(screen.getByRole("button", { name: "Replace original…" })).toBeDisabled();
+		expect(screen.getByText("Choose Original to replace the existing image.").query()).toBeNull();
 		await expect
-			.element(screen.getByText("Choose Original to replace the existing image."))
+			.element(screen.getByText("Replace original is available with the Original aspect ratio."))
 			.toBeVisible();
 	});
 
@@ -642,7 +690,7 @@ describe("MediaDetailPanel", () => {
 		await vi.waitFor(() => {
 			expect(uploadMedia).toHaveBeenCalledWith(
 				expect.objectContaining({ name: "photo-cropped.jpg", type: "image/jpeg" }),
-				{ deduplicate: false },
+				{ deduplicate: false, folderId: "folder-1" },
 			);
 			expect(onCroppedCopyCreated).toHaveBeenCalledTimes(1);
 			expect(onClose).toHaveBeenCalledTimes(1);
@@ -997,6 +1045,7 @@ describe("MediaDetailPanel", () => {
 		const screen = await renderPanel({ item });
 		const altInput = screen.getByLabelText("Alt Text");
 		await expect.element(altInput).toBeInTheDocument();
+		await expect.element(altInput).toHaveAttribute("rows", "2");
 		await expect
 			.element(screen.getByRole("button", { name: "Why is this important?" }))
 			.toBeInTheDocument();
@@ -1010,6 +1059,7 @@ describe("MediaDetailPanel", () => {
 		// Caption textarea should exist for images - find by placeholder
 		const captionArea = screen.getByPlaceholder("Optional caption for display");
 		await expect.element(captionArea).toBeInTheDocument();
+		await expect.element(captionArea).toHaveAttribute("rows", "4");
 		await expect.element(captionArea).toHaveValue("Photo caption");
 	});
 

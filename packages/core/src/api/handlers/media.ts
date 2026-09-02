@@ -149,6 +149,7 @@ export async function handleMediaCreate(
 		blurhash?: string;
 		dominantColor?: string;
 		authorId?: string;
+		folderId?: string | null;
 	},
 ): Promise<ApiResult<MediaResponse>> {
 	try {

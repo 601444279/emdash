@@ -393,6 +393,7 @@ export interface EmDashHandlers {
 		blurhash?: string;
 		dominantColor?: string;
 		authorId?: string;
+		folderId?: string | null;
 	}) => Promise<HandlerResponse>;
 
 	handleMediaUpdate: (

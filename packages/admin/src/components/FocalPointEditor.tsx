@@ -35,9 +35,12 @@ export function FocalPointPreviews({ src, point }: Pick<FocalPointEditorProps, "
 	] as const;
 
 	return (
-		<div className="grid w-full grid-cols-3 items-end gap-2" data-testid="focal-preview-group">
+		<div
+			className="mb-6 grid w-full grid-cols-3 items-end gap-2 md:mb-0"
+			data-testid="focal-preview-group"
+		>
 			{previews.map(([id, label, ratio]) => (
-				<figure key={id} className="grid w-full min-w-0 gap-1.5">
+				<figure key={id} className="relative w-full min-w-0">
 					<div
 						className={`emdash-media-transparency-grid overflow-hidden rounded-lg ring ring-kumo-line ${ratio}`}
 					>
@@ -49,7 +52,9 @@ export function FocalPointPreviews({ src, point }: Pick<FocalPointEditorProps, "
 							style={{ objectPosition }}
 						/>
 					</div>
-					<figcaption className="truncate text-center text-sm text-kumo-subtle">{label}</figcaption>
+					<figcaption className="absolute inset-x-0 top-full mt-1 truncate text-center text-sm text-kumo-subtle">
+						{label}
+					</figcaption>
 				</figure>
 			))}
 		</div>

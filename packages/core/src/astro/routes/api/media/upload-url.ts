@@ -127,6 +127,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			size: body.size,
 			storageKey,
 			authorId: user?.id,
+			folderId: body.folderId,
 		});
 
 		const response: UploadUrlResponse = {

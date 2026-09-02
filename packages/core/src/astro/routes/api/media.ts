@@ -18,6 +18,7 @@ import { isParseError, parseQuery } from "#api/parse.js";
 import {
 	DEFAULT_MAX_UPLOAD_SIZE,
 	formatFileSize,
+	mediaFolderIdSchema,
 	mediaListQuery,
 	mediaUploadDeduplicateForm,
 } from "#api/schemas.js";
@@ -154,6 +155,22 @@ export const POST: APIRoute = async ({ request, locals }) => {
 				})),
 			});
 		}
+		const folderEntry = formData.get("folderId");
+		let folderId: string | null | undefined;
+		if (folderEntry !== null) {
+			if (typeof folderEntry !== "string") {
+				return apiError("VALIDATION_ERROR", "Invalid request data", 400);
+			}
+			if (folderEntry === "unfiled") {
+				folderId = null;
+			} else {
+				const folderResult = mediaFolderIdSchema.safeParse(folderEntry);
+				if (!folderResult.success) {
+					return apiError("VALIDATION_ERROR", "Invalid request data", 400);
+				}
+				folderId = folderResult.data;
+			}
+		}
 
 		// Validate file type — widen the allowlist when a field-specific list is configured
 		const fieldIdEntry = formData.get("fieldId");
@@ -237,6 +254,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			blurhash: enriched.blurhash,
 			dominantColor: enriched.dominantColor,
 			authorId: user?.id,
+			folderId,
 		});
 
 		if (!result.success) {

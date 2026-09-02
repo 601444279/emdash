@@ -131,6 +131,7 @@ export function mediaUploadUrlBody(maxSize: number) {
 			contentHash: z.string().optional(),
 			fieldId: z.string().optional(),
 			deduplicate: z.boolean().optional(),
+			folderId: mediaFolderIdSchema.nullable().optional(),
 		})
 		.meta({ id: "MediaUploadUrlBody" });
 }
@@ -155,6 +156,7 @@ export const mediaDirectUploadBody = z
 		thumbnail: binaryFileSchema.optional(),
 		fieldId: z.string().optional(),
 		deduplicate: z.enum(["true", "false"]).optional(),
+		folderId: z.union([mediaFolderIdSchema, z.literal("unfiled")]).optional(),
 	})
 	.meta({ id: "MediaDirectUploadBody" });
 

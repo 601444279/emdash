@@ -70,6 +70,7 @@ import {
 	getFileIcon,
 	formatFileSize,
 	getMediaThumbnailUrl,
+	getMediaPreviewUrl,
 	getMediaObjectPosition,
 	fallbackToOriginalThumbnail,
 	MEDIA_THUMBNAIL_WIDTH,
@@ -1682,6 +1683,7 @@ interface MediaGridItemProps {
 function MediaGridItem({ item, selected, draggable, isMoving, onClick }: MediaGridItemProps) {
 	const isImage = item.mimeType.startsWith("image/");
 	const localItem = isLocalMediaItem(item) ? item : null;
+	const previewUrl = getMediaPreviewUrl(item.url, item.contentHash);
 	const { setNodeRef, listeners, isDragging } = useDraggable({
 		id: mediaDragId(item.id),
 		data: localItem
@@ -1709,12 +1711,17 @@ function MediaGridItem({ item, selected, draggable, isMoving, onClick }: MediaGr
 			<LayerCard.Primary className="aspect-video p-0">
 				{isImage ? (
 					<img
-						src={getMediaThumbnailUrl(item.url, item.mimeType, MEDIA_THUMBNAIL_WIDTH)}
+						src={getMediaThumbnailUrl(
+							item.url,
+							item.mimeType,
+							MEDIA_THUMBNAIL_WIDTH,
+							item.contentHash,
+						)}
 						alt={item.alt || item.filename}
 						draggable={false}
 						className="emdash-media-transparency-grid h-full w-full object-contain"
 						style={{ objectPosition: getMediaObjectPosition(item) }}
-						onError={(e) => fallbackToOriginalThumbnail(e.currentTarget, item.url)}
+						onError={(e) => fallbackToOriginalThumbnail(e.currentTarget, previewUrl)}
 					/>
 				) : (
 					<div className="flex h-full w-full items-center justify-center bg-kumo-tint">
@@ -1811,6 +1818,7 @@ function MediaListItem({ item, selected, draggable, isMoving, onClick }: MediaLi
 	const { t } = useLingui();
 	const isImage = item.mimeType.startsWith("image/");
 	const localItem = isLocalMediaItem(item) ? item : null;
+	const previewUrl = getMediaPreviewUrl(item.url, item.contentHash);
 	const { setNodeRef, listeners, isDragging } = useDraggable({
 		id: mediaDragId(item.id),
 		data: localItem
@@ -1837,12 +1845,12 @@ function MediaListItem({ item, selected, draggable, isMoving, onClick }: MediaLi
 				<div className="h-10 w-10 overflow-hidden rounded">
 					{isImage ? (
 						<img
-							src={getMediaThumbnailUrl(item.url, item.mimeType, 80)}
+							src={getMediaThumbnailUrl(item.url, item.mimeType, 80, item.contentHash)}
 							alt={item.alt || item.filename}
 							draggable={false}
 							className="emdash-media-transparency-grid h-full w-full object-cover"
 							style={{ objectPosition: getMediaObjectPosition(item) }}
-							onError={(e) => fallbackToOriginalThumbnail(e.currentTarget, item.url)}
+							onError={(e) => fallbackToOriginalThumbnail(e.currentTarget, previewUrl)}
 						/>
 					) : (
 						<div className="flex h-full w-full items-center justify-center bg-kumo-tint text-xl">

@@ -59,6 +59,7 @@ import { useDebouncedValue, useStableCallback } from "../lib/hooks";
 import {
 	getFileIcon,
 	formatFileSize,
+	getMediaPreviewUrl,
 	metaPlayback,
 	normalizeMediaFocalPoint,
 	type MediaFocalPoint,
@@ -182,6 +183,7 @@ export function MediaDetailPanel({
 	const cropImageRef = React.useRef<HTMLImageElement | null>(null);
 	const dialogBodyRef = React.useRef<HTMLDivElement | null>(null);
 	const dialogResizeAnimationRef = React.useRef<Animation | null>(null);
+	const imageModeOverflowFrameRef = React.useRef<number | null>(null);
 
 	const isProviderAsset = Boolean(item.provider);
 	const isImage = item.mimeType.startsWith("image/");
@@ -207,6 +209,8 @@ export function MediaDetailPanel({
 	);
 	const [activeTab, setActiveTab] = React.useState<MediaDetailTab>("details");
 	const [imageEditMode, setImageEditMode] = React.useState<ImageEditMode>("focal-point");
+	const [suppressImageModeOverflow, setSuppressImageModeOverflow] = React.useState(false);
+	const [suppressDialogResizeOverflow, setSuppressDialogResizeOverflow] = React.useState(false);
 	const [cropAspectMode, setCropAspectMode] = React.useState<CropAspectMode>("original");
 	const [cropSelection, setCropSelection] = React.useState<MediaCropSelection>();
 	const [cropPixels, setCropPixels] = React.useState<PixelCrop | null>(null);
@@ -236,6 +240,12 @@ export function MediaDetailPanel({
 		savePendingRef.current = false;
 		cropPendingRef.current = false;
 		cropImageRef.current = null;
+		if (imageModeOverflowFrameRef.current !== null) {
+			window.cancelAnimationFrame(imageModeOverflowFrameRef.current);
+			imageModeOverflowFrameRef.current = null;
+		}
+		setSuppressImageModeOverflow(false);
+		setSuppressDialogResizeOverflow(false);
 		setFilename(item.filename);
 		setAlt(item.alt ?? "");
 		setCaption(item.caption ?? "");
@@ -262,6 +272,9 @@ export function MediaDetailPanel({
 	React.useEffect(() => {
 		return () => {
 			dialogResizeAnimationRef.current?.cancel();
+			if (imageModeOverflowFrameRef.current !== null) {
+				window.cancelAnimationFrame(imageModeOverflowFrameRef.current);
+			}
 			if (closeFallbackTimerRef.current !== null) {
 				window.clearTimeout(closeFallbackTimerRef.current);
 			}
@@ -312,7 +325,12 @@ export function MediaDetailPanel({
 		["image/jpeg", "image/png", "image/webp"].includes(cropMime) &&
 		(canCropOriginal || canDuplicateCrop),
 	);
-	const cropPreviewUrl = canShowCrop ? cacheBustMediaUrl(item.url, cropPreviewKey) : item.url;
+	const mediaPreviewUrl = localItem
+		? getMediaPreviewUrl(item.url, item.contentHash ?? cropPreviewKey)
+		: item.url;
+	const cropPreviewUrl = canShowCrop
+		? cacheBustMediaUrl(item.url, cropPreviewKey)
+		: mediaPreviewUrl;
 	const cropAspectSource =
 		cropSourceSize ??
 		(item.width && item.height ? { width: item.width, height: item.height } : null);
@@ -329,6 +347,8 @@ export function MediaDetailPanel({
 	const filenameHelpLabel = t`Why can't this be changed?`;
 	const altTextHelp = t`Used by screen readers and when image fails to load`;
 	const altTextHelpLabel = t`Why is this important?`;
+	const focalPointHelp = t`Move the focal point to choose what stays visible in cropped images.`;
+	const focalPointHelpLabel = t`About focal point`;
 	const cropAspectOptions = React.useMemo(
 		() => ({
 			original: t`Original`,
@@ -503,7 +523,13 @@ export function MediaDetailPanel({
 			}
 
 			if (action === "duplicate") {
-				return { action, item: await uploadMedia(file, { deduplicate: false }) };
+				return {
+					action,
+					item: await uploadMedia(file, {
+						deduplicate: false,
+						folderId: localItem?.folderId ?? null,
+					}),
+				};
 			}
 			return {
 				action,
@@ -645,6 +671,7 @@ export function MediaDetailPanel({
 			dialogResizeAnimationRef.current?.cancel();
 			dialogResizeAnimationRef.current = null;
 			if (dialog) dialog.style.height = "";
+			setSuppressDialogResizeOverflow(false);
 			update();
 			return;
 		}
@@ -653,11 +680,15 @@ export function MediaDetailPanel({
 		dialogResizeAnimationRef.current?.cancel();
 		dialogResizeAnimationRef.current = null;
 		dialog.style.height = `${startHeight}px`;
-		flushSync(update);
+		flushSync(() => {
+			setSuppressDialogResizeOverflow(true);
+			update();
+		});
 		dialog.style.height = "auto";
 		const endHeight = dialog.getBoundingClientRect().height;
 		if (Math.abs(endHeight - startHeight) < 1) {
 			dialog.style.height = "";
+			setSuppressDialogResizeOverflow(false);
 			return;
 		}
 
@@ -677,13 +708,18 @@ export function MediaDetailPanel({
 				if (dialogResizeAnimationRef.current !== animation) return;
 				dialogResizeAnimationRef.current = null;
 				dialog.style.height = "";
+				setSuppressDialogResizeOverflow(false);
 				animation.cancel();
 			},
 			{ once: true },
 		);
 	};
 	const changeImageEditMode = (mode: ImageEditMode) => {
-		if (isBusy || (mode === "crop" && !canShowCrop)) return;
+		if (mode === imageEditMode || isBusy || (mode === "crop" && !canShowCrop)) return;
+		if (imageModeOverflowFrameRef.current !== null) {
+			window.cancelAnimationFrame(imageModeOverflowFrameRef.current);
+		}
+		setSuppressImageModeOverflow(true);
 		transitionDialogLayout(() => {
 			setImageEditMode(mode);
 			cropMutation.reset();
@@ -691,6 +727,12 @@ export function MediaDetailPanel({
 				setCropSourceFailed(false);
 				setCropPreviewKey(createCropPreviewKey());
 			}
+		});
+		imageModeOverflowFrameRef.current = window.requestAnimationFrame(() => {
+			imageModeOverflowFrameRef.current = window.requestAnimationFrame(() => {
+				imageModeOverflowFrameRef.current = null;
+				setSuppressImageModeOverflow(false);
+			});
 		});
 	};
 
@@ -827,8 +869,15 @@ export function MediaDetailPanel({
 						}
 						style={
 							activeTab === "used-in"
-								? { flexGrow: 1, height: "min(16rem, calc(88dvh - 12.5rem))" }
-								: { flexGrow: 1 }
+								? {
+										flexGrow: 1,
+										height: "min(16rem, calc(88dvh - 12.5rem))",
+										overflowY: suppressDialogResizeOverflow ? "hidden" : undefined,
+									}
+								: {
+										flexGrow: 1,
+										overflowY: suppressDialogResizeOverflow ? "hidden" : undefined,
+									}
 						}
 						data-testid="media-detail-dialog-body"
 						role={hasTabs ? "tabpanel" : undefined}
@@ -846,13 +895,16 @@ export function MediaDetailPanel({
 							className={`border-b border-kumo-line p-6 md:min-h-0 md:overflow-y-auto md:border-e md:border-b-0 ${activeTab === "edit-image" ? "flex flex-col" : "space-y-5"}`}
 							data-testid="media-detail-dialog-preview-column"
 							hidden={activeTab === "used-in"}
+							style={{
+								overflowY: suppressDialogResizeOverflow ? "hidden" : undefined,
+							}}
 						>
 							{isImage ? (
 								activeTab === "edit-image" && imageEditMode === "crop" && canShowCrop ? (
 									cropSourceFailed ? (
 										<FocalPointEditor
 											key={`${item.id}:${item.url}:crop-fallback`}
-											src={item.url}
+											src={mediaPreviewUrl}
 											sourceSize={cropAspectSource ?? undefined}
 											alt={item.alt || item.filename}
 											editing={false}
@@ -886,7 +938,9 @@ export function MediaDetailPanel({
 								) : (
 									<FocalPointEditor
 										key={`${item.id}:${item.url}`}
-										src={activeTab === "edit-image" && canShowCrop ? cropPreviewUrl : item.url}
+										src={
+											activeTab === "edit-image" && canShowCrop ? cropPreviewUrl : mediaPreviewUrl
+										}
 										sourceSize={cropAspectSource ?? undefined}
 										alt={item.alt || item.filename}
 										editing={activeTab === "edit-image"}
@@ -1013,7 +1067,19 @@ export function MediaDetailPanel({
 							hidden={activeTab === "used-in"}
 							style={
 								canEditMetadata
-									? { gridTemplateAreas: updateErrorMessage ? '"panel" "error"' : '"panel"' }
+									? {
+											gridTemplateAreas: updateErrorMessage ? '"panel" "error"' : '"panel"',
+											overflowY:
+												suppressImageModeOverflow || suppressDialogResizeOverflow
+													? "hidden"
+													: undefined,
+											gridTemplateRows:
+												activeTab === "edit-image"
+													? updateErrorMessage
+														? "minmax(0, 1fr) auto"
+														: "minmax(0, 1fr)"
+													: undefined,
+										}
 									: undefined
 							}
 						>
@@ -1214,11 +1280,12 @@ export function MediaDetailPanel({
 													}
 												/>
 											</div>
-											<Input
+											<InputArea
 												aria-label={t`Alt Text`}
 												value={alt}
 												onChange={(event) => setAlt(event.target.value)}
 												placeholder={t`Describe this image for accessibility`}
+												rows={2}
 												disabled={isBusy || mediaUnavailable}
 												className="w-full"
 											/>
@@ -1229,18 +1296,18 @@ export function MediaDetailPanel({
 											value={caption}
 											onChange={(event) => setCaption(event.target.value)}
 											placeholder={t`Optional caption for display`}
-											rows={2}
+											rows={4}
 											disabled={isBusy || mediaUnavailable}
 										/>
 									</>
 								)}
 							</div>
 							{canEditMetadata && activeTab === "edit-image" ? (
-								<div className="grid content-start gap-6" style={{ gridArea: "panel" }}>
+								<div className="flex h-full min-h-0 flex-col gap-4" style={{ gridArea: "panel" }}>
 									{canShowCrop ? (
 										<Tabs
 											variant="segmented"
-											className="w-full max-w-sm"
+											className="w-full"
 											value={imageEditMode}
 											onValueChange={(value) => {
 												if (value === "focal-point" || value === "crop") {
@@ -1264,17 +1331,32 @@ export function MediaDetailPanel({
 
 									{imageEditMode === "focal-point" ? (
 										<>
-											<div className="flex items-center justify-between gap-4">
-												<div className="grid min-w-0 max-w-xs gap-1.5">
+											<div className="flex items-center justify-between gap-3">
+												<div className="flex min-w-0 items-center gap-1.5">
 													<h3 className="text-sm font-semibold">{t`Focal point`}</h3>
-													<p id={focalPointDescriptionId} className="text-sm text-kumo-subtle">
-														{t`Move the focal point to choose what stays visible in cropped images.`}
-													</p>
+													<Tooltip
+														content={focalPointHelp}
+														delay={0}
+														closeDelay={0}
+														render={
+															<Button
+																type="button"
+																variant="ghost"
+																shape="square"
+																size="xs"
+																aria-label={focalPointHelpLabel}
+																icon={<Info className="h-4 w-4" aria-hidden="true" />}
+															/>
+														}
+													/>
 												</div>
+												<p id={focalPointDescriptionId} className="sr-only">
+													{focalPointHelp}
+												</p>
 												<Button
 													type="button"
 													variant="outline"
-													size="lg"
+													size="sm"
 													icon={
 														<ArrowCounterClockwise
 															className="h-4 w-4"
@@ -1289,27 +1371,22 @@ export function MediaDetailPanel({
 													{t`Reset`}
 												</Button>
 											</div>
-											<section className="grid gap-4 border-t border-kumo-line pt-5">
+											<section className="mt-auto grid gap-3 border-t border-kumo-line pt-4">
 												<h3 className="text-sm font-semibold">{t`Preview`}</h3>
-												<FocalPointPreviews src={item.url} point={focalPoint} />
+												<FocalPointPreviews src={mediaPreviewUrl} point={focalPoint} />
 											</section>
 										</>
 									) : (
-										<div className="grid max-w-sm gap-4">
+										<div className="grid w-full gap-4">
 											<div className="grid gap-2">
-												<div className="flex items-end gap-2">
-													<div className="min-w-0 flex-1">
+												<div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2">
+													<div className="min-w-0">
 														<Select
 															label={t`Aspect ratio`}
 															value={cropAspectMode}
 															items={cropAspectOptions}
 															className="w-full"
 															size="lg"
-															description={
-																canCropOriginal && cropAspectMode !== "original"
-																	? t`Choose Original to replace the existing image.`
-																	: undefined
-															}
 															disabled={isBusy || cropSourceFailed}
 															onValueChange={changeCropAspect}
 														/>
@@ -1346,6 +1423,11 @@ export function MediaDetailPanel({
 															: t`Loading...`}
 													</output>
 												</div>
+												{canCropOriginal && cropAspectMode !== "original" ? (
+													<p className="text-sm text-kumo-subtle">
+														{t`Replace original is available with the Original aspect ratio.`}
+													</p>
+												) : null}
 											</div>
 											{cropSourceFailed ? (
 												<DialogError message={t`This image could not be loaded for cropping.`} />
@@ -1459,6 +1541,21 @@ export function MediaDetailPanel({
 			/>
 
 			<ConfirmDialog
+				open={showDeleteConfirm}
+				onClose={() => {
+					setShowDeleteConfirm(false);
+					deleteMutation.reset();
+				}}
+				title={t`Delete Media?`}
+				description={t`Delete "${item.filename}"? This cannot be undone.`}
+				confirmLabel={t`Delete`}
+				pendingLabel={t`Deleting...`}
+				isPending={deleteMutation.isPending}
+				error={deleteMutation.error}
+				onConfirm={() => deleteMutation.mutate()}
+			/>
+
+			<ConfirmDialog
 				open={showCropConfirm}
 				onClose={() => setShowCropConfirm(false)}
 				title={t`Replace original image?`}
@@ -1474,21 +1571,6 @@ export function MediaDetailPanel({
 					{isCropping && cropMutation.variables === "replace" ? t`Replacing original...` : ""}
 				</p>
 			</ConfirmDialog>
-
-			<ConfirmDialog
-				open={showDeleteConfirm}
-				onClose={() => {
-					setShowDeleteConfirm(false);
-					deleteMutation.reset();
-				}}
-				title={t`Delete Media?`}
-				description={t`Delete "${item.filename}"? This cannot be undone.`}
-				confirmLabel={t`Delete`}
-				pendingLabel={t`Deleting...`}
-				isPending={deleteMutation.isPending}
-				error={deleteMutation.error}
-				onConfirm={() => deleteMutation.mutate()}
-			/>
 		</>
 	);
 }

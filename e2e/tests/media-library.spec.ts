@@ -114,6 +114,7 @@ interface CropTestMediaItem {
 	url: string;
 	width: number;
 	height: number;
+	contentHash: string | null;
 }
 
 async function findMediaByFilename(
@@ -330,6 +331,30 @@ test.describe("Media Library", () => {
 			}),
 		).toBe("dashed");
 		await page.setViewportSize({ width: 1280, height: 800 });
+		const editPane = details.getByTestId("media-detail-dialog-details-column");
+		await expect
+			.poll(() => editPane.evaluate((element) => getComputedStyle(element).overflowY))
+			.toBe("auto");
+		const editModeTabs = details.getByRole("tablist").nth(1);
+		const outputRow = details.getByLabel("Crop output dimensions").locator("..");
+		const editPaneBounds = await editPane.boundingBox();
+		const editModeTabsBounds = await editModeTabs.boundingBox();
+		const outputRowBounds = await outputRow.boundingBox();
+		if (!editPaneBounds || !editModeTabsBounds || !outputRowBounds) {
+			throw new Error("Crop control geometry is unavailable");
+		}
+		const leadingInset = editModeTabsBounds.x - editPaneBounds.x;
+		const trailingInset =
+			editPaneBounds.x + editPaneBounds.width - (editModeTabsBounds.x + editModeTabsBounds.width);
+		expect(Math.abs(leadingInset - trailingInset)).toBeLessThanOrEqual(1);
+		expect(Math.abs(outputRowBounds.x - editModeTabsBounds.x)).toBeLessThanOrEqual(1);
+		expect(
+			Math.abs(
+				outputRowBounds.x +
+					outputRowBounds.width -
+					(editModeTabsBounds.x + editModeTabsBounds.width),
+			),
+		).toBeLessThanOrEqual(1);
 		const cropFrame = details.locator(".emdash-image-cropper");
 		await expect
 			.poll(async () => {
@@ -387,6 +412,16 @@ test.describe("Media Library", () => {
 			contentBefore,
 		);
 		await expect(page.getByText("Original image cropped.")).toBeAttached();
+		await details.getByRole("tab", { name: "Details" }).click();
+		const refreshedPreview = previewColumn.locator("img").first();
+		await expect
+			.poll(() => refreshedPreview.evaluate((image) => image.naturalWidth))
+			.toBe(replaced.width);
+		await expect(refreshedPreview).toHaveAttribute(
+			"src",
+			new RegExp(encodeURIComponent(replaced.contentHash!)),
+		);
+		await details.getByRole("tab", { name: "Edit image" }).click();
 
 		const aspectRatio = details.getByRole("combobox", { name: "Aspect ratio" });
 		await aspectRatio.click();
