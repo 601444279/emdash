@@ -1385,13 +1385,13 @@ export function MediaDetailPanel({
 											}}
 											tabs={[
 												{
-													value: "focal-point",
-													label: t`Focal point`,
+													value: "crop",
+													label: t`Crop`,
 													className: "flex-1 justify-center",
 												},
 												{
-													value: "crop",
-													label: t`Crop`,
+													value: "focal-point",
+													label: t`Focal point`,
 													className: "flex-1 justify-center",
 												},
 											]}

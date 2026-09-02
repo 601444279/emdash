@@ -519,7 +519,13 @@ describe("MediaDetailPanel", () => {
 		});
 
 		screen.getByRole("tab", { name: "Edit image" }).element().click();
-		await expect.element(screen.getByRole("tab", { name: "Focal point" })).toBeVisible();
+		const editModeTabs = screen.getByRole("tabpanel", { name: "Edit image" }).getByRole("tablist");
+		expect(
+			Array.from(editModeTabs.element().querySelectorAll('[role="tab"]'), (tab) => tab.textContent),
+		).toEqual(["Crop", "Focal point"]);
+		await expect
+			.element(screen.getByRole("tab", { name: "Focal point" }))
+			.toHaveAttribute("aria-selected", "true");
 		await expect.element(screen.getByRole("tab", { name: "Crop" })).toBeVisible();
 		screen.getByRole("tab", { name: "Crop" }).element().click();
 		await vi.waitFor(() => {
