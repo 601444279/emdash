@@ -6,11 +6,14 @@ import { loadConfiguration } from "../src/config.js";
 import { createPublisherApplicationSession } from "../src/publisher-session/session.js";
 import {
 	handleDisablePublisherWorkload,
+	handleGetPublisherApproverStatus,
 	handleGetPublisher,
+	handleListPublisherAudit,
 	handleListPublisherIntents,
 	handleListPublisherWorkloads,
 	handlePutPublisherWorkload,
 	handleRevokePublisherDelegation,
+	matchPublisherApproverStatusPath,
 } from "../src/publisher/routes.js";
 import { TEST_BINDINGS } from "./fixtures/oauth.js";
 
@@ -85,6 +88,17 @@ describe("publisher API", () => {
 			request("/v1/publisher", headers),
 			"request-1",
 			configuration,
+			{
+				actorResolver: {
+					async resolve() {
+						return {
+							did: PUBLISHER_DID,
+							handle: "publisher.example.com",
+							pds: "https://pds.example.com",
+						};
+					},
+				},
+			},
 		);
 		expect(response.status).toBe(200);
 		const value = await response.json();
@@ -92,6 +106,7 @@ describe("publisher API", () => {
 			data: {
 				publisher: {
 					did: PUBLISHER_DID,
+					handle: "publisher.example.com",
 					delegation: { status: "active", stateVersion: 1 },
 				},
 			},
@@ -146,6 +161,82 @@ describe("publisher API", () => {
 		});
 	});
 
+	it("compares signed approvers without exposing credential metadata", async () => {
+		const configuration = await loadConfiguration(TEST_BINDINGS);
+		const enrolledDid = "did:plc:enrolled-approver";
+		const missingDid = "did:plc:missing-approver";
+		const revokedDid = "did:plc:revoked-approver";
+		await env.PUBLISHER_DO.getByName(PUBLISHER_DID).putWorkloadPolicy({
+			publisherDid: PUBLISHER_DID,
+			...policyBody(),
+			active: true,
+			now: NOW,
+		});
+		await env.APPROVER_DO.getByName(enrolledDid).enrolCredential(enrolledDid, {
+			credentialId: "publisher-visible-status",
+			publicKey: new Uint8Array([1, 2, 3]),
+			algorithm: -7,
+			counter: 0,
+			transports: ["internal"],
+			name: "Private credential name",
+			now: NOW + 1,
+		});
+		await env.APPROVER_DO.getByName(revokedDid).enrolCredential(revokedDid, {
+			credentialId: "revoked-publisher-status",
+			publicKey: new Uint8Array([4, 5, 6]),
+			algorithm: -7,
+			counter: 0,
+			transports: ["internal"],
+			name: "Revoked private credential",
+			now: NOW + 1,
+		});
+		await env.APPROVER_DO.getByName(revokedDid).revokeCredential(
+			revokedDid,
+			"revoked-publisher-status",
+			NOW + 2,
+		);
+		const params = matchPublisherApproverStatusPath("/v1/publisher/workloads/gallery/approvers");
+		expect(params).toEqual({ packageSlug: "gallery" });
+
+		const response = await handleGetPublisherApproverStatus(
+			request("/v1/publisher/workloads/gallery/approvers", await sessionHeaders()),
+			"request-approvers",
+			configuration,
+			params!,
+			{
+				loadCurrentApprovalPolicy: async () => ({
+					profileCid: "bafyprofile",
+					approverDids: [enrolledDid, missingDid, revokedDid],
+				}),
+				actorResolver: {
+					async resolve(identifier) {
+						return {
+							did: identifier as `did:${string}:${string}`,
+							handle: `${identifier.split(":").at(-1)}.example.com` as `${string}.${string}`,
+							pds: "https://pds.example.com",
+						};
+					},
+				},
+			},
+		);
+
+		expect(response.status).toBe(200);
+		const body = await response.json();
+		expect(body).toMatchObject({
+			data: { packageSlug: "gallery", profileCid: "bafyprofile" },
+		});
+		if (typeof body !== "object" || body === null) throw new Error("Expected response object");
+		const data = Reflect.get(body, "data");
+		if (typeof data !== "object" || data === null) throw new Error("Expected response data");
+		expect(Reflect.get(data, "items")).toEqual([
+			{ did: enrolledDid, handle: "enrolled-approver.example.com", status: "enrolled" },
+			{ did: missingDid, handle: "missing-approver.example.com", status: "not_enrolled" },
+			{ did: revokedDid, handle: "revoked-approver.example.com", status: "revoked" },
+		]);
+		expect(JSON.stringify(body)).not.toContain("Private credential name");
+		expect(JSON.stringify(body)).not.toContain("publisher-visible-status");
+	});
+
 	it("lists only intents from the authenticated publisher shard", async () => {
 		const configuration = await loadConfiguration(TEST_BINDINGS);
 		const publisher = env.PUBLISHER_DO.getByName(PUBLISHER_DID);
@@ -180,6 +271,64 @@ describe("publisher API", () => {
 		expect(await response.json()).toMatchObject({
 			data: { items: [{ id: INTENT_ID, publisherDid: PUBLISHER_DID }] },
 		});
+	});
+
+	it("accepts the maximum page size for workload and intent lists", async () => {
+		const configuration = await loadConfiguration(TEST_BINDINGS);
+		const headers = await sessionHeaders();
+		const workloads = await handleListPublisherWorkloads(
+			request("/v1/publisher/workloads?limit=100", headers),
+			"request-workloads",
+			configuration,
+		);
+		const intents = await handleListPublisherIntents(
+			request("/v1/publisher/intents?limit=100", headers),
+			"request-intents",
+			configuration,
+		);
+
+		expect(workloads.status).toBe(200);
+		expect(await workloads.json()).toMatchObject({ data: { items: [] } });
+		expect(intents.status).toBe(200);
+		expect(await intents.json()).toMatchObject({ data: { items: [] } });
+	});
+
+	it("paginates the authenticated publisher audit without private payloads", async () => {
+		const configuration = await loadConfiguration(TEST_BINDINGS);
+		await sessionHeaders();
+		const response = await handleListPublisherAudit(
+			request("/v1/publisher/audit?limit=1", await sessionHeaders()),
+			"request-audit",
+			configuration,
+			{
+				actorResolver: {
+					async resolve() {
+						return {
+							did: PUBLISHER_DID,
+							handle: "publisher.example.com",
+							pds: "https://pds.example.com",
+						};
+					},
+				},
+			},
+		);
+
+		expect(response.status).toBe(200);
+		const body = await response.json();
+		expect(body).toMatchObject({
+			data: {
+				items: [
+					{
+						sequence: 1,
+						eventType: "publisher-session-created",
+						actorHandle: "publisher.example.com",
+					},
+				],
+				nextCursor: "1",
+			},
+		});
+		expect(JSON.stringify(body)).not.toContain("csrf");
+		expect(JSON.stringify(body)).not.toContain("publicPayloadJson");
 	});
 
 	it("revokes retained authority idempotently without exposing OAuth errors", async () => {

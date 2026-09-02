@@ -13,6 +13,10 @@ import { loadConfiguration } from "../src/config.js";
 import { SERVICE_CONTROL_OBJECT_NAME } from "../src/control-do/service-control-do.js";
 import { createPublisherOAuthStores } from "../src/oauth/custody.js";
 import { publishVerifiedIntent } from "../src/publishing/workflow.js";
+import {
+	persistWorkloadStagedArtifact,
+	workloadArtifactSourceUrl,
+} from "../src/publishing/workload-staging.js";
 import type { AuthoritativeRecord } from "../src/verification/pds.js";
 import {
 	restartReleaseIntentWorkflow,
@@ -522,6 +526,96 @@ describe("ReleaseIntentWorkflow", () => {
 			{ name: "policy-decision" },
 			{ name: "final-verification" },
 		]);
+	});
+
+	it("publishes private workflow uploads and promotes only verified provenance", async () => {
+		const provenanceBytes = new TextEncoder().encode('{"sigstore":"bundle"}\n');
+		const provenanceChecksum = await checksumFor(provenanceBytes);
+		const release = releaseRecord();
+		release.artifacts.package.url = workloadArtifactSourceUrl(
+			TEST_BINDINGS.PUBLIC_ORIGIN,
+			"package",
+			ARTIFACT_CHECKSUM,
+		);
+		const provenanceUrl = workloadArtifactSourceUrl(
+			TEST_BINDINGS.PUBLIC_ORIGIN,
+			"provenance",
+			provenanceChecksum,
+		);
+		const releaseExtension = release.extensions[NSID.packageReleaseExtension]! as {
+			declaredAccess: Record<string, unknown>;
+			provenance?: {
+				url: `${string}:${string}`;
+				checksum: string;
+				predicateType: "https://slsa.dev/provenance/v1";
+				sourceRepository: `${string}:${string}`;
+				builderId: `${string}:${string}`;
+			};
+		};
+		releaseExtension.provenance = {
+			...releaseExtension.provenance!,
+			url: provenanceUrl,
+			checksum: provenanceChecksum,
+		};
+		for (const artifact of [
+			{
+				slot: "package" as const,
+				checksum: ARTIFACT_CHECKSUM,
+				contentType: "application/gzip",
+				bytes: PACKAGE_BYTES,
+			},
+			{
+				slot: "provenance" as const,
+				checksum: provenanceChecksum,
+				contentType: "application/json",
+				bytes: provenanceBytes,
+			},
+		]) {
+			await persistWorkloadStagedArtifact(env.PUBLICATION_STAGING, {
+				publisherDid: PUBLISHER_DID,
+				workloadDigest: "I".repeat(43),
+				packageSlug: "gallery",
+				version: "1.2.3",
+				slot: artifact.slot,
+				checksum: artifact.checksum,
+				contentType: artifact.contentType,
+				contentLength: artifact.bytes.byteLength,
+				body: new Response(artifact.bytes).body!,
+			});
+		}
+		let createdRecord:
+			| (PackageRelease.Main & {
+					extensions: Record<string, { provenance?: { url: string } }>;
+			  })
+			| null = null;
+		vi.stubGlobal(
+			"fetch",
+			workflowNetwork({
+				onCreateRecord: async (request) => {
+					const body = await request.clone().json<{ record: NonNullable<typeof createdRecord> }>();
+					createdRecord = body.record;
+					return Response.json({ uri: CREATED_URI, cid: CREATED_CID });
+				},
+			}),
+		);
+		await createVerifyingIntent(true, JSON.stringify({ release }));
+		await using introspector = await introspectWorkflowInstance(
+			env.RELEASE_INTENT_WORKFLOW,
+			INTENT_ID,
+		);
+		await env.RELEASE_INTENT_WORKFLOW.create({
+			id: INTENT_ID,
+			params: { publisherDid: PUBLISHER_DID, intentId: INTENT_ID },
+		});
+		await introspector.waitForStatus("complete");
+
+		expect(createdRecord).not.toBeNull();
+		expect(createdRecord!.artifacts.package).not.toHaveProperty("url");
+		expect(createdRecord!.extensions[NSID.packageReleaseExtension]!.provenance!.url).toBe(
+			provenanceUrl,
+		);
+		expect((await env.PUBLICATION_STAGING.list()).objects).toHaveLength(0);
+		expect(await env.PROVENANCE_STORE.head(`provenance/${provenanceChecksum}`)).not.toBeNull();
 	});
 
 	it("uploads every artifact before permitting a blob-only canonical create", async () => {
@@ -1130,6 +1224,72 @@ describe("ReleaseIntentWorkflow", () => {
 				.one(),
 		);
 		expect(operation.lease_ms).toBe(5 * 60_000);
+	});
+
+	it("expires a ready intent instead of publishing it after a pause", async () => {
+		let paused = false;
+		let createAttempts = 0;
+		vi.stubGlobal(
+			"fetch",
+			workflowNetwork({
+				onAuthorizationMetadata: async () => {
+					if (paused) return;
+					paused = true;
+					await env.SERVICE_CONTROL_DO.getByName(SERVICE_CONTROL_OBJECT_NAME).setServiceMode({
+						actor: CONTROL_ACTOR,
+						idempotencyKey: "publication-expiry-pause",
+						requestDigest: "E".repeat(43),
+						mode: "publication-paused",
+						reasonCode: "TEST_PAUSE",
+					});
+				},
+				onCreateRecord: () => {
+					createAttempts += 1;
+					return Response.json({ uri: CREATED_URI, cid: CREATED_CID });
+				},
+			}),
+		);
+		await createVerifyingIntent();
+		await using introspector = await introspectWorkflowInstance(
+			env.RELEASE_INTENT_WORKFLOW,
+			INTENT_ID,
+		);
+		await env.RELEASE_INTENT_WORKFLOW.create({
+			id: INTENT_ID,
+			params: { publisherDid: PUBLISHER_DID, intentId: INTENT_ID },
+		});
+		await introspector.waitForStatus("complete");
+		await runInDurableObject(env.PUBLISHER_DO.getByName(PUBLISHER_DID), (_instance, state) => {
+			state.storage.sql.exec(
+				"UPDATE intents SET expires_at = ? WHERE id = ?",
+				Date.now() - 1,
+				INTENT_ID,
+			);
+		});
+		await env.SERVICE_CONTROL_DO.getByName(SERVICE_CONTROL_OBJECT_NAME).setServiceMode({
+			actor: CONTROL_ACTOR,
+			idempotencyKey: "publication-expiry-active",
+			requestDigest: "F".repeat(43),
+			mode: "active",
+			reasonCode: null,
+		});
+
+		await expect(
+			restartReleaseIntentWorkflow(
+				env.RELEASE_INTENT_WORKFLOW,
+				env.PUBLISHER_DO,
+				PUBLISHER_DID,
+				INTENT_ID,
+			),
+		).resolves.toEqual({ ok: true, workflowId: INTENT_ID, restarted: true });
+		await introspector.waitForStepResult({ name: "recovery-policy-decision" });
+		await introspector.waitForStatus("complete");
+		await expect(introspector.getOutput()).resolves.toEqual({
+			intentId: INTENT_ID,
+			state: "expired",
+			reasonCode: "INTENT_EXPIRED",
+		});
+		expect(createAttempts).toBe(0);
 	});
 
 	it("restarts an errored reconciliation and accepts the exact authoritative record", async () => {

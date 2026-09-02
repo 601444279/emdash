@@ -27,6 +27,10 @@ const OAUTH_NETWORK_TIMEOUT_MS = 30_000;
 const ERROR_NAME_PATTERN = /^[A-Za-z][A-Za-z0-9]{0,63}$/;
 const ERROR_CODE_PATTERN = /^[A-Za-z][A-Za-z0-9_]{0,63}$/;
 
+export interface OAuthRouteDependencies {
+	registerDirectoryIdentity?: typeof registerDirectoryIdentity;
+}
+
 export async function handleApproverIdentityAuthorize(
 	request: Request,
 	requestId: string,
@@ -299,6 +303,7 @@ export async function handleOAuthCallback(
 	request: Request,
 	requestId: string,
 	configuration: ServiceConfiguration,
+	dependencies: OAuthRouteDependencies = {},
 ): Promise<Response> {
 	try {
 		const params = new URL(request.url).searchParams;
@@ -339,26 +344,35 @@ export async function handleOAuthCallback(
 						},
 						fetch: callbackFetch,
 					});
+		const identityKinds =
+			route.purpose === "release_delegation"
+				? (["publisher"] as const)
+				: (["publisher", "approver"] as const);
+		const register = dependencies.registerDirectoryIdentity ?? registerDirectoryIdentity;
+		const registerIdentities = async () => {
+			for (const identityKind of identityKinds) {
+				try {
+					await register(identityKind, route.expectedDid);
+				} catch (error) {
+					writeOperationsMetric({
+						event: "directory_failure",
+						outcome: identityKind,
+						requestId,
+					});
+					console.error(
+						JSON.stringify({
+							event: "identity_directory_registration_failed",
+							requestId,
+							name: error instanceof Error ? error.name : "UnknownError",
+						}),
+					);
+					throw error;
+				}
+			}
+		};
+		if (route.purpose === "release_delegation") await registerIdentities();
 		await client.callback(params);
-		try {
-			await registerDirectoryIdentity(
-				route.purpose === "approver_identity" ? "approver" : "publisher",
-				route.expectedDid,
-			);
-		} catch (error) {
-			writeOperationsMetric({
-				event: "directory_failure",
-				outcome: route.purpose === "approver_identity" ? "approver" : "publisher",
-				requestId,
-			});
-			console.error(
-				JSON.stringify({
-					event: "identity_directory_registration_failed",
-					requestId,
-					name: error instanceof Error ? error.name : "UnknownError",
-				}),
-			);
-		}
+		if (route.purpose !== "release_delegation") await registerIdentities();
 		const headers = new Headers({
 			"cache-control": "no-store",
 			location: new URL(route.redirectTarget, configuration.publicOrigin).toString(),
@@ -366,13 +380,14 @@ export async function handleOAuthCallback(
 			"x-request-id": requestId,
 		});
 		headers.append("set-cookie", clearOAuthRouteCookie());
-		if (route.purpose === "publisher_identity") {
-			await client.revoke();
-			const created = await createPublisherApplicationSession(env.PUBLISHER_DO, route.expectedDid);
-			for (const cookie of created.setCookieHeaders) headers.append("set-cookie", cookie);
-		} else if (route.purpose === "approver_identity") {
-			const created = await createApproverApplicationSession(env.APPROVER_DO, route.expectedDid);
-			for (const cookie of created.setCookieHeaders) headers.append("set-cookie", cookie);
+		if (route.purpose !== "release_delegation") {
+			if (route.purpose === "publisher_identity") await client.revoke();
+			const [publisherSession, approverSession] = await Promise.all([
+				createPublisherApplicationSession(env.PUBLISHER_DO, route.expectedDid),
+				createApproverApplicationSession(env.APPROVER_DO, route.expectedDid),
+			]);
+			for (const cookie of publisherSession.setCookieHeaders) headers.append("set-cookie", cookie);
+			for (const cookie of approverSession.setCookieHeaders) headers.append("set-cookie", cookie);
 		}
 		return new Response(null, { status: 303, headers });
 	} catch (error) {

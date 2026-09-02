@@ -1,13 +1,20 @@
-import type { ReleaseIntentResource } from "@emdash-cms/registry-client/release-service";
+import type {
+	DryRunReleaseIntentResult,
+	ReleaseIntentResource,
+} from "@emdash-cms/registry-client/release-service";
 import { defineCommand } from "citty";
 import { consola } from "consola";
 import pc from "picocolors";
 
 import {
 	cancelDelegatedReleaseIntent,
+	dryRunDelegatedRelease,
 	getDelegatedReleaseIntent,
+	interactiveReleaseUrl,
 	submitDelegatedRelease,
+	type InteractiveReleaseAction,
 } from "../release-service/operations.js";
+import { releaseSetupCommand } from "../release-setup.js";
 
 const POSITIVE_INTEGER_PATTERN = /^[1-9][0-9]*$/;
 const FAILURE_STATES = new Set([
@@ -25,6 +32,12 @@ function requiredTarget(args: { "publisher-did"?: string; "service-url"?: string
 	if (!serviceUrl) throw new Error("Release service URL is required");
 	if (!publisherDid) throw new Error("Publisher DID is required");
 	return { serviceUrl, publisherDid };
+}
+
+function requiredService(args: { "service-url"?: string }): string {
+	const serviceUrl = args["service-url"] || process.env["EMDASH_RELEASE_SERVICE_URL"];
+	if (!serviceUrl) throw new Error("Release service URL is required");
+	return serviceUrl;
 }
 
 function positiveInteger(value: string, name: string, maximum: number): number {
@@ -52,6 +65,26 @@ function printIntent(intent: ReleaseIntentResource, json: boolean): void {
 	if (intent.reasonCode) console.log(`  Reason: ${intent.reasonCode}`);
 }
 
+function printDryRun(result: DryRunReleaseIntentResult, json: boolean): void {
+	if (json) {
+		console.log(JSON.stringify(result, null, 2));
+		return;
+	}
+	console.log(`${pc.bold(result.packageSlug)} ${pc.dim(result.version)}`);
+	console.log("  Admission: allowed");
+	console.log(`  Policy:    ${result.workloadPolicyVersion}`);
+}
+
+function printBrowserHandoff(action: InteractiveReleaseAction, url: URL, json?: boolean): void {
+	if (json) {
+		console.log(JSON.stringify({ action, url: url.toString() }));
+		return;
+	}
+	consola.info("Open your browser to:");
+	console.log(`  ${pc.cyan(pc.bold(url.toString()))}`);
+	consola.info("OAuth sessions and passkey assertions remain in the browser.");
+}
+
 const commonArgs = {
 	"service-url": {
 		type: "string" as const,
@@ -67,6 +100,86 @@ const commonArgs = {
 	},
 };
 
+const browserArgs = {
+	"service-url": commonArgs["service-url"],
+	json: {
+		type: "boolean" as const,
+		description: "Output the browser handoff as JSON",
+	},
+};
+
+export const releaseDelegateCommand = defineCommand({
+	meta: { name: "delegate", description: "Print a browser handoff for publisher delegation" },
+	args: browserArgs,
+	async run({ args }) {
+		const url = interactiveReleaseUrl("delegate", { serviceUrl: requiredService(args) });
+		printBrowserHandoff("delegate", url, args.json);
+	},
+});
+
+export const releaseRevokeCommand = defineCommand({
+	meta: { name: "revoke", description: "Print a browser handoff for authority revocation" },
+	args: browserArgs,
+	async run({ args }) {
+		const url = interactiveReleaseUrl("revoke", { serviceUrl: requiredService(args) });
+		printBrowserHandoff("revoke", url, args.json);
+	},
+});
+
+export const releaseWorkloadCommand = defineCommand({
+	meta: { name: "workload", description: "Print a browser handoff for workload policies" },
+	args: browserArgs,
+	async run({ args }) {
+		const url = interactiveReleaseUrl("workload", { serviceUrl: requiredService(args) });
+		printBrowserHandoff("workload", url, args.json);
+	},
+});
+
+export const releaseEnrolCommand = defineCommand({
+	meta: { name: "enrol", description: "Print a browser handoff for passkey enrolment" },
+	args: browserArgs,
+	async run({ args }) {
+		const url = interactiveReleaseUrl("enrol", { serviceUrl: requiredService(args) });
+		printBrowserHandoff("enrol", url, args.json);
+	},
+});
+
+const approvalBrowserArgs = {
+	"intent-id": {
+		type: "positional" as const,
+		description: "Release intent ULID",
+		required: true,
+	},
+	...browserArgs,
+	"publisher-did": commonArgs["publisher-did"],
+};
+
+export const releaseApproveCommand = defineCommand({
+	meta: { name: "approve", description: "Print a browser handoff for passkey approval" },
+	args: approvalBrowserArgs,
+	async run({ args }) {
+		const target = requiredTarget(args);
+		const url = interactiveReleaseUrl("approve", {
+			...target,
+			intentId: args["intent-id"],
+		});
+		printBrowserHandoff("approve", url, args.json);
+	},
+});
+
+export const releaseRejectCommand = defineCommand({
+	meta: { name: "reject", description: "Print a browser handoff for passkey rejection" },
+	args: approvalBrowserArgs,
+	async run({ args }) {
+		const target = requiredTarget(args);
+		const url = interactiveReleaseUrl("reject", {
+			...target,
+			intentId: args["intent-id"],
+		});
+		printBrowserHandoff("reject", url, args.json);
+	},
+});
+
 export const releaseSubmitCommand = defineCommand({
 	meta: {
 		name: "submit",
@@ -75,7 +188,7 @@ export const releaseSubmitCommand = defineCommand({
 	args: {
 		"release-file": {
 			type: "positional",
-			description: "Package release record JSON file",
+			description: "URL-source package release JSON file",
 			required: true,
 		},
 		...commonArgs,
@@ -105,6 +218,7 @@ export const releaseSubmitCommand = defineCommand({
 	},
 	async run({ args }) {
 		const target = requiredTarget(args);
+		let connectionRequestId: string | null = null;
 		let previousState: string | null = null;
 		const intent = await submitDelegatedRelease({
 			...target,
@@ -115,6 +229,15 @@ export const releaseSubmitCommand = defineCommand({
 			pollIntervalMs:
 				positiveInteger(args["poll-interval-seconds"], "poll-interval-seconds", 300) * 1000,
 			maxWaitMs: positiveInteger(args["timeout-minutes"], "timeout-minutes", 360) * 60_000,
+			onConnectionUpdate: args.json
+				? undefined
+				: (current) => {
+						if (current.status === "pending" && current.request.id !== connectionRequestId) {
+							connectionRequestId = current.request.id;
+							consola.info("Approve this GitHub workflow to continue:");
+							console.log(`  ${pc.cyan(pc.bold(current.approvalUrl))}`);
+						}
+					},
 			onUpdate: args.json
 				? undefined
 				: (current) => {
@@ -130,6 +253,28 @@ export const releaseSubmitCommand = defineCommand({
 				`Release intent ended in ${intent.state}${intent.reasonCode ? ` (${intent.reasonCode})` : ""}`,
 			);
 		}
+	},
+});
+
+export const releaseDryRunCommand = defineCommand({
+	meta: {
+		name: "dry-run",
+		description: "Validate delegated release admission without creating an intent",
+	},
+	args: {
+		"release-file": {
+			type: "positional",
+			description: "URL-source package release JSON file",
+			required: true,
+		},
+		...commonArgs,
+	},
+	async run({ args }) {
+		const result = await dryRunDelegatedRelease({
+			...requiredTarget(args),
+			releaseFile: args["release-file"],
+		});
+		printDryRun(result, args.json ?? false);
 	},
 });
 
@@ -179,8 +324,16 @@ export const releaseCancelCommand = defineCommand({
 export const releaseCommand = defineCommand({
 	meta: { name: "release", description: "Manage delegated release intents" },
 	subCommands: {
+		approve: releaseApproveCommand,
+		delegate: releaseDelegateCommand,
+		"dry-run": releaseDryRunCommand,
+		enrol: releaseEnrolCommand,
+		reject: releaseRejectCommand,
+		revoke: releaseRevokeCommand,
+		setup: releaseSetupCommand,
 		submit: releaseSubmitCommand,
 		status: releaseStatusCommand,
 		cancel: releaseCancelCommand,
+		workload: releaseWorkloadCommand,
 	},
 });

@@ -3,7 +3,7 @@ import {
 	parseDelegatedReleaseSourceRecord,
 	type DelegatedReleaseSourceRecord,
 } from "@emdash-cms/registry-client/release-service";
-import type { PackageRelease } from "@emdash-cms/registry-lexicons";
+import { NSID, type PackageRelease } from "@emdash-cms/registry-lexicons";
 import type { WorkflowStep } from "cloudflare:workers";
 import { NonRetryableError } from "cloudflare:workflows";
 import { base64url } from "jose";
@@ -36,6 +36,7 @@ import {
 	readPublisherVerificationSnapshot,
 	resolvePublicHostname,
 } from "../verification/pds.js";
+import { verifyReleaseEvidence } from "../verification/staged-input.js";
 import { createReleaseRecord, uploadReleaseBlob } from "./create-only.js";
 import {
 	buildMaterializedRelease,
@@ -51,6 +52,13 @@ import {
 	reconcileReleaseRecord,
 } from "./reconcile.js";
 import { deleteStagedArtifacts, loadStagedArtifact, persistStagedArtifact } from "./staging.js";
+import {
+	deleteWorkloadStagedArtifacts,
+	loadWorkloadStagedArtifact,
+	promoteWorkloadProvenance,
+	workloadArtifactSourceUrl,
+	type WorkloadArtifactIdentity,
+} from "./workload-staging.js";
 
 const PUBLICATION_PERMIT_TTL_MS = 30_000;
 const PUBLICATION_OPERATION_LEASE_MS = 5 * 60_000;
@@ -78,7 +86,7 @@ const STEP_SLOT_PATTERN = /[[\]]/g;
 
 export interface PublicationWorkflowOutput {
 	intentId: string;
-	state: "conflict" | "failed" | "invalid" | "published" | "ready";
+	state: "conflict" | "expired" | "failed" | "invalid" | "published" | "ready";
 	reasonCode: string | null;
 }
 
@@ -94,6 +102,7 @@ type TransitionSummary =
 type AttemptResult =
 	| { state: "published"; uri: string; cid: string }
 	| { state: "reconciling" }
+	| { state: "expired" }
 	| { state: "blocked"; reasonCode: string }
 	| { state: "failed"; reasonCode: string };
 
@@ -149,6 +158,7 @@ function publisherSnapshotErrorCode(error: unknown): PublisherSnapshotError["cod
 
 function isRetryablePublicationBlock(code: string): boolean {
 	return (
+		code === "ENCRYPTION_KEY_INACTIVE" ||
 		code === "PERMIT_EXPIRED" ||
 		code === "PERMIT_STALE" ||
 		code === "PUBLICATION_PAUSED" ||
@@ -227,6 +237,59 @@ function sourceDescriptor(
 	const match = SCREENSHOT_PATH_PATTERN.exec(path);
 	if (!match) return null;
 	return release.artifacts.screenshots?.[Number(match[1])] ?? null;
+}
+
+function releaseArtifactPaths(
+	release: DelegatedReleaseSourceRecord,
+): ArtifactMaterializationPath[] {
+	const paths: ArtifactMaterializationPath[] = ["package"];
+	if (release.artifacts.icon) paths.push("icon");
+	if (release.artifacts.banner) paths.push("banner");
+	for (const [index] of (release.artifacts.screenshots ?? []).entries()) {
+		paths.push(`screenshots[${index}]`);
+	}
+	return paths;
+}
+
+function workloadStagedSources(
+	publicOrigin: string,
+	publisherDid: string,
+	intent: StoredIntent,
+	release: DelegatedReleaseSourceRecord,
+): WorkloadArtifactIdentity[] {
+	const sources: WorkloadArtifactIdentity[] = releaseArtifactPaths(release).flatMap((slot) => {
+		const descriptor = sourceDescriptor(release, slot);
+		if (
+			!descriptor ||
+			descriptor.url !== workloadArtifactSourceUrl(publicOrigin, slot, descriptor.checksum)
+		) {
+			return [];
+		}
+		return [
+			{
+				publisherDid,
+				workloadDigest: intent.workloadIdempotencyDigest,
+				packageSlug: intent.packageSlug,
+				version: intent.version,
+				slot,
+				checksum: descriptor.checksum,
+			},
+		];
+	});
+	const provenance = release.extensions[NSID.packageReleaseExtension].provenance;
+	if (
+		provenance.url === workloadArtifactSourceUrl(publicOrigin, "provenance", provenance.checksum)
+	) {
+		sources.push({
+			publisherDid,
+			workloadDigest: intent.workloadIdempotencyDigest,
+			packageSlug: intent.packageSlug,
+			version: intent.version,
+			slot: "provenance",
+			checksum: provenance.checksum,
+		});
+	}
+	return sources;
 }
 
 function isPublicationSlot(path: string): path is PublicationArtifactSlot {
@@ -348,6 +411,18 @@ async function stageSourceArtifacts(
 	const staged = await stageReleaseArtifacts(release, {
 		fetch: globalThis.fetch,
 		resolveHostname: (hostname) => resolvePublicHostname(hostname, globalThis.fetch),
+		loadSource: async ({ path, url, checksum }) => {
+			if (url !== workloadArtifactSourceUrl(env.PUBLIC_ORIGIN, path, checksum)) return null;
+			const loaded = await loadWorkloadStagedArtifact(env.PUBLICATION_STAGING, {
+				publisherDid,
+				workloadDigest: intent.workloadIdempotencyDigest,
+				packageSlug: intent.packageSlug,
+				version: intent.version,
+				slot: path,
+				checksum,
+			});
+			return { bytes: loaded.bytes, contentType: loaded.contentType };
+		},
 	});
 	for (const artifact of staged.artifacts) {
 		const descriptor = sourceDescriptor(release, artifact.metadata.path);
@@ -566,7 +641,11 @@ export async function publishVerifiedIntent(
 						return { ok: false, reasonCode: "FINAL_INPUT_INVALID", terminalState: "invalid" };
 					}
 					const verifier = normalizeVerifierReport(
-						await env.RELEASE_VERIFIER.verifyRelease(verifierInput),
+						await verifyReleaseEvidence({ ...originalIntent, publisherDid }, verifierInput, {
+							bucket: env.PUBLICATION_STAGING,
+							publicOrigin: env.PUBLIC_ORIGIN,
+							verifier: env.RELEASE_VERIFIER,
+						}),
 					);
 					const evaluation = await evaluateVerifiedRelease(
 						publisherDid,
@@ -665,6 +744,21 @@ export async function publishVerifiedIntent(
 			if (current?.state === "reconciling") return { state: "reconciling" };
 			if (!current || (current.state !== "ready" && current.state !== "publishing")) {
 				return { state: "failed", reasonCode: "INTENT_NOT_READY" };
+			}
+			if (current.state === "ready" && current.expiresAt <= Date.now()) {
+				const expired = await transition(publisher, {
+					publisherDid,
+					intentId: originalIntent.id,
+					expectedState: "ready",
+					expectedGeneration: current.stateGeneration,
+					toState: "expired",
+					transitionDigest: await digest(["expired", originalIntent.id, current.expiresAt]),
+					actorRealm: "system",
+					actorIdentity: "release-service",
+					reasonCode: "INTENT_EXPIRED",
+					stateDataJson: JSON.stringify({ reasonCode: "INTENT_EXPIRED" }),
+				});
+				return expired.ok ? { state: "expired" } : { state: "failed", reasonCode: expired.code };
 			}
 			const staged = await step.do<MaterializationStageResult>(
 				"publication-stage",
@@ -765,6 +859,23 @@ export async function publishVerifiedIntent(
 			let materializedDigest: string | null = null;
 			try {
 				await uploadMaterializedArtifacts(env, step, publisher, publisherDid, originalIntent);
+				await step.do("publication-provenance-promote", async () => {
+					const provenance = release.extensions[NSID.packageReleaseExtension].provenance;
+					if (
+						provenance.url !==
+						workloadArtifactSourceUrl(env.PUBLIC_ORIGIN, "provenance", provenance.checksum)
+					) {
+						return false;
+					}
+					await promoteWorkloadProvenance(env.PUBLICATION_STAGING, env.PROVENANCE_STORE, {
+						publisherDid,
+						workloadDigest: originalIntent.workloadIdempotencyDigest,
+						packageSlug: originalIntent.packageSlug,
+						version: originalIntent.version,
+						checksum: provenance.checksum,
+					});
+					return true;
+				});
 				const materialized = await step.do<MaterializedSummary>(
 					"publication-complete-materialization",
 					async () => {
@@ -805,14 +916,20 @@ export async function publishVerifiedIntent(
 					);
 					if (stored?.status !== "complete") return false;
 					try {
-						await deleteStagedArtifacts(
-							env.PUBLICATION_STAGING,
-							stored.slots.map((artifact) => ({
-								key: artifact.stagingKey,
-								metadata: stagedMetadata(artifact),
-								sourceUrlDigest: artifact.sourceUrlDigest,
-							})),
-						);
+						await Promise.all([
+							deleteStagedArtifacts(
+								env.PUBLICATION_STAGING,
+								stored.slots.map((artifact) => ({
+									key: artifact.stagingKey,
+									metadata: stagedMetadata(artifact),
+									sourceUrlDigest: artifact.sourceUrlDigest,
+								})),
+							),
+							deleteWorkloadStagedArtifacts(
+								env.PUBLICATION_STAGING,
+								workloadStagedSources(env.PUBLIC_ORIGIN, publisherDid, originalIntent, release),
+							),
+						]);
 						return true;
 					} catch (error) {
 						console.error(
@@ -834,6 +951,7 @@ export async function publishVerifiedIntent(
 			return await step.do<AttemptResult>(`publication-create-${attempt}`, async () => {
 				let writeStarted = false;
 				try {
+					const serviceConfiguration = await loadConfiguration(env);
 					const restored = await restorePublicationSession(env, publisherDid);
 					const delegation = await publisher.getDelegation(publisherDid);
 					if (
@@ -846,6 +964,7 @@ export async function publishVerifiedIntent(
 						publisherDid,
 						originalIntent.id,
 						PUBLICATION_PERMIT_TTL_MS,
+						serviceConfiguration.encryption.currentKeyVersion,
 					);
 					if (!permit.ok) {
 						return failBeforeWrite(permit.code, isRetryablePublicationBlock(permit.code));
@@ -956,6 +1075,9 @@ export async function publishVerifiedIntent(
 		})();
 		if (attemptResult.state === "published") {
 			return { intentId: originalIntent.id, state: "published", reasonCode: null };
+		}
+		if (attemptResult.state === "expired") {
+			return { intentId: originalIntent.id, state: "expired", reasonCode: "INTENT_EXPIRED" };
 		}
 		if (attemptResult.state === "failed") {
 			await step.do(`publication-terminal-staging-cleanup-${attempt}`, async () => {

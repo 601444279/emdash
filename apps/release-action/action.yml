@@ -9,8 +9,18 @@ inputs:
     description: Publisher DID that owns the package.
     required: true
   release-file:
-    description: Path to the package release record JSON file.
-    required: true
+    description: Legacy path to a URL-source release JSON file. Cannot be combined with bundle or provenance inputs.
+    required: false
+  bundle-file:
+    description: Path to an existing plugin tarball inside the GitHub workspace. Omit to build the plugin project.
+    required: false
+  plugin-directory:
+    description: Plugin project directory inside the GitHub workspace when bundle-file is omitted.
+    required: false
+    default: "."
+  provenance-file:
+    description: Path to the Sigstore bundle emitted by actions/attest-build-provenance.
+    required: false
   idempotency-key:
     description: Stable key for replaying this submission. Defaults to the GitHub run.
     required: false
@@ -19,7 +29,7 @@ inputs:
     required: false
     default: "5"
   timeout-minutes:
-    description: Maximum time to wait for publication or approval.
+    description: Maximum time to wait for workflow approval, publication, or release approval.
     required: false
     default: "30"
   wait-for-approval:
@@ -27,6 +37,8 @@ inputs:
     required: false
     default: "false"
 outputs:
+  connection-url:
+    description: Browser URL for approving the workflow on its first release run.
   intent-id:
     description: Release intent ULID.
   state:

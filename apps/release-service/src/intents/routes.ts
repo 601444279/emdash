@@ -57,6 +57,10 @@ export interface SubmitIntentDependencies {
 	startWorkflow?: typeof startReleaseIntentWorkflow;
 }
 
+export interface DryRunIntentDependencies {
+	keyResolver?: JWTVerifyGetKey;
+}
+
 function hasExactKeys(value: Record<string, unknown>, expected: readonly string[]): boolean {
 	const keys = Object.keys(value);
 	return keys.length === expected.length && keys.every((key) => expected.includes(key));
@@ -412,6 +416,70 @@ export async function handleSubmitReleaseIntent(
 			},
 			requestId,
 			created.replayed ? 200 : 202,
+		);
+	} catch (error) {
+		return routeFailure(error, requestId);
+	}
+}
+
+export async function handleDryRunReleaseIntent(
+	request: Request,
+	requestId: string,
+	configuration: ServiceConfiguration,
+	dependencies: DryRunIntentDependencies = {},
+): Promise<Response> {
+	try {
+		const identity = await authenticateWorkload(request, configuration, dependencies.keyResolver);
+		const body = await readJsonObject(request, MAX_INTENT_BODY_BYTES);
+		if (
+			!hasExactKeys(body, ["publisherDid", "packageSlug", "version", "release"]) ||
+			typeof body["publisherDid"] !== "string" ||
+			!isDid(body["publisherDid"]) ||
+			typeof body["packageSlug"] !== "string" ||
+			!PACKAGE_SLUG_PATTERN.test(body["packageSlug"]) ||
+			typeof body["version"] !== "string" ||
+			!VERSION_PATTERN.test(body["version"])
+		) {
+			throw new ApiError("INVALID_REQUEST", 400, "Invalid release intent request");
+		}
+		const release = parseDelegatedReleaseSourceRecord(body["release"], {
+			packageSlug: body["packageSlug"],
+			version: body["version"],
+		});
+		if (!release) {
+			throw new ApiError("INVALID_REQUEST", 400, "Invalid release intent request");
+		}
+		const publisherDid = body["publisherDid"];
+		const admission = await env.SERVICE_CONTROL_DO.getByName(
+			SERVICE_CONTROL_OBJECT_NAME,
+		).getAdmissionDecision(publisherDid);
+		if (!admission.allowed) {
+			throw new ApiError(
+				admission.code === "PUBLISHER_SUSPENDED" ? "PUBLISHER_SUSPENDED" : "SERVICE_PAUSED",
+				503,
+				admission.code === "PUBLISHER_SUSPENDED"
+					? "Publisher is suspended"
+					: "Release admission is paused",
+			);
+		}
+		const policy = await env.PUBLISHER_DO.getByName(publisherDid).getWorkloadPolicyIfInitialized(
+			publisherDid,
+			release.package,
+		);
+		if (!policy || !evaluateWorkloadPolicy(identity, policy).ok) {
+			throw new ApiError("WORKLOAD_NOT_ALLOWED", 403, "Workload is not authorized");
+		}
+		return apiSuccess(
+			{
+				allowed: true,
+				publisherDid,
+				packageSlug: release.package,
+				version: release.version,
+				workloadPolicyVersion: policy.stateVersion,
+				workloadIdentityDigest: await digestWorkloadIdentity(identity),
+				requestDigest: await digest(["release-intent", 1, publisherDid, release]),
+			},
+			requestId,
 		);
 	} catch (error) {
 		return routeFailure(error, requestId);

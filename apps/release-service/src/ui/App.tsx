@@ -7,10 +7,13 @@ export function App() {
 	const path = location.pathname;
 	const content = path.startsWith("/admin") ? (
 		<OperatorPage />
-	) : path.startsWith("/approvals/") ? (
+	) : path === "/approver" || path.startsWith("/approvals/") ? (
 		<ApproverPage />
 	) : (
-		<PublisherPage />
+		<div className="flex flex-col gap-6">
+			<PublisherPage />
+			<ApproverPage embedded />
+		</div>
 	);
 	return <Page>{content}</Page>;
 }

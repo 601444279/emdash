@@ -4,10 +4,14 @@ import {
 	ReleaseServiceClient,
 	createReleaseIdempotencyKey,
 	parseDelegatedReleaseSourceRecord,
+	type DryRunReleaseIntentResult,
 	type ReleaseIntentResource,
+	type RequestWorkflowConnectionResult,
 } from "@emdash-cms/registry-client/release-service";
 
 const POSITIVE_INTEGER_PATTERN = /^[1-9][0-9]*$/;
+const DID_PATTERN = /^did:[a-z0-9]+:[A-Za-z0-9._:%-]+$/;
+const ULID_PATTERN = /^[0-9A-HJKMNP-TV-Z]{26}$/;
 const MAX_RELEASE_FILE_BYTES = 128 * 1024;
 const MAX_OIDC_TOKEN_CHARS = 16 * 1024;
 
@@ -33,12 +37,79 @@ export interface SubmitDelegatedReleaseOptions extends ReleaseServiceTarget {
 	waitForApproval?: boolean;
 	pollIntervalMs?: number;
 	maxWaitMs?: number;
+	onConnectionUpdate?: (result: RequestWorkflowConnectionResult) => void | Promise<void>;
 	onUpdate?: (intent: ReleaseIntentResource) => void | Promise<void>;
+}
+
+export interface DryRunDelegatedReleaseOptions extends ReleaseServiceTarget {
+	releaseFile: string;
 }
 
 export interface MutateReleaseIntentOptions extends ReleaseServiceTarget {
 	intentId: string;
 	idempotencyKey?: string;
+}
+
+export type InteractiveReleaseAction =
+	| "approve"
+	| "delegate"
+	| "enrol"
+	| "reject"
+	| "revoke"
+	| "workload";
+
+export interface InteractiveReleaseOptions {
+	serviceUrl: string;
+	publisherDid?: string;
+	intentId?: string;
+}
+
+export function interactiveReleaseUrl(
+	action: InteractiveReleaseAction,
+	options: InteractiveReleaseOptions,
+): URL {
+	let service: URL;
+	try {
+		service = new URL(options.serviceUrl);
+	} catch {
+		throw new Error("Release service URL must be a secure origin");
+	}
+	const loopback =
+		service.hostname === "localhost" ||
+		service.hostname === "127.0.0.1" ||
+		service.hostname === "[::1]";
+	if (
+		(service.protocol !== "https:" && !(service.protocol === "http:" && loopback)) ||
+		service.username !== "" ||
+		service.password !== "" ||
+		service.pathname !== "/" ||
+		service.search !== "" ||
+		service.hash !== ""
+	) {
+		throw new Error("Release service URL must be a secure origin");
+	}
+	if (action === "delegate" || action === "revoke" || action === "workload") {
+		service.pathname = "/publisher";
+		service.searchParams.set("view", action === "workload" ? "workloads" : "delegation");
+		if (action === "revoke") service.searchParams.set("action", "revoke");
+		return service;
+	}
+	if (action === "enrol") {
+		service.pathname = "/approver";
+		return service;
+	}
+	if (
+		!options.intentId ||
+		!ULID_PATTERN.test(options.intentId) ||
+		!options.publisherDid ||
+		!DID_PATTERN.test(options.publisherDid)
+	) {
+		throw new Error("Approval browser handoff requires a publisher DID and intent ULID");
+	}
+	service.pathname = `/approvals/${options.intentId}`;
+	service.searchParams.set("publisher", options.publisherDid);
+	service.searchParams.set("decision", action);
+	return service;
 }
 
 async function defaultReadReleaseRecord(path: string): Promise<unknown> {
@@ -59,6 +130,17 @@ function defaultIdempotencyKey(environment: ReleaseServiceEnvironment): string {
 		return `github-run-${runId}`;
 	}
 	return createReleaseIdempotencyKey("emdash-plugin-release");
+}
+
+function defaultConnectionIdempotencyKey(
+	environment: ReleaseServiceEnvironment,
+	packageSlug: string,
+): string {
+	const runId = environment["GITHUB_RUN_ID"];
+	if (runId && POSITIVE_INTEGER_PATTERN.test(runId)) {
+		return `github-connection-${runId}-${packageSlug}`;
+	}
+	return createReleaseIdempotencyKey("workflow-connection");
 }
 
 export async function requestGithubOidcToken(
@@ -128,6 +210,16 @@ export async function submitDelegatedRelease(
 	if (!release) throw new Error("Release record file is invalid");
 	const environment = dependencies.environment ?? process.env;
 	const client = releaseClient(options, dependencies);
+	await client.waitForWorkflowConnection(
+		{ publisherDid: options.publisherDid, packageSlug: release.package },
+		{
+			idempotencyKey: defaultConnectionIdempotencyKey(environment, release.package),
+			pollIntervalMs: options.pollIntervalMs,
+			maxWaitMs: options.maxWaitMs,
+			onUpdate: options.onConnectionUpdate,
+		},
+	);
+	const idempotencyKey = options.idempotencyKey ?? defaultIdempotencyKey(environment);
 	const submitted = await client.submitIntent(
 		{
 			publisherDid: options.publisherDid,
@@ -135,7 +227,7 @@ export async function submitDelegatedRelease(
 			version: release.version,
 			release,
 		},
-		{ idempotencyKey: options.idempotencyKey ?? defaultIdempotencyKey(environment) },
+		{ idempotencyKey },
 	);
 	if (options.wait === false) return submitted.intent;
 	return await client.waitForIntent(options.publisherDid, submitted.intent.id, {
@@ -143,6 +235,23 @@ export async function submitDelegatedRelease(
 		maxWaitMs: options.maxWaitMs,
 		stopOnApproval: !(options.waitForApproval ?? false),
 		onUpdate: options.onUpdate,
+	});
+}
+
+export async function dryRunDelegatedRelease(
+	options: DryRunDelegatedReleaseOptions,
+	dependencies: ReleaseServiceOperationDependencies = {},
+): Promise<DryRunReleaseIntentResult> {
+	const rawRelease = await (dependencies.readReleaseRecord ?? defaultReadReleaseRecord)(
+		options.releaseFile,
+	);
+	const release = parseDelegatedReleaseSourceRecord(rawRelease);
+	if (!release) throw new Error("Release record file is invalid");
+	return await releaseClient(options, dependencies).dryRunIntent({
+		publisherDid: options.publisherDid,
+		packageSlug: release.package,
+		version: release.version,
+		release,
 	});
 }
 
