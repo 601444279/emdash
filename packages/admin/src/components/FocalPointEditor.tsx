@@ -14,6 +14,11 @@ interface FocalPointEditorProps {
 	descriptionId: string;
 	onChange: (point: MediaFocalPoint) => void;
 	onReadyChange?: (ready: boolean) => void;
+	editorFrameRef?: React.RefObject<HTMLDivElement | null>;
+}
+
+interface FocalPointPreviewsProps extends Pick<FocalPointEditorProps, "src" | "point"> {
+	firstPreviewRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 const KEY_MOVES: Record<string, [number, number]> = {
@@ -24,7 +29,7 @@ const KEY_MOVES: Record<string, [number, number]> = {
 };
 const clamp = (value: number) => Math.min(1, Math.max(0, Math.round(value * 10_000) / 10_000));
 
-export function FocalPointPreviews({ src, point }: Pick<FocalPointEditorProps, "src" | "point">) {
+export function FocalPointPreviews({ src, point, firstPreviewRef }: FocalPointPreviewsProps) {
 	const { t } = useLingui();
 	const current = point ?? { focalX: 0.5, focalY: 0.5 };
 	const objectPosition = getMediaObjectPosition(current)!;
@@ -39,6 +44,7 @@ export function FocalPointPreviews({ src, point }: Pick<FocalPointEditorProps, "
 			{previews.map(([id, label, ratio]) => (
 				<figure key={id} className="grid w-full min-w-0 gap-1">
 					<div
+						ref={id === "portrait" ? firstPreviewRef : undefined}
 						className={`emdash-media-transparency-grid overflow-hidden rounded-lg ring ring-kumo-line ${ratio}`}
 					>
 						<img
@@ -66,6 +72,7 @@ export function FocalPointEditor({
 	descriptionId,
 	onChange,
 	onReadyChange,
+	editorFrameRef,
 }: FocalPointEditorProps) {
 	const { t } = useLingui();
 	const activePointerRef = React.useRef<number | null>(null);
@@ -78,6 +85,13 @@ export function FocalPointEditor({
 	const [announcement, setAnnouncement] = React.useState("");
 	const displaySize = useContainedMediaSize(frameRef, loadedSourceSize ?? knownSourceSize ?? null);
 	const current = point ?? { focalX: 0.5, focalY: 0.5 };
+	const setFrameRef = React.useCallback(
+		(node: HTMLDivElement | null) => {
+			frameRef.current = node;
+			if (editorFrameRef) editorFrameRef.current = node;
+		},
+		[editorFrameRef],
+	);
 
 	const announce = (next: MediaFocalPoint) =>
 		setAnnouncement(
@@ -131,7 +145,7 @@ export function FocalPointEditor({
 	return (
 		<div className="grid gap-4">
 			<div
-				ref={frameRef}
+				ref={setFrameRef}
 				className="emdash-media-transparency-grid flex h-64 items-center justify-center overflow-hidden rounded-xl ring ring-kumo-line md:h-80"
 			>
 				<div

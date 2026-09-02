@@ -457,6 +457,61 @@ describe("MediaDetailPanel", () => {
 		await expect.element(screen.getByLabelText("Filename")).toBeVisible();
 	});
 
+	it("keeps focal-point preview image bottoms aligned with the editor frame", async () => {
+		const nativeMatchMedia = window.matchMedia.bind(window);
+		const matchMediaSpy = vi.spyOn(window, "matchMedia").mockImplementation((query) => {
+			const result = nativeMatchMedia(query);
+			if (query !== "(min-width: 48rem)" && query !== "(prefers-reduced-motion: reduce)") {
+				return result;
+			}
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addEventListener: result.addEventListener.bind(result),
+				removeEventListener: result.removeEventListener.bind(result),
+				addListener: result.addListener.bind(result),
+				removeListener: result.removeListener.bind(result),
+				dispatchEvent: result.dispatchEvent.bind(result),
+			};
+		});
+
+		const screen = await renderPanel({ item: makeLocalItem({ url: TEST_IMAGE_URL }) });
+		const surface = await openFocalEditor(screen);
+		const editorFrame = surface.element().parentElement!.parentElement!;
+		const previewFrame = screen.getByTestId("focal-preview-portrait").element().parentElement!;
+		const previewSection = previewFrame.closest("section")!;
+		const editorBoundsSpy = vi.spyOn(editorFrame, "getBoundingClientRect").mockReturnValue({
+			bottom: 320,
+		} as DOMRect);
+		const previewBoundsSpy = vi.spyOn(previewFrame, "getBoundingClientRect").mockImplementation(
+			() =>
+				({
+					bottom:
+						330 + Number(previewSection.style.transform.match(/translateY\((-?\d+)px\)/)?.[1] ?? 0),
+				}) as DOMRect,
+		);
+
+		try {
+			window.dispatchEvent(new Event("resize"));
+			await vi.waitFor(() => {
+				expect(previewSection.style.transform).toBe("translateY(-10px)");
+				expect(previewFrame.getBoundingClientRect().bottom).toBe(
+					editorFrame.getBoundingClientRect().bottom,
+				);
+			});
+
+			window.dispatchEvent(new Event("resize"));
+			await vi.waitFor(() => {
+				expect(previewSection.style.transform).toBe("translateY(-10px)");
+			});
+		} finally {
+			previewBoundsSpy.mockRestore();
+			editorBoundsSpy.mockRestore();
+			matchMediaSpy.mockRestore();
+		}
+	});
+
 	it("shows crop only for ready supported local images with an allowed action", async () => {
 		const screen = await renderPanel({
 			item: makeLocalItem({ url: TEST_IMAGE_URL }),

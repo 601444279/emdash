@@ -186,6 +186,9 @@ export function MediaDetailPanel({
 	const dialogBodyRef = React.useRef<HTMLDivElement | null>(null);
 	const dialogResizeAnimationRef = React.useRef<Animation | null>(null);
 	const imageModeOverflowFrameRef = React.useRef<number | null>(null);
+	const focalEditorFrameRef = React.useRef<HTMLDivElement | null>(null);
+	const focalPreviewFrameRef = React.useRef<HTMLDivElement | null>(null);
+	const focalPreviewSectionRef = React.useRef<HTMLElement | null>(null);
 
 	const isProviderAsset = Boolean(item.provider);
 	const isImage = item.mimeType.startsWith("image/");
@@ -209,6 +212,7 @@ export function MediaDetailPanel({
 	const [focalPoint, setFocalPoint] = React.useState<MediaFocalPoint | null>(() =>
 		normalizeMediaFocalPoint(item),
 	);
+	const [focalPreviewOffset, setFocalPreviewOffset] = React.useState(0);
 	const [activeTab, setActiveTab] = React.useState<MediaDetailTab>("details");
 	const [imageEditMode, setImageEditMode] = React.useState<ImageEditMode>("focal-point");
 	const [suppressImageModeOverflow, setSuppressImageModeOverflow] = React.useState(false);
@@ -256,6 +260,7 @@ export function MediaDetailPanel({
 		setLocationOpen(false);
 		setLocationSearch("");
 		setFocalPoint(normalizeMediaFocalPoint(item));
+		setFocalPreviewOffset(0);
 		setActiveTab("details");
 		setImageEditMode("focal-point");
 		setCropAspectMode("original");
@@ -270,6 +275,56 @@ export function MediaDetailPanel({
 		setShowCropConfirm(false);
 		setPendingUsageEntry(null);
 	}, [item.id, localItem?.folderId, open]);
+
+	React.useLayoutEffect(() => {
+		if (!open || activeTab !== "edit-image" || imageEditMode !== "focal-point") return;
+		const editorFrame = focalEditorFrameRef.current;
+		const previewFrame = focalPreviewFrameRef.current;
+		const previewSection = focalPreviewSectionRef.current;
+		if (!editorFrame || !previewFrame || !previewSection) return;
+
+		const desktop = window.matchMedia("(min-width: 48rem)");
+		let alignmentFrame = 0;
+		let resizeAnimation: Animation | null = null;
+		const updateOffset = () => {
+			if (!desktop.matches) {
+				setFocalPreviewOffset(0);
+				return;
+			}
+			const delta =
+				editorFrame.getBoundingClientRect().bottom - previewFrame.getBoundingClientRect().bottom;
+			if (Math.abs(delta) < 0.5) return;
+			const transform = getComputedStyle(previewSection).transform;
+			const renderedOffset = transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42;
+			setFocalPreviewOffset(Math.round(renderedOffset + delta));
+		};
+		const alignPreview = () => {
+			window.cancelAnimationFrame(alignmentFrame);
+			alignmentFrame = window.requestAnimationFrame(() => {
+				if (dialogResizeAnimationRef.current) return;
+				updateOffset();
+			});
+		};
+
+		alignPreview();
+		const animationListenerFrame = window.requestAnimationFrame(() => {
+			resizeAnimation = dialogResizeAnimationRef.current;
+			resizeAnimation?.addEventListener("finish", alignPreview, { once: true });
+		});
+		const observer = new ResizeObserver(alignPreview);
+		observer.observe(editorFrame);
+		observer.observe(previewFrame);
+		desktop.addEventListener("change", alignPreview);
+		window.addEventListener("resize", alignPreview);
+		return () => {
+			window.cancelAnimationFrame(alignmentFrame);
+			window.cancelAnimationFrame(animationListenerFrame);
+			resizeAnimation?.removeEventListener("finish", alignPreview);
+			observer.disconnect();
+			desktop.removeEventListener("change", alignPreview);
+			window.removeEventListener("resize", alignPreview);
+		};
+	}, [activeTab, imageEditMode, open]);
 
 	React.useEffect(() => {
 		return () => {
@@ -950,6 +1005,7 @@ export function MediaDetailPanel({
 										point={focalPoint}
 										descriptionId={focalPointDescriptionId}
 										onChange={setFocalPoint}
+										editorFrameRef={focalEditorFrameRef}
 									/>
 								)
 							) : (
@@ -1373,9 +1429,17 @@ export function MediaDetailPanel({
 													{t`Reset`}
 												</Button>
 											</div>
-											<section className="mt-auto grid gap-2 border-t border-kumo-line pt-3">
+											<section
+												ref={focalPreviewSectionRef}
+												className="mt-auto grid gap-2 border-t border-kumo-line pt-3"
+												style={{ transform: `translateY(${focalPreviewOffset}px)` }}
+											>
 												<h3 className="text-sm font-semibold">{t`Preview`}</h3>
-												<FocalPointPreviews src={mediaPreviewUrl} point={focalPoint} />
+												<FocalPointPreviews
+													src={mediaPreviewUrl}
+													point={focalPoint}
+													firstPreviewRef={focalPreviewFrameRef}
+												/>
 											</section>
 										</>
 									) : (
