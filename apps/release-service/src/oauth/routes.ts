@@ -1,8 +1,9 @@
 import { isDid, isHandle } from "@atcute/lexicons/syntax";
 import { env } from "cloudflare:workers";
 
+import { isRecord, readJsonObject } from "../api/body.js";
 import { ApiError } from "../api/errors.js";
-import { apiFailure } from "../api/response.js";
+import { apiFailure, apiSuccess } from "../api/response.js";
 import { createApproverApplicationSession } from "../approver-session/session.js";
 import type { ServiceConfiguration } from "../config.js";
 import {
@@ -20,14 +21,9 @@ import {
 	canonicalizeRedirectTarget,
 } from "./custody.js";
 
-const MAX_JSON_BODY_BYTES = 4096;
 const OAUTH_NETWORK_TIMEOUT_MS = 30_000;
 const ERROR_NAME_PATTERN = /^[A-Za-z][A-Za-z0-9]{0,63}$/;
 const ERROR_CODE_PATTERN = /^[A-Za-z][A-Za-z0-9_]{0,63}$/;
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return value !== null && typeof value === "object" && !Array.isArray(value);
-}
 
 export async function handleApproverIdentityAuthorize(
 	request: Request,
@@ -36,7 +32,7 @@ export async function handleApproverIdentityAuthorize(
 ): Promise<Response> {
 	try {
 		requireSameOriginRequest(request, configuration.publicOrigin);
-		const body = await readJsonBody(request);
+		const body = await readJsonObject(request);
 		if (
 			Object.keys(body).length !== 2 ||
 			typeof body["identifier"] !== "string" ||
@@ -69,6 +65,7 @@ export async function handleApproverIdentityAuthorize(
 			{ signal: AbortSignal.timeout(30_000) },
 		);
 		return redirectToAuthorization(
+			request,
 			authorization.url,
 			createOAuthRouteCookie({
 				purpose: "approver_identity",
@@ -129,51 +126,6 @@ const callbackFetch: typeof fetch = (input, init) =>
 		signal: init?.signal ?? AbortSignal.timeout(OAUTH_NETWORK_TIMEOUT_MS),
 	});
 
-async function readJsonBody(request: Request): Promise<Record<string, unknown>> {
-	const mediaType = request.headers.get("content-type")?.split(";", 1)[0]?.trim().toLowerCase();
-	if (mediaType !== "application/json") {
-		throw new ApiError("INVALID_REQUEST", 415, "Expected an application/json request body");
-	}
-	const declaredLength = Number(request.headers.get("content-length"));
-	if (Number.isFinite(declaredLength) && declaredLength > MAX_JSON_BODY_BYTES) {
-		throw new ApiError("INVALID_REQUEST", 413, "Request body is too large");
-	}
-	if (!request.body) throw new ApiError("INVALID_REQUEST", 400, "Request body is required");
-	const reader = request.body.getReader();
-	const chunks: Uint8Array[] = [];
-	let length = 0;
-	try {
-		while (true) {
-			const { done, value } = await reader.read();
-			if (done) break;
-			length += value.byteLength;
-			if (length > MAX_JSON_BODY_BYTES) {
-				await reader.cancel();
-				throw new ApiError("INVALID_REQUEST", 413, "Request body is too large");
-			}
-			chunks.push(value);
-		}
-	} finally {
-		reader.releaseLock();
-	}
-	const bytes = new Uint8Array(length);
-	let offset = 0;
-	for (const chunk of chunks) {
-		bytes.set(chunk, offset);
-		offset += chunk.byteLength;
-	}
-	let parsed: unknown;
-	try {
-		parsed = JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(bytes));
-	} catch {
-		throw new ApiError("INVALID_REQUEST", 400, "Request body is not valid JSON");
-	}
-	if (!isRecord(parsed)) {
-		throw new ApiError("INVALID_REQUEST", 400, "Request body must be an object");
-	}
-	return parsed;
-}
-
 function requireSameOriginRequest(request: Request, publicOrigin: string): void {
 	if (
 		request.headers.get("origin") !== publicOrigin ||
@@ -183,7 +135,23 @@ function requireSameOriginRequest(request: Request, publicOrigin: string): void 
 	}
 }
 
-function redirectToAuthorization(url: URL, stateCookie: string, requestId: string): Response {
+function redirectToAuthorization(
+	request: Request,
+	url: URL,
+	stateCookie: string,
+	requestId: string,
+): Response {
+	if (
+		request.headers
+			.get("accept")
+			?.split(",")
+			.some((value) => value.trim() === "application/json")
+	) {
+		const response = apiSuccess({ authorizationUrl: url.toString() }, requestId);
+		const headers = new Headers(response.headers);
+		headers.append("set-cookie", stateCookie);
+		return new Response(response.body, { status: response.status, headers });
+	}
 	const headers = new Headers({
 		"cache-control": "no-store",
 		location: url.toString(),
@@ -201,7 +169,7 @@ export async function handlePublisherIdentityAuthorize(
 ): Promise<Response> {
 	try {
 		requireSameOriginRequest(request, configuration.publicOrigin);
-		const body = await readJsonBody(request);
+		const body = await readJsonObject(request);
 		if (
 			Object.keys(body).length !== 2 ||
 			typeof body["identifier"] !== "string" ||
@@ -234,6 +202,7 @@ export async function handlePublisherIdentityAuthorize(
 			{ signal: AbortSignal.timeout(30_000) },
 		);
 		return redirectToAuthorization(
+			request,
 			authorization.url,
 			createOAuthRouteCookie({
 				purpose: "publisher_identity",
@@ -245,7 +214,6 @@ export async function handlePublisherIdentityAuthorize(
 		);
 	} catch (error) {
 		if (error instanceof ApiError) return apiFailure(error, requestId);
-		logOAuthError("oauth_authorization_error", requestId, error);
 		return oauthError(
 			"OAUTH_AUTHORIZATION_FAILED",
 			400,
@@ -267,7 +235,7 @@ export async function handlePublisherDelegationAuthorize(
 			configuration.publicOrigin,
 			{ requireCsrf: true },
 		);
-		const body = await readJsonBody(request);
+		const body = await readJsonObject(request);
 		if (Object.keys(body).length !== 1 || typeof body["redirectTarget"] !== "string") {
 			throw new ApiError("INVALID_REQUEST", 400, "Invalid delegation authorization request");
 		}
@@ -293,6 +261,7 @@ export async function handlePublisherDelegationAuthorize(
 			{ signal: AbortSignal.timeout(30_000) },
 		);
 		return redirectToAuthorization(
+			request,
 			authorization.url,
 			createOAuthRouteCookie({
 				purpose: "release_delegation",
@@ -315,7 +284,6 @@ export async function handlePublisherDelegationAuthorize(
 				requestId,
 			);
 		}
-		logOAuthError("oauth_delegation_authorization_error", requestId, error);
 		return oauthError(
 			"OAUTH_AUTHORIZATION_FAILED",
 			400,

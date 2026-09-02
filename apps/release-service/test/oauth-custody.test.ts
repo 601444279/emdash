@@ -2,6 +2,7 @@ import type { ActorResolver } from "@atcute/identity-resolver";
 import type { StoredSession, StoredState } from "@atcute/oauth-node-client";
 import { reset, runInDurableObject } from "cloudflare:test";
 import { env } from "cloudflare:workers";
+import { base64url } from "jose";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { loadConfiguration } from "../src/config.js";
@@ -32,7 +33,7 @@ function state(userState: unknown, overrides: Partial<StoredState> = {}): Stored
 		authMethod: { method: "private_key_jwt", kid: ASSERTION_KEY_2.kid },
 		pkceVerifier: PKCE_VERIFIER,
 		issuer: "https://authorization.example",
-		redirectUri: "https://release.example.invalid/oauth/callback",
+		redirectUri: "https://release.example.com/oauth/callback",
 		sub: DID,
 		userState,
 		expiresAt: Date.now() + 10 * 60_000,
@@ -76,19 +77,22 @@ describe("Durable Object OAuth custody", () => {
 			},
 		);
 		await custody.stores.states.set(RAW_STATE, state(custody.userState));
+		const stateHash = base64url.encode(
+			new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(RAW_STATE))),
+		);
 
 		const persisted = await runInDurableObject(
-			env.PUBLISHER_DO.getByName(DID),
+			env.OAUTH_STATE_DO.getByName(stateHash),
 			(_instance, durableState) =>
 				durableState.storage.sql
 					.exec<{
 						state_hash: string;
 						encrypted_state: string;
 						encryption_key_version: number;
-					}>("SELECT state_hash, encrypted_state, encryption_key_version FROM oauth_states")
+					}>("SELECT state_hash, encrypted_state, encryption_key_version FROM oauth_state")
 					.one(),
 		);
-		expect(persisted.state_hash).not.toBe(RAW_STATE);
+		expect(persisted.state_hash).toBe(stateHash);
 		expect(persisted.encryption_key_version).toBe(configuration.encryption.currentKeyVersion);
 		expect(JSON.stringify(persisted)).not.toContain(RAW_STATE);
 		expect(JSON.stringify(persisted)).not.toContain(PKCE_VERIFIER);
@@ -168,6 +172,7 @@ describe("Durable Object OAuth custody", () => {
 		const delegatedSession = session(configuration.oauth.releaseScope);
 		await custody.stores.sessions.set(DID, delegatedSession);
 		await expect(custody.stores.sessions.get(DID)).resolves.toEqual(delegatedSession);
+		expect(custody.sessionVersion?.(DID)).toBe(1);
 		await expect(custody.stores.sessions.set(DID, delegatedSession)).rejects.toMatchObject({
 			code: "OAUTH_DELEGATION_CAS_REQUIRED",
 		});
@@ -224,6 +229,7 @@ describe("Durable Object OAuth custody", () => {
 		await expect(env.PUBLISHER_DO.getByName(DID).getDelegation(DID)).resolves.toMatchObject({
 			stateVersion: 2,
 		});
+		expect(custody.sessionVersion?.(DID)).toBe(2);
 	});
 
 	it("revokes authority and rejects assertion-key reuse as DPoP", async () => {
@@ -415,9 +421,9 @@ describe("OAuth redirect targets", () => {
 	it.each(["https://evil.example", "//evil.example", "/\\evil", "/path\nnext"])(
 		"rejects %j",
 		(value) => {
-			expect(() =>
-				canonicalizeRedirectTarget(value, "https://release.example.invalid"),
-			).toThrowError(expect.objectContaining({ code: "OAUTH_REDIRECT_INVALID" }));
+			expect(() => canonicalizeRedirectTarget(value, "https://release.example.com")).toThrowError(
+				expect.objectContaining({ code: "OAUTH_REDIRECT_INVALID" }),
+			);
 		},
 	);
 
@@ -425,7 +431,7 @@ describe("OAuth redirect targets", () => {
 		expect(
 			canonicalizeRedirectTarget(
 				"/publisher/../publisher?done=1#result",
-				"https://release.example.invalid",
+				"https://release.example.com",
 			),
 		).toBe("/publisher?done=1#result");
 	});

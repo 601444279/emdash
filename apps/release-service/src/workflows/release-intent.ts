@@ -11,13 +11,18 @@ import type {
 	StoredIntent,
 	TransitionIntentInput,
 } from "../publisher-do/publisher-do.js";
+import { reconcileReleaseRecord } from "../publishing/reconcile.js";
+import { publishVerifiedIntent, readPersistedMaterializedRelease } from "../publishing/workflow.js";
 import {
 	evaluateVerifiedRelease,
 	normalizeVerifierReport,
 	parseNormalizedVerifierReport,
 	prepareVerifierInput,
 } from "../verification/evaluate.js";
-import { readPublisherVerificationSnapshot } from "../verification/pds.js";
+import {
+	findProofVerifiedRelease,
+	readPublisherVerificationSnapshot,
+} from "../verification/pds.js";
 
 const DID_PATTERN = /^did:[a-z0-9]+:[A-Za-z0-9._:%-]+$/;
 const ULID_PATTERN = /^[0-9A-HJKMNP-TV-Z]{26}$/;
@@ -30,7 +35,7 @@ export interface ReleaseIntentWorkflowParams {
 
 export interface ReleaseIntentWorkflowOutput {
 	intentId: string;
-	state: "expired" | "invalid" | "ready" | "rejected";
+	state: "conflict" | "expired" | "failed" | "invalid" | "published" | "ready" | "rejected";
 	reasonCode: string | null;
 }
 
@@ -64,6 +69,87 @@ interface IntentSummary {
 	expiresAt: number;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function stringField(value: Record<string, unknown>, key: string): string | null {
+	const field = value[key];
+	return typeof field === "string" ? field : null;
+}
+
+function parseStoredWorkflowDecision(value: string): WorkflowDecision | null {
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(value);
+	} catch {
+		return null;
+	}
+	if (
+		!isRecord(parsed) ||
+		typeof parsed["requiresApproval"] !== "boolean" ||
+		!isRecord(parsed["approvalEvidence"]) ||
+		!Array.isArray(parsed["approvers"]) ||
+		parsed["approvers"].some((approver) => typeof approver !== "string") ||
+		(parsed["confirmation"] !== "always" && parsed["confirmation"] !== "escalation-only") ||
+		typeof parsed["accessDiffJson"] !== "string"
+	) {
+		return null;
+	}
+	const source = parsed["approvalEvidence"];
+	const intentId = stringField(source, "intentId");
+	const publisherDid = stringField(source, "publisherDid");
+	const packageSlug = stringField(source, "packageSlug");
+	const version = stringField(source, "version");
+	const workloadIdentityDigest = stringField(source, "workloadIdentityDigest");
+	const releaseInputDigest = stringField(source, "releaseInputDigest");
+	const profileCid = stringField(source, "profileCid");
+	const artifactChecksum = stringField(source, "artifactChecksum");
+	const provenanceChecksum = stringField(source, "provenanceChecksum");
+	const declaredAccessDiffDigest = stringField(source, "declaredAccessDiffDigest");
+	const verificationDigest = stringField(source, "verificationDigest");
+	const baselineReleaseCid = source["baselineReleaseCid"];
+	if (
+		!intentId ||
+		!publisherDid ||
+		!packageSlug ||
+		!version ||
+		!Number.isSafeInteger(source["verificationGeneration"]) ||
+		Number(source["verificationGeneration"]) < 3 ||
+		!workloadIdentityDigest ||
+		!releaseInputDigest ||
+		!profileCid ||
+		(baselineReleaseCid !== null && typeof baselineReleaseCid !== "string") ||
+		!artifactChecksum ||
+		!provenanceChecksum ||
+		!declaredAccessDiffDigest ||
+		!verificationDigest
+	) {
+		return null;
+	}
+	return {
+		requiresApproval: parsed["requiresApproval"],
+		approvalEvidence: {
+			intentId,
+			publisherDid,
+			packageSlug,
+			version,
+			verificationGeneration: Number(source["verificationGeneration"]),
+			workloadIdentityDigest,
+			releaseInputDigest,
+			profileCid,
+			baselineReleaseCid,
+			artifactChecksum,
+			provenanceChecksum,
+			declaredAccessDiffDigest,
+			verificationDigest,
+		},
+		approvers: [...parsed["approvers"]],
+		confirmation: parsed["confirmation"],
+		accessDiffJson: parsed["accessDiffJson"],
+	};
+}
+
 type ReleaseWorkflowEnv = Env & {
 	RELEASE_VERIFIER: Service<typeof ReleaseVerifier>;
 };
@@ -86,6 +172,7 @@ function plainIntent(value: StoredIntent): StoredIntent {
 		stateGeneration: value.stateGeneration,
 		workloadPolicyVersion: value.workloadPolicyVersion,
 		workloadIdentityDigest: value.workloadIdentityDigest,
+		workloadIdempotencyDigest: value.workloadIdempotencyDigest,
 		requestDigest: value.requestDigest,
 		workloadIdentityJson: value.workloadIdentityJson,
 		releaseInputJson: value.releaseInputJson,
@@ -105,7 +192,7 @@ function requireIntent(
 	if (
 		!value ||
 		value.id !== params.intentId ||
-		value.state !== "verifying" ||
+		(value.state !== "verifying" && value.state !== "ready" && value.state !== "reconciling") ||
 		value.workflowId !== instanceId
 	) {
 		throw new NonRetryableError("Release intent is not in the expected Workflow state");
@@ -185,6 +272,116 @@ export class ReleaseIntentWorkflow extends WorkflowEntrypoint<
 				event.instanceId,
 			),
 		);
+		if (intent.state === "ready" || intent.state === "reconciling") {
+			const decision = await step.do<WorkflowDecision>("recovery-policy-decision", async () => {
+				const stored = await publisher.getVerificationStep(
+					params.publisherDid,
+					params.intentId,
+					"policy-decision",
+				);
+				const parsed = stored ? parseStoredWorkflowDecision(stored.resultJson) : null;
+				if (!parsed) throw new NonRetryableError("Stored Workflow decision is invalid");
+				return parsed;
+			});
+			const verificationIntent = {
+				...intent,
+				stateGeneration: decision.approvalEvidence.verificationGeneration - 2,
+			};
+			if (intent.state === "reconciling") {
+				const reconciliation = await step.do("recovery-reconciliation", async () => {
+					const materialized = await readPersistedMaterializedRelease(
+						publisher,
+						params.publisherDid,
+						params.intentId,
+						intent.requestDigest,
+					);
+					if (!materialized) {
+						throw new NonRetryableError("Stored materialized release is unavailable");
+					}
+					const authoritative = await findProofVerifiedRelease(
+						params.publisherDid,
+						intent.packageSlug,
+						intent.version,
+					);
+					return reconcileReleaseRecord(
+						params.publisherDid,
+						intent.packageSlug,
+						intent.version,
+						materialized.record,
+						authoritative,
+					);
+				});
+				if (reconciliation.outcome === "exact") {
+					const published = await step.do<TransitionSummary>("recovery-published", async () =>
+						transitionIntent(publisher, {
+							publisherDid: params.publisherDid,
+							intentId: params.intentId,
+							expectedState: "reconciling",
+							expectedGeneration: intent.stateGeneration,
+							toState: "published",
+							transitionDigest: await digest([
+								"recovery-published",
+								reconciliation.uri,
+								reconciliation.cid,
+							]),
+							actorRealm: "system",
+							actorIdentity: WORKFLOW_ACTOR,
+							reasonCode: null,
+							stateDataJson: JSON.stringify({
+								resultUri: reconciliation.uri,
+								resultCid: reconciliation.cid,
+							}),
+						}),
+					);
+					if (!published.ok) throw new NonRetryableError(published.code);
+					return { intentId: params.intentId, state: "published", reasonCode: null };
+				}
+				if (reconciliation.outcome === "conflict") {
+					const conflict = await step.do<TransitionSummary>("recovery-conflict", async () =>
+						transitionIntent(publisher, {
+							publisherDid: params.publisherDid,
+							intentId: params.intentId,
+							expectedState: "reconciling",
+							expectedGeneration: intent.stateGeneration,
+							toState: "conflict",
+							transitionDigest: await digest(["recovery-conflict", params.intentId]),
+							actorRealm: "system",
+							actorIdentity: WORKFLOW_ACTOR,
+							reasonCode: "RELEASE_CONFLICT",
+							stateDataJson: JSON.stringify({ reasonCode: "RELEASE_CONFLICT" }),
+						}),
+					);
+					if (!conflict.ok) throw new NonRetryableError(conflict.code);
+					return {
+						intentId: params.intentId,
+						state: "conflict",
+						reasonCode: "RELEASE_CONFLICT",
+					};
+				}
+				const ready = await step.do<TransitionSummary>("recovery-absence", async () =>
+					transitionIntent(publisher, {
+						publisherDid: params.publisherDid,
+						intentId: params.intentId,
+						expectedState: "reconciling",
+						expectedGeneration: intent.stateGeneration,
+						toState: "ready",
+						transitionDigest: await digest(["recovery-absence", params.intentId]),
+						actorRealm: "system",
+						actorIdentity: WORKFLOW_ACTOR,
+						reasonCode: "PDS_RETRY_ABSENT",
+						stateDataJson: JSON.stringify({ absenceConfirmed: true }),
+					}),
+				);
+				if (!ready.ok) throw new NonRetryableError(ready.code);
+			}
+			return await publishVerifiedIntent(
+				this.env,
+				step,
+				params.publisherDid,
+				verificationIntent,
+				decision.approvalEvidence,
+			);
+		}
 		const authoritative = await step.do<AuthoritativeSummary>("authoritative-records", async () => {
 			const snapshot = await readPublisherVerificationSnapshot(
 				params.publisherDid,
@@ -382,7 +579,13 @@ export class ReleaseIntentWorkflow extends WorkflowEntrypoint<
 				}),
 			);
 			if (!ready.ok) throw new NonRetryableError(ready.code);
-			return { intentId: params.intentId, state: "ready", reasonCode: null };
+			return await publishVerifiedIntent(
+				this.env,
+				step,
+				params.publisherDid,
+				intent,
+				decision.approvalEvidence,
+			);
 		}
 		const awaiting = await step.do<TransitionSummary>("await-approval", async () =>
 			transitionIntent(publisher, {
@@ -395,61 +598,84 @@ export class ReleaseIntentWorkflow extends WorkflowEntrypoint<
 				actorRealm: "system",
 				actorIdentity: WORKFLOW_ACTOR,
 				reasonCode: "APPROVAL_REQUIRED",
-				stateDataJson: await encodeAwaitingApprovalState(decision.approvalEvidence),
+				stateDataJson: await encodeAwaitingApprovalState(
+					decision.approvalEvidence,
+					decision.approvers,
+				),
 			}),
 		);
 		if (!awaiting.ok) throw new NonRetryableError(awaiting.code);
-		const timeout = Math.max(1, awaiting.expiresAt - event.timestamp.getTime());
-		try {
-			await step.waitForEvent("approval-decision", { type: "approval-decision", timeout });
-		} catch {
-			const timeoutState = await step.do<{ intent: IntentSummary | null; checkedAt: number }>(
-				"approval-timeout-state",
-				async () => ({
-					intent: await currentIntent(publisher, params.publisherDid, params.intentId),
-					checkedAt: Date.now(),
-				}),
-			);
-			if (
-				timeoutState.intent?.state === "awaiting_approval" &&
-				timeoutState.checkedAt >= timeoutState.intent.expiresAt
-			) {
-				const expired = await step.do<TransitionSummary>("mark-expired", async () => {
-					const result = await transitionIntent(publisher, {
-						publisherDid: params.publisherDid,
-						intentId: params.intentId,
-						expectedState: "awaiting_approval",
-						expectedGeneration: timeoutState.intent!.stateGeneration,
-						toState: "expired",
-						transitionDigest: await digest(["expired", decision.approvalEvidence]),
-						actorRealm: "system",
-						actorIdentity: WORKFLOW_ACTOR,
-						reasonCode: "APPROVAL_EXPIRED",
-						stateDataJson: JSON.stringify({ reasonCode: "APPROVAL_EXPIRED" }),
-					});
-					if (result.ok) {
-						await invalidateApprovalChallenges(
-							this.env.APPROVER_DO,
-							decision.approvers,
-							params.intentId,
-							"EXPIRED",
-							timeoutState.checkedAt,
-						);
-					}
-					return result;
+		let waitStartedAt = event.timestamp.getTime();
+		let waitSequence = 1;
+		for (;;) {
+			const waitName =
+				waitSequence === 1 ? "approval-decision" : `approval-decision-${waitSequence}`;
+			try {
+				await step.waitForEvent(waitName, {
+					type: "approval-decision",
+					timeout: Math.max(1, awaiting.expiresAt - waitStartedAt),
 				});
-				if (!expired.ok) throw new NonRetryableError(expired.code);
-				return { intentId: params.intentId, state: "expired", reasonCode: "APPROVAL_EXPIRED" };
-			}
-			if (timeoutState.intent?.state === "awaiting_approval") {
-				throw new Error("Approval wait ended before the intent deadline");
+				break;
+			} catch {
+				const timeoutStateName =
+					waitSequence === 1 ? "approval-timeout-state" : `approval-timeout-state-${waitSequence}`;
+				const timeoutState = await step.do<{ intent: IntentSummary | null; checkedAt: number }>(
+					timeoutStateName,
+					async () => ({
+						intent: await currentIntent(publisher, params.publisherDid, params.intentId),
+						checkedAt: Date.now(),
+					}),
+				);
+				if (
+					timeoutState.intent?.state === "awaiting_approval" &&
+					timeoutState.checkedAt >= timeoutState.intent.expiresAt
+				) {
+					const expired = await step.do<TransitionSummary>("mark-expired", async () => {
+						const result = await transitionIntent(publisher, {
+							publisherDid: params.publisherDid,
+							intentId: params.intentId,
+							expectedState: "awaiting_approval",
+							expectedGeneration: timeoutState.intent!.stateGeneration,
+							toState: "expired",
+							transitionDigest: await digest(["expired", decision.approvalEvidence]),
+							actorRealm: "system",
+							actorIdentity: WORKFLOW_ACTOR,
+							reasonCode: "APPROVAL_EXPIRED",
+							stateDataJson: JSON.stringify({ reasonCode: "APPROVAL_EXPIRED" }),
+						});
+						if (result.ok) {
+							await invalidateApprovalChallenges(
+								this.env.APPROVER_DO,
+								decision.approvers,
+								params.intentId,
+								"EXPIRED",
+								timeoutState.checkedAt,
+							);
+						}
+						return result;
+					});
+					if (!expired.ok) throw new NonRetryableError(expired.code);
+					return { intentId: params.intentId, state: "expired", reasonCode: "APPROVAL_EXPIRED" };
+				}
+				if (timeoutState.intent?.state === "awaiting_approval") {
+					waitStartedAt = timeoutState.checkedAt;
+					waitSequence += 1;
+					continue;
+				}
+				break;
 			}
 		}
 		const completed = await step.do<IntentSummary | null>("approval-result", () =>
 			currentIntent(publisher, params.publisherDid, params.intentId),
 		);
 		if (completed?.state === "ready") {
-			return { intentId: params.intentId, state: "ready", reasonCode: null };
+			return await publishVerifiedIntent(
+				this.env,
+				step,
+				params.publisherDid,
+				intent,
+				decision.approvalEvidence,
+			);
 		}
 		if (completed?.state === "rejected") {
 			return { intentId: params.intentId, state: "rejected", reasonCode: "REJECTED" };

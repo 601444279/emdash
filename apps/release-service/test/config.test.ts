@@ -10,16 +10,16 @@ describe("release-service OAuth configuration", () => {
 		const metadata = getClientMetadata(configuration.oauth);
 
 		expect(metadata).toEqual({
-			client_id: "https://release.example.invalid/.well-known/atproto-client-metadata.json",
+			client_id: "https://release.example.com/.well-known/atproto-client-metadata.json",
 			client_name: "EmDash delegated release service",
-			client_uri: "https://release.example.invalid",
+			client_uri: "https://release.example.com",
 			application_type: "web",
 			grant_types: ["authorization_code", "refresh_token"],
 			response_types: ["code"],
-			redirect_uris: ["https://release.example.invalid/oauth/callback"],
+			redirect_uris: ["https://release.example.com/oauth/callback"],
 			scope:
 				"atproto repo:com.emdashcms.experimental.package.release?action=create blob:application/gzip blob:image/*",
-			jwks_uri: "https://release.example.invalid/oauth/jwks.json",
+			jwks_uri: "https://release.example.com/oauth/jwks.json",
 			dpop_bound_access_tokens: true,
 			token_endpoint_auth_method: "private_key_jwt",
 			token_endpoint_auth_signing_alg: "ES256",
@@ -29,13 +29,30 @@ describe("release-service OAuth configuration", () => {
 			ASSERTION_KEY_1.kid,
 		]);
 		expect(JSON.stringify(getPublicJwks(configuration.oauth))).not.toContain('"d"');
+		expect(configuration.access).toEqual({
+			teamDomain: TEST_BINDINGS.ACCESS_TEAM_DOMAIN,
+			audiences: {
+				viewer: TEST_BINDINGS.ACCESS_VIEWER_AUD,
+				reviewer: TEST_BINDINGS.ACCESS_REVIEWER_AUD,
+				admin: TEST_BINDINGS.ACCESS_ADMIN_AUD,
+			},
+		});
+	});
+
+	it("accepts a custom Access issuer hostname", async () => {
+		const configuration = await loadConfiguration({
+			...TEST_BINDINGS,
+			ACCESS_TEAM_DOMAIN: "https://access.example.com",
+		});
+
+		expect(configuration.access.teamDomain).toBe("https://access.example.com");
 	});
 
 	it.each([
 		["empty origin", { ...TEST_BINDINGS, PUBLIC_ORIGIN: "" }],
 		["empty deployment ID", { ...TEST_BINDINGS, DEPLOYMENT_ID: "" }],
-		["HTTP origin", { ...TEST_BINDINGS, PUBLIC_ORIGIN: "http://release.example.invalid" }],
-		["origin path", { ...TEST_BINDINGS, PUBLIC_ORIGIN: "https://release.example.invalid/path" }],
+		["HTTP origin", { ...TEST_BINDINGS, PUBLIC_ORIGIN: "http://release.example.com" }],
+		["origin path", { ...TEST_BINDINGS, PUBLIC_ORIGIN: "https://release.example.com/path" }],
 		[
 			"redirect mismatch",
 			{ ...TEST_BINDINGS, OAUTH_REDIRECT_URIS: '["https://other.example/callback"]' },
@@ -43,6 +60,15 @@ describe("release-service OAuth configuration", () => {
 		["empty redirects", { ...TEST_BINDINGS, OAUTH_REDIRECT_URIS: "[]" }],
 		["malformed keyset", { ...TEST_BINDINGS, OAUTH_ASSERTION_KEYSET: "not-json" }],
 		["malformed encryption keyring", { ...TEST_BINDINGS, ENCRYPTION_KEYRING: "not-json" }],
+		[
+			"Access team domain with a port",
+			{ ...TEST_BINDINGS, ACCESS_TEAM_DOMAIN: "https://emdash-test.cloudflareaccess.com:8443" },
+		],
+		["malformed Access audience", { ...TEST_BINDINGS, ACCESS_ADMIN_AUD: "not-an-aud" }],
+		[
+			"duplicate Access audiences",
+			{ ...TEST_BINDINGS, ACCESS_ADMIN_AUD: TEST_BINDINGS.ACCESS_REVIEWER_AUD },
+		],
 		[
 			"missing active key",
 			{

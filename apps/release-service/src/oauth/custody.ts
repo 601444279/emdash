@@ -20,11 +20,9 @@ import {
 	type StoredSession,
 	type StoredState,
 } from "@atcute/oauth-node-client";
+import { env } from "cloudflare:workers";
 
-import type {
-	ApproverDurableObject,
-	StoredIdentityTransaction,
-} from "../approver-do/approver-do.js";
+import type { ApproverDurableObject } from "../approver-do/approver-do.js";
 import type { OAuthConfiguration } from "../config.js";
 import {
 	EncryptionError,
@@ -36,8 +34,8 @@ import type {
 	DelegationRefreshLease,
 	PublisherDurableObject,
 	StoredDelegation,
-	StoredOAuthState,
 } from "../publisher-do/publisher-do.js";
+import type { StoredOAuthTransaction } from "./state-do.js";
 
 const DID_PATTERN = /^did:[a-z0-9]+:[A-Za-z0-9._:%-]+$/;
 const BASE64URL_PATTERN = /^[A-Za-z0-9_-]+$/;
@@ -366,33 +364,28 @@ interface PutDurableOAuthStateInput {
 }
 
 interface DurableOAuthStateBackend {
-	objectClass: "PublisherDurableObject" | "ApproverDurableObject";
-	table: "oauth_states" | "identity_transactions";
+	objectClass: "OAuthStateDurableObject";
+	table: "oauth_state";
 	put(input: PutDurableOAuthStateInput): Promise<{ ok: boolean }>;
-	consume(stateHash: string): Promise<StoredOAuthState | StoredIdentityTransaction | null>;
+	consume(stateHash: string): Promise<StoredOAuthTransaction | null>;
 }
 
-function publisherOAuthStateBackend(
-	stub: DurableObjectStub<PublisherDurableObject>,
-	publisherDid: Did,
-): DurableOAuthStateBackend {
+function oauthStateBackend(options: PublisherOAuthFlowOptions): DurableOAuthStateBackend {
 	return {
-		objectClass: "PublisherDurableObject",
-		table: "oauth_states",
-		put: (input) => stub.putOAuthState({ publisherDid, ...input }),
-		consume: (stateHash) => stub.consumeOAuthState(publisherDid, stateHash),
-	};
-}
-
-function approverOAuthStateBackend(
-	stub: DurableObjectStub<ApproverDurableObject>,
-	approverDid: Did,
-): DurableOAuthStateBackend {
-	return {
-		objectClass: "ApproverDurableObject",
-		table: "identity_transactions",
-		put: (input) => stub.putIdentityTransaction({ approverDid, ...input }),
-		consume: (stateHash) => stub.consumeIdentityTransaction(approverDid, stateHash),
+		objectClass: "OAuthStateDurableObject",
+		table: "oauth_state",
+		put: (input) =>
+			env.OAUTH_STATE_DO.getByName(input.stateHash).put({
+				...input,
+				ownerDid: options.expectedDid,
+				purpose: options.purpose,
+			}),
+		consume: (stateHash) =>
+			env.OAUTH_STATE_DO.getByName(stateHash).consume({
+				stateHash,
+				ownerDid: options.expectedDid,
+				purpose: options.purpose,
+			}),
 	};
 }
 
@@ -510,6 +503,7 @@ class PublisherOAuthSessionStore implements Store<Did, StoredSession> {
 	readonly #options: PublisherShardOAuthFlowOptions;
 	readonly #identitySessions: Store<Did, StoredSession> = new MemoryStore<Did, StoredSession>();
 	#activeLease: ActiveRefreshLease | null = null;
+	#sessionVersion: number | null = null;
 
 	constructor(
 		stub: DurableObjectStub<PublisherDurableObject>,
@@ -536,10 +530,13 @@ class PublisherOAuthSessionStore implements Store<Did, StoredSession> {
 				)
 			: await this.#stub.getDelegation(did);
 		if (!stored || stored.status !== "active" || stored.encryptedSession.length === 0) {
+			this.#sessionVersion = null;
 			return undefined;
 		}
 		try {
-			return await this.#decryptSession(stored, did);
+			const session = await this.#decryptSession(stored, did);
+			this.#sessionVersion = stored.stateVersion;
+			return session;
 		} catch (error) {
 			await this.#requireReauthorization(did, stored, error);
 			throw error;
@@ -572,6 +569,7 @@ class PublisherOAuthSessionStore implements Store<Did, StoredSession> {
 				...fields,
 			});
 			if (!result.ok) throw new OAuthCustodyError("OAUTH_DELEGATION_CAS_REQUIRED");
+			this.#sessionVersion = result.delegation.stateVersion;
 			return;
 		}
 		const existing = await this.#stub.getDelegation(did);
@@ -586,6 +584,7 @@ class PublisherOAuthSessionStore implements Store<Did, StoredSession> {
 			expectedVersion: existing?.stateVersion ?? null,
 		});
 		if (!result.ok) throw new OAuthCustodyError("OAUTH_DELEGATION_CAS_REQUIRED");
+		this.#sessionVersion = result.delegation.stateVersion;
 	}
 
 	async delete(did: Did): Promise<void> {
@@ -596,9 +595,15 @@ class PublisherOAuthSessionStore implements Store<Did, StoredSession> {
 		}
 		for (let attempt = 0; attempt < 2; attempt += 1) {
 			const existing = await this.#stub.getDelegation(did);
-			if (!existing || existing.status === "revoked") return;
+			if (!existing || existing.status === "revoked") {
+				this.#sessionVersion = null;
+				return;
+			}
 			const result = await this.#stub.revokeDelegation(did, existing.stateVersion);
-			if (result.ok) return;
+			if (result.ok) {
+				this.#sessionVersion = null;
+				return;
+			}
 		}
 		throw new OAuthCustodyError("OAUTH_DELEGATION_CAS_REQUIRED");
 	}
@@ -643,6 +648,14 @@ class PublisherOAuthSessionStore implements Store<Did, StoredSession> {
 			this.#activeLease = null;
 			await this.#stub.releaseDelegationRefresh(lease.publisherDid, lease.generation, lease.token);
 		}
+	}
+
+	sessionVersion(did: string): number {
+		this.#assertDid(did);
+		if (this.#options.purpose !== "release_delegation" || this.#sessionVersion === null) {
+			throw new OAuthCustodyError("OAUTH_DELEGATION_UNAVAILABLE");
+		}
+		return this.#sessionVersion;
 	}
 
 	#assertDid(did: string): asserts did is Did {
@@ -716,6 +729,7 @@ class PublisherOAuthSessionStore implements Store<Did, StoredSession> {
 	}
 
 	async #requireReauthorization(did: Did, stored: StoredDelegation, error: unknown): Promise<void> {
+		this.#sessionVersion = null;
 		let reason: DelegationReauthorizationReason = "OAUTH_SESSION_INVALID";
 		if (error instanceof OAuthCustodyError && error.code === "OAUTH_CLIENT_KEY_UNAVAILABLE") {
 			reason = "OAUTH_CLIENT_KEY_UNAVAILABLE";
@@ -756,6 +770,7 @@ function assertSeparateDpopKey(oauth: OAuthConfiguration, dpopKey: StoredSession
 export interface PublisherOAuthStores {
 	stores: OAuthClientStores;
 	requestLock?: <T>(name: string, callback: () => Promise<T>) => Promise<T>;
+	sessionVersion?: (did: string) => number;
 	userState: PublisherOAuthUserState;
 }
 
@@ -777,7 +792,7 @@ export function createPublisherOAuthStores(
 	};
 	const stub = namespace.getByName(options.expectedDid);
 	const states = new DurableOAuthStateStore(
-		publisherOAuthStateBackend(stub, options.expectedDid),
+		oauthStateBackend(normalizedOptions),
 		encryption,
 		oauth,
 		normalizedOptions,
@@ -786,7 +801,10 @@ export function createPublisherOAuthStores(
 	return {
 		stores: { states, sessions },
 		...(options.purpose === "release_delegation"
-			? { requestLock: sessions.requestLock.bind(sessions) }
+			? {
+					requestLock: sessions.requestLock.bind(sessions),
+					sessionVersion: sessions.sessionVersion.bind(sessions),
+				}
 			: {}),
 		userState: expectedUserState(normalizedOptions, oauth.clientMetadata.client_uri),
 	};
@@ -834,6 +852,7 @@ export class PublisherOAuthClient {
 	readonly #client: OAuthClient;
 	readonly #oauth: OAuthConfiguration;
 	readonly #flow: PublisherOAuthFlowOptions;
+	readonly #sessionVersion: ((did: string) => number) | undefined;
 	readonly userState: PublisherOAuthUserState;
 
 	constructor(
@@ -841,10 +860,12 @@ export class PublisherOAuthClient {
 		oauth: OAuthConfiguration,
 		flow: PublisherOAuthFlowOptions,
 		userState: PublisherOAuthUserState,
+		sessionVersion?: (did: string) => number,
 	) {
 		this.#client = client;
 		this.#oauth = oauth;
 		this.#flow = flow;
+		this.#sessionVersion = sessionVersion;
 		this.userState = userState;
 	}
 
@@ -894,6 +915,20 @@ export class PublisherOAuthClient {
 		return this.#client.restore(this.#flow.expectedDid, options);
 	}
 
+	async restoreForPublication(options?: RestoreOptions): Promise<{
+		session: OAuthSession;
+		delegationVersion: number;
+	}> {
+		if (this.#flow.purpose !== "release_delegation" || !this.#sessionVersion) {
+			throw new OAuthCustodyError("OAUTH_DELEGATION_UNAVAILABLE");
+		}
+		const session = await this.#client.restore(this.#flow.expectedDid, options);
+		return {
+			session,
+			delegationVersion: this.#sessionVersion(this.#flow.expectedDid),
+		};
+	}
+
 	revoke(): Promise<void> {
 		return this.#client.revoke(this.#flow.expectedDid);
 	}
@@ -917,7 +952,13 @@ export function createPublisherOAuthClient(
 		...(custody.requestLock ? { requestLock: custody.requestLock } : {}),
 		fetch: fetchThis,
 	});
-	return new PublisherOAuthClient(client, options.oauth, options.flow, custody.userState);
+	return new PublisherOAuthClient(
+		client,
+		options.oauth,
+		options.flow,
+		custody.userState,
+		custody.sessionVersion,
+	);
 }
 
 export function createApproverOAuthClient(
@@ -933,9 +974,8 @@ export function createApproverOAuthClient(
 			options.oauth.clientMetadata.client_uri,
 		),
 	};
-	const stub = options.namespace.getByName(flow.expectedDid);
 	const states = new DurableOAuthStateStore(
-		approverOAuthStateBackend(stub, flow.expectedDid),
+		oauthStateBackend(flow),
 		options.encryption,
 		options.oauth,
 		flow,

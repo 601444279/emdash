@@ -13,6 +13,14 @@
 				"class_name": "ApproverDurableObject",
 			},
 			{
+				"name": "OAUTH_STATE_DO",
+				"class_name": "OAuthStateDurableObject",
+			},
+			{
+				"name": "SERVICE_CONTROL_DO",
+				"class_name": "ServiceControlDurableObject",
+			},
+			{
 				"name": "PUBLISHER_DO",
 				"class_name": "PublisherDurableObject",
 			},
@@ -21,13 +29,24 @@
 	"migrations": [
 		{
 			"tag": "v1",
-			"new_sqlite_classes": ["ApproverDurableObject", "PublisherDurableObject"],
+			"new_sqlite_classes": [
+				"ApproverDurableObject",
+				"OAuthStateDurableObject",
+				"PublisherDurableObject",
+				"ServiceControlDurableObject",
+			],
 		},
 	],
 	"services": [
 		{
 			"binding": "RELEASE_VERIFIER",
 			"service": "emdash-release-verifier",
+		},
+	],
+	"r2_buckets": [
+		{
+			"binding": "PUBLICATION_STAGING",
+			"bucket_name": "emdash-release-service-publication-staging",
 		},
 	],
 	"workflows": [
@@ -37,9 +56,31 @@
 			"class_name": "ReleaseIntentWorkflow",
 		},
 	],
+	"assets": {
+		"directory": "./dist/client",
+		"binding": "ASSETS",
+		"not_found_handling": "single-page-application",
+		"html_handling": "none",
+		"run_worker_first": [
+			"/",
+			"/.well-known/*",
+			"/admin",
+			"/admin/*",
+			"/approvals/*",
+			"/health",
+			"/oauth/*",
+			"/publisher*",
+			"/ready",
+			"/v1/*",
+		],
+	},
 	"vars": {
 		"PUBLIC_ORIGIN": "",
 		"DEPLOYMENT_ID": "",
+		"ACCESS_TEAM_DOMAIN": "",
+		"ACCESS_VIEWER_AUD": "",
+		"ACCESS_REVIEWER_AUD": "",
+		"ACCESS_ADMIN_AUD": "",
 		"OAUTH_REDIRECT_URIS": "[]",
 	},
 	"secrets": {

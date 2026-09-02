@@ -18,7 +18,7 @@ const ARTIFACT_CHECKSUM = "bciqcz4snxjp3biyoe3udwkwfxhrj4gywdzob7j2clzzqim3csofz
 const PROVENANCE = {
 	predicateType: "https://slsa.dev/provenance/v1",
 	url: "https://github.com/example/gallery/attestation.sigstore.json",
-	checksum: "bciqkkpvkbtfcwq6kjkbq3kgjxe5j6ihzkxlfxkzqhwzaaaa3wkbq3a",
+	checksum: "bciqaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 	sourceRepository: "https://github.com/example/gallery",
 	builderId: "https://github.com/example/gallery/.github/workflows/release.yml@refs/heads/main",
 } as const;
@@ -45,6 +45,7 @@ function intent(release = proposedRelease()): StoredIntent {
 		stateGeneration: 2,
 		workloadPolicyVersion: 1,
 		workloadIdentityDigest: "A".repeat(43),
+		workloadIdempotencyDigest: "I".repeat(43),
 		requestDigest: "B".repeat(43),
 		workloadIdentityJson: JSON.stringify({ issuer: "github-actions" }),
 		releaseInputJson: JSON.stringify({ release }),
