@@ -1509,8 +1509,14 @@ describe("MediaDetailPanel", () => {
 		const deleteBtn = screen.getByRole("button", { name: "Delete" });
 		deleteBtn.element().click();
 
-		// ConfirmDialog should appear
-		await expect.element(screen.getByText("Delete Media?")).toBeInTheDocument();
+		const confirmation = screen.getByRole("alertdialog", { name: "Delete media?" });
+		await expect.element(confirmation).toBeInTheDocument();
+		await expect
+			.element(confirmation)
+			.toHaveTextContent('"photo.jpg" will be permanently deleted.');
+		await expect
+			.element(confirmation.getByRole("note"))
+			.toHaveTextContent("Content using this media item may show a broken reference.");
 
 		// Direct DOM click to bypass Base UI inert overlay
 		const allDeleteBtns = screen.getByRole("button", { name: "Delete" }).all();
@@ -1534,7 +1540,12 @@ describe("MediaDetailPanel", () => {
 		});
 
 		screen.getByRole("button", { name: "Delete" }).element().click();
-		await expect.element(screen.getByText("Delete Media?")).toBeInTheDocument();
+		const confirmation = screen.getByRole("alertdialog", { name: "Delete media?" });
+		await expect.element(confirmation).toBeInTheDocument();
+		await expect
+			.element(confirmation)
+			.toHaveTextContent('"photo.jpg" will be deleted from Cloudflare Images.');
+		expect(confirmation.getByText("This cannot be undone").query()).toBeNull();
 		screen.getByRole("button", { name: "Delete" }).all().at(-1)!.element().click();
 
 		await vi.waitFor(() => {
@@ -1551,8 +1562,9 @@ describe("MediaDetailPanel", () => {
 		const deleteBtn = screen.getByRole("button", { name: "Delete" });
 		deleteBtn.element().click();
 
-		// ConfirmDialog should appear
-		await expect.element(screen.getByText("Delete Media?")).toBeInTheDocument();
+		await expect
+			.element(screen.getByRole("alertdialog", { name: "Delete media?" }))
+			.toBeInTheDocument();
 
 		// Direct DOM click to bypass Base UI inert overlay
 		screen.getByRole("button", { name: "Cancel" }).all().at(-1)!.element().click();

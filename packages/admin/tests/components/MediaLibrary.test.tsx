@@ -1228,7 +1228,7 @@ describe("MediaLibrary", () => {
 
 			await screen.getByRole("button", { name: "photo.jpg" }).click();
 			screen.getByRole("button", { name: "Delete" }).element().click();
-			await expect.element(screen.getByText("Delete Media?")).toBeInTheDocument();
+			await expect.element(screen.getByText("Delete media?")).toBeInTheDocument();
 			screen.getByRole("button", { name: "Delete" }).all().at(-1)!.element().click();
 
 			await vi.waitFor(() => {
@@ -1254,7 +1254,7 @@ describe("MediaLibrary", () => {
 
 			await screen.getByRole("button", { name: "photo.jpg" }).click();
 			screen.getByRole("button", { name: "Delete" }).element().click();
-			await expect.element(screen.getByText("Delete Media?")).toBeInTheDocument();
+			await expect.element(screen.getByText("Delete media?")).toBeInTheDocument();
 			screen.getByRole("button", { name: "Delete" }).all().at(-1)!.element().click();
 
 			await vi.waitFor(() => {

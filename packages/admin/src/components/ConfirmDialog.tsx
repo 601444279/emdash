@@ -71,8 +71,8 @@ export function ConfirmDialog({
 			onOpenChange={(nextOpen) => !nextOpen && !closeLocked && onClose()}
 			disablePointerDismissal
 		>
-			<Dialog className={compact ? "max-w-md px-5 pt-5 pb-4" : "p-6"} size="sm">
-				<div className={compact ? "grid gap-1.5" : undefined}>
+			<Dialog className={compact ? "max-w-md px-5 pt-6 pb-4" : "p-6"} size="sm">
+				<div className={compact ? "grid gap-1" : undefined}>
 					<Dialog.Title
 						className={
 							titleClassName ??

@@ -1548,14 +1548,41 @@ export function MediaDetailPanel({
 					setShowDeleteConfirm(false);
 					deleteMutation.reset();
 				}}
-				title={t`Delete Media?`}
-				description={t`Delete "${item.filename}"? This cannot be undone.`}
+				role="alertdialog"
+				title={t`Delete media?`}
+				titleClassName="text-[18px] font-semibold leading-6"
+				description={
+					<span className="text-[14px] leading-5">
+						{isProviderAsset
+							? providerName
+								? t`"${item.filename}" will be deleted from ${providerName}.`
+								: t`"${item.filename}" will be deleted from its media provider.`
+							: t`"${item.filename}" will be permanently deleted.`}
+					</span>
+				}
+				descriptionClassName="text-pretty text-[14px] leading-5 text-kumo-subtle"
 				confirmLabel={t`Delete`}
 				pendingLabel={t`Deleting...`}
 				isPending={deleteMutation.isPending}
+				compact
 				error={deleteMutation.error}
 				onConfirm={() => deleteMutation.mutate()}
-			/>
+			>
+				{!isProviderAsset ? (
+					<Banner
+						variant="error"
+						icon={<WarningCircle className="h-4 w-4" aria-hidden="true" />}
+						title={t`This cannot be undone`}
+						description={
+							<span className="text-[14px] leading-5">
+								{t`Content using this media item may show a broken reference.`}
+							</span>
+						}
+						className="mt-4 text-[14px]"
+						role="note"
+					/>
+				) : null}
+			</ConfirmDialog>
 
 			<ConfirmDialog
 				open={showCropConfirm}
