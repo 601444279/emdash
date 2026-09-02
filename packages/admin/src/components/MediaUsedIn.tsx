@@ -177,7 +177,7 @@ export function MediaUsedIn({ mediaId, open, navigationBlocked, onEntryClick }: 
 							))}
 						</ul>
 					) : canRenderEmpty ? (
-						<LayerCard className="grid justify-items-center gap-1.5 px-6 py-5 text-center">
+						<LayerCard className="grid justify-items-center gap-1.5 px-6 py-14 text-center">
 							<p className="text-sm font-medium text-kumo-default">
 								{coverageComplete ? t`No usage` : t`No usage to show yet`}
 							</p>
