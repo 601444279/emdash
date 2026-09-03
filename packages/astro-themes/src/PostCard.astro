@@ -1,7 +1,11 @@
 ---
-import type { Post, Theme } from "../lib/cms";
+import type { Theme, ThemePost } from "./types";
 
-interface Props { post: Post; theme: Theme; }
+interface Props {
+	post: ThemePost;
+	theme: Theme;
+}
+
 const { post, theme } = Astro.props;
 const title = typeof post.data.title === "string" ? post.data.title : "Untitled";
 const excerpt = typeof post.data.excerpt === "string" ? post.data.excerpt : "";
@@ -23,7 +27,6 @@ const cardStyle = ["flat", "bordered"].includes(theme.settings.cardStyle)
 	.post-card.flat { border-color: transparent; background: transparent; padding-inline: 0; }
 	.post-card.catalog { border-inline-start: 4px solid var(--accent); }
 	h2 { margin: .35rem 0 .7rem; font-size: clamp(1.25rem, 2vw, 1.7rem); line-height: 1.1; letter-spacing: -.03em; }
-	.eyebrow { margin: 0; color: var(--accent); font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
 	.excerpt, time { color: var(--muted); line-height: 1.6; }
 	time { font-size: .85rem; }
 </style>

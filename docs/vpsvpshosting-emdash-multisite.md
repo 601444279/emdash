@@ -29,7 +29,7 @@ CMS 位于 `apps/vpsvpshosting-cms`，前台首站位于 `sites/vpsvpshosting`�
 
 ## Astro 主题
 
-主题注册表在 `packages/core/src/themes/index.ts`。主题是受版本控制的代码包，数据库只保存主题 ID、版本和经过验证的配置值。
+主题注册表在 `packages/core/src/themes/index.ts`，共享 Astro 渲染组件位于 `packages/astro-themes`。主题是受版本控制的代码包，数据库只保存主题 ID、版本和经过验证的配置值。每个公开站点依赖这个共享包，不复制主题壳或文章卡片代码。
 
 主题声明覆盖的页面类型：
 
@@ -42,7 +42,7 @@ CMS 位于 `apps/vpsvpshosting-cms`，前台首站位于 `sites/vpsvpshosting`�
 
 当前提供 `editorial` 与 `catalog` 两套主题。可配置项为配色、字体、文章卡片、导航和页脚布局。主题切换、版本升级和回滚只变更站点主题配置，不修改文章正文、文章字段或 SEO 数据。
 
-不要把主题代码上传到数据库，也不要增加任意 CSS 或任意脚本注入入口。新增主题时，应在注册表中声明允许的配置和值，并在各 Astro 前台实现相同的页面契约。
+不要把主题代码上传到数据库，也不要增加任意 CSS 或任意脚本注入入口。新增主题时，应在注册表中声明允许的配置和值，并在 `packages/astro-themes` 中实现对应的静态 Astro 页面组件。
 
 ## 首站运行与部署
 

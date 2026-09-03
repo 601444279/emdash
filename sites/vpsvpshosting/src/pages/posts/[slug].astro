@@ -1,6 +1,6 @@
 ---
 import { getPost, getSite } from "../../lib/cms";
-import SiteLayout from "../../layouts/SiteLayout.astro";
+import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
 
 const slug = Astro.params.slug ?? "";
 const [site, post] = await Promise.all([getSite(), getPost(slug)]);
@@ -22,7 +22,7 @@ function blockText(block: unknown): string {
 
 ---
 
-<SiteLayout site={site} title={`${title} — ${site.name}`} description={excerpt}>
+<ThemeShell site={site} title={`${title} — ${site.name}`} description={excerpt}>
 	<article class:list={["article", site.theme.id]}>
 		<h1>{title}</h1>
 		{excerpt && <p class="lede">{excerpt}</p>}
@@ -31,7 +31,7 @@ function blockText(block: unknown): string {
 			{blocks.map((block) => blockText(block) && <p>{blockText(block)}</p>)}
 		</div>
 	</article>
-</SiteLayout>
+</ThemeShell>
 
 <style>
 	.article { max-width: 48rem; margin: auto; padding: 4rem 1.5rem 0; }

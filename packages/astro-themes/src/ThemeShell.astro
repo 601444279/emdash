@@ -1,8 +1,8 @@
 ---
-import type { Site } from "../lib/cms";
+import type { ThemeSite } from "./types";
 
 interface Props {
-	site: Site;
+	site: ThemeSite;
 	title: string;
 	description?: string;
 }
@@ -25,7 +25,7 @@ const footer = site.theme.settings.footer === "compact" ? "compact" : "columns";
 		{description && <meta name="description" content={description} />}
 	</head>
 	<body>
-		<header class:list={["site-header", navigation === "centered" && "centered"]}>
+		<header class:list={["site-header", navigation === "centered" && "centered", navigation === "stacked" && "stacked"]}>
 			<a class="brand" href="/">{site.name}</a>
 			<nav aria-label="Primary navigation">
 				<a href="/">Latest</a>

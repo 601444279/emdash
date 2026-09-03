@@ -1,12 +1,12 @@
 ---
-import PostCard from "../components/PostCard.astro";
+import PostCard from "@emdash-cms/astro-themes/PostCard.astro";
+import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
 import { getPosts, getSite } from "../lib/cms";
-import SiteLayout from "../layouts/SiteLayout.astro";
 
 const [site, posts] = await Promise.all([getSite(), getPosts()]);
 ---
 
-<SiteLayout site={site} title={`${site.name} — VPS reviews and comparisons`} description="Independent VPS hosting reviews, guides, and comparisons.">
+<ThemeShell site={site} title={`${site.name} — VPS reviews and comparisons`} description="Independent VPS hosting reviews, guides, and comparisons.">
 	<section class:list={["hero", site.theme.id]}>
 		<p class="kicker">Independent research</p>
 		<h1>Find hosting that fits the work.</h1>
@@ -15,7 +15,7 @@ const [site, posts] = await Promise.all([getSite(), getPosts()]);
 	<section class:list={["post-grid", site.theme.id]} aria-label="Latest articles">
 		{posts.length > 0 ? posts.map((post) => <PostCard post={post} theme={site.theme} />) : <p>No published articles yet.</p>}
 	</section>
-</SiteLayout>
+</ThemeShell>
 
 <style>
 	.hero { padding: 6rem 1.5rem 3.5rem; max-width: 72rem; margin: auto; }

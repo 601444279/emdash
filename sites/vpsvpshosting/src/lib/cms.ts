@@ -1,22 +1,8 @@
-export interface Theme {
-	id: "editorial" | "catalog";
-	version: string;
-	settings: Record<string, string>;
-}
+import type { Theme, ThemePost, ThemeSite } from "@emdash-cms/astro-themes/types";
 
-export interface Site {
-	key: string;
-	name: string;
-	theme: Theme;
-}
-
-export interface Post {
-	id: string;
-	slug: string;
-	status: string;
-	data: Record<string, unknown>;
-	publishedAt: string | null;
-}
+export type { Theme };
+export type Site = ThemeSite;
+export type Post = ThemePost;
 
 interface ApiSuccess<T> {
 	success: true;

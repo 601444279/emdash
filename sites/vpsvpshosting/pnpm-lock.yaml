@@ -11,6 +11,9 @@ importers:
       '@astrojs/cloudflare':
         specifier: ^14.0.0
         version: 14.2.6(astro@7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(yaml@2.9.0))(esbuild@0.28.2)(wrangler@4.127.1(@cloudflare/workers-types@4.20260702.1))(yaml@2.9.0)
+      '@emdash-cms/astro-themes':
+        specifier: file:../../packages/astro-themes
+        version: file:../../packages/astro-themes(astro@7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(yaml@2.9.0))
       astro:
         specifier: ^7.0.0
         version: 7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(yaml@2.9.0)
@@ -276,6 +279,11 @@ packages:
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
+
+  '@emdash-cms/astro-themes@file:../../packages/astro-themes':
+    resolution: {directory: ../../packages/astro-themes, type: directory}
+    peerDependencies:
+      astro: 'catalog:'
 
   '@emmetio/abbreviation@2.3.3':
     resolution: {integrity: sha512-mgv58UrU3rh4YgbE/TzgLQwJ3pFsHHhCLqY20aJq+9comytTXUDNGG/SMtSeMJdkpxgXSXunBGLD8Boka3JyVA==}
@@ -2433,6 +2441,10 @@ snapshots:
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
+
+  '@emdash-cms/astro-themes@file:../../packages/astro-themes(astro@7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(yaml@2.9.0))':
+    dependencies:
+      astro: 7.2.10(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(yaml@2.9.0)
 
   '@emmetio/abbreviation@2.3.3':
     dependencies:

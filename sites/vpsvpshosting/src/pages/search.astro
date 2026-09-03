@@ -1,21 +1,21 @@
 ---
 import { getPosts, getSite } from "../lib/cms";
-import PostCard from "../components/PostCard.astro";
-import SiteLayout from "../layouts/SiteLayout.astro";
+import PostCard from "@emdash-cms/astro-themes/PostCard.astro";
+import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
 
 const [site, posts] = await Promise.all([getSite(), getPosts(100)]);
 const query = (Astro.url.searchParams.get("q") ?? "").trim().toLowerCase();
 const results = query ? posts.filter((post) => JSON.stringify(post.data).toLowerCase().includes(query)) : [];
 ---
 
-<SiteLayout site={site} title={`Search — ${site.name}`}>
+<ThemeShell site={site} title={`Search — ${site.name}`}>
 	<section class="search">
 		<h1>Search</h1>
 		<form><input name="q" value={query} placeholder="Search published articles" /><button>Search</button></form>
 		{query && <p>{results.length} result{results.length === 1 ? "" : "s"} for “{query}”</p>}
 		<div class="results">{results.map((post) => <PostCard post={post} theme={site.theme} />)}</div>
 	</section>
-</SiteLayout>
+</ThemeShell>
 
 <style>
 	.search { max-width: 72rem; padding: 4rem 1.5rem; margin: auto; }
