@@ -60,8 +60,14 @@ export class SiteContentRepository {
 		return id ? this.content.findById(type, id) : null;
 	}
 
-	async findByIdentifier(siteId: string, type: string, identifier: string): Promise<ContentItem | null> {
-		return (await this.findById(siteId, type, identifier)) ?? this.findBySlug(siteId, type, identifier);
+	async findByIdentifier(
+		siteId: string,
+		type: string,
+		identifier: string,
+	): Promise<ContentItem | null> {
+		return (
+			(await this.findById(siteId, type, identifier)) ?? this.findBySlug(siteId, type, identifier)
+		);
 	}
 
 	async listPublished(siteId: string, type: string, limit = 50): Promise<ContentItem[]> {

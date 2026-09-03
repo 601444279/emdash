@@ -37,6 +37,10 @@ export interface ThemeHistoryEntry {
 	createdAt: string;
 }
 
+export interface SiteMenuAssignment {
+	menuId: string | null;
+}
+
 export interface RegisteredTheme {
 	id: string;
 	version: string;
@@ -89,4 +93,18 @@ export async function rollbackTheme(key: string, historyId: string): Promise<Man
 		{ method: "POST" },
 	);
 	return parseApiResponse<ManagedSite>(response, i18n._(msg`Failed to roll back theme`));
+}
+
+export async function fetchSiteMenu(key: string): Promise<SiteMenuAssignment> {
+	const response = await apiFetch(`${API_BASE}/sites/${encodeURIComponent(key)}/menu`);
+	return parseApiResponse<SiteMenuAssignment>(response, i18n._(msg`Failed to fetch site menu`));
+}
+
+export async function assignSiteMenu(key: string, menuId: string): Promise<SiteMenuAssignment> {
+	const response = await apiFetch(`${API_BASE}/sites/${encodeURIComponent(key)}/menu`, {
+		method: "PUT",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ menuId }),
+	});
+	return parseApiResponse<SiteMenuAssignment>(response, i18n._(msg`Failed to assign site menu`));
 }

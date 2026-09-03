@@ -38,7 +38,10 @@ export const GET: APIRoute = async ({ locals, params, url }) => {
 		);
 		if (items.length === 0) return apiError("NOT_FOUND", "Taxonomy term not found", 404);
 		const response = apiSuccess({ term, items });
-		response.headers.set("Cache-Control", "public, max-age=0, s-maxage=60, stale-while-revalidate=30");
+		response.headers.set(
+			"Cache-Control",
+			"public, max-age=0, s-maxage=60, stale-while-revalidate=30",
+		);
 		return response;
 	} catch {
 		return apiError("SITE_TAXONOMY_GET_ERROR", "Failed to load site taxonomy", 500);

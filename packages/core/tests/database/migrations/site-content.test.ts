@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { ContentRepository } from "../../../src/database/repositories/content.js";
 import { up } from "../../../src/database/migrations/075_site_content.js";
+import { ContentRepository } from "../../../src/database/repositories/content.js";
 import { setupTestDatabaseWithCollections, teardownTestDatabase } from "../../utils/test-db.js";
 
 describe("075_site_content", () => {

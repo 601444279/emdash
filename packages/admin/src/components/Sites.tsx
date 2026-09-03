@@ -4,8 +4,11 @@ import { Plus } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
 
+import { fetchMenus } from "../lib/api/menus.js";
 import {
+	assignSiteMenu,
 	createSite,
+	fetchSiteMenu,
 	fetchRegisteredThemes,
 	fetchSites,
 	fetchThemeHistory,
@@ -17,13 +20,17 @@ import {
 } from "../lib/api/sites.js";
 import { RouterLinkButton } from "./RouterLinkButton.js";
 
-function themeOptionKey(theme: Pick<ManagedSite["theme"] | RegisteredTheme, "id" | "version">): string {
+function themeOptionKey(
+	theme: Pick<ManagedSite["theme"] | RegisteredTheme, "id" | "version">,
+): string {
 	return `${theme.id}@${theme.version}`;
 }
 
 function stringThemeSettings(settings: Record<string, unknown>): Record<string, string> {
 	return Object.fromEntries(
-		Object.entries(settings).filter((entry): entry is [string, string] => typeof entry[1] === "string"),
+		Object.entries(settings).filter(
+			(entry): entry is [string, string] => typeof entry[1] === "string",
+		),
 	);
 }
 
@@ -34,7 +41,10 @@ export function Sites() {
 	const [error, setError] = React.useState<string>();
 	const [selectedSite, setSelectedSite] = React.useState<ManagedSite>();
 	const [selectedThemeKey, setSelectedThemeKey] = React.useState("");
-	const [selectedThemeSettings, setSelectedThemeSettings] = React.useState<Record<string, string>>({});
+	const [selectedThemeSettings, setSelectedThemeSettings] = React.useState<Record<string, string>>(
+		{},
+	);
+	const [selectedMenuId, setSelectedMenuId] = React.useState("");
 	const [themeError, setThemeError] = React.useState<string>();
 	const sitesQuery = useQuery({ queryKey: ["sites"], queryFn: fetchSites });
 	const themesQuery = useQuery({ queryKey: ["registered-themes"], queryFn: fetchRegisteredThemes });
@@ -45,6 +55,15 @@ export function Sites() {
 		queryFn: () => fetchThemeHistory(selectedSite?.key ?? ""),
 		enabled: selectedSite !== undefined,
 	});
+	const menusQuery = useQuery({ queryKey: ["menus"], queryFn: () => fetchMenus() });
+	const siteMenuQuery = useQuery({
+		queryKey: ["site-menu", selectedSite?.key],
+		queryFn: () => fetchSiteMenu(selectedSite?.key ?? ""),
+		enabled: selectedSite !== undefined,
+	});
+	React.useEffect(() => {
+		if (siteMenuQuery.data?.menuId) setSelectedMenuId(siteMenuQuery.data.menuId);
+	}, [siteMenuQuery.data?.menuId]);
 	const createMutation = useMutation({
 		mutationFn: createSite,
 		onSuccess: async () => {
@@ -86,6 +105,15 @@ export function Sites() {
 		onError: (cause) =>
 			setThemeError(cause instanceof Error ? cause.message : t`Failed to roll back theme`),
 	});
+	const assignMenuMutation = useMutation({
+		mutationFn: ({ key, menuId }: { key: string; menuId: string }) => assignSiteMenu(key, menuId),
+		onSuccess: async (_, variables) => {
+			setThemeError(undefined);
+			await queryClient.invalidateQueries({ queryKey: ["site-menu", variables.key] });
+		},
+		onError: (cause) =>
+			setThemeError(cause instanceof Error ? cause.message : t`Failed to assign site menu`),
+	});
 
 	function handleCreate(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -117,6 +145,7 @@ export function Sites() {
 		setSelectedSite(site);
 		setSelectedThemeKey(themeOptionKey(site.theme));
 		setSelectedThemeSettings(stringThemeSettings(site.theme.settings));
+		setSelectedMenuId("");
 		setThemeError(undefined);
 	}
 
@@ -212,7 +241,11 @@ export function Sites() {
 						name="domain"
 						placeholder={t`example.com, www.example.com`}
 					/>
-					<Select label={t`Theme`} name="theme" defaultValue={themeOptions[0] ? themeOptionKey(themeOptions[0]) : undefined}>
+					<Select
+						label={t`Theme`}
+						name="theme"
+						defaultValue={themeOptions[0] ? themeOptionKey(themeOptions[0]) : undefined}
+					>
 						{themeOptions.map((theme) => (
 							<Select.Option key={themeOptionKey(theme)} value={themeOptionKey(theme)}>
 								{theme.name} {theme.version}
@@ -223,7 +256,12 @@ export function Sites() {
 						<Button type="button" variant="outline" onClick={() => setFormOpen(false)}>
 							{t`Cancel`}
 						</Button>
-						<Button type="submit" disabled={createMutation.isPending || themesQuery.isLoading || themeOptions.length === 0}>
+						<Button
+							type="submit"
+							disabled={
+								createMutation.isPending || themesQuery.isLoading || themeOptions.length === 0
+							}
+						>
 							{createMutation.isPending ? t`Creating…` : t`Create Site`}
 						</Button>
 					</div>
@@ -309,6 +347,37 @@ export function Sites() {
 						</Button>
 					</div>
 					<section className="mt-6">
+						<h3 className="text-sm font-semibold">{t`Navigation menu`}</h3>
+						<p className="mt-1 text-sm text-kumo-subtle">
+							{t`Only this site's assigned menu is shown by its public theme.`}
+						</p>
+						<div className="mt-4 flex flex-wrap items-end gap-3">
+							<Select
+								className="min-w-64"
+								label={t`Menu`}
+								value={selectedMenuId}
+								onValueChange={(value) => setSelectedMenuId(value ?? "")}
+							>
+								{menusQuery.data?.map((menu) => (
+									<Select.Option key={menu.id} value={menu.id}>
+										{menu.label}
+									</Select.Option>
+								))}
+							</Select>
+							<Button
+								disabled={!selectedMenuId || assignMenuMutation.isPending}
+								onClick={() =>
+									assignMenuMutation.mutate({ key: selectedSite.key, menuId: selectedMenuId })
+								}
+							>
+								{assignMenuMutation.isPending ? t`Saving…` : t`Save menu`}
+							</Button>
+						</div>
+						{menusQuery.data?.length === 0 && (
+							<p className="mt-2 text-sm text-kumo-subtle">{t`Create a menu before assigning it to this site.`}</p>
+						)}
+					</section>
+					<section className="mt-6">
 						<h3 className="text-sm font-semibold">{t`Style settings`}</h3>
 						<p className="mt-1 text-sm text-kumo-subtle">
 							{t`These settings change the presentation only. They never modify your content.`}
@@ -325,18 +394,25 @@ export function Sites() {
 								}
 							>
 								{settingValues("palette").map((value) => (
-									<Select.Option key={value} value={value}>{settingLabel(value)}</Select.Option>
+									<Select.Option key={value} value={value}>
+										{settingLabel(value)}
+									</Select.Option>
 								))}
 							</Select>
 							<Select
 								label={t`Font pairing`}
 								value={selectedThemeSettings.font ?? selectedTheme?.defaults.font ?? ""}
 								onValueChange={(font) =>
-									setSelectedThemeSettings((settings) => ({ ...settings, font: font ?? selectedTheme?.defaults.font ?? "" }))
+									setSelectedThemeSettings((settings) => ({
+										...settings,
+										font: font ?? selectedTheme?.defaults.font ?? "",
+									}))
 								}
 							>
 								{settingValues("font").map((value) => (
-									<Select.Option key={value} value={value}>{settingLabel(value)}</Select.Option>
+									<Select.Option key={value} value={value}>
+										{settingLabel(value)}
+									</Select.Option>
 								))}
 							</Select>
 							<Select
@@ -350,7 +426,9 @@ export function Sites() {
 								}
 							>
 								{settingValues("cardStyle").map((value) => (
-									<Select.Option key={value} value={value}>{settingLabel(value)}</Select.Option>
+									<Select.Option key={value} value={value}>
+										{settingLabel(value)}
+									</Select.Option>
 								))}
 							</Select>
 							<Select
@@ -364,18 +442,25 @@ export function Sites() {
 								}
 							>
 								{settingValues("navigation").map((value) => (
-									<Select.Option key={value} value={value}>{settingLabel(value)}</Select.Option>
+									<Select.Option key={value} value={value}>
+										{settingLabel(value)}
+									</Select.Option>
 								))}
 							</Select>
 							<Select
 								label={t`Footer layout`}
 								value={selectedThemeSettings.footer ?? selectedTheme?.defaults.footer ?? ""}
 								onValueChange={(footer) =>
-									setSelectedThemeSettings((settings) => ({ ...settings, footer: footer ?? selectedTheme?.defaults.footer ?? "" }))
+									setSelectedThemeSettings((settings) => ({
+										...settings,
+										footer: footer ?? selectedTheme?.defaults.footer ?? "",
+									}))
 								}
 							>
 								{settingValues("footer").map((value) => (
-									<Select.Option key={value} value={value}>{settingLabel(value)}</Select.Option>
+									<Select.Option key={value} value={value}>
+										{settingLabel(value)}
+									</Select.Option>
 								))}
 							</Select>
 						</div>

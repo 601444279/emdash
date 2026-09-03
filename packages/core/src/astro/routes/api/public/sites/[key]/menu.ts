@@ -15,8 +15,19 @@ export const GET: APIRoute = async ({ locals, params }) => {
 		const site = await new SiteRepository(emdash.db).findByKey(params.key ?? "");
 		if (!site || site.status !== "active") return apiError("NOT_FOUND", "Site not found", 404);
 		const menu = await new SiteMenuRepository(emdash.db).find(site.id);
-		const response = apiSuccess({ items: menu?.items ?? [] });
-		response.headers.set("Cache-Control", "public, max-age=0, s-maxage=60, stale-while-revalidate=30");
+		const items = (menu?.items ?? [])
+			.filter(
+				(item) =>
+					item.type === "custom" &&
+					item.customUrl?.startsWith("/") &&
+					!item.customUrl.startsWith("//"),
+			)
+			.map((item) => ({ label: item.label, href: item.customUrl! }));
+		const response = apiSuccess({ items });
+		response.headers.set(
+			"Cache-Control",
+			"public, max-age=0, s-maxage=60, stale-while-revalidate=30",
+		);
 		return response;
 	} catch {
 		return apiError("SITE_MENU_GET_ERROR", "Failed to load site menu", 500);

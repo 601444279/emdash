@@ -56,18 +56,50 @@ describe("SiteContentRepository", () => {
 		const db = await setupTestDatabaseWithCollections();
 		try {
 			const sites = new SiteRepository(db);
-			const first = await sites.create({ key: "first", name: "First", domains: [], theme: { id: "editorial", version: "1.0.0", settings: {} } });
-			const second = await sites.create({ key: "second", name: "Second", domains: [], theme: { id: "catalog", version: "1.0.0", settings: {} } });
+			const first = await sites.create({
+				key: "first",
+				name: "First",
+				domains: [],
+				theme: { id: "editorial", version: "1.0.0", settings: {} },
+			});
+			const second = await sites.create({
+				key: "second",
+				name: "Second",
+				domains: [],
+				theme: { id: "catalog", version: "1.0.0", settings: {} },
+			});
 			const content = new SiteContentRepository(db);
-			const taxonomy = await new TaxonomyRepository(db).create({ name: "category", slug: "guides", label: "Guides" });
-			const firstPost = await content.create(first.id, { type: "post", slug: "first-guide", status: "published", data: { title: "First" } });
-			const secondPost = await content.create(second.id, { type: "post", slug: "second-guide", status: "published", data: { title: "Second" } });
+			const taxonomy = await new TaxonomyRepository(db).create({
+				name: "category",
+				slug: "guides",
+				label: "Guides",
+			});
+			const firstPost = await content.create(first.id, {
+				type: "post",
+				slug: "first-guide",
+				status: "published",
+				data: { title: "First" },
+			});
+			const secondPost = await content.create(second.id, {
+				type: "post",
+				slug: "second-guide",
+				status: "published",
+				data: { title: "Second" },
+			});
 			const terms = new TaxonomyRepository(db);
 			await terms.setTermsForEntry("post", firstPost.id, "category", [taxonomy.id]);
 			await terms.setTermsForEntry("post", secondPost.id, "category", [taxonomy.id]);
 
-			expect((await content.listPublishedByTaxonomy(first.id, "post", "category", "guides")).map((item) => item.slug)).toEqual(["first-guide"]);
-			expect((await content.listPublishedByTaxonomy(second.id, "post", "category", "guides")).map((item) => item.slug)).toEqual(["second-guide"]);
+			expect(
+				(await content.listPublishedByTaxonomy(first.id, "post", "category", "guides")).map(
+					(item) => item.slug,
+				),
+			).toEqual(["first-guide"]);
+			expect(
+				(await content.listPublishedByTaxonomy(second.id, "post", "category", "guides")).map(
+					(item) => item.slug,
+				),
+			).toEqual(["second-guide"]);
 		} finally {
 			await teardownTestDatabase(db);
 		}

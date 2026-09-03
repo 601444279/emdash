@@ -731,7 +731,7 @@ function ContentNewPage() {
 			void navigate({
 				to: "/content/$collection/$id",
 				params: { collection, id: result.id },
-			search: { locale: result.locale, site: siteKey },
+				search: { locale: result.locale, site: siteKey },
 			});
 		},
 		onError: (error) => {
@@ -1160,7 +1160,8 @@ function ContentEditPage() {
 	});
 
 	const unpublishMutation = useMutation({
-		mutationFn: () => unpublishContent(collection, id, { locale: rawItem?.locale ?? activeLocale, siteKey }),
+		mutationFn: () =>
+			unpublishContent(collection, id, { locale: rawItem?.locale ?? activeLocale, siteKey }),
 		onSuccess: () => {
 			void queryClient.invalidateQueries({
 				queryKey: ["content", collection, id],
@@ -1178,7 +1179,8 @@ function ContentEditPage() {
 	});
 
 	const discardDraftMutation = useMutation({
-		mutationFn: () => discardDraft(collection, id, { locale: rawItem?.locale ?? activeLocale, siteKey }),
+		mutationFn: () =>
+			discardDraft(collection, id, { locale: rawItem?.locale ?? activeLocale, siteKey }),
 		onSuccess: () => {
 			void queryClient.invalidateQueries({
 				queryKey: ["content", collection, id],
@@ -1272,14 +1274,15 @@ function ContentEditPage() {
 	});
 
 	const deleteMutation = useMutation({
-		mutationFn: () => deleteContent(collection, id, { locale: rawItem?.locale ?? activeLocale, siteKey }),
+		mutationFn: () =>
+			deleteContent(collection, id, { locale: rawItem?.locale ?? activeLocale, siteKey }),
 		onSuccess: () => {
 			void queryClient.invalidateQueries({ queryKey: ["content", collection] });
 			void queryClient.invalidateQueries({ queryKey: ["content", collection, "trash"] });
 			void navigate({
 				to: "/content/$collection",
 				params: { collection },
-			search: { locale: activeLocale, site: siteKey },
+				search: { locale: activeLocale, site: siteKey },
 			});
 		},
 		onError: (error) => {

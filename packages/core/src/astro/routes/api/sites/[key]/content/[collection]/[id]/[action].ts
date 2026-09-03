@@ -44,7 +44,11 @@ export const POST: APIRoute = async ({ cache, locals, params, request }) => {
 			const body = await parseOptionalBody(request, contentPublishBody, {});
 			if (isParseError(body)) return body;
 			if (body.publishedAt !== undefined && !hasPermission(user, "content:publish_any")) {
-				return apiError("FORBIDDEN", "Setting publishedAt requires content:publish_any permission", 403);
+				return apiError(
+					"FORBIDDEN",
+					"Setting publishedAt requires content:publish_any permission",
+					403,
+				);
 			}
 			result = await emdash.handleContentPublish(params.collection ?? "", item.id, {
 				publishedAt: body.publishedAt,

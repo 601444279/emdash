@@ -500,11 +500,14 @@ export async function publishContent(
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
 	const query = params.toString() ? `?${params}` : "";
-	const response = await apiFetch(`${contentApiBase(collection, options?.siteKey)}/${id}/publish${query}`, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ _rev: options?._rev }),
-	});
+	const response = await apiFetch(
+		`${contentApiBase(collection, options?.siteKey)}/${id}/publish${query}`,
+		{
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ _rev: options?._rev }),
+		},
+	);
 	const data = await parseApiResponse<{ item: ContentItem; _rev?: string }>(
 		response,
 		"Failed to publish content",
@@ -523,9 +526,12 @@ export async function unpublishContent(
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
 	const query = params.toString() ? `?${params}` : "";
-	const response = await apiFetch(`${contentApiBase(collection, options?.siteKey)}/${id}/unpublish${query}`, {
-		method: "POST",
-	});
+	const response = await apiFetch(
+		`${contentApiBase(collection, options?.siteKey)}/${id}/unpublish${query}`,
+		{
+			method: "POST",
+		},
+	);
 	const data = await parseApiResponse<{ item: ContentItem }>(
 		response,
 		"Failed to unpublish content",
@@ -544,9 +550,12 @@ export async function discardDraft(
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
 	const query = params.toString() ? `?${params}` : "";
-	const response = await apiFetch(`${contentApiBase(collection, options?.siteKey)}/${id}/discard-draft${query}`, {
-		method: "POST",
-	});
+	const response = await apiFetch(
+		`${contentApiBase(collection, options?.siteKey)}/${id}/discard-draft${query}`,
+		{
+			method: "POST",
+		},
+	);
 	const data = await parseApiResponse<{ item: ContentItem }>(response, "Failed to discard draft");
 	return data.item;
 }

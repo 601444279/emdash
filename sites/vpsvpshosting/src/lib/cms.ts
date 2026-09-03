@@ -12,7 +12,7 @@ export interface TaxonomyTerm {
 
 interface PublicMenuItem {
 	label: string;
-	customUrl: string | null;
+	href: string;
 }
 
 interface ApiSuccess<T> {
@@ -50,7 +50,9 @@ export async function getEntry(collection: string, slug: string): Promise<Post |
 	}
 }
 
-export async function getCategory(slug: string): Promise<{ term: TaxonomyTerm; items: Post[] } | null> {
+export async function getCategory(
+	slug: string,
+): Promise<{ term: TaxonomyTerm; items: Post[] } | null> {
 	try {
 		return await getJson<{ term: TaxonomyTerm; items: Post[] }>(
 			`/_emdash/api/public/sites/${siteKey()}/taxonomies/category/${encodeURIComponent(slug)}?collection=posts`,
@@ -62,10 +64,18 @@ export async function getCategory(slug: string): Promise<{ term: TaxonomyTerm; i
 
 export async function getNavigation(): Promise<Array<{ label: string; href: string }>> {
 	try {
-		const result = await getJson<{ items: PublicMenuItem[] }>(`/_emdash/api/public/sites/${siteKey()}/menu`);
+		const result = await getJson<{ items: PublicMenuItem[] }>(
+			`/_emdash/api/public/sites/${siteKey()}/menu`,
+		);
 		return result.items
-			.filter((item) => typeof item.label === "string" && typeof item.customUrl === "string" && item.customUrl.startsWith("/"))
-			.map((item) => ({ label: item.label, href: item.customUrl! }));
+			.filter(
+				(item) =>
+					typeof item.label === "string" &&
+					typeof item.href === "string" &&
+					item.href.startsWith("/") &&
+					!item.href.startsWith("//"),
+			)
+			.map((item) => ({ label: item.label, href: item.href }));
 	} catch {
 		return [];
 	}

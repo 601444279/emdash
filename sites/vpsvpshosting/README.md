@@ -10,8 +10,8 @@
 
 ```json
 {
-  "CMS_BASE_URL": "https://cms.vpsvpshosting.com",
-  "CMS_SITE_KEY": "vpsvpshosting"
+	"CMS_BASE_URL": "https://cms.vpsvpshosting.com",
+	"CMS_SITE_KEY": "vpsvpshosting"
 }
 ```
 

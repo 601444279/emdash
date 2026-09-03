@@ -11,13 +11,7 @@ export type { Taxonomy, CreateTaxonomyInput, UpdateTaxonomyInput } from "./taxon
 export { OptionsRepository } from "./options.js";
 export { SiteRepository } from "./site.js";
 export { SiteContentRepository } from "./site-content.js";
-export type {
-	Site,
-	SiteStatus,
-	SiteTheme,
-	CreateSiteInput,
-	UpdateSiteInput,
-} from "./site.js";
+export type { Site, SiteStatus, SiteTheme, CreateSiteInput, UpdateSiteInput } from "./site.js";
 export { AuditRepository } from "./audit.js";
 export type {
 	AuditLog,
