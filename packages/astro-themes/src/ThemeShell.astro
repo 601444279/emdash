@@ -14,6 +14,7 @@ const navigation = ["centered", "stacked"].includes(site.theme.settings.navigati
 	? site.theme.settings.navigation
 	: "inline";
 const footer = site.theme.settings.footer === "compact" ? "compact" : "columns";
+const canonicalUrl = new URL(Astro.url.pathname, Astro.url).toString();
 ---
 
 <!doctype html>
@@ -23,6 +24,15 @@ const footer = site.theme.settings.footer === "compact" ? "compact" : "columns";
 		<meta name="viewport" content="width=device-width" />
 		<title>{title}</title>
 		{description && <meta name="description" content={description} />}
+		<link rel="canonical" href={canonicalUrl} />
+		<meta property="og:site_name" content={site.name} />
+		<meta property="og:title" content={title} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
+		{description && <meta property="og:description" content={description} />}
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content={title} />
+		{description && <meta name="twitter:description" content={description} />}
 	</head>
 	<body>
 		<header class:list={["site-header", navigation === "centered" && "centered", navigation === "stacked" && "stacked"]}>
