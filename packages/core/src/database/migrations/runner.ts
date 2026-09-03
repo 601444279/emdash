@@ -80,6 +80,7 @@ import * as m074 from "./074_sites.js";
 import * as m075 from "./075_site_content.js";
 import * as m076 from "./076_site_theme_history.js";
 import * as m077 from "./077_api_token_site_keys.js";
+import * as m078 from "./078_site_menus.js";
 
 const MIGRATIONS: Readonly<Record<string, Migration>> = Object.freeze({
 	"001_initial": m001,
@@ -158,6 +159,7 @@ const MIGRATIONS: Readonly<Record<string, Migration>> = Object.freeze({
 	"075_site_content": m075,
 	"076_site_theme_history": m076,
 	"077_api_token_site_keys": m077,
+	"078_site_menus": m078,
 });
 
 /** Ordered names from the statically registered migration set. */

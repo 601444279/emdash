@@ -662,6 +662,13 @@ export interface SiteThemeHistoryTable {
 	created_at: Generated<string>;
 }
 
+export interface SiteMenuTable {
+	site_id: string;
+	menu_id: string;
+	location: string;
+	created_at: Generated<string>;
+}
+
 // Database schema
 // Note: ec_* content tables are dynamic and not part of this type
 export interface Database {
@@ -669,6 +676,7 @@ export interface Database {
 	_emdash_site_domains: SiteDomainTable;
 	_emdash_site_content: SiteContentTable;
 	_emdash_site_theme_history: SiteThemeHistoryTable;
+	_emdash_site_menus: SiteMenuTable;
 	revisions: RevisionTable;
 	_emdash_revision_prune_queue: RevisionPruneQueueTable;
 	taxonomies: TaxonomyTable;
