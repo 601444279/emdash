@@ -17,6 +17,7 @@ export interface ApiTokenInfo {
 	name: string;
 	prefix: string;
 	scopes: string[];
+	siteKeys: string[] | null;
 	userId: string;
 	expiresAt: string | null;
 	lastUsedAt: string | null;
@@ -35,6 +36,7 @@ export interface ApiTokenCreateResult {
 export interface CreateApiTokenInput {
 	name: string;
 	scopes: string[];
+	siteKeys?: string[];
 	expiresAt?: string;
 }
 

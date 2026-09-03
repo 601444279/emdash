@@ -342,6 +342,7 @@ export interface ApiTokenTable {
 	prefix: string; // First 8 chars for identification (e.g. "ec_pat_Ab")
 	user_id: string;
 	scopes: string; // JSON array of scope strings
+	site_keys: string | null; // JSON array of site keys; null = every site
 	expires_at: string | null; // null = no expiry
 	last_used_at: string | null;
 	created_at: Generated<string>;
@@ -627,9 +628,47 @@ export interface SectionTable {
 	updated_at: Generated<string>;
 }
 
+export interface SiteTable {
+	id: string;
+	key: string;
+	name: string;
+	status: string;
+	active_theme_id: string;
+	active_theme_version: string;
+	theme_settings: string;
+	created_at: Generated<string>;
+	updated_at: Generated<string>;
+}
+
+export interface SiteDomainTable {
+	domain: string;
+	site_id: string;
+	created_at: Generated<string>;
+}
+
+export interface SiteContentTable {
+	site_id: string;
+	collection: string;
+	entry_id: string;
+	created_at: Generated<string>;
+}
+
+export interface SiteThemeHistoryTable {
+	id: string;
+	site_id: string;
+	theme_id: string;
+	theme_version: string;
+	theme_settings: string;
+	created_at: Generated<string>;
+}
+
 // Database schema
 // Note: ec_* content tables are dynamic and not part of this type
 export interface Database {
+	_emdash_sites: SiteTable;
+	_emdash_site_domains: SiteDomainTable;
+	_emdash_site_content: SiteContentTable;
+	_emdash_site_theme_history: SiteThemeHistoryTable;
 	revisions: RevisionTable;
 	_emdash_revision_prune_queue: RevisionPruneQueueTable;
 	taxonomies: TaxonomyTable;

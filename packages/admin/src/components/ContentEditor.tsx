@@ -222,6 +222,8 @@ export interface ContentEditorProps {
 	onSeoChange?: (seo: ContentSeoInput) => void;
 	/** Admin manifest for resolving plugin field widgets */
 	manifest?: import("../lib/api/client.js").AdminManifest | null;
+	/** Site workspace key retained by the editor's back link. */
+	siteKey?: string;
 }
 
 /**
@@ -271,6 +273,7 @@ export function ContentEditor({
 	hasSeo = false,
 	onSeoChange,
 	manifest,
+	siteKey,
 }: ContentEditorProps) {
 	const { t } = useLingui();
 	const { locale: uiLocale } = useLocale();
@@ -758,7 +761,7 @@ export function ContentEditor({
 								<RouterLinkButton
 									to="/content/$collection"
 									params={{ collection }}
-									search={{ locale: undefined }}
+									search={{ locale: undefined, site: siteKey }}
 									aria-label={t`Back to ${collectionLabel} list`}
 									variant="ghost"
 									shape="square"

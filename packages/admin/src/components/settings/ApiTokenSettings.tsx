@@ -19,8 +19,10 @@ import {
 	API_TOKEN_SCOPES,
 	type ApiTokenCreateResult,
 	type ApiTokenScopeValue,
+	type CreateApiTokenInput,
 } from "../../lib/api/api-tokens.js";
 import { fetchPlugins } from "../../lib/api/plugins.js";
+import { fetchSites, type ManagedSite } from "../../lib/api/sites.js";
 import { parseTimestamp } from "../../lib/utils.js";
 import { ConfirmDialog } from "../ConfirmDialog.js";
 import { SettingRow, SettingsFrame, SettingsSection } from "./SettingsLayout.js";
@@ -142,6 +144,7 @@ export function ApiTokenSettings() {
 		queryKey: ["plugins"],
 		queryFn: fetchPlugins,
 	});
+	const { data: sites = [] } = useQuery({ queryKey: ["sites"], queryFn: fetchSites });
 
 	const createMutation = useMutation({
 		mutationFn: createApiToken,
@@ -317,6 +320,7 @@ export function ApiTokenSettings() {
 								pluginScopes={plugins
 									.filter((plugin) => (plugin.mcpTools?.length ?? 0) > 0)
 									.map((plugin) => ({ scope: `mcp:tools:${plugin.id}`, name: plugin.name }))}
+								sites={sites}
 								onSubmit={(input) => createMutation.mutate(input)}
 							/>
 						</SettingRow>
@@ -351,6 +355,12 @@ export function ApiTokenSettings() {
 												<dt className="shrink-0 font-medium">{t(msg`Scopes`)}</dt>
 												<dd className="min-w-0 break-words text-kumo-subtle">
 													{token.scopes.join(", ")}
+												</dd>
+											</div>
+											<div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:gap-2">
+												<dt className="shrink-0 font-medium">{t`Sites`}</dt>
+												<dd className="min-w-0 break-words text-kumo-subtle">
+													{token.siteKeys === null ? t`All sites` : token.siteKeys.join(", ")}
 												</dd>
 											</div>
 											<div className="flex flex-wrap gap-x-4 gap-y-1 text-kumo-subtle">
@@ -432,7 +442,8 @@ interface CreateTokenFormProps {
 	isCreating: boolean;
 	error: string | null;
 	pluginScopes: Array<{ scope: string; name: string }>;
-	onSubmit: (input: { name: string; scopes: string[]; expiresAt?: string }) => void;
+	sites: ManagedSite[];
+	onSubmit: (input: CreateApiTokenInput) => void;
 }
 
 function CreateTokenForm({
@@ -440,12 +451,15 @@ function CreateTokenForm({
 	isCreating,
 	error,
 	pluginScopes,
+	sites,
 	onSubmit,
 }: CreateTokenFormProps) {
 	const { t } = useLingui();
 	const [name, setName] = React.useState("");
 	const [selectedScopes, setSelectedScopes] = React.useState<Set<string>>(new Set());
 	const [expiry, setExpiry] = React.useState("30d");
+	const [allSites, setAllSites] = React.useState(false);
+	const [selectedSiteKeys, setSelectedSiteKeys] = React.useState<Set<string>>(new Set());
 
 	const toggleScope = (scope: string) => {
 		setSelectedScopes((prev) => {
@@ -464,11 +478,23 @@ function CreateTokenForm({
 		onSubmit({
 			name: name.trim(),
 			scopes: [...selectedScopes],
+			siteKeys: allSites ? undefined : [...selectedSiteKeys],
 			expiresAt: computeExpiryDate(expiry),
 		});
 	};
 
-	const isValid = name.trim().length > 0 && selectedScopes.size > 0;
+	const isValid =
+		name.trim().length > 0 && selectedScopes.size > 0 && (allSites || selectedSiteKeys.size > 0);
+
+	const toggleSite = (siteKey: string) => {
+		setAllSites(false);
+		setSelectedSiteKeys((previous) => {
+			const next = new Set(previous);
+			if (next.has(siteKey)) next.delete(siteKey);
+			else next.add(siteKey);
+			return next;
+		});
+	};
 
 	return (
 		<div className="grid gap-4">
@@ -520,6 +546,40 @@ function CreateTokenForm({
 							</label>
 						))}
 					</div>
+				</div>
+
+				<div className="grid gap-2">
+					<div className="text-sm font-medium">{t`Authorized sites`}</div>
+					<p className="text-sm leading-5 text-kumo-subtle">
+						{t`This token can only access the sites selected here.`}
+					</p>
+					<label className="flex cursor-pointer items-start gap-2">
+						<Checkbox
+							checked={allSites}
+							onCheckedChange={() => {
+								setAllSites((value) => !value);
+								setSelectedSiteKeys(new Set());
+							}}
+							aria-label={t`All sites`}
+						/>
+						<span className="text-sm font-medium">{t`All sites`}</span>
+					</label>
+					{sites.map((site) => (
+						<label key={site.id} className="flex cursor-pointer items-start gap-2">
+							<Checkbox
+								checked={selectedSiteKeys.has(site.key)}
+								disabled={allSites}
+								onCheckedChange={() => toggleSite(site.key)}
+								aria-label={site.name}
+							/>
+							<span className="text-sm font-medium">{site.name}</span>
+						</label>
+					))}
+					{sites.length === 0 && (
+						<p className="text-sm leading-5 text-kumo-subtle">
+							{t`Create a site before issuing a site-restricted token.`}
+						</p>
+					)}
 				</div>
 
 				<Select

@@ -99,6 +99,24 @@ describe("core media route injection", () => {
 		expect(folder).toBeLessThan(mediaItem);
 	});
 
+	it("registers the multi-site management and public content routes", () => {
+		const routes = collectRoutePatterns();
+
+		for (const pattern of [
+			"/_emdash/api/sites",
+			"/_emdash/api/sites/[key]",
+			"/_emdash/api/sites/[key]/content/[collection]",
+			"/_emdash/api/sites/[key]/content/[collection]/[slug]",
+			"/_emdash/api/sites/[key]/theme-history",
+			"/_emdash/api/sites/[key]/theme-history/[historyId]/rollback",
+			"/_emdash/api/public/sites/[key]",
+			"/_emdash/api/public/sites/[key]/content/[collection]",
+			"/_emdash/api/public/sites/[key]/content/[collection]/[slug]",
+		]) {
+			expect(routes).toContain(pattern);
+		}
+	});
+
 	it("injects default root SEO routes when the site does not define them", () => {
 		const routes = collectRoutePatterns();
 

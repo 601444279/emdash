@@ -1,0 +1,30 @@
+---
+import PostCard from "../components/PostCard.astro";
+import { getPosts, getSite } from "../lib/cms";
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const [site, posts] = await Promise.all([getSite(), getPosts()]);
+---
+
+<SiteLayout site={site} title={`${site.name} — VPS reviews and comparisons`} description="Independent VPS hosting reviews, guides, and comparisons.">
+	<section class:list={["hero", site.theme.id]}>
+		<p class="kicker">Independent research</p>
+		<h1>Find hosting that fits the work.</h1>
+		<p>Practical VPS reviews, comparisons, and guides, managed from one publishing system.</p>
+	</section>
+	<section class:list={["post-grid", site.theme.id]} aria-label="Latest articles">
+		{posts.length > 0 ? posts.map((post) => <PostCard post={post} theme={site.theme} />) : <p>No published articles yet.</p>}
+	</section>
+</SiteLayout>
+
+<style>
+	.hero { padding: 6rem 1.5rem 3.5rem; max-width: 72rem; margin: auto; }
+	.hero.catalog { background: linear-gradient(135deg, var(--accent), #101821); color: white; margin-top: 2rem; }
+	.kicker { color: var(--accent); font-size: .75rem; text-transform: uppercase; font-weight: 800; letter-spacing: .12em; }
+	.catalog .kicker { color: #c8d5ff; }
+	h1 { max-width: 10ch; margin: .5rem 0 1rem; font-size: clamp(3rem, 8vw, 6rem); line-height: .92; letter-spacing: -.07em; }
+	.hero > p:last-child { max-width: 38rem; color: var(--muted); font-size: 1.2rem; line-height: 1.6; }
+	.catalog > p:last-child { color: #d7e1ef; }
+	.post-grid { max-width: 72rem; margin: auto; padding: 2rem 1.5rem; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+	.post-grid.catalog { grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); }
+</style>

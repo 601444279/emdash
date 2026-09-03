@@ -1,0 +1,29 @@
+---
+import type { Post, Theme } from "../lib/cms";
+
+interface Props { post: Post; theme: Theme; }
+const { post, theme } = Astro.props;
+const title = typeof post.data.title === "string" ? post.data.title : "Untitled";
+const excerpt = typeof post.data.excerpt === "string" ? post.data.excerpt : "";
+const cardStyle = ["flat", "bordered"].includes(theme.settings.cardStyle)
+	? theme.settings.cardStyle
+	: "elevated";
+---
+
+<article class:list={["post-card", theme.id, cardStyle]}>
+	<h2><a href={`/posts/${post.slug}`}>{title}</a></h2>
+	{excerpt && <p class="excerpt">{excerpt}</p>}
+	{post.publishedAt && <time datetime={post.publishedAt}>{new Date(post.publishedAt).toLocaleDateString("en-US", { dateStyle: "medium" })}</time>}
+</article>
+
+<style>
+	.post-card { background: var(--paper); border: 1px solid var(--line); padding: 1.5rem; }
+	.post-card.elevated { border-radius: 1rem; box-shadow: 0 8px 24px rgb(26 42 62 / 6%); }
+	.post-card.bordered { border-inline-start: 4px solid var(--accent); }
+	.post-card.flat { border-color: transparent; background: transparent; padding-inline: 0; }
+	.post-card.catalog { border-inline-start: 4px solid var(--accent); }
+	h2 { margin: .35rem 0 .7rem; font-size: clamp(1.25rem, 2vw, 1.7rem); line-height: 1.1; letter-spacing: -.03em; }
+	.eyebrow { margin: 0; color: var(--accent); font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+	.excerpt, time { color: var(--muted); line-height: 1.6; }
+	time { font-size: .85rem; }
+</style>

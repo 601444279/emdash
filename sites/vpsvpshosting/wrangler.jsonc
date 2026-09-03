@@ -1,0 +1,20 @@
+{
+	"name": "vpsvpshosting",
+	"main": "@astrojs/cloudflare/entrypoints/server",
+	"compatibility_date": "2026-08-22",
+	"compatibility_flags": ["nodejs_compat"],
+	"routes": [
+		{
+			"pattern": "vpsvpshosting.com",
+			"custom_domain": true
+		}
+	],
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS",
+	},
+	"vars": {
+		"CMS_BASE_URL": "https://cms.vpsvpshosting.com",
+		"CMS_SITE_KEY": "vpsvpshosting",
+	},
+}

@@ -136,6 +136,9 @@ export {
 // Settings
 export { type SiteSettings, fetchSettings, updateSettings } from "./settings.js";
 
+// Multisite
+export { type ManagedSite, type CreateManagedSiteInput, fetchSites, createSite } from "./sites.js";
+
 // Users, passkeys, allowed domains
 export {
 	type UserListItem,

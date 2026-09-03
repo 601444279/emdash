@@ -1,6 +1,6 @@
 import { Sidebar as KumoSidebar, useSidebar } from "@cloudflare/kumo";
 import { useLingui } from "@lingui/react/macro";
-import { Gear, Palette, Storefront, Users } from "@phosphor-icons/react";
+import { Gear, Palette, Storefront, Users, Buildings } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 import * as React from "react";
@@ -286,6 +286,7 @@ export function SidebarNav({ manifest }: SidebarNavProps) {
 	];
 
 	const adminItems: NavItem[] = [
+		{ to: "/sites", label: t`Sites`, icon: Buildings, minRole: ROLE_ADMIN },
 		{
 			to: "/content-types",
 			label: t`Content Types`,

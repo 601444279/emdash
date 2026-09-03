@@ -185,6 +185,8 @@ export interface ContentListProps {
 	userRole?: number;
 	/** Manifest state used to omit disabled or stale trusted-plugin contributions. */
 	pluginStates?: AdminManifest["plugins"];
+	/** Site workspace key. When present, editor links retain the site context. */
+	siteKey?: string;
 }
 
 type BulkActionHandler = (ids: string[]) => Promise<string[]>;
@@ -270,6 +272,7 @@ export function ContentList({
 	onBulkDelete,
 	userRole = 0,
 	pluginStates,
+	siteKey,
 }: ContentListProps) {
 	const { t } = useLingui();
 	const pluginAdmins = usePluginAdmins();
@@ -425,7 +428,7 @@ export function ContentList({
 				<RouterLinkButton
 					to="/content/$collection/new"
 					params={{ collection }}
-					search={{ locale: activeLocale }}
+					search={{ locale: activeLocale, site: siteKey }}
 					icon={<Plus />}
 				>
 					{t`Add New`}
@@ -657,8 +660,8 @@ export function ContentList({
 													{t`No ${collectionLabel.toLowerCase()} yet.`}{" "}
 													<Link
 														to="/content/$collection/new"
-														params={{ collection }}
-														search={{ locale: activeLocale }}
+												params={{ collection }}
+												search={{ locale: activeLocale, site: siteKey }}
 														className="text-kumo-link underline"
 													>
 														{t`Create your first one`}
@@ -680,6 +683,7 @@ export function ContentList({
 											item={item}
 											visibleItems={paginatedItems}
 											collection={collection}
+											siteKey={siteKey}
 											onDelete={onDelete}
 											onDuplicate={onDuplicate}
 											showLocale={!!i18n}
@@ -1131,6 +1135,7 @@ function SortableTh({ field, sort, onSortChange, label }: SortableThProps) {
 interface ExtensionColumnHeaderProps {
 	column: ResolvedContentListColumn;
 	collection: string;
+	siteKey?: string;
 	locale?: string;
 }
 
@@ -1207,6 +1212,7 @@ interface ContentListItemProps {
 	item: ContentItem;
 	visibleItems: readonly ContentItem[];
 	collection: string;
+	siteKey?: string;
 	onDelete?: (id: string) => void;
 	onDuplicate?: (id: string) => void;
 	showLocale?: boolean;
@@ -1224,6 +1230,7 @@ function ContentListItem({
 	item,
 	visibleItems,
 	collection,
+	siteKey,
 	onDelete,
 	onDuplicate,
 	showLocale,
@@ -1258,7 +1265,7 @@ function ContentListItem({
 				<Link
 					to="/content/$collection/$id"
 					params={{ collection, id: item.id }}
-					search={{ locale: item.locale }}
+					search={{ locale: item.locale, site: siteKey }}
 					className="font-medium hover:text-kumo-link"
 				>
 					{title}

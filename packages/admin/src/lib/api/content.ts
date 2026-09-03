@@ -14,6 +14,12 @@ import {
 	type FindManyResult,
 } from "./client.js";
 
+function contentApiBase(collection: string, siteKey?: string): string {
+	return siteKey
+		? `${API_BASE}/sites/${encodeURIComponent(siteKey)}/content/${collection}`
+		: `${API_BASE}/content/${collection}`;
+}
+
 /**
  * Derive draft status from a content item's revision pointers
  */
@@ -183,6 +189,7 @@ export async function fetchContentList(
 		 * explicit credit. Off by default: the filter matches real credits.
 		 */
 		includeInferredBylines?: boolean;
+		siteKey?: string;
 	},
 ): Promise<FindManyResult<ContentItem>> {
 	const params = new URLSearchParams();
@@ -212,7 +219,7 @@ export async function fetchContentList(
 		params.set("includeInferredBylines", "1");
 	}
 
-	const url = `${API_BASE}/content/${collection}${params.toString() ? `?${params}` : ""}`;
+	const url = `${contentApiBase(collection, options?.siteKey)}${params.toString() ? `?${params}` : ""}`;
 	const response = await apiFetch(url);
 	return parseApiResponse<FindManyResult<ContentItem>>(response, "Failed to fetch content");
 }
@@ -245,12 +252,12 @@ export async function fetchContentAuthors(collection: string): Promise<ContentAu
 export async function fetchContent(
 	collection: string,
 	id: string,
-	options?: { locale?: string },
+	options?: { locale?: string; siteKey?: string },
 ): Promise<ContentItem> {
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
 	const query = params.toString() ? `?${params}` : "";
-	const response = await apiFetch(`${API_BASE}/content/${collection}/${id}${query}`);
+	const response = await apiFetch(`${contentApiBase(collection, options?.siteKey)}/${id}${query}`);
 	const data = await parseApiResponse<{ item: ContentItem; _rev?: string }>(
 		response,
 		"Failed to fetch content",
@@ -266,8 +273,9 @@ export async function fetchContent(
 export async function createContent(
 	collection: string,
 	input: Omit<CreateContentInput, "type">,
+	options?: { siteKey?: string },
 ): Promise<ContentItem> {
-	const response = await apiFetch(`${API_BASE}/content/${collection}`, {
+	const response = await apiFetch(contentApiBase(collection, options?.siteKey), {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({
@@ -293,12 +301,12 @@ export async function updateContent(
 	collection: string,
 	id: string,
 	input: UpdateContentInput,
-	options?: { locale?: string },
+	options?: { locale?: string; siteKey?: string },
 ): Promise<ContentItem> {
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
 	const query = params.toString() ? `?${params}` : "";
-	const response = await apiFetch(`${API_BASE}/content/${collection}/${id}${query}`, {
+	const response = await apiFetch(`${contentApiBase(collection, options?.siteKey)}/${id}${query}`, {
 		method: "PUT",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(input),
@@ -316,12 +324,12 @@ export async function updateContent(
 export async function deleteContent(
 	collection: string,
 	id: string,
-	options?: { locale?: string },
+	options?: { locale?: string; siteKey?: string },
 ): Promise<void> {
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
 	const query = params.toString() ? `?${params}` : "";
-	const response = await apiFetch(`${API_BASE}/content/${collection}/${id}${query}`, {
+	const response = await apiFetch(`${contentApiBase(collection, options?.siteKey)}/${id}${query}`, {
 		method: "DELETE",
 	});
 	if (!response.ok) await throwResponseError(response, i18n._(msg`Failed to delete content`));
@@ -391,7 +399,7 @@ export async function scheduleContent(
 	collection: string,
 	id: string,
 	scheduledAt: string,
-	options?: { locale?: string },
+	options?: { locale?: string; siteKey?: string },
 ): Promise<ContentItem> {
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
@@ -487,12 +495,12 @@ export async function getPreviewUrl(
 export async function publishContent(
 	collection: string,
 	id: string,
-	options?: { locale?: string; _rev?: string },
+	options?: { locale?: string; _rev?: string; siteKey?: string },
 ): Promise<ContentItem> {
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
 	const query = params.toString() ? `?${params}` : "";
-	const response = await apiFetch(`${API_BASE}/content/${collection}/${id}/publish${query}`, {
+	const response = await apiFetch(`${contentApiBase(collection, options?.siteKey)}/${id}/publish${query}`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ _rev: options?._rev }),
@@ -510,12 +518,12 @@ export async function publishContent(
 export async function unpublishContent(
 	collection: string,
 	id: string,
-	options?: { locale?: string },
+	options?: { locale?: string; siteKey?: string },
 ): Promise<ContentItem> {
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
 	const query = params.toString() ? `?${params}` : "";
-	const response = await apiFetch(`${API_BASE}/content/${collection}/${id}/unpublish${query}`, {
+	const response = await apiFetch(`${contentApiBase(collection, options?.siteKey)}/${id}/unpublish${query}`, {
 		method: "POST",
 	});
 	const data = await parseApiResponse<{ item: ContentItem }>(
@@ -531,12 +539,12 @@ export async function unpublishContent(
 export async function discardDraft(
 	collection: string,
 	id: string,
-	options?: { locale?: string },
+	options?: { locale?: string; siteKey?: string },
 ): Promise<ContentItem> {
 	const params = new URLSearchParams();
 	if (options?.locale) params.set("locale", options.locale);
 	const query = params.toString() ? `?${params}` : "";
-	const response = await apiFetch(`${API_BASE}/content/${collection}/${id}/discard-draft${query}`, {
+	const response = await apiFetch(`${contentApiBase(collection, options?.siteKey)}/${id}/discard-draft${query}`, {
 		method: "POST",
 	});
 	const data = await parseApiResponse<{ item: ContentItem }>(response, "Failed to discard draft");

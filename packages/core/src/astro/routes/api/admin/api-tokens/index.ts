@@ -19,6 +19,10 @@ export const prerender = false;
 const createTokenSchema = z.object({
 	name: z.string().min(1).max(100),
 	scopes: z.array(z.string().refine(isValidScope)).min(1),
+	siteKeys: z
+		.array(z.string().regex(/^[a-z][a-z0-9-]{0,62}$/))
+		.max(100)
+		.optional(),
 	expiresAt: z.string().datetime().optional(),
 });
 

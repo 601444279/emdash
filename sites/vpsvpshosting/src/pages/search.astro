@@ -1,0 +1,27 @@
+---
+import { getPosts, getSite } from "../lib/cms";
+import PostCard from "../components/PostCard.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const [site, posts] = await Promise.all([getSite(), getPosts(100)]);
+const query = (Astro.url.searchParams.get("q") ?? "").trim().toLowerCase();
+const results = query ? posts.filter((post) => JSON.stringify(post.data).toLowerCase().includes(query)) : [];
+---
+
+<SiteLayout site={site} title={`Search — ${site.name}`}>
+	<section class="search">
+		<h1>Search</h1>
+		<form><input name="q" value={query} placeholder="Search published articles" /><button>Search</button></form>
+		{query && <p>{results.length} result{results.length === 1 ? "" : "s"} for “{query}”</p>}
+		<div class="results">{results.map((post) => <PostCard post={post} theme={site.theme} />)}</div>
+	</section>
+</SiteLayout>
+
+<style>
+	.search { max-width: 72rem; padding: 4rem 1.5rem; margin: auto; }
+	h1 { font-size: 3rem; letter-spacing: -.05em; }
+	form { display: flex; max-width: 40rem; gap: .5rem; }
+	input { flex: 1; padding: .85rem 1rem; border: 1px solid var(--line); font: inherit; }
+	button { border: 0; padding: .85rem 1.25rem; background: var(--accent); color: white; font: inherit; }
+	.results { margin-top: 2rem; display: grid; gap: 1rem; }
+</style>

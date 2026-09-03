@@ -42,6 +42,8 @@ declare global {
 			user?: User;
 			/** Token scopes when authenticated via API token or OAuth token. Undefined for session auth. */
 			tokenScopes?: string[];
+			/** Site keys authorized for a personal access token. Null means every site. */
+			tokenSiteKeys?: string[] | null;
 			emdash?: EmDashHandlers;
 		}
 		interface SessionData {
@@ -85,6 +87,7 @@ function mcpUnauthorizedResponse(
  * Exact entries (no trailing slash or wildcard) match that path only.
  */
 const PUBLIC_API_PREFIXES = [
+	"/_emdash/api/public/",
 	"/_emdash/api/setup",
 	"/_emdash/api/auth/login",
 	"/_emdash/api/auth/register",
@@ -281,6 +284,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	// If already authenticated via Bearer token, enforce scope then skip session/external auth
 	if (isTokenAuth) {
+		const siteError = enforceTokenSiteAccess(url.pathname, context.locals.tokenSiteKeys);
+		if (siteError) return siteError;
+
 		// Enforce API token scopes based on URL pattern + HTTP method
 		const scopeError = enforceTokenScope(url.pathname, method, context.locals.tokenScopes);
 		if (scopeError) return scopeError;
@@ -635,7 +641,7 @@ async function handleBearerAuth(
 	if (!emdash?.db) return "none";
 
 	// Resolve token based on prefix
-	let resolved: { userId: string; scopes: string[] } | null = null;
+	let resolved: { userId: string; scopes: string[]; siteKeys?: string[] | null } | null = null;
 
 	if (token.startsWith("ec_pat_")) {
 		resolved = await resolveApiToken(emdash.db, token);
@@ -657,6 +663,7 @@ async function handleBearerAuth(
 	// Set user and scopes on locals
 	locals.user = user;
 	locals.tokenScopes = resolved.scopes;
+	locals.tokenSiteKeys = resolved.siteKeys;
 
 	return "authenticated";
 }
@@ -777,6 +784,27 @@ const SCOPE_RULES: Array<[prefix: string, method: string, scope: string]> = [
 ];
 
 const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+const SITE_API_PATH = /^\/_emdash\/api\/sites\/([^/]+)(?:\/|$)/;
+
+function enforceTokenSiteAccess(
+	pathname: string,
+	siteKeys: string[] | null | undefined,
+): Response | null {
+	if (siteKeys === undefined || siteKeys === null) return null;
+
+	const match = SITE_API_PATH.exec(pathname);
+	if (!match) return null;
+
+	let siteKey: string;
+	try {
+		siteKey = decodeURIComponent(match[1]).toLowerCase();
+	} catch {
+		return apiError("SITE_ACCESS_DENIED", "Token is not authorized for the requested site", 403);
+	}
+
+	if (siteKeys.includes(siteKey)) return null;
+	return apiError("SITE_ACCESS_DENIED", "Token is not authorized for the requested site", 403);
+}
 
 /**
  * Enforce API token scopes based on the request URL and HTTP method.

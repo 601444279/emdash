@@ -13,6 +13,8 @@ import { hashApiToken, generatePrefixedToken } from "../../auth/api-tokens.js";
 import type { Database } from "../../database/types.js";
 import type { ApiResult } from "../types.js";
 
+const SITE_KEY_PATTERN = /^[a-z][a-z0-9-]{0,62}$/;
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -22,6 +24,7 @@ export interface ApiTokenInfo {
 	name: string;
 	prefix: string;
 	scopes: string[];
+	siteKeys: string[] | null;
 	userId: string;
 	expiresAt: string | null;
 	lastUsedAt: string | null;
@@ -48,12 +51,15 @@ export async function handleApiTokenCreate(
 	input: {
 		name: string;
 		scopes: string[];
+		siteKeys?: string[];
 		expiresAt?: string;
 	},
 ): Promise<ApiResult<ApiTokenCreateResult>> {
 	try {
 		const id = ulid();
 		const { raw, hash, prefix } = generatePrefixedToken("ec_pat_");
+
+		const siteKeys = normalizeSiteKeys(input.siteKeys);
 
 		await db
 			.insertInto("_emdash_api_tokens")
@@ -64,6 +70,7 @@ export async function handleApiTokenCreate(
 				prefix,
 				user_id: userId,
 				scopes: JSON.stringify(input.scopes),
+				site_keys: siteKeys === null ? null : JSON.stringify(siteKeys),
 				expires_at: input.expiresAt ?? null,
 			})
 			.execute();
@@ -73,6 +80,7 @@ export async function handleApiTokenCreate(
 			name: input.name,
 			prefix,
 			scopes: input.scopes,
+			siteKeys,
 			userId,
 			expiresAt: input.expiresAt ?? null,
 			lastUsedAt: null,
@@ -106,6 +114,7 @@ export async function handleApiTokenList(
 				"name",
 				"prefix",
 				"scopes",
+				"site_keys",
 				"user_id",
 				"expires_at",
 				"last_used_at",
@@ -120,6 +129,7 @@ export async function handleApiTokenList(
 			name: row.name,
 			prefix: row.prefix,
 			scopes: JSON.parse(row.scopes) as string[],
+			siteKeys: parseSiteKeys(row.site_keys),
 			userId: row.user_id,
 			expiresAt: row.expires_at,
 			lastUsedAt: row.last_used_at,
@@ -199,12 +209,12 @@ export async function deleteApiTokensByName(
 export async function resolveApiToken(
 	db: Kysely<Database>,
 	rawToken: string,
-): Promise<{ userId: string; scopes: string[] } | null> {
+): Promise<{ userId: string; scopes: string[]; siteKeys: string[] | null } | null> {
 	const hash = hashApiToken(rawToken);
 
 	const row = await db
 		.selectFrom("_emdash_api_tokens")
-		.select(["id", "user_id", "scopes", "expires_at"])
+		.select(["id", "user_id", "scopes", "site_keys", "expires_at"])
 		.where("token_hash", "=", hash)
 		.executeTakeFirst();
 
@@ -225,7 +235,31 @@ export async function resolveApiToken(
 	return {
 		userId: row.user_id,
 		scopes: JSON.parse(row.scopes) as string[],
+		siteKeys: parseSiteKeys(row.site_keys),
 	};
+}
+
+function normalizeSiteKeys(siteKeys: string[] | undefined): string[] | null {
+	if (siteKeys === undefined) return null;
+
+	const normalized = [...new Set(siteKeys.map((siteKey) => siteKey.trim().toLowerCase()))];
+	if (normalized.some((siteKey) => !SITE_KEY_PATTERN.test(siteKey))) {
+		throw new Error("Invalid site key");
+	}
+	return normalized;
+}
+
+function parseSiteKeys(value: string | null): string[] | null {
+	if (value === null) return null;
+	try {
+		const parsed: unknown = JSON.parse(value);
+		if (Array.isArray(parsed) && parsed.every((siteKey) => typeof siteKey === "string")) {
+			return parsed;
+		}
+	} catch {
+		// Treat malformed restrictions as no authorized sites.
+	}
+	return [];
 }
 
 /**

@@ -1,0 +1,42 @@
+{
+	"$schema": "../../node_modules/wrangler/config-schema.json",
+	"name": "vpsvpshosting-cms",
+	"main": "./src/worker.ts",
+	"compatibility_date": "2026-08-22",
+	"compatibility_flags": ["nodejs_compat"],
+	"vars": {
+		"EMDASH_SITE_URL": "https://cms.vpsvpshosting.com"
+	},
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "vpsvpshosting-cms",
+			"database_id": "aa796df3-1a87-4b34-a07f-f86cdab2cc69"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "SESSION",
+			"id": "444dbda4bc384f2a83db7c34538fa3f6"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			"bucket_name": "vpsvpshosting-cms-media"
+		}
+	],
+	"routes": [
+		{
+			"pattern": "cms.vpsvpshosting.com",
+			"custom_domain": true
+		}
+	],
+	"triggers": {
+		"crons": ["* * * * *"]
+	}
+}

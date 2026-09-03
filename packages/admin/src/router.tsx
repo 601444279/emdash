@@ -69,6 +69,7 @@ import { SocialSettings } from "./components/settings/SocialSettings";
 import { SetupWizard } from "./components/SetupWizard";
 import { Shell } from "./components/Shell";
 import { SignupPage } from "./components/SignupPage";
+import { Sites } from "./components/Sites";
 import { TaxonomyManager } from "./components/TaxonomyManager";
 import { ThemeMarketplaceBrowse } from "./components/ThemeMarketplaceBrowse";
 import { ThemeMarketplaceDetail } from "./components/ThemeMarketplaceDetail";
@@ -337,13 +338,14 @@ const contentListRoute = createRoute({
 	component: ContentListPage,
 	validateSearch: (search: Record<string, unknown>) => ({
 		locale: typeof search.locale === "string" ? search.locale : undefined,
+		site: typeof search.site === "string" ? search.site : undefined,
 	}),
 });
 
 function ContentListPage() {
 	const { t } = useLingui();
 	const { collection } = useParams({ from: "/_admin/content/$collection" });
-	const { locale: localeParam } = useSearch({ from: "/_admin/content/$collection" });
+	const { locale: localeParam, site: siteKey } = useSearch({ from: "/_admin/content/$collection" });
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const toastManager = Toast.useToastManager();
@@ -409,9 +411,9 @@ function ContentListPage() {
 	// query key omits locale to avoid refetching/cache-fragmenting on locale
 	// switches, and the selection stays valid across locales.
 	const { data: authors } = useQuery({
-		queryKey: ["content", collection, "authors"],
+		queryKey: ["content", collection, siteKey, "authors"],
 		queryFn: () => fetchContentAuthors(collection),
-		enabled: !!manifest,
+		enabled: !!manifest && !siteKey,
 	});
 
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } =
@@ -441,6 +443,7 @@ function ContentListPage() {
 					authorId: authorFilter || undefined,
 					...dateApiParams,
 					...bylineApiParams,
+					siteKey,
 				}),
 			initialPageParam: undefined as string | undefined,
 			getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -449,12 +452,13 @@ function ContentListPage() {
 
 	// Fetch trashed items
 	const { data: trashedData, isLoading: isTrashedLoading } = useQuery({
-		queryKey: ["content", collection, "trash"],
+		queryKey: ["content", collection, siteKey, "trash"],
 		queryFn: () => fetchTrashedContent(collection),
+		enabled: !siteKey,
 	});
 
 	const deleteMutation = useMutation({
-		mutationFn: (id: string) => deleteContent(collection, id),
+		mutationFn: (id: string) => deleteContent(collection, id, { siteKey }),
 		onSuccess: () => {
 			void queryClient.invalidateQueries({ queryKey: ["content", collection] });
 			void queryClient.invalidateQueries({ queryKey: ["content", collection, "trash"] });
@@ -520,7 +524,7 @@ function ContentListPage() {
 	const bulkPublishMutation = useMutation({
 		mutationFn: async (ids: string[]) => {
 			const { failedIds } = await runBulkAction(ids, (id) =>
-				publishContent(collection, id, { locale: activeLocale }),
+				publishContent(collection, id, { locale: activeLocale, siteKey }),
 			);
 			return { total: ids.length, failedIds };
 		},
@@ -543,7 +547,7 @@ function ContentListPage() {
 	const bulkUnpublishMutation = useMutation({
 		mutationFn: async (ids: string[]) => {
 			const { failedIds } = await runBulkAction(ids, (id) =>
-				unpublishContent(collection, id, { locale: activeLocale }),
+				unpublishContent(collection, id, { locale: activeLocale, siteKey }),
 			);
 			return { total: ids.length, failedIds };
 		},
@@ -565,7 +569,9 @@ function ContentListPage() {
 
 	const bulkDeleteMutation = useMutation({
 		mutationFn: async (ids: string[]) => {
-			const { failedIds } = await runBulkAction(ids, (id) => deleteContent(collection, id));
+			const { failedIds } = await runBulkAction(ids, (id) =>
+				deleteContent(collection, id, { siteKey }),
+			);
 			return { total: ids.length, failedIds };
 		},
 		onSuccess: ({ total, failedIds }) => {
@@ -631,7 +637,7 @@ function ContentListPage() {
 		void navigate({
 			to: "/content/$collection",
 			params: { collection },
-			search: { locale: locale || undefined },
+			search: { locale: locale || undefined, site: siteKey },
 		});
 	};
 
@@ -641,7 +647,7 @@ function ContentListPage() {
 			collectionLabel={collectionConfig.label}
 			items={items}
 			listColumns={listColumns}
-			trashedItems={trashedData?.items || []}
+			trashedItems={siteKey ? [] : (trashedData?.items ?? [])}
 			isLoading={isLoading || isFetchingNextPage}
 			isTrashedLoading={isTrashedLoading}
 			hasMore={!!hasNextPage}
@@ -650,7 +656,7 @@ function ContentListPage() {
 			onDelete={(id) => deleteMutation.mutate(id)}
 			onRestore={(id) => restoreMutation.mutate(id)}
 			onPermanentDelete={(id) => permanentDeleteMutation.mutate(id)}
-			onDuplicate={(id) => duplicateMutation.mutate(id)}
+			onDuplicate={siteKey ? undefined : (id) => duplicateMutation.mutate(id)}
 			i18n={i18n}
 			activeLocale={activeLocale}
 			onLocaleChange={handleLocaleChange}
@@ -660,21 +666,22 @@ function ContentListPage() {
 			sort={sort}
 			onSortChange={setSortOverride}
 			total={total}
-			onSearchChange={setSearchTerm}
+			onSearchChange={siteKey ? undefined : setSearchTerm}
 			statusFilter={statusFilter}
-			onStatusFilterChange={setStatusFilter}
-			authors={authors}
+			onStatusFilterChange={siteKey ? undefined : setStatusFilter}
+			authors={siteKey ? undefined : authors}
 			authorFilter={authorFilter}
-			onAuthorFilterChange={setAuthorFilter}
+			onAuthorFilterChange={siteKey ? undefined : setAuthorFilter}
 			dateFilter={dateFilter}
-			onDateFilterChange={setDateFilter}
+			onDateFilterChange={siteKey ? undefined : setDateFilter}
 			bylineFilter={bylineFilter}
-			onBylineFilterChange={setBylineFilter}
+			onBylineFilterChange={siteKey ? undefined : setBylineFilter}
 			onBulkPublish={(ids) => bulkPublishMutation.mutateAsync(ids).then((r) => r.failedIds)}
 			onBulkUnpublish={(ids) => bulkUnpublishMutation.mutateAsync(ids).then((r) => r.failedIds)}
 			onBulkDelete={(ids) => bulkDeleteMutation.mutateAsync(ids).then((r) => r.failedIds)}
 			pluginStates={manifest.plugins}
 			userRole={currentUser?.role ?? 0}
+			siteKey={siteKey}
 		/>
 	);
 }
@@ -687,12 +694,13 @@ const contentNewRoute = createRoute({
 	staticData: { fullBleed: true },
 	validateSearch: (search: Record<string, unknown>) => ({
 		locale: typeof search.locale === "string" ? search.locale : undefined,
+		site: typeof search.site === "string" ? search.site : undefined,
 	}),
 });
 
 function ContentNewPage() {
 	const { collection } = useParams({ from: "/_admin/content/$collection/new" });
-	const { locale } = useSearch({ from: "/_admin/content/$collection/new" });
+	const { locale, site: siteKey } = useSearch({ from: "/_admin/content/$collection/new" });
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { t } = useLingui();
@@ -717,13 +725,13 @@ function ContentNewPage() {
 			data: Record<string, unknown>;
 			slug?: string;
 			bylines?: BylineCreditInput[];
-		}) => createContent(collection, { ...data, locale: pickerLocale }),
+		}) => createContent(collection, { ...data, locale: pickerLocale }, { siteKey }),
 		onSuccess: (result) => {
 			void queryClient.invalidateQueries({ queryKey: ["content", collection] });
 			void navigate({
 				to: "/content/$collection/$id",
 				params: { collection, id: result.id },
-				search: { locale: result.locale },
+			search: { locale: result.locale, site: siteKey },
 			});
 		},
 		onError: (error) => {
@@ -816,6 +824,7 @@ function ContentNewPage() {
 			onQuickCreateByline={handleQuickCreateByline}
 			onQuickEditByline={handleQuickEditByline}
 			manifest={manifest ?? null}
+			siteKey={siteKey}
 		/>
 	);
 }
@@ -829,6 +838,7 @@ const contentEditRoute = createRoute({
 	validateSearch: (search) => ({
 		...(typeof search.field === "string" && { field: search.field }),
 		...(typeof search.locale === "string" && { locale: search.locale }),
+		...(typeof search.site === "string" && { site: search.site }),
 	}),
 });
 
@@ -844,6 +854,7 @@ function ContentEditPage() {
 	const searchParams = useSearch({
 		from: "/_admin/content/$collection/$id",
 	});
+	const siteKey = searchParams.site;
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const toastManager = Toast.useToastManager();
@@ -857,8 +868,8 @@ function ContentEditPage() {
 	const activeLocale = i18n ? (searchParams.locale ?? i18n.defaultLocale) : undefined;
 
 	const { data: rawItem, isLoading } = useQuery({
-		queryKey: ["content", collection, id, { locale: activeLocale }],
-		queryFn: () => fetchContent(collection, id, { locale: activeLocale }),
+		queryKey: ["content", collection, id, { locale: activeLocale, siteKey }],
+		queryFn: () => fetchContent(collection, id, { locale: activeLocale, siteKey }),
 		enabled: !i18n || !!activeLocale,
 	});
 	const revisionTokensRef = React.useRef(new Map<string, string | undefined>());
@@ -1050,7 +1061,7 @@ function ContentEditPage() {
 				collection,
 				targetId,
 				{ ...changes, _rev: revisionTokensRef.current.get(targetId) },
-				{ locale: targetLocale },
+				{ locale: targetLocale, siteKey },
 			);
 			revisionTokensRef.current.set(targetId, savedItem._rev);
 			return savedItem;
@@ -1076,7 +1087,7 @@ function ContentEditPage() {
 				collection,
 				id,
 				{ publishedAt },
-				{ locale: rawItem?.locale ?? activeLocale },
+				{ locale: rawItem?.locale ?? activeLocale, siteKey },
 			);
 			revisionTokensRef.current.set(id, savedItem._rev);
 			return savedItem;
@@ -1094,7 +1105,7 @@ function ContentEditPage() {
 				collection,
 				targetId,
 				{ ...changes, skipRevision: true, _rev: revisionTokensRef.current.get(targetId) },
-				{ locale: targetLocale },
+				{ locale: targetLocale, siteKey },
 			);
 			revisionTokensRef.current.set(targetId, savedItem._rev);
 			return savedItem;
@@ -1128,6 +1139,7 @@ function ContentEditPage() {
 			publishContent(collection, id, {
 				locale: rawItem?.locale ?? activeLocale,
 				_rev: revision,
+				siteKey,
 			}),
 		onSuccess: (publishedItem) => {
 			revisionTokensRef.current.set(id, publishedItem._rev);
@@ -1148,7 +1160,7 @@ function ContentEditPage() {
 	});
 
 	const unpublishMutation = useMutation({
-		mutationFn: () => unpublishContent(collection, id, { locale: rawItem?.locale ?? activeLocale }),
+		mutationFn: () => unpublishContent(collection, id, { locale: rawItem?.locale ?? activeLocale, siteKey }),
 		onSuccess: () => {
 			void queryClient.invalidateQueries({
 				queryKey: ["content", collection, id],
@@ -1166,7 +1178,7 @@ function ContentEditPage() {
 	});
 
 	const discardDraftMutation = useMutation({
-		mutationFn: () => discardDraft(collection, id, { locale: rawItem?.locale ?? activeLocale }),
+		mutationFn: () => discardDraft(collection, id, { locale: rawItem?.locale ?? activeLocale, siteKey }),
 		onSuccess: () => {
 			void queryClient.invalidateQueries({
 				queryKey: ["content", collection, id],
@@ -1260,14 +1272,14 @@ function ContentEditPage() {
 	});
 
 	const deleteMutation = useMutation({
-		mutationFn: () => deleteContent(collection, id, { locale: rawItem?.locale ?? activeLocale }),
+		mutationFn: () => deleteContent(collection, id, { locale: rawItem?.locale ?? activeLocale, siteKey }),
 		onSuccess: () => {
 			void queryClient.invalidateQueries({ queryKey: ["content", collection] });
 			void queryClient.invalidateQueries({ queryKey: ["content", collection, "trash"] });
 			void navigate({
 				to: "/content/$collection",
 				params: { collection },
-				search: { locale: activeLocale },
+			search: { locale: activeLocale, site: siteKey },
 			});
 		},
 		onError: (error) => {
@@ -1463,6 +1475,7 @@ function ContentEditPage() {
 			onQuickCreateByline={handleQuickCreateByline}
 			onQuickEditByline={handleQuickEditByline}
 			manifest={manifest ?? null}
+			siteKey={siteKey}
 		/>
 	);
 }
@@ -1947,6 +1960,12 @@ const mediaUsageSettingsRoute = createRoute({
 	getParentRoute: () => adminLayoutRoute,
 	path: "/settings/media-usage",
 	component: MediaUsageSettings,
+});
+
+const sitesRoute = createRoute({
+	getParentRoute: () => adminLayoutRoute,
+	path: "/sites",
+	component: Sites,
 });
 
 // Security settings route
@@ -2540,6 +2559,7 @@ const adminRoutes = adminLayoutRoute.addChildren([
 	apiTokenSettingsRoute,
 	emailSettingsRoute,
 	backupSettingsRoute,
+	sitesRoute,
 	wordpressImportRoute,
 	notFoundRoute,
 ]);

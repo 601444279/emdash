@@ -539,6 +539,35 @@ export class ContentRepository {
 	}
 
 	/**
+	 * Fetch multiple content items by ID while preserving the supplied ID order.
+	 * Callers that already have a scoped ID list can use this instead of issuing
+	 * one point lookup per item.
+	 */
+	async findManyByIds(type: string, ids: string[]): Promise<ContentItem[]> {
+		const uniqueIds = [...new Set(ids)];
+		if (uniqueIds.length === 0) return [];
+
+		const tableName = getTableName(type);
+		const items = new Map<string, ContentItem>();
+		for (const chunk of chunks(uniqueIds, SQL_BATCH_SIZE)) {
+			const result = await sql<Record<string, unknown>>`
+				SELECT * FROM ${sql.ref(tableName)}
+				WHERE id IN (${sql.join(chunk)})
+				AND deleted_at IS NULL
+			`.execute(this.db);
+			for (const row of result.rows) {
+				const item = this.mapRow(type, row);
+				items.set(item.id, item);
+			}
+		}
+
+		return uniqueIds.flatMap((id) => {
+			const item = items.get(id);
+			return item ? [item] : [];
+		});
+	}
+
+	/**
 	 * Find content by id, including trashed (soft-deleted) items.
 	 * Used by restore endpoint for ownership checks.
 	 */

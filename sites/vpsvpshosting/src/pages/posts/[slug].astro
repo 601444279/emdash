@@ -1,0 +1,44 @@
+---
+import { getPost, getSite } from "../../lib/cms";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+
+const slug = Astro.params.slug ?? "";
+const [site, post] = await Promise.all([getSite(), getPost(slug)]);
+if (!post) return Astro.redirect("/");
+const title = typeof post.data.title === "string" ? post.data.title : "Untitled";
+const excerpt = typeof post.data.excerpt === "string" ? post.data.excerpt : "";
+const blocks = Array.isArray(post.data.content) ? post.data.content : [];
+
+function blockText(block: unknown): string {
+	if (typeof block !== "object" || block === null || !("children" in block) || !Array.isArray(block.children)) {
+		return "";
+	}
+	return block.children
+		.map((child: unknown) =>
+			typeof child === "object" && child !== null && "text" in child ? String(child.text) : "",
+		)
+		.join("");
+}
+
+---
+
+<SiteLayout site={site} title={`${title} — ${site.name}`} description={excerpt}>
+	<article class:list={["article", site.theme.id]}>
+		<h1>{title}</h1>
+		{excerpt && <p class="lede">{excerpt}</p>}
+		{post.publishedAt && <time datetime={post.publishedAt}>{new Date(post.publishedAt).toLocaleDateString("en-US", { dateStyle: "long" })}</time>}
+		<div class="body">
+			{blocks.map((block) => blockText(block) && <p>{blockText(block)}</p>)}
+		</div>
+	</article>
+</SiteLayout>
+
+<style>
+	.article { max-width: 48rem; margin: auto; padding: 4rem 1.5rem 0; }
+	.article.catalog { max-width: 64rem; display: grid; grid-template-columns: minmax(0, 1fr) 15rem; column-gap: 4rem; }
+	h1 { margin: .7rem 0 1rem; font-size: clamp(2.5rem, 7vw, 4.8rem); letter-spacing: -.06em; line-height: .95; }
+	.lede { color: var(--muted); font-size: 1.3rem; line-height: 1.6; }
+	time { color: var(--muted); font-size: .9rem; }
+	.body { grid-column: 1; margin-top: 2rem; font-size: 1.13rem; line-height: 1.8; }
+	@media (max-width: 48rem) { .article.catalog { display: block; } }
+</style>

@@ -9,6 +9,15 @@ export { CommentRepository } from "./comment.js";
 export type { Comment, CommentStatus, PublicComment, CreateCommentInput } from "./comment.js";
 export type { Taxonomy, CreateTaxonomyInput, UpdateTaxonomyInput } from "./taxonomy.js";
 export { OptionsRepository } from "./options.js";
+export { SiteRepository } from "./site.js";
+export { SiteContentRepository } from "./site-content.js";
+export type {
+	Site,
+	SiteStatus,
+	SiteTheme,
+	CreateSiteInput,
+	UpdateSiteInput,
+} from "./site.js";
 export { AuditRepository } from "./audit.js";
 export type {
 	AuditLog,

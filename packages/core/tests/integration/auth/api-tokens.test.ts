@@ -82,6 +82,17 @@ describe("handleApiTokenCreate", () => {
 
 		expect(result.data!.info.expiresAt).toBe(expiresAt);
 	});
+
+	it("normalizes the site keys that restrict a token", async () => {
+		const result = await handleApiTokenCreate(db, "user_1", {
+			name: "VPS publisher",
+			scopes: ["content:write"],
+			siteKeys: ["VPSVPSHOSTING", "vpsvpshosting"],
+		});
+
+		expect(result.success).toBe(true);
+		expect(result.data!.info.siteKeys).toEqual(["vpsvpshosting"]);
+	});
 });
 
 describe("handleApiTokenList", () => {
@@ -208,6 +219,18 @@ describe("resolveApiToken", () => {
 		expect(resolved).not.toBeNull();
 		expect(resolved!.userId).toBe("user_1");
 		expect(resolved!.scopes).toEqual(["content:read", "media:write"]);
+		expect(resolved!.siteKeys).toBeNull();
+	});
+
+	it("resolves the sites authorized for a restricted token", async () => {
+		const createResult = await handleApiTokenCreate(db, "user_1", {
+			name: "VPS publisher",
+			scopes: ["content:write"],
+			siteKeys: ["vpsvpshosting"],
+		});
+
+		const resolved = await resolveApiToken(db, createResult.data!.token);
+		expect(resolved!.siteKeys).toEqual(["vpsvpshosting"]);
 	});
 
 	it("returns null for invalid token", async () => {

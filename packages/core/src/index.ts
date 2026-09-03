@@ -21,8 +21,17 @@ export {
 	PluginStorageRepository,
 	UserRepository,
 	OptionsRepository,
+	SiteRepository,
+	SiteContentRepository,
 	EmDashValidationError,
 	InvalidCursorError,
+} from "./database/repositories/index.js";
+export type {
+	Site,
+	SiteStatus,
+	SiteTheme,
+	CreateSiteInput,
+	UpdateSiteInput,
 } from "./database/repositories/index.js";
 export type {
 	ContentItem,
@@ -42,6 +51,10 @@ export type {
 } from "./content-list-query.js";
 export type { MediaItem, CreateMediaInput } from "./database/repositories/media.js";
 export type { CompoundSelectLimitedAdapter } from "./database/dialect-helpers.js";
+
+// Built-in site theme registry
+export { getTheme, listThemes, validateThemeSettings } from "./themes/index.js";
+export type { ThemeDefinition, ThemePage } from "./themes/index.js";
 
 // Fields
 export { portableText, image, file, reference } from "./fields/index.js";

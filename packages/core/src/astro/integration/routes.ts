@@ -101,6 +101,57 @@ export function injectCoreRoutes(
 		entrypoint: resolveRoute("api/dashboard.ts"),
 	});
 
+	// Multi-site management routes
+	injectRoute({
+		pattern: "/_emdash/api/sites",
+		entrypoint: resolveRoute("api/sites/index.ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/sites/[key]",
+		entrypoint: resolveRoute("api/sites/[key].ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/sites/[key]/content/[collection]",
+		entrypoint: resolveRoute("api/sites/[key]/content/[collection]/index.ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/sites/[key]/content/[collection]/[slug]",
+		entrypoint: resolveRoute("api/sites/[key]/content/[collection]/[slug].ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/sites/[key]/content/[collection]/[id]/[action]",
+		entrypoint: resolveRoute("api/sites/[key]/content/[collection]/[id]/[action].ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/sites/[key]/theme-history",
+		entrypoint: resolveRoute("api/sites/[key]/theme-history/index.ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/sites/[key]/theme-history/[historyId]/rollback",
+		entrypoint: resolveRoute("api/sites/[key]/theme-history/[historyId]/rollback.ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/public/sites/[key]",
+		entrypoint: resolveRoute("api/public/sites/[key].ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/public/sites/[key]/content/[collection]",
+		entrypoint: resolveRoute("api/public/sites/[key]/content/[collection]/index.ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/public/sites/[key]/content/[collection]/[slug]",
+		entrypoint: resolveRoute("api/public/sites/[key]/content/[collection]/[slug].ts"),
+	});
+
 	injectRoute({
 		pattern: "/_emdash/api/content/[collection]",
 		entrypoint: resolveRoute("api/content/[collection]/index.ts"),
@@ -574,6 +625,11 @@ export function injectCoreRoutes(
 	});
 
 	// Theme preview signing (local, not proxied)
+	injectRoute({
+		pattern: "/_emdash/api/themes",
+		entrypoint: resolveRoute("api/themes/index.ts"),
+	});
+
 	injectRoute({
 		pattern: "/_emdash/api/themes/preview",
 		entrypoint: resolveRoute("api/themes/preview.ts"),
