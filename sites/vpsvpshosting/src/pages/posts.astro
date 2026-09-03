@@ -1,0 +1,25 @@
+---
+import PostCard from "@emdash-cms/astro-themes/PostCard.astro";
+import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
+import { getPosts, getSite } from "../lib/cms";
+
+const [site, posts] = await Promise.all([getSite(), getPosts(100)]);
+---
+
+<ThemeShell site={site} title={`Articles — ${site.name}`} description={`All published articles from ${site.name}.`}>
+	<section class="archive">
+		<p class="kicker">Archive</p>
+		<h1>Articles</h1>
+		<div class:list={["post-grid", site.theme.id]}>
+			{posts.length > 0 ? posts.map((post) => <PostCard post={post} theme={site.theme} />) : <p>No published articles yet.</p>}
+		</div>
+	</section>
+</ThemeShell>
+
+<style>
+	.archive { max-width: 72rem; padding: 4rem 1.5rem; margin: auto; }
+	.kicker { color: var(--accent); font-size: .75rem; text-transform: uppercase; font-weight: 800; letter-spacing: .12em; }
+	h1 { margin: .5rem 0 2rem; font-size: clamp(2.5rem, 7vw, 4.8rem); letter-spacing: -.06em; line-height: .95; }
+	.post-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+	.post-grid.catalog { grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); }
+</style>

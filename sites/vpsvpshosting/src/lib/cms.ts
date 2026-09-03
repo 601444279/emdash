@@ -14,16 +14,24 @@ export async function getSite(): Promise<Site> {
 }
 
 export async function getPosts(limit = 20): Promise<Post[]> {
+	return getEntries("posts", limit);
+}
+
+export async function getPost(slug: string): Promise<Post | null> {
+	return getEntry("posts", slug);
+}
+
+export async function getEntries(collection: string, limit = 20): Promise<Post[]> {
 	const result = await getJson<{ items: Post[] }>(
-		`/_emdash/api/public/sites/${siteKey()}/content/posts?limit=${limit}`,
+		`/_emdash/api/public/sites/${siteKey()}/content/${encodeURIComponent(collection)}?limit=${limit}`,
 	);
 	return result.items;
 }
 
-export async function getPost(slug: string): Promise<Post | null> {
+export async function getEntry(collection: string, slug: string): Promise<Post | null> {
 	try {
 		const result = await getJson<{ item: Post }>(
-			`/_emdash/api/public/sites/${siteKey()}/content/posts/${encodeURIComponent(slug)}`,
+			`/_emdash/api/public/sites/${siteKey()}/content/${encodeURIComponent(collection)}/${encodeURIComponent(slug)}`,
 		);
 		return result.item;
 	} catch {
