@@ -11,46 +11,6 @@ export interface ThemeDefinition {
 
 const THEMES: readonly ThemeDefinition[] = [
 	{
-		id: "editorial",
-		version: "1.0.0",
-		name: "Editorial",
-		pages: ["home", "post", "category", "search", "archive", "page"],
-		settings: {
-			palette: ["ocean", "slate", "forest"],
-			font: ["sans", "serif"],
-			cardStyle: ["flat", "elevated"],
-			navigation: ["inline", "centered"],
-			footer: ["compact", "columns"],
-		},
-		defaults: {
-			palette: "ocean",
-			font: "sans",
-			cardStyle: "elevated",
-			navigation: "inline",
-			footer: "columns",
-		},
-	},
-	{
-		id: "editorial",
-		version: "1.1.0",
-		name: "Editorial",
-		pages: ["home", "post", "category", "search", "archive", "page"],
-		settings: {
-			palette: ["ocean", "slate", "forest"],
-			font: ["sans", "serif"],
-			cardStyle: ["flat", "elevated"],
-			navigation: ["inline", "centered"],
-			footer: ["compact", "columns"],
-		},
-		defaults: {
-			palette: "ocean",
-			font: "sans",
-			cardStyle: "elevated",
-			navigation: "inline",
-			footer: "columns",
-		},
-	},
-	{
 		id: "catalog",
 		version: "1.0.0",
 		name: "Catalog",

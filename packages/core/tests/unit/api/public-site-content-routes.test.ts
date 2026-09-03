@@ -16,7 +16,7 @@ describe("public site content routes", () => {
 				key: "first",
 				name: "First",
 				domains: [],
-				theme: { id: "editorial", version: "1.0.0", settings: {} },
+				theme: { id: "ranked", version: "1.0.0", settings: {} },
 			});
 			const second = await sites.create({
 				key: "second",
@@ -74,7 +74,7 @@ describe("site content write routes", () => {
 				key: "first",
 				name: "First",
 				domains: [],
-				theme: { id: "editorial", version: "1.0.0", settings: {} },
+				theme: { id: "ranked", version: "1.0.0", settings: {} },
 			});
 			await sites.create({
 				key: "second",

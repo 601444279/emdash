@@ -14,7 +14,7 @@ describe("SiteContentRepository", () => {
 				key: "first",
 				name: "First",
 				domains: [],
-				theme: { id: "editorial", version: "1.0.0", settings: {} },
+				theme: { id: "ranked", version: "1.0.0", settings: {} },
 			});
 			const second = await sites.create({
 				key: "second",
@@ -60,7 +60,7 @@ describe("SiteContentRepository", () => {
 				key: "first",
 				name: "First",
 				domains: [],
-				theme: { id: "editorial", version: "1.0.0", settings: {} },
+				theme: { id: "ranked", version: "1.0.0", settings: {} },
 			});
 			const second = await sites.create({
 				key: "second",

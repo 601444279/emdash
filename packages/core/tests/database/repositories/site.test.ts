@@ -12,17 +12,17 @@ describe("SiteRepository", () => {
 				key: "vpsvpshosting",
 				name: "VPS VPS Hosting",
 				domains: ["vpsvpshosting.com"],
-				theme: { id: "editorial", version: "1.0.0", settings: { palette: "ocean" } },
+				theme: { id: "ranked", version: "1.0.0", settings: { palette: "forest" } },
 			});
 
 			expect(site.key).toBe("vpsvpshosting");
 			expect(site.domains).toEqual(["vpsvpshosting.com"]);
 			expect(site.theme).toEqual({
-				id: "editorial",
+				id: "ranked",
 				version: "1.0.0",
 				settings: {
-					palette: "ocean",
-					font: "sans",
+					palette: "forest",
+					font: "serif",
 					cardStyle: "elevated",
 					navigation: "inline",
 					footer: "columns",
@@ -42,7 +42,7 @@ describe("SiteRepository", () => {
 				key: "first",
 				name: "First",
 				domains: ["shared.example.com"],
-				theme: { id: "editorial", version: "1.0.0", settings: {} },
+				theme: { id: "ranked", version: "1.0.0", settings: {} },
 			});
 
 			await expect(
@@ -66,7 +66,7 @@ describe("SiteRepository", () => {
 				key: "first",
 				name: "First",
 				domains: ["first.example.com"],
-				theme: { id: "editorial", version: "1.0.0", settings: {} },
+				theme: { id: "ranked", version: "1.0.0", settings: {} },
 			});
 
 			const updated = await sites.update(site.id, { domains: ["renamed.example.com"] });
@@ -86,7 +86,7 @@ describe("SiteRepository", () => {
 					key: "unsafe",
 					name: "Unsafe",
 					domains: [],
-					theme: { id: "editorial", version: "1.0.0", settings: { customCss: "body {}" } },
+					theme: { id: "ranked", version: "1.0.0", settings: { customCss: "body {}" } },
 				}),
 			).rejects.toThrow("INVALID_THEME_SETTINGS");
 		} finally {
@@ -102,7 +102,7 @@ describe("SiteRepository", () => {
 				key: "themed",
 				name: "Themed",
 				domains: [],
-				theme: { id: "editorial", version: "1.0.0", settings: { palette: "ocean" } },
+				theme: { id: "ranked", version: "1.0.0", settings: { palette: "forest" } },
 			});
 			const updated = await sites.update(site.id, {
 				theme: { id: "catalog", version: "1.1.0", settings: { palette: "indigo" } },
@@ -111,11 +111,11 @@ describe("SiteRepository", () => {
 
 			const [previous] = await sites.listThemeHistory(site.id);
 			expect(previous?.theme).toEqual({
-				id: "editorial",
+				id: "ranked",
 				version: "1.0.0",
 				settings: {
-					palette: "ocean",
-					font: "sans",
+					palette: "forest",
+					font: "serif",
 					cardStyle: "elevated",
 					navigation: "inline",
 					footer: "columns",
