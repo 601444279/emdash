@@ -4,6 +4,12 @@ export type { Theme };
 export type Site = ThemeSite;
 export type Post = ThemePost;
 
+export interface TaxonomyTerm {
+	name: string;
+	slug: string;
+	label: string;
+}
+
 interface ApiSuccess<T> {
 	success: true;
 	data: T;
@@ -34,6 +40,16 @@ export async function getEntry(collection: string, slug: string): Promise<Post |
 			`/_emdash/api/public/sites/${siteKey()}/content/${encodeURIComponent(collection)}/${encodeURIComponent(slug)}`,
 		);
 		return result.item;
+	} catch {
+		return null;
+	}
+}
+
+export async function getCategory(slug: string): Promise<{ term: TaxonomyTerm; items: Post[] } | null> {
+	try {
+		return await getJson<{ term: TaxonomyTerm; items: Post[] }>(
+			`/_emdash/api/public/sites/${siteKey()}/taxonomies/category/${encodeURIComponent(slug)}?collection=posts`,
+		);
 	} catch {
 		return null;
 	}

@@ -68,6 +68,40 @@ export class SiteContentRepository {
 		return this.list(siteId, type, limit, true);
 	}
 
+	async listPublishedByTaxonomy(
+		siteId: string,
+		type: string,
+		taxonomyName: string,
+		taxonomySlug: string,
+		limit = 50,
+	): Promise<ContentItem[]> {
+		validateIdentifier(type, "collection type");
+		const tableName = `ec_${type}`;
+		const rows = await sql<{ id: string }>`
+			SELECT DISTINCT content.id
+			FROM ${sql.ref(tableName)} AS content
+			INNER JOIN _emdash_site_content AS site_content
+				ON site_content.collection = ${type} AND site_content.entry_id = content.id
+			INNER JOIN content_taxonomies AS content_taxonomies
+				ON content_taxonomies.collection = ${type}
+				AND content_taxonomies.entry_id = content.translation_group
+			INNER JOIN taxonomies AS taxonomy
+				ON taxonomy.translation_group = content_taxonomies.taxonomy_id
+			WHERE site_content.site_id = ${siteId}
+				AND content.status = 'published'
+				AND content.deleted_at IS NULL
+				AND taxonomy.name = ${taxonomyName}
+				AND taxonomy.slug = ${taxonomySlug}
+			ORDER BY content.updated_at DESC, content.id DESC
+			LIMIT ${Math.min(Math.max(limit, 1), 100)}
+		`.execute(this.db);
+
+		return this.content.findManyByIds(
+			type,
+			rows.rows.map(({ id }) => id),
+		);
+	}
+
 	async list(
 		siteId: string,
 		type: string,

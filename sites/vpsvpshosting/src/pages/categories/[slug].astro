@@ -1,0 +1,27 @@
+---
+import PostCard from "@emdash-cms/astro-themes/PostCard.astro";
+import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
+import { getCategory, getSite } from "../../lib/cms";
+
+const slug = Astro.params.slug ?? "";
+const [site, category] = await Promise.all([getSite(), getCategory(slug)]);
+if (!category) return Astro.redirect("/posts");
+---
+
+<ThemeShell site={site} title={`${category.term.label} — ${site.name}`} description={`Articles filed in ${category.term.label}.`}>
+	<section class="category">
+		<p class="kicker">Category</p>
+		<h1>{category.term.label}</h1>
+		<div class:list={["post-grid", site.theme.id]}>
+			{category.items.map((post) => <PostCard post={post} theme={site.theme} />)}
+		</div>
+	</section>
+</ThemeShell>
+
+<style>
+	.category { max-width: 72rem; padding: 4rem 1.5rem; margin: auto; }
+	.kicker { color: var(--accent); font-size: .75rem; text-transform: uppercase; font-weight: 800; letter-spacing: .12em; }
+	h1 { margin: .5rem 0 2rem; font-size: clamp(2.5rem, 7vw, 4.8rem); letter-spacing: -.06em; line-height: .95; }
+	.post-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+	.post-grid.catalog { grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); }
+</style>
