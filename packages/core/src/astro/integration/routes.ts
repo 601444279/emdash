@@ -153,6 +153,16 @@ export function injectCoreRoutes(
 	});
 
 	injectRoute({
+		pattern: "/_emdash/api/public/sites/[key]/menu",
+		entrypoint: resolveRoute("api/public/sites/[key]/menu.ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/public/sites/[key]/taxonomies/[name]/[slug]",
+		entrypoint: resolveRoute("api/public/sites/[key]/taxonomies/[name]/[slug].ts"),
+	});
+
+	injectRoute({
 		pattern: "/_emdash/api/content/[collection]",
 		entrypoint: resolveRoute("api/content/[collection]/index.ts"),
 	});
