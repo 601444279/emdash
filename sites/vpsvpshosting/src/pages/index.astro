@@ -8,10 +8,21 @@ const [site, posts, navigation] = await Promise.all([getSite(), getPosts(), getN
 
 <ThemeShell site={site} navigationItems={navigation.length ? navigation : undefined} title={`${site.name} — VPS reviews and comparisons`} description="Independent VPS hosting reviews, guides, and comparisons.">
 	<section class:list={["hero", site.theme.id]}>
-		<p class="kicker">Independent research</p>
-		<h1>Find hosting that fits the work.</h1>
-		<p>Practical VPS reviews, comparisons, and guides, managed from one publishing system.</p>
+		<p class="kicker">Independent research desk</p>
+		<h1>{site.theme.id === "ranked" ? "Choose infrastructure with the evidence in view." : "Find hosting that fits the work."}</h1>
+		<p>{site.theme.id === "ranked" ? "Field-tested VPS reviews, comparisons, and operating notes for teams that need their infrastructure to hold up." : "Practical VPS reviews, comparisons, and guides, managed from one publishing system."}</p>
+		{site.theme.id === "ranked" && <a class="hero-link" href="/posts">Explore the research desk <span aria-hidden="true">↗</span></a>}
 	</section>
+	{site.theme.id === "ranked" && (
+		<section class="ranked-intro" aria-label="Research standards">
+			<p>How the desk works</p>
+			<ul>
+				<li>Operational context over spec-sheet claims</li>
+				<li>Clear trade-offs for each workload</li>
+				<li>Reviews dated for easier verification</li>
+			</ul>
+		</section>
+	)}
 	<section class:list={["post-grid", site.theme.id]} aria-label="Latest articles">
 		{posts.length > 0 ? posts.map((post) => <PostCard post={post} theme={site.theme} />) : <p>No published articles yet.</p>}
 	</section>
@@ -20,11 +31,23 @@ const [site, posts, navigation] = await Promise.all([getSite(), getPosts(), getN
 <style>
 	.hero { padding: 6rem 1.5rem 3.5rem; max-width: 72rem; margin: auto; }
 	.hero.catalog { background: linear-gradient(135deg, var(--accent), #101821); color: white; margin-top: 2rem; }
+	.hero.ranked { position: relative; max-width: 78rem; margin-top: 2.5rem; padding: clamp(3rem, 8vw, 7rem) clamp(1.5rem, 6vw, 6rem) clamp(3rem, 6vw, 5rem); border: 1px solid var(--line); background: var(--paper); overflow: hidden; }
+	.hero.ranked::after { position: absolute; inset: 0 0 0 auto; width: min(35%, 30rem); background: linear-gradient(150deg, transparent 10%, rgb(181 107 49 / 13%) 10% 20%, transparent 20% 35%, rgb(21 58 52 / 8%) 35% 45%, transparent 45%); content: ""; pointer-events: none; }
 	.kicker { color: var(--accent); font-size: .75rem; text-transform: uppercase; font-weight: 800; letter-spacing: .12em; }
 	.catalog .kicker { color: #c8d5ff; }
 	h1 { max-width: 10ch; margin: .5rem 0 1rem; font-size: clamp(3rem, 8vw, 6rem); line-height: .92; letter-spacing: -.07em; }
 	.hero > p:last-child { max-width: 38rem; color: var(--muted); font-size: 1.2rem; line-height: 1.6; }
 	.catalog > p:last-child { color: #d7e1ef; }
+	.ranked .kicker { font-family: "Avenir Next", Avenir, sans-serif; font-size: .68rem; letter-spacing: .15em; }
+	.ranked h1 { position: relative; z-index: 1; max-width: 13ch; font-family: Charter, "Iowan Old Style", Georgia, serif; font-size: clamp(3.4rem, 7.2vw, 6.8rem); letter-spacing: -.07em; }
+	.ranked .hero-link { position: relative; z-index: 1; display: inline-flex; gap: .7rem; margin-top: 1.25rem; border-bottom: 2px solid var(--accent); padding-bottom: .45rem; color: var(--ink); font-family: "Avenir Next", Avenir, sans-serif; font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+	.ranked .hero-link span { color: var(--accent); font-size: 1.1rem; line-height: .7; }
+	.ranked-intro { display: grid; grid-template-columns: minmax(12rem, .7fr) minmax(0, 2fr); gap: 2rem; max-width: 78rem; margin: 0 auto; padding: 1.8rem 1.5rem; border-bottom: 1px solid var(--line); font-family: "Avenir Next", Avenir, sans-serif; }
+	.ranked-intro > p { margin: 0; color: var(--accent); font-size: .7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+	.ranked-intro ul { display: flex; flex-wrap: wrap; gap: .75rem 2rem; margin: 0; padding: 0; color: var(--muted); font-size: .9rem; list-style: none; }
+	.ranked-intro li::before { color: var(--accent); content: "•"; margin-inline-end: .45rem; }
 	.post-grid { max-width: 72rem; margin: auto; padding: 2rem 1.5rem; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
 	.post-grid.catalog { grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); }
+	.post-grid.ranked { max-width: 78rem; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; padding-top: 3.5rem; background: var(--line); counter-reset: article; }
+	@media (max-width: 42rem) { .hero.ranked { margin-top: 0; } .ranked-intro { display: block; } .ranked-intro ul { margin-top: 1rem; } .post-grid.ranked { grid-template-columns: 1fr; } }
 </style>

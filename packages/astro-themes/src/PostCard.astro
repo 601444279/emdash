@@ -26,7 +26,14 @@ const cardStyle = ["flat", "bordered"].includes(theme.settings.cardStyle)
 	.post-card.bordered { border-inline-start: 4px solid var(--accent); }
 	.post-card.flat { border-color: transparent; background: transparent; padding-inline: 0; }
 	.post-card.catalog { border-inline-start: 4px solid var(--accent); }
+	.post-card.ranked { position: relative; min-height: 13rem; padding: 2rem 2rem 1.7rem 4.5rem; border: 1px solid var(--line); border-radius: 0; box-shadow: none; transition: transform .2s ease, border-color .2s ease; }
+	.post-card.ranked::before { position: absolute; inset: 1.8rem auto auto 1.4rem; color: var(--accent); content: counter(article); counter-increment: article; font-family: Charter, "Iowan Old Style", Georgia, serif; font-size: 2.1rem; font-weight: 700; line-height: 1; }
+	.post-card.ranked:hover { border-color: var(--accent); transform: translateY(-3px); }
+	.post-card.ranked h2 { font-family: Charter, "Iowan Old Style", Georgia, serif; font-size: clamp(1.45rem, 2vw, 2rem); }
+	.post-card.ranked .excerpt { max-width: 38rem; }
+	.post-card.ranked time { display: inline-block; margin-top: .8rem; color: var(--accent); font-family: "Avenir Next", Avenir, sans-serif; font-size: .67rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 	h2 { margin: .35rem 0 .7rem; font-size: clamp(1.25rem, 2vw, 1.7rem); line-height: 1.1; letter-spacing: -.03em; }
 	.excerpt, time { color: var(--muted); line-height: 1.6; }
 	time { font-size: .85rem; }
+	@media (max-width: 38rem) { .post-card.ranked { min-height: 0; padding: 4rem 1.25rem 1.4rem; } .post-card.ranked::before { inset: 1.25rem auto auto 1.25rem; } }
 </style>

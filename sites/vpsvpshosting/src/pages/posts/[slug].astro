@@ -24,21 +24,30 @@ function blockText(block: unknown): string {
 
 <ThemeShell site={site} navigationItems={navigation.length ? navigation : undefined} title={`${title} — ${site.name}`} description={excerpt}>
 	<article class:list={["article", site.theme.id]}>
+		{site.theme.id === "ranked" && <p class="article-label">Research note</p>}
 		<h1>{title}</h1>
 		{excerpt && <p class="lede">{excerpt}</p>}
 		{post.publishedAt && <time datetime={post.publishedAt}>{new Date(post.publishedAt).toLocaleDateString("en-US", { dateStyle: "long" })}</time>}
 		<div class="body">
 			{blocks.map((block) => blockText(block) && <p>{blockText(block)}</p>)}
 		</div>
+		{site.theme.id === "ranked" && <aside class="article-footer">This page is part of the site’s independent VPS research archive.</aside>}
 	</article>
 </ThemeShell>
 
 <style>
 	.article { max-width: 48rem; margin: auto; padding: 4rem 1.5rem 0; }
 	.article.catalog { max-width: 64rem; display: grid; grid-template-columns: minmax(0, 1fr) 15rem; column-gap: 4rem; }
+	.article.ranked { max-width: 74rem; display: grid; grid-template-columns: minmax(0, 46rem) minmax(12rem, 1fr); column-gap: clamp(2rem, 8vw, 7rem); padding-top: clamp(3.5rem, 8vw, 7rem); }
 	h1 { margin: .7rem 0 1rem; font-size: clamp(2.5rem, 7vw, 4.8rem); letter-spacing: -.06em; line-height: .95; }
+	.ranked h1 { grid-column: 1; font-family: Charter, "Iowan Old Style", Georgia, serif; font-size: clamp(3.1rem, 6vw, 5.8rem); }
+	.article-label { grid-column: 1; margin: 0; color: var(--accent); font-family: "Avenir Next", Avenir, sans-serif; font-size: .68rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
 	.lede { color: var(--muted); font-size: 1.3rem; line-height: 1.6; }
+	.ranked .lede { grid-column: 1; max-width: 38rem; font-size: 1.35rem; }
 	time { color: var(--muted); font-size: .9rem; }
+	.ranked time { grid-column: 1; color: var(--accent); font-family: "Avenir Next", Avenir, sans-serif; font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 	.body { grid-column: 1; margin-top: 2rem; font-size: 1.13rem; line-height: 1.8; }
-	@media (max-width: 48rem) { .article.catalog { display: block; } }
+	.ranked .body { max-width: 42rem; margin-top: 2.5rem; font-size: 1.17rem; line-height: 1.9; }
+	.article-footer { grid-column: 2; grid-row: 2 / span 4; align-self: start; border-top: 2px solid var(--accent); padding-top: 1rem; color: var(--muted); font-family: "Avenir Next", Avenir, sans-serif; font-size: .8rem; line-height: 1.6; }
+	@media (max-width: 48rem) { .article.catalog, .article.ranked { display: block; } .article-footer { margin-top: 2.5rem; } }
 </style>

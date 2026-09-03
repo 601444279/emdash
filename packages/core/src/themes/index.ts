@@ -90,6 +90,26 @@ const THEMES: readonly ThemeDefinition[] = [
 			footer: "columns",
 		},
 	},
+	{
+		id: "ranked",
+		version: "1.0.0",
+		name: "Ranked",
+		pages: ["home", "post", "category", "search", "archive", "page"],
+		settings: {
+			palette: ["forest", "slate", "amber"],
+			font: ["sans", "serif"],
+			cardStyle: ["flat", "elevated", "bordered"],
+			navigation: ["inline", "centered"],
+			footer: ["compact", "columns"],
+		},
+		defaults: {
+			palette: "forest",
+			font: "serif",
+			cardStyle: "elevated",
+			navigation: "inline",
+			footer: "columns",
+		},
+	},
 ];
 
 export function listThemes(): readonly ThemeDefinition[] {

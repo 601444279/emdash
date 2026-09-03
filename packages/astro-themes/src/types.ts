@@ -1,5 +1,5 @@
 export interface Theme {
-	id: "editorial" | "catalog";
+	id: string;
 	version: string;
 	settings: Record<string, string>;
 }
