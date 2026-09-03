@@ -1,9 +1,9 @@
 ---
 import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
-import { getEntry, getSite } from "../../lib/cms";
+import { getEntry, getNavigation, getSite } from "../../lib/cms";
 
 const slug = Astro.params.slug ?? "";
-const [site, page] = await Promise.all([getSite(), getEntry("pages", slug)]);
+const [site, page, navigation] = await Promise.all([getSite(), getEntry("pages", slug), getNavigation()]);
 if (!page) return Astro.redirect("/");
 const title = typeof page.data.title === "string" ? page.data.title : "Untitled";
 const excerpt = typeof page.data.excerpt === "string" ? page.data.excerpt : "";
@@ -19,7 +19,7 @@ function blockText(block: unknown): string {
 }
 ---
 
-<ThemeShell site={site} title={`${title} — ${site.name}`} description={excerpt}>
+<ThemeShell site={site} navigationItems={navigation.length ? navigation : undefined} title={`${title} — ${site.name}`} description={excerpt}>
 	<article class:list={["page", site.theme.id]}>
 		<h1>{title}</h1>
 		{excerpt && <p class="lede">{excerpt}</p>}

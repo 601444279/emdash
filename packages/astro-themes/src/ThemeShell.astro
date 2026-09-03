@@ -5,9 +5,10 @@ interface Props {
 	site: ThemeSite;
 	title: string;
 	description?: string;
+	navigationItems?: Array<{ label: string; href: string }>;
 }
 
-const { site, title, description } = Astro.props;
+const { site, title, description, navigationItems = [{ label: "Articles", href: "/posts" }, { label: "Search", href: "/search" }] } = Astro.props;
 const palette = site.theme.settings.palette ?? "ocean";
 const font = site.theme.settings.font === "serif" ? "serif" : "sans";
 const navigation = ["centered", "stacked"].includes(site.theme.settings.navigation)
@@ -38,8 +39,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.url).toString();
 		<header class:list={["site-header", navigation === "centered" && "centered", navigation === "stacked" && "stacked"]}>
 			<a class="brand" href="/">{site.name}</a>
 			<nav aria-label="Primary navigation">
-				<a href="/posts">Articles</a>
-				<a href="/search">Search</a>
+				{navigationItems.map((item) => <a href={item.href}>{item.label}</a>)}
 			</nav>
 		</header>
 		<main><slot /></main>

@@ -1,12 +1,12 @@
 ---
 import PostCard from "@emdash-cms/astro-themes/PostCard.astro";
 import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
-import { getPosts, getSite } from "../lib/cms";
+import { getNavigation, getPosts, getSite } from "../lib/cms";
 
-const [site, posts] = await Promise.all([getSite(), getPosts(100)]);
+const [site, posts, navigation] = await Promise.all([getSite(), getPosts(100), getNavigation()]);
 ---
 
-<ThemeShell site={site} title={`Articles — ${site.name}`} description={`All published articles from ${site.name}.`}>
+<ThemeShell site={site} navigationItems={navigation.length ? navigation : undefined} title={`Articles — ${site.name}`} description={`All published articles from ${site.name}.`}>
 	<section class="archive">
 		<p class="kicker">Archive</p>
 		<h1>Articles</h1>

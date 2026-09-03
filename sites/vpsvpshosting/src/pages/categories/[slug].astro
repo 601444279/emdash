@@ -1,14 +1,14 @@
 ---
 import PostCard from "@emdash-cms/astro-themes/PostCard.astro";
 import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
-import { getCategory, getSite } from "../../lib/cms";
+import { getCategory, getNavigation, getSite } from "../../lib/cms";
 
 const slug = Astro.params.slug ?? "";
-const [site, category] = await Promise.all([getSite(), getCategory(slug)]);
+const [site, category, navigation] = await Promise.all([getSite(), getCategory(slug), getNavigation()]);
 if (!category) return Astro.redirect("/posts");
 ---
 
-<ThemeShell site={site} title={`${category.term.label} — ${site.name}`} description={`Articles filed in ${category.term.label}.`}>
+<ThemeShell site={site} navigationItems={navigation.length ? navigation : undefined} title={`${category.term.label} — ${site.name}`} description={`Articles filed in ${category.term.label}.`}>
 	<section class="category">
 		<p class="kicker">Category</p>
 		<h1>{category.term.label}</h1>

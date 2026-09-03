@@ -1,12 +1,12 @@
 ---
 import PostCard from "@emdash-cms/astro-themes/PostCard.astro";
 import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
-import { getPosts, getSite } from "../lib/cms";
+import { getNavigation, getPosts, getSite } from "../lib/cms";
 
-const [site, posts] = await Promise.all([getSite(), getPosts()]);
+const [site, posts, navigation] = await Promise.all([getSite(), getPosts(), getNavigation()]);
 ---
 
-<ThemeShell site={site} title={`${site.name} — VPS reviews and comparisons`} description="Independent VPS hosting reviews, guides, and comparisons.">
+<ThemeShell site={site} navigationItems={navigation.length ? navigation : undefined} title={`${site.name} — VPS reviews and comparisons`} description="Independent VPS hosting reviews, guides, and comparisons.">
 	<section class:list={["hero", site.theme.id]}>
 		<p class="kicker">Independent research</p>
 		<h1>Find hosting that fits the work.</h1>

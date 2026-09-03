@@ -1,14 +1,14 @@
 ---
-import { getPosts, getSite } from "../lib/cms";
+import { getNavigation, getPosts, getSite } from "../lib/cms";
 import PostCard from "@emdash-cms/astro-themes/PostCard.astro";
 import ThemeShell from "@emdash-cms/astro-themes/ThemeShell.astro";
 
-const [site, posts] = await Promise.all([getSite(), getPosts(100)]);
+const [site, posts, navigation] = await Promise.all([getSite(), getPosts(100), getNavigation()]);
 const query = (Astro.url.searchParams.get("q") ?? "").trim().toLowerCase();
 const results = query ? posts.filter((post) => JSON.stringify(post.data).toLowerCase().includes(query)) : [];
 ---
 
-<ThemeShell site={site} title={`Search — ${site.name}`}>
+<ThemeShell site={site} navigationItems={navigation.length ? navigation : undefined} title={`Search — ${site.name}`}>
 	<section class="search">
 		<h1>Search</h1>
 		<form><input name="q" value={query} placeholder="Search published articles" /><button>Search</button></form>

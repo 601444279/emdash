@@ -10,6 +10,11 @@ export interface TaxonomyTerm {
 	label: string;
 }
 
+interface PublicMenuItem {
+	label: string;
+	customUrl: string | null;
+}
+
 interface ApiSuccess<T> {
 	success: true;
 	data: T;
@@ -52,6 +57,17 @@ export async function getCategory(slug: string): Promise<{ term: TaxonomyTerm; i
 		);
 	} catch {
 		return null;
+	}
+}
+
+export async function getNavigation(): Promise<Array<{ label: string; href: string }>> {
+	try {
+		const result = await getJson<{ items: PublicMenuItem[] }>(`/_emdash/api/public/sites/${siteKey()}/menu`);
+		return result.items
+			.filter((item) => typeof item.label === "string" && typeof item.customUrl === "string" && item.customUrl.startsWith("/"))
+			.map((item) => ({ label: item.label, href: item.customUrl! }));
+	} catch {
+		return [];
 	}
 }
 
